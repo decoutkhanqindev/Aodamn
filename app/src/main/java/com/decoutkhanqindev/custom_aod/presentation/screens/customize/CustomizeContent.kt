@@ -8,11 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.HelpOutline
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -25,7 +21,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.stringResource
@@ -34,11 +29,10 @@ import com.decoutkhanqindev.custom_aod.R
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.AodContent
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.DrawingPadDialog
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.MemoEditorDialog
-import com.decoutkhanqindev.custom_aod.presentation.components.onboarding.AppOnboardingTopBar
+import com.decoutkhanqindev.custom_aod.presentation.components.aod.rememberAodPreview
 import com.decoutkhanqindev.custom_aod.presentation.components.permission.AppPermissionSheet
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeGuideStepValue
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeTabValue
-import com.decoutkhanqindev.custom_aod.presentation.model.onboarding.OnboardingStepValue
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionValue
 import com.decoutkhanqindev.custom_aod.presentation.screens.customize.components.CustomizeApplyingOverlay
@@ -46,10 +40,10 @@ import com.decoutkhanqindev.custom_aod.presentation.screens.customize.components
 import com.decoutkhanqindev.custom_aod.presentation.screens.customize.components.CustomizePanelHost
 import com.decoutkhanqindev.custom_aod.presentation.screens.customize.components.CustomizeTabBar
 import com.decoutkhanqindev.custom_aod.presentation.screens.customize.components.CustomizeToolbar
+import com.decoutkhanqindev.custom_aod.presentation.screens.customize.components.CustomizeTopBar
 import com.decoutkhanqindev.custom_aod.presentation.screens.customize.state.CustomizeIntent
 import com.decoutkhanqindev.custom_aod.presentation.screens.customize.state.CustomizeState
 import com.decoutkhanqindev.custom_aod.presentation.theme.Black
-import com.decoutkhanqindev.custom_aod.presentation.theme.Grey9A
 import com.decoutkhanqindev.custom_aod.presentation.theme.Theme
 import kotlinx.collections.immutable.persistentListOf
 
@@ -58,7 +52,11 @@ fun CustomizeContent(
     state: CustomizeState,
     onIntent: (CustomizeIntent) -> Unit,
 ) {
-    val preview = rememberCustomizePreview(state)
+    val preview = rememberAodPreview(
+        draft = state.draft,
+        nowMillis = state.nowMillis,
+        isGlowing = state.effects.isGlowPreviewing,
+    )
     val guideTargets = remember { mutableStateMapOf<CustomizeGuideStepValue, Rect>() }
     val onTargetPositioned = remember(guideTargets) {
         { step: CustomizeGuideStepValue, bounds: Rect ->
@@ -84,26 +82,10 @@ fun CustomizeContent(
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            AppOnboardingTopBar(
-                step = OnboardingStepValue.CUSTOMIZE,
-                onNavigateBack = { onIntent(CustomizeIntent.NavigateBack) },
-                containerColor = Color.Transparent,
-                actions = {
-                    IconButton(onClick = { onIntent(CustomizeIntent.Guide.ShowGuide) }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Outlined.HelpOutline,
-                            contentDescription = stringResource(R.string.customize_show_guide),
-                            tint = Grey9A,
-                        )
-                    }
-
-                    TextButton(
-                        onClick = { onIntent(CustomizeIntent.SkipCustomization) },
-                        enabled = !state.isApplying,
-                    ) {
-                        Text(text = stringResource(R.string.customize_skip))
-                    }
-                },
+            CustomizeTopBar(
+                isFirstOpen = state.isFirstOpen,
+                isApplying = state.isApplying,
+                onIntent = onIntent,
             )
 
             CustomizeToolbar(

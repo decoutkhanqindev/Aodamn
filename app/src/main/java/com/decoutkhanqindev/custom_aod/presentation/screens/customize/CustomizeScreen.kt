@@ -30,14 +30,18 @@ import com.decoutkhanqindev.custom_aod.utils.showToast
 import kotlinx.coroutines.flow.filterIsInstance
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 import timber.log.Timber
 
 @Composable
-fun CustomizeScreen(backStack: NavBackStack<NavKey>) {
+fun CustomizeScreen(
+    backStack: NavBackStack<NavKey>,
+    isFirstOpen: Boolean,
+) {
     val context = LocalContext.current
     val resources = LocalResources.current
     val tag = LocalTag.current
-    val viewModel: CustomizeViewModel = koinViewModel()
+    val viewModel: CustomizeViewModel = koinViewModel { parametersOf(isFirstOpen) }
     val permissionManager: PermissionManager = koinInject()
     val state by viewModel.state.collectAsStateWithLifecycle()
     val backgroundPicker = rememberLauncherForActivityResult(

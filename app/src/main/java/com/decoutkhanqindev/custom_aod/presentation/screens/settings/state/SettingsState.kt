@@ -1,0 +1,42 @@
+package com.decoutkhanqindev.custom_aod.presentation.screens.settings.state
+
+import androidx.compose.runtime.Immutable
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.AodAppearanceUiModel
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.info.WakeResultValue
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodGestureValue
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodInteractionUiModel
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodOptionsUiModel
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodRulesUiModel
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.ScheduleTimeValue
+import com.decoutkhanqindev.custom_aod.presentation.model.language.LanguageUiModel
+import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionUiModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+
+@Immutable
+data class SettingsState(
+    val isLoading: Boolean = true,
+    val options: AodOptionsUiModel = AodOptionsUiModel(),
+    val appearance: AodAppearanceUiModel = AodAppearanceUiModel(),
+    val interaction: SettingsInteractionState = SettingsInteractionState(),
+    val rules: SettingsRulesState = SettingsRulesState(),
+    val permissions: ImmutableList<PermissionUiModel> = persistentListOf(),
+    val language: LanguageUiModel? = null,
+    val lastWake: WakeResultValue = WakeResultValue.UNKNOWN,
+)
+
+@Immutable
+data class SettingsInteractionState(
+    val settings: AodInteractionUiModel = AodInteractionUiModel(),
+    val editingGesture: AodGestureValue? = null,
+    val isFlashlightAvailable: Boolean = false,
+    val isLightSensorAvailable: Boolean = false,
+    val isPickupSensorAvailable: Boolean = false,
+)
+
+@Immutable
+data class SettingsRulesState(
+    val settings: AodRulesUiModel = AodRulesUiModel(),
+    val isChargingRulePickerVisible: Boolean = false,
+    val editingScheduleTime: ScheduleTimeValue? = null,
+)

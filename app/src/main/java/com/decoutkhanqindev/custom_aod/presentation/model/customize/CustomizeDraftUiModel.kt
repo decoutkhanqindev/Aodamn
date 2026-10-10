@@ -2,10 +2,17 @@ package com.decoutkhanqindev.custom_aod.presentation.model.customize
 
 import android.graphics.Bitmap
 import androidx.compose.runtime.Immutable
+import com.decoutkhanqindev.custom_aod.data.device.permission.PermissionManager
 import com.decoutkhanqindev.custom_aod.data.local.datastore.DataStoreManager
+import com.decoutkhanqindev.custom_aod.data.local.image.AodImageManager
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.AodAppearanceUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.WallpaperValue
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.observeAodAppearance
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodExtrasUiModel
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.observeAodExtras
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.observeAodNotificationOptions
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 
 // Chỉ ghi vào cài đặt thật khi bấm Áp dụng; mục cần quyền giữ giá trị có hiệu lực (đã bật và đã có quyền), mặc định = AOD trống.
 @Immutable
@@ -56,3 +63,38 @@ data class CustomizeInfoUiModel(
 data class CustomizeEffectsUiModel(
     val isEdgeGlowEnabled: Boolean = false,
 )
+
+// Đúng như AOD đang hiện: mục cần quyền chỉ tính là bật khi đã có quyền, vì AOD bỏ qua mục đó khi thiếu quyền.
+suspend fun DataStoreManager.loadCustomizeDraft(
+    aodImageManager: AodImageManager,
+    permissionManager: PermissionManager,
+): CustomizeDraftUiModel {
+    val extras = observeAodExtras().first()
+    val notificationOptions = observeAodNotificationOptions().first()
+    val hasNotificationAccess = permissionManager.isNotificationListenerEnabled()
+
+    return CustomizeDraftUiModel(
+        appearance = CustomizeAppearanceUiModel(
+            clock = observeAodAppearance().first(),
+            isDateEnabled = extras.isDateEnabled,
+            isBatteryEnabled = extras.isBatteryEnabled,
+        ),
+        decor = CustomizeDecorUiModel(
+            wallpaper = WallpaperValue.fromCode(aodWallpaper.filterNotNull().first()),
+            background = aodImageManager.loadBackground(),
+            drawing = aodImageManager.loadDrawing(),
+            memo = extras.memo,
+        ),
+        info = CustomizeInfoUiModel(
+            isNotificationIconsEnabled = notificationOptions.isIconsEnabled && hasNotificationAccess,
+            isNotificationContentEnabled = notificationOptions.isContentEnabled && hasNotificationAccess,
+            isCalendarEnabled = extras.isCalendarEnabled && permissionManager.hasCalendarPermission(),
+            isWeatherEnabled = extras.isWeatherEnabled && permissionManager.hasCoarseLocationPermission(),
+            isWeatherFahrenheit = extras.isWeatherFahrenheit,
+            isMediaControlsEnabled = notificationOptions.isMediaControlsEnabled && hasNotificationAccess,
+        ),
+        effects = CustomizeEffectsUiModel(
+            isEdgeGlowEnabled = notificationOptions.isEdgeGlowEnabled && hasNotificationAccess,
+        ),
+    )
+}

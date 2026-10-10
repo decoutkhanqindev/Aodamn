@@ -13,7 +13,7 @@ hồ che màn hình khoá rồi tự bật màn hình lại. Repo:
 - `com.decoutkhanqindev.custom_aod` · single module `:app` · minSdk 30 · targetSdk 37 · phiên bản
   thư viện: `gradle/libs.versions.toml`.
 - Compose · Clean Architecture + MVI · Navigation 3 · Koin · Coroutines/Flow. Theme luôn tối (nền
-  đen, accent mint).
+  gradient chéo mint → đen → tím, accent mint; màn AOD và khung xem trước AOD nền đen).
 - Chỗ còn phải làm có `// TODO` (Android Studio › View › Tool Windows › TODO). Build, cấp quyền,
   test trên máy: [README.md](README.md).
 
@@ -98,7 +98,7 @@ bắt buộc (compiler không chặn hộ):
   `confirmLanguage()`). Không dùng danh từ trơn (`Preview`), nhãn nút (`Done`, `Back`), thì quá khứ
   (`BackgroundPicked` → `BackgroundPickerResult`), thiếu đối tượng (`Close` → `CloseAod`). Boolean
   là `isXxx`; số có đơn vị trong tên (`percent`, `minuteOfDay`).
-- Màn có ≥ 3 cụm thao tác độc lập hoặc ≥ 15 Intent (`screens/main/`, `screens/customize/`) thì chia
+- Màn có ≥ 3 cụm thao tác độc lập hoặc ≥ 15 Intent (`screens/settings/`, `screens/customize/`) thì chia
   cụm, không gom phẳng: `sealed interface <Cụm> : XxxIntent` / `: XxxEffect` lồng trong cha (việc
   chung cả màn ở cấp cha, gọi bằng đường đầy đủ `CustomizeIntent.Appearance.ToggleDate(it)`);
   `onIntent` chỉ `when` theo cụm rồi giao `on<Cụm>Intent`; State = field chung + `Xxx<Cụm>State` +
@@ -116,6 +116,12 @@ bắt buộc (compiler không chặn hộ):
   `.copy(alpha = …)` trên màu theme (dùng biến thể `MintAlpha12`). Màu / chữ / bo góc mới → thêm
   `val` vào đúng file. `Theme { }` chỉ là cầu nối cho component Material 3. Không dựng tầng token
   hay object trung gian (đã thử và bỏ). Khoảng cách, `sp`, thời lượng, alpha viết số thẳng.
+- Nền màn app là `BackgroundGradient` (`Colors.kt`), mỗi màn / tab tự vẽ ở node gốc của Content
+  (Scaffold thì `containerColor = Color.Transparent` + `contentColor = GreyED`); `MainNavDisplay` không
+  vẽ nền. Màn AOD và Customize (khung xem trước AOD) giữ nền đen.
+- Thanh trên của màn dùng `AppTopBar` (căn giữa, nền trong suốt, chữ và icon `GreyED`), tab dùng
+  `AppTabTopBar`; không gọi `TopAppBar` / `CenterAlignedTopAppBar` thẳng, không tô màu riêng cho icon
+  trên thanh. Mint để cho trạng thái đang chọn / giá trị.
 - Màn AOD (`screens/aod/`) **không bọc `Theme`**, cả `@Preview`: bọc thì `Text` nhận
   `LocalTextStyle` làm đồng hồ đè lên dòng ngày. Cỡ chữ ở đó là `TextUnit` (`14.sp * scale`), chữ
   xám (`Grey8A` / `Grey6E` / `Grey5A`) để ít sáng, ít burn-in.
@@ -142,6 +148,10 @@ bắt buộc (compiler không chặn hộ):
   trong `AppNavDisplay` (hàm bọc `entry`, tự cấp `LocalTag` = tên class của destination;
   `AodActivity` tự cấp `"AodScreen"`). `NavDisplay` phải đủ 2 decorator (saveable state holder +
   ViewModel store).
+- Main = `MainNavDisplay` (theo mẫu `AppNavDisplay`): chỉ chứa `NavDisplay` của các tab và thanh tab,
+  không ViewModel. Tab là Screen đủ bộ (`AodTabScreen` / `EdgeLightScreen` / `SettingsScreen`, mỗi tab
+  ViewModel, effect, nền riêng), destination ở `navigation/MainDestinations.kt`, thứ tự và icon ở
+  `MainTabValue`. Tab AOD là gốc back stack tab; `screens/aod/` là màn AOD thật trên màn hình khoá.
 - Chỉ Screen đụng `backStack`, ViewModel bắn Effect. Thay cả stack:
   `navigateTo(dest, preserveState = false)`; `navigateTo(dest)` xoá mọi màn giữa root và dest nên mở
   màn chồng lên dùng `backStack.add`; quay lại luôn `navigateBack()` (không `removeLast…`: back
@@ -187,9 +197,10 @@ bắt buộc (compiler không chặn hộ):
   code: `id → in`, `he → iw`, `zh-hk → zh-rHK`, `es-la → es-rLA`, `pt-br → pt-rBR`, `fil → b+fil`.
 - Onboarding lần đầu: Splash → Language → Customize → Permission → Main; các lần sau Splash → Main.
   `saveIsFirstOpen(false)` gọi ngay ở nút Tiếp tục của Language, nên thoát giữa chừng thì lần sau
-  vào thẳng Main (thiếu quyền thì Main hiện `MainPermissionSheet`). **Bỏ qua ở Customize vào thẳng
-  Main**, không qua Permission (ép cấp quyền sau khi user đã bỏ qua thì dễ bỏ app); Áp dụng thì đủ
-  quyền bắt buộc vào Main, thiếu thì sang Permission.
+  vào thẳng Main (thiếu quyền thì tab AOD hiện `AodTabPermissionSheet`). **Bỏ qua ở Customize vào
+  thẳng Main**, không qua Permission (ép cấp quyền sau khi user đã bỏ qua thì dễ bỏ app); Áp dụng thì
+  đủ quyền bắt buộc vào Main, thiếu thì sang Permission. Customize mở từ tab AOD
+  (`CustomizeDestination(isFirstOpen = false)`): không bước / Bỏ qua, Áp dụng xong quay về Main.
 - Trang cấp quyền ở app Cài đặt mở bằng `context.openXxxSettings(isGranted)`
   (`utils/ContextExt.kt`): `returnAppWhen` kéo app về khi quyền được cấp (poll 200 ms, tối đa 60
   giây; quyền đã có lúc mở thì không kéo). `isGranted` lấy từ

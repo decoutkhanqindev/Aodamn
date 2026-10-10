@@ -26,11 +26,41 @@
     <string name="notif_service_title">Hiện đồng hồ mỗi khi màn hình tắt</string>
 
     <!-- Main -->
-    <string name="main_subtitle">Đồng hồ luôn bật cho những máy mà chế độ có sẵn tự tắt sau vài giây.</string>
+    <string name="edge_light">Viền sáng</string>
+    <string name="settings">Cài đặt</string>
+    <string name="coming_soon">Sắp có</string>
+    <string name="share_app">Chia sẻ ứng dụng</string>
+    <string name="share_app_text">Dùng thử Custom AOD, đồng hồ luôn bật trên màn hình khóa: %1$s</string>
+
+    <!-- IAP -->
+    <string name="iap_soon_title">Gói Premium sắp có</string>
+    <string name="iap_soon_desc">Các gói nâng cấp sẽ có ở đây.</string>
+
+    <!-- Tab AOD -->
     <string name="opt_enabled">Hiện đồng hồ khi màn hình tắt</string>
+    <string name="aod_tab_design_title">Giao diện của bạn</string>
+    <string name="aod_tab_design_default">Mặc định</string>
+    <string name="aod_tab_themes_title">Chủ đề</string>
+    <string name="aod_tab_themes_soon_title">Chủ đề dựng sẵn đang được làm</string>
+    <string name="aod_tab_themes_soon_desc">Trong lúc chờ, bạn có thể tự tùy chỉnh giao diện ở thẻ phía trên.</string>
+
+    <!-- Tab Edge Light -->
+    <string name="edge_light_soon_title">Viền sáng sắp có</string>
+    <string name="edge_light_soon_desc">Ánh sáng chạy quanh viền màn hình khi có thông báo mới hoặc khi đang phát nhạc.</string>
+    <string name="edge_light_in_progress">Đang phát triển</string>
+    <string name="edge_light_glow_hint">Viền sáng khi có thông báo mới đã dùng được trên AOD, bật ở Tùy chỉnh › Hiệu ứng.</string>
+
+    <!-- Tab Settings -->
+    <string name="section_display">Hiển thị</string>
+    <string name="opt_brightness">Độ sáng</string>
+    <string name="opt_timeout">Tối màn hình sau</string>
+    <string name="opt_min_battery">Bỏ qua đồng hồ khi pin yếu</string>
+    <string name="value_minutes">%1$d phút</string>
+    <string name="value_never">Không bao giờ</string>
+    <string name="value_off">Tắt</string>
+    <string name="value_below_percent">Dưới %1$d%%</string>
 
     <string name="section_permissions">Quyền</string>
-    <string name="section_options">Tùy chọn</string>
     <string name="action_open">Mở</string>
 
     <string name="perm_overlay_title">Hiển thị trên ứng dụng khác (bắt buộc)</string>
@@ -61,12 +91,8 @@
     <string name="action_later">Để sau</string>
 
     <string name="opt_custom_brightness">Dùng độ sáng riêng cho đồng hồ</string>
-    <string name="opt_brightness_value">Độ sáng: %1$d%%</string>
     <string name="opt_proximity">Tối màn hình khi máy ở trong túi hoặc bị úp</string>
-    <string name="opt_timeout_never">Tối màn hình sau: không bao giờ</string>
-    <string name="opt_timeout_value">Tối màn hình sau: %1$d phút</string>
 
-    <string name="section_appearance">Giao diện đồng hồ</string>
     <string name="opt_clock_face">Mặt đồng hồ</string>
     <string name="clock_face_digital">Số</string>
     <string name="clock_face_stacked">Số, xếp chồng</string>
@@ -88,7 +114,6 @@
     <string name="clock_color_red">Đỏ</string>
     <string name="opt_clock_size_value">Cỡ đồng hồ: %1$d%%</string>
     <string name="opt_landscape">Luôn xoay ngang (đồng hồ đêm)</string>
-    <string name="opt_background">Ảnh nền</string>
     <string name="wallpaper_stars">Sao đêm</string>
     <string name="wallpaper_aurora">Cực quang</string>
     <string name="wallpaper_eclipse">Nhật thực</string>
@@ -98,11 +123,9 @@
     <string name="background_from_device">Ảnh từ máy</string>
     <string name="background_choose">Chọn ảnh</string>
     <string name="background_change">Đổi ảnh</string>
-    <string name="background_saving">Đang lưu…</string>
     <string name="background_remove">Bỏ ảnh nền</string>
     <string name="background_save_failed">Không dùng được ảnh này.</string>
 
-    <string name="section_extras">Thông tin thêm trên đồng hồ</string>
     <string name="opt_memo">Ghi nhớ</string>
     <string name="memo_add">Thêm</string>
     <string name="memo_edit">Sửa</string>
@@ -121,8 +144,6 @@
     <string name="opt_weather_fahrenheit">Hiện nhiệt độ theo °F</string>
     <string name="location_permission_denied">Chưa được cấp quyền vị trí. Bạn có thể cấp trong cài đặt hệ thống của ứng dụng.</string>
 
-    <string name="section_notifications">Thông báo trên đồng hồ</string>
-    <string name="notification_access_needed">Cần quyền Truy cập thông báo ở mục Quyền.</string>
     <string name="opt_notification_icons">Hiện biểu tượng thông báo</string>
     <string name="opt_notification_content">Hiện nội dung thông báo mới nhất</string>
     <string name="opt_notification_content_desc">Tiêu đề và nội dung dưới các icon. Nội dung bị màn hình khóa ẩn thì ở đây cũng ẩn.</string>
@@ -158,8 +179,6 @@
     <string name="opt_schedule">Chỉ hiện trong khung giờ</string>
     <string name="opt_schedule_start">Bắt đầu</string>
     <string name="opt_schedule_end">Kết thúc</string>
-    <string name="opt_battery_off">Bỏ qua đồng hồ khi pin yếu: tắt</string>
-    <string name="opt_battery_value">Bỏ qua đồng hồ khi pin dưới %1$d%%</string>
 
     <string name="section_app">Ứng dụng</string>
     <string name="language">Ngôn ngữ</string>
@@ -228,6 +247,7 @@
     <string name="customize_guide_next">Tiếp</string>
     <string name="customize_guide_done">Đã hiểu</string>
     <string name="customize_show_guide">Xem hướng dẫn</string>
+    <string name="customize_title">Tùy chỉnh</string>
     <string name="customize_apply">Áp dụng</string>
     <string name="customize_skip">Bỏ qua</string>
     <string name="customize_undo">Hoàn tác</string>

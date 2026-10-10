@@ -10,16 +10,13 @@ import com.decoutkhanqindev.custom_aod.data.local.image.AodImageManager
 import com.decoutkhanqindev.custom_aod.domain.usecase.RefreshWeatherUseCase
 import com.decoutkhanqindev.custom_aod.presentation.base.BaseViewModel
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.WallpaperValue
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.observeAodAppearance
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodExtrasUiModel
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.observeAodExtras
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.observeAodNotificationOptions
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeAppearanceUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeDecorUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeDraftUiModel
-import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeEffectsUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeGuideStepValue
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeInfoUiModel
+import com.decoutkhanqindev.custom_aod.presentation.model.customize.loadCustomizeDraft
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionValue
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.hasRequiredPermissions
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.requiredAodPermissions
@@ -35,12 +32,13 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class CustomizeViewModel(
+    private val isFirstOpen: Boolean,
     private val dataStoreManager: DataStoreManager,
     private val permissionManager: PermissionManager,
     private val aodImageManager: AodImageManager,
     private val refreshWeatherUseCase: RefreshWeatherUseCase,
 ) : BaseViewModel<CustomizeState, CustomizeIntent, CustomizeEffect>(
-    initialState = CustomizeState(),
+    initialState = CustomizeState(isFirstOpen = isFirstOpen),
 ) {
 
     private var initialDraft = CustomizeDraftUiModel()
@@ -273,38 +271,10 @@ class CustomizeViewModel(
         }
     }
 
-    // Bản nháp bắt đầu từ cài đặt đang có (lần đầu mở app là mặc định); mục cần quyền chỉ tính là bật khi đã có quyền.
+    // Bản nháp bắt đầu từ cài đặt đang có (lần đầu mở app là mặc định).
     private fun loadDraft() {
         viewModelScope.launch {
-            val clock = dataStoreManager.observeAodAppearance().first()
-            val extras = dataStoreManager.observeAodExtras().first()
-            val notificationOptions = dataStoreManager.observeAodNotificationOptions().first()
-            val wallpaperCode = dataStoreManager.aodWallpaper.filterNotNull().first()
-            val hasNotificationAccess = isGranted(PermissionValue.NOTIFICATION_ACCESS)
-            initialDraft = CustomizeDraftUiModel(
-                appearance = CustomizeAppearanceUiModel(
-                    clock = clock,
-                    isDateEnabled = extras.isDateEnabled,
-                    isBatteryEnabled = extras.isBatteryEnabled,
-                ),
-                decor = CustomizeDecorUiModel(
-                    wallpaper = WallpaperValue.fromCode(wallpaperCode),
-                    background = aodImageManager.loadBackground(),
-                    drawing = aodImageManager.loadDrawing(),
-                    memo = extras.memo,
-                ),
-                info = CustomizeInfoUiModel(
-                    isNotificationIconsEnabled = notificationOptions.isIconsEnabled && hasNotificationAccess,
-                    isNotificationContentEnabled = notificationOptions.isContentEnabled && hasNotificationAccess,
-                    isCalendarEnabled = extras.isCalendarEnabled && isGranted(PermissionValue.CALENDAR),
-                    isWeatherEnabled = extras.isWeatherEnabled && isGranted(PermissionValue.LOCATION),
-                    isWeatherFahrenheit = extras.isWeatherFahrenheit,
-                    isMediaControlsEnabled = notificationOptions.isMediaControlsEnabled && hasNotificationAccess,
-                ),
-                effects = CustomizeEffectsUiModel(
-                    isEdgeGlowEnabled = notificationOptions.isEdgeGlowEnabled && hasNotificationAccess,
-                ),
-            )
+            initialDraft = dataStoreManager.loadCustomizeDraft(aodImageManager, permissionManager)
             undoStack.clear()
             redoStack.clear()
             publish(initialDraft)
@@ -475,11 +445,18 @@ class CustomizeViewModel(
         }
     }
 
-    // Áp dụng xong: đủ quyền bắt buộc thì vào thẳng Main, không thì sang màn quyền. Bỏ qua không đi qua đây: không ghi gì và vào thẳng Main
+    // Onboarding: đủ quyền bắt buộc thì vào thẳng Main, không thì sang màn quyền. Bỏ qua không đi qua đây: không ghi gì và vào thẳng Main
     // (thiếu quyền thì Main hiện bottom sheet nhắc), vì user đã muốn bỏ qua mà còn bắt cấp quyền thì dễ bỏ app.
+    // Mở từ Main thì quay lại Main, việc nhắc quyền để Main lo.
     private suspend fun navigateNext() {
         val isReady = permissionManager.requiredAodPermissions().hasRequiredPermissions
-        sendEffect(if (isReady) CustomizeEffect.Navigation.NavigateToMain else CustomizeEffect.Navigation.NavigateToPermission)
+        sendEffect(
+            when {
+                !isFirstOpen -> CustomizeEffect.Navigation.NavigateBack
+                isReady -> CustomizeEffect.Navigation.NavigateToMain
+                else -> CustomizeEffect.Navigation.NavigateToPermission
+            },
+        )
     }
 
     // Chỉ ghi phần đã đổi: mục cần quyền user không đụng tới giữ cờ đã lưu (vd icon thông báo mặc định bật nhưng chưa có quyền).

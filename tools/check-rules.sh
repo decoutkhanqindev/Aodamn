@@ -54,6 +54,12 @@ check "LottieAnimation ngoài AppLottie" \
 check "context.getString / activity.getString cho text UI" \
   "stringResource hoặc LocalResources.current.getString" \
   'grep -rn "context\.getString\|activity\.getString" $SRC --include="*.kt"'
+check "TopAppBar / CenterAlignedTopAppBar gọi thẳng" \
+  "AppTopBar (màn) hoặc AppTabTopBar (tab)" \
+  'grep -rn "TopAppBar(" $SRC --include="*.kt" | grep -v "/components/AppTopBar.kt"'
+check "Nền gradient vẽ ở NavDisplay" \
+  "mỗi màn / tab tự vẽ BackgroundGradient ở Content" \
+  'grep -rn "BackgroundGradient" $PKG/presentation/navigation --include="*.kt"'
 
 # --- Component, tên và access --------------------------------------------------------------------
 check "Hàm composable dùng chung không có tiền tố App" \

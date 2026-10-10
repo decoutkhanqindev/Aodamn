@@ -9,19 +9,11 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
@@ -30,8 +22,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.custom_aod.R
+import com.decoutkhanqindev.custom_aod.presentation.components.AppTopBar
 import com.decoutkhanqindev.custom_aod.presentation.model.onboarding.OnboardingStepValue
-import com.decoutkhanqindev.custom_aod.presentation.theme.Black
 import com.decoutkhanqindev.custom_aod.presentation.theme.BodyLarge
 import com.decoutkhanqindev.custom_aod.presentation.theme.BodySmall
 import com.decoutkhanqindev.custom_aod.presentation.theme.Grey9A
@@ -42,16 +34,14 @@ import com.decoutkhanqindev.custom_aod.presentation.theme.Mint
 import com.decoutkhanqindev.custom_aod.presentation.theme.MintAlpha12
 import com.decoutkhanqindev.custom_aod.presentation.theme.Theme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppOnboardingTopBar(
     step: OnboardingStepValue,
     modifier: Modifier = Modifier,
     onNavigateBack: (() -> Unit)? = null,
-    containerColor: Color = Black,
     actions: @Composable RowScope.() -> Unit = {},
 ) {
-    CenterAlignedTopAppBar(
+    AppTopBar(
         title = {
             Text(
                 text = stringResource(
@@ -73,18 +63,8 @@ fun AppOnboardingTopBar(
             )
         },
         modifier = modifier,
-        navigationIcon = {
-            if (onNavigateBack != null) {
-                IconButton(onClick = onNavigateBack) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = stringResource(R.string.action_back),
-                    )
-                }
-            }
-        },
+        onNavigateBack = onNavigateBack,
         actions = actions,
-        colors = TopAppBarDefaults.topAppBarColors(containerColor = containerColor),
     )
 }
 

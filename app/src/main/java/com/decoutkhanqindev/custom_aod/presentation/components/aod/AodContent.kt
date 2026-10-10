@@ -61,6 +61,7 @@ fun AodContent(
     state: AodState,
     onIntent: (AodIntent) -> Unit,
     modifier: Modifier = Modifier,
+    isInteractive: Boolean = true,
 ) {
     val currentOnIntent by rememberUpdatedState(onIntent)
     val focusRequester = remember { FocusRequester() }
@@ -75,56 +76,64 @@ fun AodContent(
         label = "AodShiftY",
     )
 
+    // Bản thu nhỏ nằm trong màn khác: lấy focus thì màn đó tự cuộn về chỗ nó, nhận chạm thì chặn click của khung bọc ngoài.
     SideEffect(Unit) {
-        focusRequester.requestFocus()
+        if (isInteractive) focusRequester.requestFocus()
     }
 
     BoxWithConstraints(
         modifier = modifier
             .fillMaxSize()
             .background(Black)
-            .onPreviewKeyEvent { event ->
-                val gesture = when (event.key) {
-                    Key.VolumeUp -> AodGestureValue.VOLUME_UP
-                    Key.VolumeDown -> AodGestureValue.VOLUME_DOWN
-                    else -> null
-                }
-                if (gesture == null || state.interaction.actionOf(gesture) == AodActionValue.NONE) {
-                    false
-                } else {
-                    if (event.type == KeyEventType.KeyDown && event.nativeKeyEvent.repeatCount == 0) {
-                        currentOnIntent(AodIntent.PerformGesture(gesture))
-                    }
-                    true
-                }
-            }
-            .focusRequester(focusRequester)
-            .focusable()
-            .pointerInput(Unit) {
-                detectTapGestures(
-                    onDoubleTap = { currentOnIntent(AodIntent.PerformGesture(AodGestureValue.DOUBLE_TAP)) },
-                )
-            }
-            .pointerInput(Unit) {
-                var dragTotal = 0f
-                detectVerticalDragGestures(
-                    onDragStart = { dragTotal = 0f },
-                    onDragEnd = {
-                        val threshold = 80.dp.toPx()
-                        when {
-                            dragTotal <= -threshold ->
-                                currentOnIntent(AodIntent.PerformGesture(AodGestureValue.SWIPE_UP))
-
-                            dragTotal >= threshold ->
-                                currentOnIntent(AodIntent.PerformGesture(AodGestureValue.SWIPE_DOWN))
+            .then(
+                if (isInteractive) {
+                    Modifier
+                        .onPreviewKeyEvent { event ->
+                            val gesture = when (event.key) {
+                                Key.VolumeUp -> AodGestureValue.VOLUME_UP
+                                Key.VolumeDown -> AodGestureValue.VOLUME_DOWN
+                                else -> null
+                            }
+                            if (gesture == null || state.interaction.actionOf(gesture) == AodActionValue.NONE) {
+                                false
+                            } else {
+                                if (event.type == KeyEventType.KeyDown && event.nativeKeyEvent.repeatCount == 0) {
+                                    currentOnIntent(AodIntent.PerformGesture(gesture))
+                                }
+                                true
+                            }
                         }
-                    },
-                    onVerticalDrag = { change, dragAmount ->
-                        change.consume()
-                        dragTotal += dragAmount
-                    },
-                )
-            },
+                        .focusRequester(focusRequester)
+                        .focusable()
+                        .pointerInput(Unit) {
+                            detectTapGestures(
+                                onDoubleTap = { currentOnIntent(AodIntent.PerformGesture(AodGestureValue.DOUBLE_TAP)) },
+                            )
+                        }
+                        .pointerInput(Unit) {
+                            var dragTotal = 0f
+                            detectVerticalDragGestures(
+                                onDragStart = { dragTotal = 0f },
+                                onDragEnd = {
+                                    val threshold = 80.dp.toPx()
+                                    when {
+                                        dragTotal <= -threshold ->
+                                            currentOnIntent(AodIntent.PerformGesture(AodGestureValue.SWIPE_UP))
+
+                                        dragTotal >= threshold ->
+                                            currentOnIntent(AodIntent.PerformGesture(AodGestureValue.SWIPE_DOWN))
+                                    }
+                                },
+                                onVerticalDrag = { change, dragAmount ->
+                                    change.consume()
+                                    dragTotal += dragAmount
+                                },
+                            )
+                        }
+                } else {
+                    Modifier
+                },
+            ),
         contentAlignment = Alignment.Center,
     ) {
         val isLandscape = maxWidth > maxHeight

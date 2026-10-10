@@ -49,7 +49,6 @@ import timber.log.Timber
 import kotlin.random.Random
 
 class AodViewModel(
-    private val isPreview: Boolean,
     dataStoreManager: DataStoreManager,
     private val batteryStateManager: BatteryStateManager,
     private val audioStateManager: AudioStateManager,
@@ -103,10 +102,8 @@ class AodViewModel(
         if (state.value.interaction.isAutoDimEnabled && ambientLightManager.isAvailable) observeAmbientLight()
         startMinuteTicks()
         scheduleHintHide()
-        if (!isPreview) {
-            if (isProximityEnabled) observeProximity()
-            armTimeout()
-        }
+        if (isProximityEnabled) observeProximity()
+        armTimeout()
     }
 
     override fun onIntent(intent: AodIntent) {
@@ -402,7 +399,6 @@ class AodViewModel(
 
     // Hết khung giờ, rút / cắm sạc trái quy tắc hoặc pin yếu khi đồng hồ đang hiện: chuyển đen như khi hết giờ.
     private fun checkRules() {
-        if (isPreview) return
         val battery = state.value.battery
         val isAllowed = rules.allows(
             batteryPercent = battery?.percent,

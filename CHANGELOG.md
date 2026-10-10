@@ -7,6 +7,52 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-10-11 – IAP / Share trên thanh tiêu đề tab, bỏ chế độ Xem thử
+
+Build được (`assembleDebug`), `tools/check-rules.sh` ra 0 vi phạm, đã test trên máy.
+
+### Thêm
+
+- `AppTabTopBar` (`presentation/components/`): tiêu đề tab kèm icon IAP (mở `IapScreen`) và Share (bảng chia sẻ của hệ thống, kèm link Play Store), dùng ở cả 3 tab. Helper `shareText`, `playStoreUrl` ở `utils/ContextExt.kt`.
+- `IapScreen` (`screens/iap/`, `IapDestination`): màn giữ chỗ cho Premium, chưa có ViewModel và Play Billing.
+- `AppTopBar` (`presentation/components/`): thanh trên căn giữa, nền trong suốt, nút back tuỳ chọn, chữ và icon `GreyED`. Thay cho `CenterAlignedTopAppBar` viết tay ở `IapContent`, `LanguageContent`, `CustomizeTopBar`; `AppOnboardingTopBar` dựng trên nó (bỏ tham số `containerColor`). `tools/check-rules.sh` chặn gọi `TopAppBar` thẳng.
+- `EdgeLightViewModel` + `state/` cho tab Viền sáng (state còn trống) để IAP / Share đi qua ViewModel như 2 tab kia.
+
+### Thay đổi
+
+- Thẻ "Giao diện của bạn": nút bút chì dùng `AppIconTile` như icon ở tab Cài đặt.
+- Icon trên mọi thanh trên cùng màu `GreyED` (IAP bỏ màu cam, nút Hướng dẫn ở Customize bỏ `Grey9A`); mint chỉ cho trạng thái đang chọn / giá trị. CLAUDE.md ghi quy tắc này.
+- Các tab không nhận `contentPadding` nữa: `MainNavDisplay` chỉ chừa phần dưới cho thanh tab, tab tự đệm thanh trạng thái (`statusBarsPadding()`) nên nền vẫn tràn dưới status bar. Tiêu đề tab chuyển sang `HeadlineSmall` để đủ chỗ cho 2 icon.
+- README: các bước test dùng nút "Xem thử" đổi sang xem trước ở Tùy chỉnh rồi khoá máy.
+
+### Xoá
+
+- `AodActivity.preview()` và chế độ xem thử của AOD (`isPreview` ở `AodActivity`, `AodScreen`, `AodViewModel`, DI). AOD thật chạy như trước: luôn gắn vào `AodSession`, luôn hẹn giờ tối, theo cảm biến tiệm cận và kiểm quy tắc.
+
+## [Chưa phát hành] – 2026-10-10 – Màn Main mới: 3 tab AOD / Viền sáng / Cài đặt
+
+Build được (`compileDebugKotlin`, `assembleDebug`), `tools/check-rules.sh` ra 0 vi phạm, đã test trên máy.
+
+### Thêm
+
+- `MainNavDisplay` (theo mẫu `AppNavDisplay`) thay `MainScreen`: chỉ chứa `NavDisplay` của 3 tab và thanh tab dưới (M3 `NavigationBar`, tab đang chọn icon mint trên nền mint nhạt), không ViewModel. Tab AOD là gốc back stack tab: Back ở tab khác về tab AOD rồi mới thoát app, chuyển tab mờ dần. Destination tab ở `navigation/MainDestinations.kt`, thứ tự / icon / nhãn ở `MainTabValue`.
+- Tab AOD (`screens/aodtab/`): công tắc "Hiện đồng hồ khi màn hình tắt" dạng thanh bo tròn; thẻ "Giao diện của bạn" vẽ AOD đang áp dụng thu nhỏ bằng chính `AodContent` (đồng hồ nhảy theo phút, mờ đi khi tắt AOD, chạm để mở Customize); lưới chủ đề giữ chỗ "Sắp có"; sheet và dòng cảnh báo khi thiếu quyền bắt buộc.
+- Tab Viền sáng (`screens/edgelight/`): màn giữ chỗ dùng Lottie viền sáng của icon, nhắc viền sáng khi có thông báo đã có ở Tùy chỉnh › Hiệu ứng.
+- Tab Cài đặt (`screens/settings/`): nhóm Hiển thị, Khi nào hiện, Thao tác và cảm biến, Quyền, Ứng dụng dạng thẻ có ô icon; giá trị màu mint nằm dưới tên; nguồn điện chọn trong hộp thoại; cuối trang có icon, tên và phiên bản app.
+- Customize mở được từ tab AOD (`CustomizeDestination(isFirstOpen = false)`): thanh trên có nút quay lại và tiêu đề "Tùy chỉnh", không bước / Bỏ qua; Áp dụng xong quay về Main.
+- Nền gradient chéo mint → đen → tím (`BackgroundGradient`) cho các tab, màn Ngôn ngữ và màn Quyền; mỗi màn tự vẽ nền. Màn AOD, Customize và Splash vẫn đen.
+- `AppIconTile`, `AppBadge` (`presentation/components/`); `rememberAodPreview` (`components/aod/AodPreview.kt`) dùng chung cho Customize và thẻ giao diện; `loadCustomizeDraft` đọc cấu hình đang lưu thành bản nháp; `AodContent(isInteractive = false)` cho bản thu nhỏ (không lấy focus, không nhận chạm / phím).
+
+### Thay đổi
+
+- `MainViewModel` tách thành `AodTabViewModel` và `SettingsViewModel`, mỗi tab tự xử lý effect. Bỏ khỏi Main 3 nhóm Giao diện đồng hồ, Thông tin thêm, Thông báo (đã có ở Customize) và nút Xem thử; "Luôn xoay ngang" chuyển sang Cài đặt › Hiển thị.
+- `CustomizePreviewSamples` chuyển từ `screens/customize/` sang `model/customize/`. `AodGestureValue` có thêm icon. `AppOnboardingTopBar` mặc định nền trong suốt. Hàm `screen<>` của `AppNavDisplay` thành public để `MainNavDisplay` dùng chung.
+- CLAUDE.md thêm quy tắc `MainNavDisplay` / tab và nền gradient; `tools/check-rules.sh` thêm lệnh chặn vẽ nền ở `navigation/`. README cập nhật bảng file.
+
+### Xoá
+
+- `screens/main/` (Screen, Content, ViewModel, state, các section) và 14 chuỗi chỉ các section bị bỏ dùng (`section_appearance`, `section_extras`, `section_notifications`, `opt_timeout_value`, …).
+
 ## [Chưa phát hành] – 2026-10-10 – Gọn lại CLAUDE.md
 
 Build được (`compileDebugKotlin`), `tools/check-rules.sh` ra 0 vi phạm. Chỉ đổi tài liệu và script, không đổi code app.

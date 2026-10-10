@@ -1,8 +1,6 @@
 package com.decoutkhanqindev.custom_aod.presentation.aod
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
@@ -24,7 +22,6 @@ class AodActivity : ComponentActivity() {
     private val dataStoreManager: DataStoreManager by inject()
     private val session: AodSession by inject()
 
-    private var isPreview = false
     private var normalBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
     private var isDark = false
     private var isDimmed = false
@@ -39,7 +36,6 @@ class AodActivity : ComponentActivity() {
             WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON,
         )
 
-        isPreview = intent.getBooleanExtra(EXTRA_PREVIEW, false)
         val isCustomBrightness =
             dataStoreManager.isAodCustomBrightness.value
                 ?: DataStoreManager.DEFAULT_IS_AOD_CUSTOM_BRIGHTNESS
@@ -51,8 +47,7 @@ class AodActivity : ComponentActivity() {
         } else {
             WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
         }
-        // Bản xem thử không phải AOD: service không được coi nó là AOD khi màn hình tắt.
-        if (!isPreview) session.attach(this)
+        session.attach(this)
 
         // Độ sáng và hướng xoay đặt trước khi cửa sổ hiện để ngay khung đầu tiên đã đúng.
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -62,7 +57,6 @@ class AodActivity : ComponentActivity() {
             AppLanguageProvider {
                 AppTagProvider(tag = "AodScreen") {
                     AodScreen(
-                        isPreview = isPreview,
                         onDarkChange = ::renderDark,
                         onDimChange = ::renderDim,
                         onClose = ::close,
@@ -73,17 +67,12 @@ class AodActivity : ComponentActivity() {
         hideSystemBars()
     }
 
-    override fun onStop() {
-        super.onStop()
-        // AOD thật có thể bị stop khi màn hình vẫn tắt nên service quyết định lúc đóng; chỉ bản xem thử đóng ở đây.
-        if (isPreview) close()
-    }
-
     override fun onDestroy() {
         session.detach(this)
         super.onDestroy()
     }
 
+    // Không tự đóng ở onStop: AOD có thể bị stop khi màn hình vẫn tắt, service quyết định lúc đóng.
     fun close() {
         if (isFinishing) return
         finish()
@@ -137,17 +126,7 @@ class AodActivity : ComponentActivity() {
     }
 
     companion object {
-        private const val EXTRA_PREVIEW = "com.decoutkhanqindev.custom_aod.extra.PREVIEW"
         private const val MAX_BRIGHTNESS_PERCENT = 100f
         private const val DIM_BRIGHTNESS = 0.01f
-
-        fun preview(context: Context) {
-            context.startActivity(
-                Intent(context, AodActivity::class.java).putExtra(
-                    EXTRA_PREVIEW,
-                    true
-                )
-            )
-        }
     }
 }

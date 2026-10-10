@@ -207,7 +207,8 @@ app xin, nên không có trong danh sách trên: `AodTileService` (`BIND_QUICK_S
   nguồn điện:** đồng hồ chuyển sang đen. Sau đó màn hình tự tắt theo thời gian chờ của máy.
 - **Ngoài khung giờ, sai quy tắc nguồn điện, hoặc pin dưới ngưỡng lúc màn hình tắt:** đồng hồ không
   hiện, màn hình tắt như bình thường.
-- **Nút "Xem thử" trong app:** hiện đồng hồ ngay mà không cần khóa máy.
+- **Thẻ "Giao diện của bạn" ở tab AOD:** AOD đang áp dụng, thu nhỏ; chạm để mở Tùy chỉnh và xem
+  trước toàn màn hình.
 - **Thông báo** (cần quyền "Truy cập thông báo"): dưới ngày là icon của các app đang có thông báo,
   mỗi app một icon, tối đa 5, còn lại hiện "+N". Bật "Hiện nội dung thông báo mới nhất" thì dưới các
   icon có thêm tiêu đề và nội dung của thông báo mới nhất, theo đúng quy tắc của màn hình khóa: nội
@@ -310,7 +311,7 @@ thiết kế"). Key `is_notifications_asked` đánh dấu đã hỏi quyền th�
 
 AOD đọc các tùy chọn và quy tắc một lần lúc mở. Đổi chúng thì lần AOD sau mới áp dụng. Trong lúc
 đồng hồ đang hiện, quy tắc vẫn được kiểm lại mỗi phút và mỗi khi pin hoặc nguồn cắm thay đổi; sai
-quy tắc thì đồng hồ chuyển sang đen. "Xem thử" không áp dụng quy tắc.
+quy tắc thì đồng hồ chuyển sang đen.
 
 ## Sơ đồ hoạt động
 
@@ -347,9 +348,12 @@ thông báo ──▶ AodNotificationListener ──▶ NotificationStateManager
 | `presentation/screens/aod/AodViewModel.kt`                                                                                                                                                                                                          | Logic của AOD: giờ hiện tại và chống burn-in (cập nhật mỗi phút), pin, ẩn dòng gợi ý sau 3 giây, hết giờ, trong túi, quy tắc hiện, đóng khi có cuộc gọi hoặc báo thức, chạm 2 lần, thời tiết (tải lại khi bản đã lưu cũ), sự kiện lịch                                                                                                                                                                                                                                                            |
 | `presentation/components/aod/AodContent.kt` (+ `AodClockFace`, `AodDetails`, `AodExtras`, `AodNotifications`, `AodMediaControls`, `AodBackdrop`; `AppTimeFormat` ở `presentation/components/`) · `presentation/screens/aod/AodScreen.kt` · `state/` | Giao diện đồng hồ (4 mặt, ngày, thời tiết, sự kiện, ghi nhớ, hình vẽ, icon thông báo, pin, nhạc, gợi ý, viền sáng, ảnh nền, bố cục ngang, dịch vị trí) và phần nối với ViewModel                                                                                                                                                                                                                                                                                                                  |
 | `presentation/aod/AodNotificationListener.kt`                                                                                                                                                                                                       | Nhận thông báo từ hệ thống (khi đã cấp "Truy cập thông báo") và chuyển cho `NotificationStateManager`                                                                                                                                                                                                                                                                                                                                                                                             |
-| `presentation/screens/main/`                                                                                                                                                                                                                        | Màn hình cài đặt (MVI): quyền, tùy chọn, thông tin thêm (ô nhập ghi nhớ, khung vẽ, lịch, thời tiết; hỏi quyền Lịch và Vị trí khi bật), quy tắc hiện, ngôn ngữ, xem thử; hỏi quyền thông báo ở lần mở đầu tiên. Mỗi mục một file `MainXxxSection.kt` trong `screens/main/components/`                                                                                                                                                                                                              |
+| `presentation/navigation/MainNavDisplay.kt` · `MainDestinations.kt` | Main: `NavDisplay` của 3 tab (AOD, Viền sáng, Cài đặt) và thanh tab dưới, không ViewModel. Tab AOD là gốc: Back ở tab khác về tab AOD rồi mới thoát app |
+| `presentation/screens/aodtab/` | Tab AOD (MVI): công tắc AOD, thẻ "Giao diện của bạn" (AOD đang áp dụng, vẽ thu nhỏ bằng `AodContent`; chạm để mở Customize), lưới chủ đề giữ chỗ, sheet và dòng cảnh báo khi thiếu quyền bắt buộc |
+| `presentation/screens/edgelight/` | Tab Viền sáng: màn giữ chỗ |
+| `presentation/screens/settings/` | Tab Cài đặt (MVI): hiển thị, khi nào hiện, thao tác và cảm biến, quyền (kèm kết quả lần hiện gần nhất), ngôn ngữ; quyền Lịch và Vị trí hỏi từ danh sách quyền. Mỗi nhóm một file `SettingsXxxSection.kt` trong `components/` |
 | `presentation/screens/language/`                                                                                                                                                                                                                    | Màn chọn ngôn ngữ (MVI): lần mở đầu tiên và từ màn hình cài đặt                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| `presentation/model/` (chia theo `aod/`, `customize/`, `language/`, `permission/`, `onboarding/`)                                                                                                                                                   | `AodOptionsUiModel`, `AodRulesUiModel` (quy tắc hiện, dùng chung cho service và màn AOD), `AodScheduleUiModel`, `ChargingRuleValue`, `ScheduleTimeValue`, `LanguageUiModel`, `BatteryUiModel`, `PermissionValue`, `PermissionStatusValue`, `PermissionUiModel`, `WakeResultValue`, `AodExtrasUiModel`, `WeatherUiModel` (ẩn bản cũ từ 3 giờ), `WeatherConditionValue`, `CalendarEventUiModel`, `AodNotificationsUiModel` (icon và nội dung thông báo mới nhất), `WallpaperValue` (ảnh nền có sẵn) |
+| `presentation/model/` (chia theo `aod/`, `customize/`, `language/`, `permission/`, `onboarding/`, `main/`)                                                                                                                                                   | `AodOptionsUiModel`, `AodRulesUiModel` (quy tắc hiện, dùng chung cho service và màn AOD), `AodScheduleUiModel`, `ChargingRuleValue`, `ScheduleTimeValue`, `LanguageUiModel`, `BatteryUiModel`, `PermissionValue`, `PermissionStatusValue`, `PermissionUiModel`, `WakeResultValue`, `AodExtrasUiModel`, `WeatherUiModel` (ẩn bản cũ từ 3 giờ), `WeatherConditionValue`, `CalendarEventUiModel`, `AodNotificationsUiModel` (icon và nội dung thông báo mới nhất), `WallpaperValue` (ảnh nền có sẵn) |
 | `presentation/components/AppLanguageProvider.kt`                                                                                                                                                                                                    | Áp ngôn ngữ đã chọn cho `MainActivity` và `AodActivity`                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | `presentation/components/settings/AppSettingsRows.kt`                                                                                                                                                                                               | Các dòng cài đặt dùng chung (`AppSectionHeader`, `AppSwitchRow`, `AppRadioRow`, `AppValueRow`, `AppSliderRow`…)                                                                                                                                                                                                                                                                                                                                                                                   |
 | `presentation/theme/`                                                                                                                                                                                                                               | Theme: `Colors.kt` (màu + biến thể alpha), `Typography.kt` (font Inter, `TextStyle`), `Shapes.kt` (bo góc) là các `val` cấp file, không bọc `object`, UI import từng tên rồi đọc thẳng, dp / sp viết số; `Theme { }` chỉ nối sang Material 3                                                                                                                                                                                                                                                      |
@@ -388,7 +392,7 @@ Từ FakeAOD sang Custom AOD:
 | `BootReceiver.kt`      | `presentation/aod/BootReceiver.kt`                                                                                                    |
 | `ProximityGate.kt`     | `ProximityManager` (cảm biến) + `AodViewModel` (đếm 3 giây, sáng lại)                                                                 |
 | `ui/AodScreen.kt`      | `presentation/components/aod/AodContent.kt` và các file tách ra cùng thư mục                                                          |
-| `ui/SettingsScreen.kt` | `presentation/screens/main/`                                                                                                          |
+| `ui/SettingsScreen.kt` | `presentation/screens/settings/` (tab Cài đặt) và `presentation/screens/aodtab/` (công tắc AOD), cùng nằm trong `MainNavDisplay`         |
 | `ui/Theme.kt`          | `presentation/theme/Theme.kt` · `Colors.kt` · `Typography.kt` · `Shapes.kt`                                                           |
 | `AodPrefs.kt`          | Các key trong `DataStoreManager`                                                                                                      |
 | `MiuiPerm.kt`          | `PermissionManager` (đọc quyền) + `utils/ContextExt.kt` (`openMiuiPermissionSettings`, mở trang "Quyền khác")                         |
@@ -509,9 +513,11 @@ Từ FakeAOD sang Custom AOD:
    mở lại: đi thẳng vào màn hình chính.
 2. Cấp các quyền bắt buộc. Nếu đã cho phép thông báo, kiểm tra đã có thông báo "Shows the clock each
    time the screen turns off".
-3. Bấm "Xem thử": đồng hồ có phủ kín cả thanh trạng thái và thanh điều hướng không.
-4. Khóa máy: đồng hồ có hiện sau khoảng 1 giây không, có thấy màn hình khóa lóe lên không. Xem dòng
-   trạng thái ở cuối màn hình chính của app.
+3. Chạm thẻ "Giao diện của bạn" ở tab AOD: Tùy chỉnh mở ra có nút quay lại và tiêu đề, không có
+   "Bỏ qua"; Áp dụng xong quay về tab AOD và thẻ đổi theo giao diện mới.
+4. Khóa máy: đồng hồ có hiện sau khoảng 1 giây không, có phủ kín cả thanh trạng thái và thanh điều
+   hướng không, có thấy màn hình khóa lóe lên không. Xem dòng "Lần gần nhất" dưới nhóm Quyền ở tab
+   Cài đặt.
 5. Nhìn vào máy khi đồng hồ đang hiện: khuôn mặt không được tự mở khóa.
 6. Bấm nút nguồn khi đồng hồ đang hiện: màn hình có nháy tắt rồi lên màn hình khóa không.
 7. Ở màn hình khóa, bấm nguồn hai lần liên tiếp (tắt rồi bật lại ngay): phải vào màn hình khóa,
@@ -523,7 +529,7 @@ Từ FakeAOD sang Custom AOD:
 11. Đổi tùy chọn, đóng hẳn app rồi mở lại: tùy chọn còn nguyên.
 12. Tắt mạng rồi mở app: hộp thoại mất mạng chặn màn hình. Khóa máy: đồng hồ vẫn hiện.
 13. Khởi động lại máy, chưa mở app, rồi khóa máy: xem đồng hồ có hiện không.
-14. Độ sáng: kéo thanh độ sáng lên 50% rồi bấm "Xem thử", đồng hồ sáng hơn rõ. Tắt "Dùng độ sáng
+14. Độ sáng: kéo thanh độ sáng lên 50% rồi khóa máy, đồng hồ sáng hơn rõ. Tắt "Dùng độ sáng
     riêng": đồng hồ theo độ sáng của máy.
 15. Nguồn điện "Chỉ khi đang cắm sạc": rút sạc rồi khóa máy, đồng hồ không hiện; cắm sạc rồi khóa
     máy, đồng hồ hiện; rút sạc khi đồng hồ đang hiện, đồng hồ chuyển sang đen. Làm ngược lại với "
@@ -549,9 +555,9 @@ Từ FakeAOD sang Custom AOD:
     dụng.
 23. Tắt từng công tắc trong "Thông báo trên đồng hồ": lần AOD sau không còn phần tương ứng. Thu
     hồi "Truy cập thông báo": icon và nhạc biến mất, đồng hồ vẫn chạy.
-24. Mặt đồng hồ: thử lần lượt 4 mặt bằng "Xem thử", rồi khóa máy với từng mặt. Mặt kim phải chỉ đúng
+24. Mặt đồng hồ: thử lần lượt 4 mặt ở Tùy chỉnh, rồi khóa máy với từng mặt. Mặt kim phải chỉ đúng
     giờ và nhích mỗi phút; mặt số theo đúng 12/24 giờ của máy.
-25. Font, màu, cỡ: đổi từng tùy chọn rồi bấm "Xem thử". Ở cỡ 150%, đồng hồ, ngày, pin và nhạc không
+25. Font, màu, cỡ: đổi từng tùy chọn ở Tùy chỉnh, Áp dụng rồi khóa máy. Ở cỡ 150%, đồng hồ, ngày, pin và nhạc không
     bị che hay tràn màn hình, cả khi dịch vị trí chống burn-in.
 26. Ảnh nền: chọn một ảnh dọc và một ảnh ngang lớn (vd ảnh chụp 50 MP): dòng "Ảnh nền" chuyển sang "
     Đang lưu…" rồi "Đổi ảnh". Khóa máy: ảnh hiện dần sau đồng hồ, mờ, không méo. Đóng app, mở lại:
@@ -597,7 +603,7 @@ Từ FakeAOD sang Custom AOD:
     cài đặt màn hình khóa của máy thì tin nhắn đổi thành bản công khai của app (vd "1 tin nhắn mới")
     hoặc "Nội dung đã ẩn"; chọn không hiện thông báo trên màn hình khóa thì luôn "Nội dung đã ẩn".
     Tin mới đến khi đồng hồ đang hiện thì dòng nội dung đổi theo.
-41. Ảnh nền có sẵn: chọn lần lượt 6 ảnh rồi bấm "Xem thử": ảnh mờ sau đồng hồ, không vỡ, đồng hồ và
+41. Ảnh nền có sẵn: chọn lần lượt 6 ảnh ở Tùy chỉnh rồi khóa máy: ảnh mờ sau đồng hồ, không vỡ, đồng hồ và
     chữ vẫn đọc rõ. Bật "Luôn xoay ngang": cực quang, nhật thực giữ phần trên; sóng, chân trời giữ
     phần dưới. Chọn ảnh từ máy thì ảnh có sẵn bỏ chọn, và ngược lại; "Bỏ ảnh nền" bỏ cả hai.
 
@@ -609,7 +615,7 @@ Muốn test đúng thì về màn hình chính, đợi hơn 10 giây rồi mới
 Xem log khi có vấn đề:
 
 ```
-adb logcat -s AodService AodViewModel AodTileService MainViewModel WeatherRepositoryImpl CalendarRepositoryImpl DeviceLocationManager ActivityTaskManager PowerManagerService
+adb logcat -s AodService AodViewModel AodTileService AodTabViewModel SettingsViewModel WeatherRepositoryImpl CalendarRepositoryImpl DeviceLocationManager ActivityTaskManager PowerManagerService
 ```
 
 Log của app đi qua Timber nên chỉ có ở bản debug. Cách đọc log:

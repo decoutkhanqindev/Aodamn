@@ -29,6 +29,20 @@ fun Context.showToast(message: String, duration: Int = Toast.LENGTH_SHORT) {
 
 fun Context.packageUri(): Uri = "package:$packageName".toUri()
 
+fun Context.playStoreUrl(): String = "https://play.google.com/store/apps/details?id=$packageName"
+
+// Máy không có app nào nhận văn bản thì bỏ qua thay vì crash.
+fun Context.shareText(text: String, chooserTitle: String) {
+    val intent = Intent(Intent.ACTION_SEND)
+        .setType("text/plain")
+        .putExtra(Intent.EXTRA_TEXT, text)
+    try {
+        startActivity(Intent.createChooser(intent, chooserTitle))
+    } catch (e: ActivityNotFoundException) {
+        return
+    }
+}
+
 // Cần Context của Activity (không thêm FLAG_ACTIVITY_NEW_TASK); ROM không có trang đó thì mở Thông tin ứng dụng thay vì crash.
 fun Context.openSettingsPage(vararg intents: Intent): Boolean {
     for (intent in intents) {

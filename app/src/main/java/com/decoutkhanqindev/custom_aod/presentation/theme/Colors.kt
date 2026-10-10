@@ -1,5 +1,6 @@
 package com.decoutkhanqindev.custom_aod.presentation.theme
 
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
 val Black = Color(0xFF000000)
@@ -28,3 +29,9 @@ val RedAlpha12 = Red.copy(alpha = 0.12f)
 val WhiteAlpha30 = White.copy(alpha = 0.3f)
 val BlackAlpha50 = Black.copy(alpha = 0.5f)
 val BlackAlpha70 = Black.copy(alpha = 0.7f)
+
+// Nền chéo của các màn app (AOD và khung xem trước AOD vẫn đen): mint → đen → tím như viền sáng của icon app. Hai màu đầu cuối là
+// mint / tím pha 20% trên nền đen để chữ và thẻ Neutral12 vẫn nổi.
+val DarkMint = Color(0xFF192A23)
+val DarkPurple = Color(0xFF272133)
+val BackgroundGradient = Brush.linearGradient(0f to DarkMint, 0.5f to Black, 1f to DarkPurple)

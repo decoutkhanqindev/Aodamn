@@ -1,5 +1,6 @@
 package com.decoutkhanqindev.custom_aod.presentation.screens.permission
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,6 +10,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -22,6 +24,8 @@ import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionU
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionValue
 import com.decoutkhanqindev.custom_aod.presentation.screens.permission.state.PermissionIntent
 import com.decoutkhanqindev.custom_aod.presentation.screens.permission.state.PermissionState
+import com.decoutkhanqindev.custom_aod.presentation.theme.BackgroundGradient
+import com.decoutkhanqindev.custom_aod.presentation.theme.GreyED
 import com.decoutkhanqindev.custom_aod.presentation.theme.Theme
 import kotlinx.collections.immutable.persistentListOf
 
@@ -31,13 +35,17 @@ fun PermissionContent(
     onIntent: (PermissionIntent) -> Unit,
 ) {
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(BackgroundGradient),
         topBar = {
             AppOnboardingTopBar(
                 step = OnboardingStepValue.PERMISSION,
                 onNavigateBack = { onIntent(PermissionIntent.NavigateBack) },
             )
         },
+        containerColor = Color.Transparent,
+        contentColor = GreyED,
         bottomBar = {
             AppOnboardingFooter(
                 actionLabel = stringResource(R.string.action_get_started),

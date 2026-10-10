@@ -1,6 +1,9 @@
-package com.decoutkhanqindev.custom_aod.presentation.screens.main.components
+package com.decoutkhanqindev.custom_aod.presentation.screens.settings.components
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.DarkMode
+import androidx.compose.material.icons.outlined.PanTool
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -9,45 +12,50 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.decoutkhanqindev.custom_aod.R
 import com.decoutkhanqindev.custom_aod.presentation.components.settings.AppRadioRow
-import com.decoutkhanqindev.custom_aod.presentation.components.settings.AppSectionHeader
-import com.decoutkhanqindev.custom_aod.presentation.components.settings.AppSwitchRow
-import com.decoutkhanqindev.custom_aod.presentation.components.settings.AppValueRow
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodActionValue
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodGestureValue
-import com.decoutkhanqindev.custom_aod.presentation.screens.main.state.MainIntent
-import com.decoutkhanqindev.custom_aod.presentation.screens.main.state.MainInteractionState
+import com.decoutkhanqindev.custom_aod.presentation.screens.settings.state.SettingsIntent
+import com.decoutkhanqindev.custom_aod.presentation.screens.settings.state.SettingsInteractionState
 
 @Composable
-fun MainInteractionSection(
-    interaction: MainInteractionState,
-    onIntent: (MainIntent) -> Unit,
+fun SettingsInteractionSection(
+    interaction: SettingsInteractionState,
+    onIntent: (SettingsIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier) {
-        AppSectionHeader(title = stringResource(R.string.section_interaction))
-
+    SettingsGroup(
+        title = stringResource(R.string.section_interaction),
+        modifier = modifier,
+    ) {
         AodGestureValue.entries.forEach { gesture ->
-            AppValueRow(
+            SettingsValueItem(
+                icon = gesture.icon,
                 label = stringResource(gesture.labelRes),
                 value = stringResource(interaction.settings.actionOf(gesture).labelRes),
-                onClick = { onIntent(MainIntent.Interaction.ShowGestureActionPicker(gesture)) },
+                onClick = { onIntent(SettingsIntent.Interaction.ShowGestureActionPicker(gesture)) },
             )
+
+            SettingsDivider()
         }
 
-        AppSwitchRow(
+        SettingsSwitchItem(
+            icon = Icons.Outlined.DarkMode,
             label = stringResource(R.string.opt_auto_dim),
             isChecked = interaction.settings.isAutoDimEnabled && interaction.isLightSensorAvailable,
-            onCheckedChange = { onIntent(MainIntent.Interaction.ToggleAutoDim(it)) },
+            onCheckedChange = { onIntent(SettingsIntent.Interaction.ToggleAutoDim(it)) },
             description = stringResource(
                 if (interaction.isLightSensorAvailable) R.string.opt_auto_dim_desc else R.string.sensor_unsupported_light,
             ),
             isEnabled = interaction.isLightSensorAvailable,
         )
 
-        AppSwitchRow(
+        SettingsDivider()
+
+        SettingsSwitchItem(
+            icon = Icons.Outlined.PanTool,
             label = stringResource(R.string.opt_raise_to_wake),
             isChecked = interaction.settings.isRaiseToWakeEnabled && interaction.isPickupSensorAvailable,
-            onCheckedChange = { onIntent(MainIntent.Interaction.ToggleRaiseToWake(it)) },
+            onCheckedChange = { onIntent(SettingsIntent.Interaction.ToggleRaiseToWake(it)) },
             description = stringResource(
                 if (interaction.isPickupSensorAvailable) R.string.opt_raise_to_wake_desc else R.string.sensor_unsupported_pickup,
             ),
@@ -62,13 +70,13 @@ fun MainInteractionSection(
             isFlashlightAvailable = interaction.isFlashlightAvailable,
             onSelect = { action ->
                 onIntent(
-                    MainIntent.Interaction.ChangeGestureAction(
+                    SettingsIntent.Interaction.ChangeGestureAction(
                         gesture,
                         action
                     )
                 )
             },
-            onDismiss = { onIntent(MainIntent.Interaction.DismissGestureActionPicker) },
+            onDismiss = { onIntent(SettingsIntent.Interaction.DismissGestureActionPicker) },
         )
     }
 }

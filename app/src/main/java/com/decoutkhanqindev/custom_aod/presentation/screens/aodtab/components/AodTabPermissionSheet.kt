@@ -1,4 +1,4 @@
-package com.decoutkhanqindev.custom_aod.presentation.screens.main.components
+package com.decoutkhanqindev.custom_aod.presentation.screens.aodtab.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.custom_aod.R
 import com.decoutkhanqindev.custom_aod.presentation.components.permission.AppPermissionSheet
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionUiModel
-import com.decoutkhanqindev.custom_aod.presentation.screens.main.state.MainIntent
+import com.decoutkhanqindev.custom_aod.presentation.screens.aodtab.state.AodTabIntent
 import com.decoutkhanqindev.custom_aod.presentation.theme.BodyLarge
 import com.decoutkhanqindev.custom_aod.presentation.theme.GreyED
 import com.decoutkhanqindev.custom_aod.presentation.theme.Red
@@ -31,31 +31,25 @@ import com.decoutkhanqindev.custom_aod.presentation.theme.Theme
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
-fun MainPermissionSheet(
+fun AodTabPermissionSheet(
     isVisible: Boolean,
     permissions: ImmutableList<PermissionUiModel>,
-    onIntent: (MainIntent) -> Unit,
+    onIntent: (AodTabIntent) -> Unit,
 ) {
     AppPermissionSheet(
         isVisible = isVisible,
         permissions = permissions,
         title = stringResource(R.string.permission_sheet_title),
         subtitle = stringResource(R.string.permission_sheet_desc),
-        onAllowClick = { permission ->
-            onIntent(
-                MainIntent.Permission.OpenPermissionSettings(
-                    permission
-                )
-            )
-        },
-        onDismiss = { onIntent(MainIntent.Permission.DismissPermissionSheet) },
+        onAllowClick = { permission -> onIntent(AodTabIntent.OpenPermissionSettings(permission)) },
+        onDismiss = { onIntent(AodTabIntent.DismissPermissionSheet) },
     )
 }
 
 @Composable
-fun MainPermissionWarning(
+fun AodTabPermissionWarning(
     isVisible: Boolean,
-    onIntent: (MainIntent) -> Unit,
+    onIntent: (AodTabIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     AnimatedVisibility(visible = isVisible, modifier = modifier) {
@@ -84,7 +78,7 @@ fun MainPermissionWarning(
                 style = BodyLarge,
             )
 
-            TextButton(onClick = { onIntent(MainIntent.Permission.ShowPermissionSheet) }) {
+            TextButton(onClick = { onIntent(AodTabIntent.ShowPermissionSheet) }) {
                 Text(text = stringResource(R.string.action_allow))
             }
         }
@@ -93,8 +87,8 @@ fun MainPermissionWarning(
 
 @Preview(widthDp = 360)
 @Composable
-private fun MainPermissionWarningPreview() {
+private fun AodTabPermissionWarningPreview() {
     Theme {
-        MainPermissionWarning(isVisible = true, onIntent = {})
+        AodTabPermissionWarning(isVisible = true, onIntent = {})
     }
 }

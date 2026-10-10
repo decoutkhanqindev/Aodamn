@@ -26,10 +26,12 @@ import com.decoutkhanqindev.custom_aod.domain.usecase.ObserveWeatherUseCase
 import com.decoutkhanqindev.custom_aod.domain.usecase.RefreshWeatherUseCase
 import com.decoutkhanqindev.custom_aod.presentation.aod.AodSession
 import com.decoutkhanqindev.custom_aod.presentation.screens.aod.AodViewModel
+import com.decoutkhanqindev.custom_aod.presentation.screens.aodtab.AodTabViewModel
 import com.decoutkhanqindev.custom_aod.presentation.screens.customize.CustomizeViewModel
+import com.decoutkhanqindev.custom_aod.presentation.screens.edgelight.EdgeLightViewModel
 import com.decoutkhanqindev.custom_aod.presentation.screens.language.LanguageViewModel
-import com.decoutkhanqindev.custom_aod.presentation.screens.main.MainViewModel
 import com.decoutkhanqindev.custom_aod.presentation.screens.permission.PermissionViewModel
+import com.decoutkhanqindev.custom_aod.presentation.screens.settings.SettingsViewModel
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import org.koin.android.ext.koin.androidApplication
@@ -88,13 +90,22 @@ val useCaseModule = module {
 }
 
 val viewModelModule = module {
-    viewModel { MainViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
+    viewModel { AodTabViewModel(get(), get(), get()) }
+    viewModel { EdgeLightViewModel() }
+    viewModel { SettingsViewModel(get(), get(), get(), get(), get(), get()) }
     viewModel { (isFirstOpen: Boolean) -> LanguageViewModel(isFirstOpen, get(), get()) }
-    viewModel { CustomizeViewModel(get(), get(), get(), get()) }
+    viewModel { (isFirstOpen: Boolean) ->
+        CustomizeViewModel(
+            isFirstOpen,
+            get(),
+            get(),
+            get(),
+            get()
+        )
+    }
     viewModel { PermissionViewModel(get(), get()) }
-    viewModel { (isPreview: Boolean) ->
+    viewModel {
         AodViewModel(
-            isPreview,
             get(),
             get(),
             get(),

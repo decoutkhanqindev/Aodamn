@@ -14,25 +14,21 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.custom_aod.R
+import com.decoutkhanqindev.custom_aod.presentation.components.AppTopBar
 import com.decoutkhanqindev.custom_aod.presentation.components.onboarding.AppOnboardingFooter
 import com.decoutkhanqindev.custom_aod.presentation.components.onboarding.AppOnboardingHeader
 import com.decoutkhanqindev.custom_aod.presentation.components.onboarding.AppOnboardingTopBar
@@ -41,6 +37,7 @@ import com.decoutkhanqindev.custom_aod.presentation.model.language.LanguageValue
 import com.decoutkhanqindev.custom_aod.presentation.model.onboarding.OnboardingStepValue
 import com.decoutkhanqindev.custom_aod.presentation.screens.language.state.LanguageIntent
 import com.decoutkhanqindev.custom_aod.presentation.screens.language.state.LanguageState
+import com.decoutkhanqindev.custom_aod.presentation.theme.BackgroundGradient
 import com.decoutkhanqindev.custom_aod.presentation.theme.GreyED
 import com.decoutkhanqindev.custom_aod.presentation.theme.HeadlineSmall
 import com.decoutkhanqindev.custom_aod.presentation.theme.Mint
@@ -52,31 +49,27 @@ import com.decoutkhanqindev.custom_aod.presentation.theme.Theme
 import com.decoutkhanqindev.custom_aod.presentation.theme.TitleMedium
 import kotlinx.collections.immutable.persistentListOf
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LanguageContent(
     state: LanguageState,
     onIntent: (LanguageIntent) -> Unit,
 ) {
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(BackgroundGradient),
         topBar = {
             if (state.isFirstOpen) {
                 AppOnboardingTopBar(step = OnboardingStepValue.LANGUAGE)
             } else {
-                TopAppBar(
-                    title = { Text(text = stringResource(R.string.language)) },
-                    navigationIcon = {
-                        IconButton(onClick = { onIntent(LanguageIntent.NavigateBack) }) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = stringResource(R.string.action_back),
-                            )
-                        }
-                    },
+                AppTopBar(
+                    title = stringResource(R.string.language),
+                    onNavigateBack = { onIntent(LanguageIntent.NavigateBack) },
                 )
             }
         },
+        containerColor = Color.Transparent,
+        contentColor = GreyED,
         bottomBar = {
             AppOnboardingFooter(
                 actionLabel = stringResource(if (state.isFirstOpen) R.string.action_continue else R.string.action_done),

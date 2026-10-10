@@ -30,7 +30,7 @@ fun LanguageScreen(
             block = { effect ->
                 when (effect) {
                     is LanguageEffect.NavigateToCustomize -> backStack.navigateTo(
-                        CustomizeDestination
+                        CustomizeDestination(isFirstOpen = true)
                     )
 
                     is LanguageEffect.NavigateBack -> backStack.navigateBack()

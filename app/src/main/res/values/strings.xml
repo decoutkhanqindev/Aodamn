@@ -28,11 +28,45 @@
     <string name="notif_service_title">Shows the clock each time the screen turns off</string>
 
     <!-- Main -->
-    <string name="main_subtitle">An always-on clock for phones whose built-in one switches off after a few seconds.</string>
+    <string name="main_tab_aod" translatable="false">AOD</string>
+    <string name="edge_light">Edge Light</string>
+    <string name="settings">Settings</string>
+    <string name="coming_soon">Coming soon</string>
+    <string name="share_app">Share app</string>
+    <string name="share_app_text">Try Custom AOD, an always-on clock for your lock screen: %1$s</string>
+
+    <!-- IAP -->
+    <string name="iap_title" translatable="false">Premium</string>
+    <string name="iap_soon_title">Premium is coming soon</string>
+    <string name="iap_soon_desc">Upgrade options will appear here.</string>
+
+    <!-- Tab AOD -->
+    <string name="aod_tab_title" translatable="false">Always On Display</string>
     <string name="opt_enabled">Show the clock when the screen turns off</string>
+    <string name="aod_tab_design_title">Your design</string>
+    <string name="aod_tab_design_default">Default</string>
+    <string name="aod_tab_themes_title">Themes</string>
+    <string name="aod_tab_themes_soon_title">Ready-made themes are on the way</string>
+    <string name="aod_tab_themes_soon_desc">Meanwhile, you can customize your own design in the card above.</string>
+
+    <!-- Tab Edge Light -->
+    <string name="edge_light_soon_title">Edge Light is coming soon</string>
+    <string name="edge_light_soon_desc">Light runs around the screen edges when a notification arrives or music is playing.</string>
+    <string name="edge_light_in_progress">In development</string>
+    <string name="edge_light_glow_hint">The edge glow for new notifications already works on the AOD: turn it on in Customize › Effects.</string>
+
+    <!-- Tab Settings -->
+    <string name="section_display">Display</string>
+    <string name="opt_brightness">Brightness</string>
+    <string name="opt_timeout">Go dark after</string>
+    <string name="opt_min_battery">Skip the clock on low battery</string>
+    <string name="value_percent" translatable="false">%1$d%%</string>
+    <string name="value_minutes">%1$d min</string>
+    <string name="value_never">Never</string>
+    <string name="value_off">Off</string>
+    <string name="value_below_percent">Below %1$d%%</string>
 
     <string name="section_permissions">Permissions</string>
-    <string name="section_options">Options</string>
     <string name="action_open">Open</string>
 
     <string name="perm_overlay_title">Display over other apps (required)</string>
@@ -63,12 +97,8 @@
     <string name="action_later">Later</string>
 
     <string name="opt_custom_brightness">Use a custom brightness for the clock</string>
-    <string name="opt_brightness_value">Brightness: %1$d%%</string>
     <string name="opt_proximity">Go dark in a pocket or face down</string>
-    <string name="opt_timeout_never">Go dark after: never</string>
-    <string name="opt_timeout_value">Go dark after: %1$d min</string>
 
-    <string name="section_appearance">Clock style</string>
     <string name="opt_clock_face">Clock face</string>
     <string name="clock_face_digital">Digital</string>
     <string name="clock_face_stacked">Digital, stacked</string>
@@ -90,7 +120,6 @@
     <string name="clock_color_red">Red</string>
     <string name="opt_clock_size_value">Clock size: %1$d%%</string>
     <string name="opt_landscape">Always landscape (night clock)</string>
-    <string name="opt_background">Background image</string>
     <string name="wallpaper_stars">Stars</string>
     <string name="wallpaper_aurora">Aurora</string>
     <string name="wallpaper_eclipse">Eclipse</string>
@@ -100,11 +129,9 @@
     <string name="background_from_device">Your own image</string>
     <string name="background_choose">Choose</string>
     <string name="background_change">Change</string>
-    <string name="background_saving">Saving…</string>
     <string name="background_remove">Remove background image</string>
     <string name="background_save_failed">Could not use this image.</string>
 
-    <string name="section_extras">Extras on the clock</string>
     <string name="opt_memo">Memo</string>
     <string name="memo_add">Add</string>
     <string name="memo_edit">Edit</string>
@@ -124,8 +151,6 @@
     <string name="opt_weather_fahrenheit">Show the temperature in °F</string>
     <string name="location_permission_denied">Location access was not allowed. You can allow it in the app\'s system settings.</string>
 
-    <string name="section_notifications">Notifications on the clock</string>
-    <string name="notification_access_needed">Needs Notification access under Permissions.</string>
     <string name="opt_notification_icons">Show notification icons</string>
     <string name="opt_notification_content">Show the latest notification\'s content</string>
     <string name="opt_notification_content_desc">Title and text under the icons. What the lock screen hides stays hidden here too.</string>
@@ -161,10 +186,6 @@
     <string name="opt_schedule">Only during set hours</string>
     <string name="opt_schedule_start">Start</string>
     <string name="opt_schedule_end">End</string>
-    <string name="opt_battery_off">Skip the clock on low battery: off</string>
-    <string name="opt_battery_value">Skip the clock when the battery is below %1$d%%</string>
-    <string name="time_skeleton_24h" translatable="false">Hm</string>
-    <string name="time_skeleton_12h" translatable="false">hma</string>
 
     <string name="section_app">App</string>
     <string name="language">Language</string>
@@ -242,6 +263,7 @@
     <string name="customize_guide_next">Next</string>
     <string name="customize_guide_done">Got it</string>
     <string name="customize_show_guide">Show tips</string>
+    <string name="customize_title">Customize</string>
     <string name="customize_apply">Apply</string>
     <string name="customize_skip">Skip</string>
     <string name="customize_undo">Undo</string>

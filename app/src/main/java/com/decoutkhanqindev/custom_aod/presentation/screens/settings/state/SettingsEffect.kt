@@ -1,19 +1,9 @@
-package com.decoutkhanqindev.custom_aod.presentation.screens.main.state
+package com.decoutkhanqindev.custom_aod.presentation.screens.settings.state
 
-import androidx.annotation.StringRes
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionValue
 
-sealed interface MainEffect {
-    sealed interface Service : MainEffect {
-        data object StartAodService : Service
-        data object StopAodService : Service
-    }
-
-    sealed interface Appearance : MainEffect {
-        data object OpenBackgroundPicker : Appearance
-    }
-
-    sealed interface Permission : MainEffect {
+sealed interface SettingsEffect {
+    sealed interface Permission : SettingsEffect {
         data object OpenOverlaySettings : Permission
         data object OpenMiuiPermissionSettings : Permission
         data object OpenNotificationSettings : Permission
@@ -24,10 +14,11 @@ sealed interface MainEffect {
         data object RequestLocationPermission : Permission
     }
 
-    sealed interface Navigation : MainEffect {
+    sealed interface Navigation : SettingsEffect {
         data object NavigateToLanguage : Navigation
-        data object OpenPreview : Navigation
+        data object NavigateToIap : Navigation
     }
 
-    data class ShowMessage(@param:StringRes val messageRes: Int) : MainEffect
+    data object StartAodService : SettingsEffect
+    data object ShareApp : SettingsEffect
 }
