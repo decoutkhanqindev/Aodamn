@@ -49,10 +49,6 @@ fun PermissionManager.isGranted(permission: PermissionValue): Boolean = when (pe
     PermissionValue.LOCATION -> hasCoarseLocationPermission()
 }
 
-// Trang của Xiaomi chứa cả hai quyền: kéo về khi cả hai đã bật.
-fun PermissionManager.areMiuiPermissionsGranted(): Boolean =
-    isGranted(PermissionValue.MIUI_LOCK_SCREEN) && isGranted(PermissionValue.MIUI_BACKGROUND_POPUP)
-
 fun PermissionManager.requiredAodPermissions(): ImmutableList<PermissionUiModel> =
     aodPermissions().filter { it.permission.isRequired }.toImmutableList()
 

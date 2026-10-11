@@ -6,10 +6,8 @@ sealed interface AodTabEffect {
     data object StartAodService : AodTabEffect
     data object StopAodService : AodTabEffect
     data object NavigateToCustomize : AodTabEffect
-    data object NavigateToIap : AodTabEffect
-    data object ShareApp : AodTabEffect
     data object OpenOverlaySettings : AodTabEffect
-    data object OpenMiuiPermissionSettings : AodTabEffect
+    data class OpenMiuiPermissionSettings(val permission: PermissionValue) : AodTabEffect
     data object OpenNotificationSettings : AodTabEffect
     data object OpenNotificationAccessSettings : AodTabEffect
     data class OpenAppSettings(val permission: PermissionValue) : AodTabEffect

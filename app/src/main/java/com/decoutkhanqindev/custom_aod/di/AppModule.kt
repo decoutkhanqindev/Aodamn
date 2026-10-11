@@ -28,7 +28,6 @@ import com.decoutkhanqindev.custom_aod.presentation.aod.AodSession
 import com.decoutkhanqindev.custom_aod.presentation.screens.aod.AodViewModel
 import com.decoutkhanqindev.custom_aod.presentation.screens.aodtab.AodTabViewModel
 import com.decoutkhanqindev.custom_aod.presentation.screens.customize.CustomizeViewModel
-import com.decoutkhanqindev.custom_aod.presentation.screens.edgelight.EdgeLightViewModel
 import com.decoutkhanqindev.custom_aod.presentation.screens.language.LanguageViewModel
 import com.decoutkhanqindev.custom_aod.presentation.screens.permission.PermissionViewModel
 import com.decoutkhanqindev.custom_aod.presentation.screens.settings.SettingsViewModel
@@ -91,7 +90,6 @@ val useCaseModule = module {
 
 val viewModelModule = module {
     viewModel { AodTabViewModel(get(), get(), get()) }
-    viewModel { EdgeLightViewModel() }
     viewModel { SettingsViewModel(get(), get(), get(), get(), get(), get()) }
     viewModel { (isFirstOpen: Boolean) -> LanguageViewModel(isFirstOpen, get(), get()) }
     viewModel { (isFirstOpen: Boolean) ->

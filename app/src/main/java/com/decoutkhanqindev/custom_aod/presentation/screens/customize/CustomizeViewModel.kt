@@ -2,6 +2,7 @@ package com.decoutkhanqindev.custom_aod.presentation.screens.customize
 
 import android.graphics.Bitmap
 import androidx.annotation.StringRes
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewModelScope
 import com.decoutkhanqindev.custom_aod.R
 import com.decoutkhanqindev.custom_aod.data.device.permission.PermissionManager
@@ -10,6 +11,7 @@ import com.decoutkhanqindev.custom_aod.data.local.image.AodImageManager
 import com.decoutkhanqindev.custom_aod.domain.usecase.RefreshWeatherUseCase
 import com.decoutkhanqindev.custom_aod.presentation.base.BaseViewModel
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.WallpaperValue
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.toStoredClockColor
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodExtrasUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeAppearanceUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeDecorUiModel
@@ -48,6 +50,9 @@ class CustomizeViewModel(
     // Mục cần quyền mà user vừa bật: chỉ ghi vào bản nháp khi quyền đã được cấp.
     private var pendingChange: (CustomizeDraftUiModel.() -> CustomizeDraftUiModel)? = null
     private var glowPreviewJob: Job? = null
+
+    // Kéo wheel / thanh sáng của color picker: xem trước trực tiếp không ghi lịch sử, thả tay mới ghi một mục hoàn tác cho cả lần kéo.
+    private var colorDragBase: CustomizeDraftUiModel? = null
 
     init {
         loadDraft()
@@ -103,8 +108,8 @@ class CustomizeViewModel(
                 )
             }
 
-            is CustomizeIntent.Appearance.ChangeClockColor ->
-                editAppearance { copy(clock = clock.copy(color = intent.color)) }
+            is CustomizeIntent.Appearance.PreviewClockColor -> previewClockColor(intent.color)
+            is CustomizeIntent.Appearance.ChangeClockColor -> commitClockColor(intent.color)
 
             is CustomizeIntent.Appearance.ChangeClockSize ->
                 editAppearance { copy(clock = clock.copy(sizePercent = intent.percent)) }
@@ -306,12 +311,35 @@ class CustomizeViewModel(
     private fun editDecor(transform: CustomizeDecorUiModel.() -> CustomizeDecorUiModel) =
         edit { copy(decor = decor.transform()) }
 
-    // Mỗi thay đổi đẩy bản trước vào lịch sử hoàn tác; thay đổi mới thì bỏ lịch sử làm lại.
-    private fun edit(transform: CustomizeDraftUiModel.() -> CustomizeDraftUiModel) {
+    private fun previewClockColor(color: Color) {
         val current = state.value.draft
-        val next = current.transform()
-        if (next == current) return
-        undoStack.addLast(current)
+        if (colorDragBase == null) colorDragBase = current
+        publish(current.withClockColor(color))
+    }
+
+    private fun commitClockColor(color: Color) {
+        val base = colorDragBase ?: state.value.draft
+        colorDragBase = null
+        commit(from = base) { withClockColor(color) }
+    }
+
+    private fun CustomizeDraftUiModel.withClockColor(color: Color) =
+        copy(appearance = appearance.copy(clock = appearance.clock.copy(color = color)))
+
+    // Mỗi thay đổi đẩy bản trước vào lịch sử hoàn tác; thay đổi mới thì bỏ lịch sử làm lại.
+    private fun edit(transform: CustomizeDraftUiModel.() -> CustomizeDraftUiModel) =
+        commit(from = state.value.draft, transform = transform)
+
+    private fun commit(
+        from: CustomizeDraftUiModel,
+        transform: CustomizeDraftUiModel.() -> CustomizeDraftUiModel,
+    ) {
+        val next = from.transform()
+        if (next == from) {
+            if (state.value.draft != from) publish(from)
+            return
+        }
+        undoStack.addLast(from)
         if (undoStack.size > MAX_HISTORY) undoStack.removeFirst()
         redoStack.clear()
         publish(next)
@@ -478,7 +506,7 @@ class CustomizeViewModel(
         with(dataStoreManager) {
             if (draft.clock.face != initial.clock.face) saveAodClockFace(draft.clock.face.code)
             if (draft.clock.font != initial.clock.font) saveAodClockFont(draft.clock.font.code)
-            if (draft.clock.color != initial.clock.color) saveAodClockColor(draft.clock.color.code)
+            if (draft.clock.color != initial.clock.color) saveAodClockColor(draft.clock.color.toStoredClockColor())
             if (draft.clock.sizePercent != initial.clock.sizePercent) saveAodClockSizePercent(draft.clock.sizePercent)
             if (draft.isDateEnabled != initial.isDateEnabled) saveIsAodDateEnabled(draft.isDateEnabled)
             if (draft.isBatteryEnabled != initial.isBatteryEnabled) saveIsAodBatteryEnabled(draft.isBatteryEnabled)

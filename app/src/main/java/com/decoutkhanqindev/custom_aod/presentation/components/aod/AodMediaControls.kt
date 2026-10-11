@@ -1,5 +1,6 @@
 package com.decoutkhanqindev.custom_aod.presentation.components.aod
 
+import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -8,17 +9,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Pause
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.SkipNext
-import androidx.compose.material.icons.filled.SkipPrevious
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -73,14 +69,14 @@ fun AodMediaControls(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     AodMediaButton(
-                        imageVector = Icons.Default.SkipPrevious,
+                        iconRes = R.drawable.ic_skip_back_light,
                         contentDescription = stringResource(R.string.aod_media_previous),
                         isEnabled = target.canSkipToPrevious,
                         onClick = { onIntent(AodIntent.SkipToPreviousTrack) },
                     )
 
                     AodMediaButton(
-                        imageVector = if (target.isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
+                        iconRes = if (target.isPlaying) R.drawable.ic_pause_light else R.drawable.ic_play_light,
                         contentDescription = stringResource(
                             if (target.isPlaying) R.string.aod_media_pause else R.string.aod_media_play,
                         ),
@@ -89,7 +85,7 @@ fun AodMediaControls(
                     )
 
                     AodMediaButton(
-                        imageVector = Icons.Default.SkipNext,
+                        iconRes = R.drawable.ic_skip_forward_light,
                         contentDescription = stringResource(R.string.aod_media_next),
                         isEnabled = target.canSkipToNext,
                         onClick = { onIntent(AodIntent.SkipToNextTrack) },
@@ -102,13 +98,13 @@ fun AodMediaControls(
 
 @Composable
 private fun AodMediaButton(
-    imageVector: ImageVector,
+    @DrawableRes iconRes: Int,
     contentDescription: String,
     isEnabled: Boolean,
     onClick: () -> Unit,
 ) {
     Icon(
-        imageVector = imageVector,
+        painter = painterResource(iconRes),
         contentDescription = contentDescription,
         modifier = Modifier
             .size(40.dp)

@@ -1,15 +1,8 @@
 package com.decoutkhanqindev.custom_aod.presentation.model.aod.settings
 
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.Undo
-import androidx.compose.material.icons.automirrored.outlined.VolumeDown
-import androidx.compose.material.icons.automirrored.outlined.VolumeUp
-import androidx.compose.material.icons.outlined.SwipeDown
-import androidx.compose.material.icons.outlined.SwipeUp
-import androidx.compose.material.icons.outlined.TouchApp
 import androidx.compose.runtime.Immutable
-import androidx.compose.ui.graphics.vector.ImageVector
 import com.decoutkhanqindev.custom_aod.R
 import com.decoutkhanqindev.custom_aod.data.local.datastore.DataStoreManager
 
@@ -17,37 +10,37 @@ import com.decoutkhanqindev.custom_aod.data.local.datastore.DataStoreManager
 @Immutable
 enum class AodGestureValue(
     @param:StringRes val labelRes: Int,
-    val icon: ImageVector,
+    @param:DrawableRes val iconRes: Int,
     val defaultActionCode: Int,
 ) {
     DOUBLE_TAP(
         labelRes = R.string.aod_gesture_double_tap,
-        icon = Icons.Outlined.TouchApp,
+        iconRes = R.drawable.ic_hand_tap_duotone,
         defaultActionCode = DataStoreManager.DEFAULT_AOD_DOUBLE_TAP_ACTION
     ),
     SWIPE_UP(
         labelRes = R.string.aod_gesture_swipe_up,
-        icon = Icons.Outlined.SwipeUp,
+        iconRes = R.drawable.ic_arrow_fat_lines_up_duotone,
         defaultActionCode = DataStoreManager.DEFAULT_AOD_SWIPE_UP_ACTION
     ),
     SWIPE_DOWN(
         labelRes = R.string.aod_gesture_swipe_down,
-        icon = Icons.Outlined.SwipeDown,
+        iconRes = R.drawable.ic_arrow_fat_lines_down_duotone,
         defaultActionCode = DataStoreManager.DEFAULT_AOD_SWIPE_DOWN_ACTION
     ),
     VOLUME_UP(
         labelRes = R.string.aod_gesture_volume_up,
-        icon = Icons.AutoMirrored.Outlined.VolumeUp,
+        iconRes = R.drawable.ic_speaker_high_duotone,
         defaultActionCode = DataStoreManager.DEFAULT_AOD_VOLUME_UP_ACTION
     ),
     VOLUME_DOWN(
         labelRes = R.string.aod_gesture_volume_down,
-        icon = Icons.AutoMirrored.Outlined.VolumeDown,
+        iconRes = R.drawable.ic_speaker_low_duotone,
         defaultActionCode = DataStoreManager.DEFAULT_AOD_VOLUME_DOWN_ACTION
     ),
     BACK(
         labelRes = R.string.aod_gesture_back,
-        icon = Icons.AutoMirrored.Outlined.Undo,
+        iconRes = R.drawable.ic_arrow_u_up_left_duotone,
         defaultActionCode = DataStoreManager.DEFAULT_AOD_BACK_ACTION
     ),
 }

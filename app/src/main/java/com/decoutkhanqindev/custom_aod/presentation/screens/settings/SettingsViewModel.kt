@@ -67,12 +67,7 @@ class SettingsViewModel(
             is SettingsIntent.Rules -> onRulesIntent(intent)
             is SettingsIntent.Permission -> onPermissionIntent(intent)
             is SettingsIntent.NavigateToLanguage ->
-                viewModelScope.launch { sendEffect(SettingsEffect.Navigation.NavigateToLanguage) }
-
-            is SettingsIntent.NavigateToIap ->
-                viewModelScope.launch { sendEffect(SettingsEffect.Navigation.NavigateToIap) }
-
-            is SettingsIntent.ShareApp -> viewModelScope.launch { sendEffect(SettingsEffect.ShareApp) }
+                viewModelScope.launch { sendEffect(SettingsEffect.NavigateToLanguage) }
         }
     }
 
@@ -241,7 +236,7 @@ class SettingsViewModel(
         val effect = when (permission) {
             PermissionValue.OVERLAY -> SettingsEffect.Permission.OpenOverlaySettings
             PermissionValue.MIUI_LOCK_SCREEN,
-            PermissionValue.MIUI_BACKGROUND_POPUP -> SettingsEffect.Permission.OpenMiuiPermissionSettings
+            PermissionValue.MIUI_BACKGROUND_POPUP -> SettingsEffect.Permission.OpenMiuiPermissionSettings(permission)
 
             PermissionValue.NOTIFICATIONS ->
                 if (permissionManager.needsNotificationPermission()) {

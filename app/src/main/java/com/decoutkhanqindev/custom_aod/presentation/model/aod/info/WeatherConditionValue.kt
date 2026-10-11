@@ -1,65 +1,55 @@
 package com.decoutkhanqindev.custom_aod.presentation.model.aod.info
 
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AcUnit
-import androidx.compose.material.icons.filled.Cloud
-import androidx.compose.material.icons.filled.Dehaze
-import androidx.compose.material.icons.filled.Grain
-import androidx.compose.material.icons.filled.NightsStay
-import androidx.compose.material.icons.filled.Thunderstorm
-import androidx.compose.material.icons.filled.Umbrella
-import androidx.compose.material.icons.filled.WbCloudy
-import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.runtime.Immutable
-import androidx.compose.ui.graphics.vector.ImageVector
 import com.decoutkhanqindev.custom_aod.R
 import com.decoutkhanqindev.custom_aod.domain.model.WeatherCondition
 
 @Immutable
 enum class WeatherConditionValue(
-    val dayIcon: ImageVector,
-    val nightIcon: ImageVector,
+    @param:DrawableRes val dayIconRes: Int,
+    @param:DrawableRes val nightIconRes: Int,
     @param:StringRes val labelRes: Int,
 ) {
     CLEAR(
-        dayIcon = Icons.Default.WbSunny,
-        nightIcon = Icons.Default.NightsStay,
+        dayIconRes = R.drawable.ic_sun_light,
+        nightIconRes = R.drawable.ic_moon_stars_light,
         labelRes = R.string.weather_clear
     ),
     PARTLY_CLOUDY(
-        dayIcon = Icons.Default.WbCloudy,
-        nightIcon = Icons.Default.NightsStay,
+        dayIconRes = R.drawable.ic_cloud_sun_light,
+        nightIconRes = R.drawable.ic_cloud_moon_light,
         labelRes = R.string.weather_partly_cloudy,
     ),
     CLOUDY(
-        dayIcon = Icons.Default.Cloud,
-        nightIcon = Icons.Default.Cloud,
+        dayIconRes = R.drawable.ic_cloud_light,
+        nightIconRes = R.drawable.ic_cloud_light,
         labelRes = R.string.weather_cloudy
     ),
     FOG(
-        dayIcon = Icons.Default.Dehaze,
-        nightIcon = Icons.Default.Dehaze,
+        dayIconRes = R.drawable.ic_cloud_fog_light,
+        nightIconRes = R.drawable.ic_cloud_fog_light,
         labelRes = R.string.weather_fog
     ),
     DRIZZLE(
-        dayIcon = Icons.Default.Grain,
-        nightIcon = Icons.Default.Grain,
+        dayIconRes = R.drawable.ic_drop_light,
+        nightIconRes = R.drawable.ic_drop_light,
         labelRes = R.string.weather_drizzle
     ),
     RAIN(
-        dayIcon = Icons.Default.Umbrella,
-        nightIcon = Icons.Default.Umbrella,
+        dayIconRes = R.drawable.ic_cloud_rain_light,
+        nightIconRes = R.drawable.ic_cloud_rain_light,
         labelRes = R.string.weather_rain
     ),
     SNOW(
-        dayIcon = Icons.Default.AcUnit,
-        nightIcon = Icons.Default.AcUnit,
+        dayIconRes = R.drawable.ic_cloud_snow_light,
+        nightIconRes = R.drawable.ic_cloud_snow_light,
         labelRes = R.string.weather_snow
     ),
     THUNDERSTORM(
-        dayIcon = Icons.Default.Thunderstorm,
-        nightIcon = Icons.Default.Thunderstorm,
+        dayIconRes = R.drawable.ic_cloud_lightning_light,
+        nightIconRes = R.drawable.ic_cloud_lightning_light,
         labelRes = R.string.weather_thunderstorm,
     ),
 }

@@ -1,5 +1,7 @@
 package com.decoutkhanqindev.custom_aod.presentation.navigation
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -21,12 +23,13 @@ import com.decoutkhanqindev.custom_aod.presentation.screens.iap.IapScreen
 import com.decoutkhanqindev.custom_aod.presentation.screens.language.LanguageScreen
 import com.decoutkhanqindev.custom_aod.presentation.screens.permission.PermissionScreen
 import com.decoutkhanqindev.custom_aod.presentation.screens.splash.SplashScreen
+import com.decoutkhanqindev.custom_aod.presentation.theme.BackgroundGradient
 import com.decoutkhanqindev.custom_aod.utils.navigateBack
 import com.decoutkhanqindev.custom_aod.utils.openWifiSettings
 import org.koin.compose.koinInject
 
 @Composable
-fun AppNavDisplay(modifier: Modifier = Modifier) {
+fun AppNavDisplay() {
     val context = LocalContext.current
     val backStack = rememberNavBackStack(SplashDestination)
     val networkManager: NetworkManager = koinInject()
@@ -59,7 +62,9 @@ fun AppNavDisplay(modifier: Modifier = Modifier) {
                 // TODO: Đăng ký screen<XxxDestination> { dest -> XxxScreen(...) } cho màn mới
             },
         ),
-        modifier = modifier,
+        modifier = Modifier
+            .fillMaxSize()
+            .background(BackgroundGradient),
         onBack = { backStack.navigateBack() },
     )
 

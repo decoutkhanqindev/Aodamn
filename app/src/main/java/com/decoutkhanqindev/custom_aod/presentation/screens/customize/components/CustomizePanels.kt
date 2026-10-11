@@ -217,16 +217,17 @@ private fun ClockPanel(
         AppSectionLabel(text = stringResource(R.string.opt_clock_color))
 
         ClockColorPicker(
-            selected = clock.color,
-            onSelect = { color -> onIntent(CustomizeIntent.Appearance.ChangeClockColor(color)) },
+            color = clock.color,
+            onColorPreview = { color -> onIntent(CustomizeIntent.Appearance.PreviewClockColor(color)) },
+            onColorChange = { color -> onIntent(CustomizeIntent.Appearance.ChangeClockColor(color)) },
         )
 
         AppSliderRow(
             label = stringResource(R.string.opt_clock_size_value, clock.sizePercent),
-            value = clock.sizePercent,
+            progress = { clock.sizePercent },
             valueRange = AodAppearanceUiModel.SIZE_MIN_PERCENT..AodAppearanceUiModel.SIZE_MAX_PERCENT,
             step = AodAppearanceUiModel.SIZE_STEP_PERCENT,
-            onValueChange = { onIntent(CustomizeIntent.Appearance.ChangeClockSize(it)) },
+            onProgressChange = { onIntent(CustomizeIntent.Appearance.ChangeClockSize(it)) },
         )
     }
 }

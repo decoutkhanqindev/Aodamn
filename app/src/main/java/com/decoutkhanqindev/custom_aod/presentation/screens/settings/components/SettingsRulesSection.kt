@@ -3,10 +3,6 @@ package com.decoutkhanqindev.custom_aod.presentation.screens.settings.components
 import android.text.format.DateFormat
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.BatteryAlert
-import androidx.compose.material.icons.outlined.DateRange
-import androidx.compose.material.icons.outlined.Power
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
@@ -42,7 +38,7 @@ fun SettingsRulesSection(
         modifier = modifier,
     ) {
         SettingsValueItem(
-            icon = Icons.Outlined.Power,
+            iconRes = R.drawable.ic_plugs_connected_duotone,
             label = stringResource(R.string.opt_charging_rule),
             value = stringResource(settings.chargingRule.labelRes),
             onClick = { onIntent(SettingsIntent.Rules.ShowChargingRulePicker) },
@@ -51,7 +47,7 @@ fun SettingsRulesSection(
         SettingsDivider()
 
         SettingsSwitchItem(
-            icon = Icons.Outlined.DateRange,
+            iconRes = R.drawable.ic_calendar_dots_duotone,
             label = stringResource(R.string.opt_schedule),
             isChecked = settings.schedule.isEnabled,
             onCheckedChange = { onIntent(SettingsIntent.Rules.ToggleSchedule(it)) },
@@ -78,11 +74,11 @@ fun SettingsRulesSection(
             } else {
                 stringResource(R.string.value_below_percent, settings.minBattery)
             },
-            value = settings.minBattery,
+            progress = { settings.minBattery },
             valueRange = 0..AodRulesUiModel.BATTERY_MAX_PERCENT,
             step = AodRulesUiModel.BATTERY_STEP_PERCENT,
-            onValueChange = { onIntent(SettingsIntent.Rules.ChangeMinBattery(it)) },
-            icon = Icons.Outlined.BatteryAlert,
+            onProgressChange = { onIntent(SettingsIntent.Rules.ChangeMinBattery(it)) },
+            iconRes = R.drawable.ic_battery_warning_duotone,
         )
     }
 

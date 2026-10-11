@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -101,7 +99,7 @@ fun AodTabDesignCard(
         val customizeLabel = stringResource(R.string.customize_title)
 
         AppIconTile(
-            icon = Icons.Outlined.Edit,
+            iconRes = R.drawable.ic_pencil_simple_duotone,
             modifier = Modifier.semantics { contentDescription = customizeLabel },
         )
     }

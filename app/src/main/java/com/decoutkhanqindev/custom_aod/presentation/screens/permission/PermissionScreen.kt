@@ -16,7 +16,6 @@ import com.decoutkhanqindev.custom_aod.presentation.aod.AodService
 import com.decoutkhanqindev.custom_aod.presentation.components.LocalTag
 import com.decoutkhanqindev.custom_aod.presentation.effects.LaunchedWithLifecycleEffect
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionValue
-import com.decoutkhanqindev.custom_aod.presentation.model.permission.areMiuiPermissionsGranted
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.isGranted
 import com.decoutkhanqindev.custom_aod.presentation.navigation.MainDestination
 import com.decoutkhanqindev.custom_aod.presentation.screens.permission.state.PermissionEffect
@@ -52,7 +51,7 @@ fun PermissionScreen(backStack: NavBackStack<NavKey>) {
                         context.openOverlaySettings { permissionManager.isGranted(PermissionValue.OVERLAY) }
 
                     is PermissionEffect.OpenMiuiPermissionSettings ->
-                        context.openMiuiPermissionSettings { permissionManager.areMiuiPermissionsGranted() }
+                        context.openMiuiPermissionSettings { permissionManager.isGranted(effect.permission) }
 
                     is PermissionEffect.OpenNotificationSettings ->
                         context.openNotificationSettings {

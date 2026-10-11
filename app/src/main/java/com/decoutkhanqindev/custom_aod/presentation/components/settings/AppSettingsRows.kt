@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material3.RadioButton
-import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,6 +18,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.decoutkhanqindev.custom_aod.presentation.components.AppSlider
 import com.decoutkhanqindev.custom_aod.presentation.components.onClick
 import com.decoutkhanqindev.custom_aod.presentation.theme.BodyLarge
 import com.decoutkhanqindev.custom_aod.presentation.theme.BodyMedium
@@ -27,7 +27,6 @@ import com.decoutkhanqindev.custom_aod.presentation.theme.Grey9A
 import com.decoutkhanqindev.custom_aod.presentation.theme.LabelMedium
 import com.decoutkhanqindev.custom_aod.presentation.theme.Mint
 import com.decoutkhanqindev.custom_aod.presentation.theme.RoundedCornerShape8dp
-import kotlin.math.roundToInt
 
 @Composable
 fun AppSectionHeader(
@@ -181,25 +180,25 @@ fun AppValueRow(
 @Composable
 fun AppSliderRow(
     label: String,
-    value: Int,
+    progress: () -> Int,
     valueRange: IntRange,
     step: Int,
-    onValueChange: (Int) -> Unit,
+    onProgressChange: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val stepCount = (valueRange.last - valueRange.first) / step
-
     Column(modifier = modifier.padding(top = 12.dp)) {
         Text(
             text = label,
             style = BodyLarge,
         )
 
-        Slider(
-            value = ((value - valueRange.first) / step).toFloat(),
-            onValueChange = { onValueChange(valueRange.first + it.roundToInt() * step) },
-            valueRange = 0f..stepCount.toFloat(),
-            steps = if (step == 1) 0 else stepCount - 1,
+        AppSlider(
+            progress = progress,
+            valueRange = valueRange,
+            step = step,
+            onProgressChange = onProgressChange,
+            label = label,
+            valueText = label,
         )
     }
 }

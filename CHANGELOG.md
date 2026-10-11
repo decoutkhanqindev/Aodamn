@@ -7,6 +7,31 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-10-11 – Icon Phosphor, font Google Fonts, slider và color picker mới
+
+Build được (`assembleDebug`), `tools/check-rules.sh` ra 0 vi phạm (36 rule), đã test trên máy.
+
+### Thêm
+
+- Icon Phosphor 2.1.1 (MIT) thay toàn bộ Material Icons: 74 VectorDrawable `res/drawable/ic_*.xml` sinh bằng `tools/icons/import_phosphor.py` từ `tools/icons/icons.txt` (ghim phiên bản, icon có hướng tự lật RTL). Độ đậm theo chỗ: regular cho thanh / nút, fill cho tab đang chọn, duotone cho ô icon ở Cài đặt và thẻ quyền, light trên màn AOD.
+- Font Google Fonts (OFL, bản variable, có tiếng Việt): Plus Jakarta Sans cho toàn app thay Inter; font đồng hồ đóng gói sẵn thay họ font hệ thống: Mặc định (Plus Jakarta Sans), Có chân (Fraunces), Đơn cách (JetBrains Mono), Viết tay (Dancing Script) giữ mã 0–3, thêm Bo tròn (Comfortaa), Cao gầy (Big Shoulders Display), Hình học (Josefin Sans). App nặng thêm khoảng 0,5 MB.
+- `licenses/`: giấy phép OFL của từng font và MIT của Phosphor.
+- `AppSlider`: track gradient mint → xanh → tím, thumb tròn phóng to và có quầng khi nhấn, không chấm step. Nhận `progress: () -> Int`; giá trị chỉ đọc trong `snapshotFlow`, vị trí thumb ở pha layout, track và hiệu ứng nhấn ở pha vẽ, nên kéo không recompose. Thumb theo ngón tay bằng `SliderState` cục bộ, chỉ báo ra khi sang bước khác. `onProgressChange = null` là chế độ chỉ hiển thị (không nhận chạm, không mờ, bỏ vùng chạm 48dp); `isThumbVisible = false` ẩn thumb, track trải hết chiều ngang.
+- Màu đồng hồ chọn tự do bằng `skydoves/colorpicker-compose` 1.3.0 (wheel HSV + thanh độ sáng) thay 8 ô màu cố định. Kéo thì xem trước trực tiếp, thả tay mới ghi một bước hoàn tác. Màu lưu dạng ARGB; mã 0–7 cũ vẫn đọc ra đúng màu nên máy đang dùng không mất lựa chọn.
+
+### Thay đổi
+
+- Splash: thanh tiến trình dùng `AppSlider` chỉ hiển thị thay `LinearProgressIndicator` chạy mãi, chạy từ 0 tới 99% trong 5 giây (`tween`, thang 0..1000 cho mượt) rồi giữ ở 99% tới khi chuyển màn, không bao giờ 100% vì splash còn chờ quảng cáo; không thumb; phần trăm hiện cùng hàng "Đang tải…", chỉ recompose khi sang số mới.
+- Thanh trên của tab chuyển vào `topBar` của `Scaffold` trong `MainNavDisplay` (`MainTopBar` private, `TopAppBar` có inset thanh trạng thái, tiêu đề mờ dần theo tab). IAP và Share xử lý ngay ở `MainNavDisplay`; các tab không còn intent / effect `NavigateToIap` / `ShareApp` và không tự đệm thanh trạng thái. Bỏ `AppTabTopBar`.
+- Tab Viền sáng quay về màn giữ chỗ không ViewModel (bỏ `EdgeLightViewModel` + `state/`, chỉ dùng cho IAP / Share).
+- Nền `BackgroundGradient` vẽ một lần ở `AppNavDisplay`; màn, tab và `Scaffold` để trong suốt (trước đây mỗi màn tự vẽ). CLAUDE.md và check đổi theo.
+- Quyền Xiaomi: mở trang Cài đặt cho quyền nào thì chỉ kéo app về khi đúng quyền đó được bật (effect `OpenMiuiPermissionSettings(permission)`), bỏ `areMiuiPermissionsGranted()` gộp hai quyền.
+- `tools/check-rules.sh` thêm rule chặn `Slider` của Material và `Icons.*` / `ImageVector`.
+
+### Xoá
+
+- Dependency `material-icons-extended`, font `inter_variable.ttf`, `ClockColorValue` và chuỗi tên 8 màu.
+
 ## [Chưa phát hành] – 2026-10-11 – IAP / Share trên thanh tiêu đề tab, bỏ chế độ Xem thử
 
 Build được (`assembleDebug`), `tools/check-rules.sh` ra 0 vi phạm, đã test trên máy.

@@ -6,10 +6,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.Redo
-import androidx.compose.material.icons.automirrored.outlined.Undo
-import androidx.compose.material.icons.outlined.RestartAlt
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -20,6 +16,7 @@ import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.custom_aod.R
@@ -53,7 +50,7 @@ fun CustomizeToolbar(
                 enabled = history.canUndo
             ) {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Outlined.Undo,
+                    painter = painterResource(R.drawable.ic_arrow_u_up_left),
                     contentDescription = stringResource(R.string.customize_undo),
                 )
             }
@@ -63,7 +60,7 @@ fun CustomizeToolbar(
                 enabled = history.canRedo
             ) {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Outlined.Redo,
+                    painter = painterResource(R.drawable.ic_arrow_u_up_right),
                     contentDescription = stringResource(R.string.customize_redo),
                 )
             }
@@ -73,7 +70,7 @@ fun CustomizeToolbar(
                 enabled = !history.isDefault,
             ) {
                 Icon(
-                    imageVector = Icons.Outlined.RestartAlt,
+                    painter = painterResource(R.drawable.ic_arrow_counter_clockwise),
                     contentDescription = stringResource(R.string.customize_reset),
                 )
             }

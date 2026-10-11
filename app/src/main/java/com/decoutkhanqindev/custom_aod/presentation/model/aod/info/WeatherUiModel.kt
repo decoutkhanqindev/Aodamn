@@ -1,7 +1,7 @@
 package com.decoutkhanqindev.custom_aod.presentation.model.aod.info
 
+import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Immutable
-import androidx.compose.ui.graphics.vector.ImageVector
 import com.decoutkhanqindev.custom_aod.domain.model.Weather
 import kotlin.math.roundToInt
 
@@ -12,8 +12,9 @@ data class WeatherUiModel(
     val isDay: Boolean,
     val updatedAtMillis: Long,
 ) {
-    val icon: ImageVector
-        get() = if (isDay) condition.dayIcon else condition.nightIcon
+    @get:DrawableRes
+    val iconRes: Int
+        get() = if (isDay) condition.dayIconRes else condition.nightIconRes
 
     // Bản đã lưu cũ hơn MAX_AGE_MILLIS (mất quyền vị trí, mất mạng lâu) thì không hiện, để khỏi hiện thời tiết sai.
     fun isFreshAt(nowMillis: Long): Boolean = nowMillis - updatedAtMillis < MAX_AGE_MILLIS

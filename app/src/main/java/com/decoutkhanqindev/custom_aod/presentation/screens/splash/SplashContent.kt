@@ -1,24 +1,28 @@
 package com.decoutkhanqindev.custom_aod.presentation.screens.splash
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -29,31 +33,37 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.custom_aod.R
 import com.decoutkhanqindev.custom_aod.presentation.components.AppLottie
-import com.decoutkhanqindev.custom_aod.presentation.theme.Black
+import com.decoutkhanqindev.custom_aod.presentation.components.AppSlider
 import com.decoutkhanqindev.custom_aod.presentation.theme.BodyMedium
 import com.decoutkhanqindev.custom_aod.presentation.theme.BodySmall
 import com.decoutkhanqindev.custom_aod.presentation.theme.Grey9A
 import com.decoutkhanqindev.custom_aod.presentation.theme.GreyED
 import com.decoutkhanqindev.custom_aod.presentation.theme.HeadlineMedium
 import com.decoutkhanqindev.custom_aod.presentation.theme.Mint
-import com.decoutkhanqindev.custom_aod.presentation.theme.Neutral12
 import com.decoutkhanqindev.custom_aod.presentation.theme.Theme
+import kotlin.math.roundToInt
 
 @Composable
 fun SplashContent() {
     val enterDuration = 600
     val titleState = remember { MutableTransitionState(false).apply { targetState = true } }
+    val loadingProgress = remember { Animatable(0f) }
+
+    LaunchedEffect(loadingProgress) {
+        loadingProgress.animateTo(
+            targetValue = LOADING_PROGRESS_CAP.toFloat(),
+            animationSpec = tween(durationMillis = 5000),
+        )
+    }
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Black),
+        modifier = Modifier.fillMaxSize(),
     ) {
         Column(
             modifier = Modifier
                 .align(Alignment.Center)
                 .padding(horizontal = 32.dp)
-                .padding(bottom = 128.dp),
+                .padding(bottom = 64.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             AppLottie(
@@ -99,16 +109,27 @@ fun SplashContent() {
             verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text(
-                text = stringResource(R.string.loading),
-                color = Grey9A,
-                style = BodyMedium,
-            )
-
-            LinearProgressIndicator(
+            Row(
                 modifier = Modifier.fillMaxWidth(),
-                color = Mint,
-                trackColor = Neutral12,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = stringResource(R.string.loading),
+                    modifier = Modifier.weight(1f),
+                    color = Grey9A,
+                    style = BodyMedium,
+                )
+
+                SplashLoadingPercent { loadingProgress.value }
+            }
+
+            AppSlider(
+                progress = { loadingProgress.value.roundToInt() },
+                valueRange = 0..LOADING_PROGRESS_MAX,
+                step = 1,
+                modifier = Modifier.fillMaxWidth(),
+                label = stringResource(R.string.loading),
+                isThumbVisible = false,
             )
 
             Text(
@@ -121,6 +142,28 @@ fun SplashContent() {
         }
     }
 }
+
+// Chỉ phần trăm recompose, và chỉ khi sang số mới (100 lần trong 5 giây), không theo từng khung hình của thanh. Số dùng tnum để không
+// xô chữ khi đổi.
+@Composable
+private fun SplashLoadingPercent(progress: () -> Float) {
+    val currentProgress by rememberUpdatedState(progress)
+    val percent by remember {
+        derivedStateOf { (currentProgress() * 100 / LOADING_PROGRESS_MAX).roundToInt() }
+    }
+
+    Text(
+        text = stringResource(R.string.value_percent, percent),
+        color = Mint,
+        fontWeight = FontWeight.Medium,
+        style = BodyMedium.copy(fontFeatureSettings = "tnum"),
+    )
+}
+
+// Thang 0..1000 thay cho phần trăm để thanh chạy mượt từng khung hình, không nhảy theo nấc 1%. Dừng ở 99%, không bao giờ 100%: splash
+// còn chờ đồng ý quảng cáo / tải quảng cáo nên chưa xong thật, thanh đầy mà chưa chuyển màn trông như treo.
+private const val LOADING_PROGRESS_MAX = 1000
+private const val LOADING_PROGRESS_CAP = 990
 
 @Preview(widthDp = 360, heightDp = 720)
 @Composable

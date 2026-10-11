@@ -42,9 +42,6 @@ class AodTabViewModel(
             is AodTabIntent.NavigateToCustomize ->
                 viewModelScope.launch { sendEffect(AodTabEffect.NavigateToCustomize) }
 
-            is AodTabIntent.NavigateToIap -> viewModelScope.launch { sendEffect(AodTabEffect.NavigateToIap) }
-            is AodTabIntent.ShareApp -> viewModelScope.launch { sendEffect(AodTabEffect.ShareApp) }
-
             is AodTabIntent.RefreshPermissions -> refreshPermissions()
             is AodTabIntent.ShowPermissionSheet -> showPermissionSheet()
             is AodTabIntent.DismissPermissionSheet ->
@@ -107,7 +104,7 @@ class AodTabViewModel(
         val effect = when (permission) {
             PermissionValue.OVERLAY -> AodTabEffect.OpenOverlaySettings
             PermissionValue.MIUI_LOCK_SCREEN,
-            PermissionValue.MIUI_BACKGROUND_POPUP -> AodTabEffect.OpenMiuiPermissionSettings
+            PermissionValue.MIUI_BACKGROUND_POPUP -> AodTabEffect.OpenMiuiPermissionSettings(permission)
 
             PermissionValue.NOTIFICATIONS ->
                 if (permissionManager.needsNotificationPermission()) {

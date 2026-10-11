@@ -7,22 +7,18 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalResources
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
-import com.decoutkhanqindev.custom_aod.R
 import com.decoutkhanqindev.custom_aod.data.device.permission.PermissionManager
 import com.decoutkhanqindev.custom_aod.presentation.aod.AodNotificationListener
 import com.decoutkhanqindev.custom_aod.presentation.aod.AodService
 import com.decoutkhanqindev.custom_aod.presentation.components.LocalTag
 import com.decoutkhanqindev.custom_aod.presentation.effects.LaunchedWithLifecycleEffect
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionValue
-import com.decoutkhanqindev.custom_aod.presentation.model.permission.areMiuiPermissionsGranted
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.isGranted
 import com.decoutkhanqindev.custom_aod.presentation.navigation.CustomizeDestination
-import com.decoutkhanqindev.custom_aod.presentation.navigation.IapDestination
 import com.decoutkhanqindev.custom_aod.presentation.screens.aodtab.state.AodTabEffect
 import com.decoutkhanqindev.custom_aod.presentation.screens.aodtab.state.AodTabIntent
 import com.decoutkhanqindev.custom_aod.utils.collectCatching
@@ -30,8 +26,6 @@ import com.decoutkhanqindev.custom_aod.utils.openAppSettings
 import com.decoutkhanqindev.custom_aod.utils.openMiuiPermissionSettings
 import com.decoutkhanqindev.custom_aod.utils.openNotificationSettings
 import com.decoutkhanqindev.custom_aod.utils.openOverlaySettings
-import com.decoutkhanqindev.custom_aod.utils.playStoreUrl
-import com.decoutkhanqindev.custom_aod.utils.shareText
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import timber.log.Timber
@@ -39,7 +33,6 @@ import timber.log.Timber
 @Composable
 fun AodTabScreen(backStack: NavBackStack<NavKey>) {
     val context = LocalContext.current
-    val resources = LocalResources.current
     val tag = LocalTag.current
     val viewModel: AodTabViewModel = koinViewModel()
     val permissionManager: PermissionManager = koinInject()
@@ -60,17 +53,11 @@ fun AodTabScreen(backStack: NavBackStack<NavKey>) {
                         CustomizeDestination(isFirstOpen = false)
                     )
 
-                    is AodTabEffect.NavigateToIap -> backStack.add(IapDestination)
-                    is AodTabEffect.ShareApp -> context.shareText(
-                        text = resources.getString(R.string.share_app_text, context.playStoreUrl()),
-                        chooserTitle = resources.getString(R.string.share_app),
-                    )
-
                     is AodTabEffect.OpenOverlaySettings ->
                         context.openOverlaySettings { permissionManager.isGranted(PermissionValue.OVERLAY) }
 
                     is AodTabEffect.OpenMiuiPermissionSettings ->
-                        context.openMiuiPermissionSettings { permissionManager.areMiuiPermissionsGranted() }
+                        context.openMiuiPermissionSettings { permissionManager.isGranted(effect.permission) }
 
                     is AodTabEffect.OpenNotificationSettings ->
                         context.openNotificationSettings {

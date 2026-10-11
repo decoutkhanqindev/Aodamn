@@ -1,5 +1,6 @@
 package com.decoutkhanqindev.custom_aod.presentation.screens.settings.components
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -10,17 +11,10 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.toggleable
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
-import androidx.compose.material.icons.outlined.DateRange
-import androidx.compose.material.icons.outlined.LightMode
-import androidx.compose.material.icons.outlined.Power
-import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
-import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,16 +23,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.custom_aod.R
 import com.decoutkhanqindev.custom_aod.presentation.components.AppIconTile
+import com.decoutkhanqindev.custom_aod.presentation.components.AppSlider
 import com.decoutkhanqindev.custom_aod.presentation.components.onClick
 import com.decoutkhanqindev.custom_aod.presentation.components.settings.AppSectionHeader
 import com.decoutkhanqindev.custom_aod.presentation.theme.BodyLarge
@@ -51,7 +44,6 @@ import com.decoutkhanqindev.custom_aod.presentation.theme.Neutral12
 import com.decoutkhanqindev.custom_aod.presentation.theme.NeutralVariant30
 import com.decoutkhanqindev.custom_aod.presentation.theme.RoundedCornerShape16dp
 import com.decoutkhanqindev.custom_aod.presentation.theme.Theme
-import kotlin.math.roundToInt
 
 @Composable
 fun SettingsGroup(
@@ -86,7 +78,7 @@ fun SettingsDivider(modifier: Modifier = Modifier) {
 
 @Composable
 fun SettingsSwitchItem(
-    icon: ImageVector,
+    @DrawableRes iconRes: Int,
     label: String,
     isChecked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
@@ -121,7 +113,7 @@ fun SettingsSwitchItem(
         },
         leadingContent = {
             AppIconTile(
-                icon = icon,
+                iconRes = iconRes,
                 modifier = Modifier.alpha(contentAlpha),
             )
         },
@@ -138,7 +130,7 @@ fun SettingsSwitchItem(
 
 @Composable
 fun SettingsValueItem(
-    icon: ImageVector,
+    @DrawableRes iconRes: Int,
     label: String,
     value: String,
     onClick: () -> Unit,
@@ -153,10 +145,10 @@ fun SettingsValueItem(
                 color = Mint,
             )
         },
-        leadingContent = { AppIconTile(icon = icon) },
+        leadingContent = { AppIconTile(iconRes = iconRes) },
         trailingContent = {
             Icon(
-                imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
+                painter = painterResource(R.drawable.ic_caret_right),
                 contentDescription = null,
                 tint = Grey9A,
             )
@@ -169,15 +161,13 @@ fun SettingsValueItem(
 fun SettingsSliderItem(
     label: String,
     valueText: String,
-    value: Int,
+    progress: () -> Int,
     valueRange: IntRange,
     step: Int,
-    onValueChange: (Int) -> Unit,
+    onProgressChange: (Int) -> Unit,
     modifier: Modifier = Modifier,
-    icon: ImageVector? = null,
+    @DrawableRes iconRes: Int? = null,
 ) {
-    val stepCount = (valueRange.last - valueRange.first) / step
-
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -192,9 +182,9 @@ fun SettingsSliderItem(
             modifier = Modifier.heightIn(min = 36.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            if (icon != null) {
+            if (iconRes != null) {
                 AppIconTile(
-                    icon = icon,
+                    iconRes = iconRes,
                     modifier = Modifier.padding(end = 16.dp),
                 )
             } else {
@@ -218,14 +208,14 @@ fun SettingsSliderItem(
             )
         }
 
-        Slider(
-            value = ((value - valueRange.first) / step).toFloat(),
-            onValueChange = { onValueChange(valueRange.first + it.roundToInt() * step) },
-            modifier = Modifier
-                .padding(start = 52.dp)
-                .semantics { contentDescription = label },
-            valueRange = 0f..stepCount.toFloat(),
-            steps = if (step == 1) 0 else stepCount - 1,
+        AppSlider(
+            progress = progress,
+            valueRange = valueRange,
+            step = step,
+            onProgressChange = onProgressChange,
+            modifier = Modifier.padding(start = 52.dp),
+            label = label,
+            valueText = valueText,
         )
     }
 }
@@ -272,7 +262,7 @@ private fun SettingsItemsPreview() {
     Theme {
         SettingsGroup(title = stringResource(R.string.section_display)) {
             SettingsSwitchItem(
-                icon = Icons.Outlined.LightMode,
+                iconRes = R.drawable.ic_sun_duotone,
                 label = stringResource(R.string.opt_custom_brightness),
                 isChecked = true,
                 onCheckedChange = {},
@@ -281,10 +271,10 @@ private fun SettingsItemsPreview() {
             SettingsSliderItem(
                 label = stringResource(R.string.opt_brightness),
                 valueText = stringResource(R.string.value_percent, 20),
-                value = 20,
+                progress = { 20 },
                 valueRange = 1..100,
                 step = 1,
-                onValueChange = {},
+                onProgressChange = {},
             )
 
             SettingsDivider()
@@ -292,17 +282,17 @@ private fun SettingsItemsPreview() {
             SettingsSliderItem(
                 label = stringResource(R.string.opt_timeout),
                 valueText = stringResource(R.string.value_minutes, 30),
-                value = 30,
+                progress = { 30 },
                 valueRange = 0..60,
                 step = 5,
-                onValueChange = {},
-                icon = Icons.Outlined.Timer,
+                onProgressChange = {},
+                iconRes = R.drawable.ic_timer_duotone,
             )
 
             SettingsDivider()
 
             SettingsValueItem(
-                icon = Icons.Outlined.Power,
+                iconRes = R.drawable.ic_plugs_connected_duotone,
                 label = stringResource(R.string.opt_charging_rule),
                 value = stringResource(R.string.charging_rule_always),
                 onClick = {},
@@ -311,7 +301,7 @@ private fun SettingsItemsPreview() {
             SettingsDivider()
 
             SettingsSwitchItem(
-                icon = Icons.Outlined.DateRange,
+                iconRes = R.drawable.ic_calendar_dots_duotone,
                 label = stringResource(R.string.opt_schedule),
                 isChecked = true,
                 onCheckedChange = {},

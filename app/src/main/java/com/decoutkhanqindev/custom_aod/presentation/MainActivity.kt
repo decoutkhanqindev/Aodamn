@@ -7,10 +7,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.ComposeUiFlags
 import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.Modifier
 import androidx.lifecycle.lifecycleScope
 import com.decoutkhanqindev.custom_aod.ads.AdsManager
 import com.decoutkhanqindev.custom_aod.data.local.datastore.DataStoreManager
@@ -43,7 +41,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             AppLanguageProvider {
                 Theme {
-                    AppNavDisplay(modifier = Modifier.fillMaxSize())
+                    AppNavDisplay()
                 }
             }
         }

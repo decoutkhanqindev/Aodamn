@@ -1,28 +1,23 @@
 package com.decoutkhanqindev.custom_aod.presentation.model.permission
 
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.QuestionMark
-import androidx.compose.material.icons.filled.Remove
 import androidx.compose.runtime.Immutable
-import androidx.compose.ui.graphics.vector.ImageVector
 import com.decoutkhanqindev.custom_aod.R
 
 @Immutable
 enum class PermissionStatusValue(
-    val icon: ImageVector,
+    @param:DrawableRes val iconRes: Int,
     @param:StringRes val descriptionRes: Int,
 ) {
-    GRANTED(icon = Icons.Default.Check, descriptionRes = R.string.permission_state_granted),
-    UNKNOWN(icon = Icons.Default.QuestionMark, descriptionRes = R.string.permission_state_unknown),
+    GRANTED(iconRes = R.drawable.ic_check, descriptionRes = R.string.permission_state_granted),
+    UNKNOWN(iconRes = R.drawable.ic_question, descriptionRes = R.string.permission_state_unknown),
     MISSING_REQUIRED(
-        icon = Icons.Default.Close,
+        iconRes = R.drawable.ic_x,
         descriptionRes = R.string.permission_state_missing
     ),
     MISSING_OPTIONAL(
-        icon = Icons.Default.Remove,
+        iconRes = R.drawable.ic_minus,
         descriptionRes = R.string.permission_state_missing
     ),
 }

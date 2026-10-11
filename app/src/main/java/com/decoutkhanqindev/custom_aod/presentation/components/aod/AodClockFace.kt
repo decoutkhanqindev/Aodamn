@@ -56,7 +56,7 @@ private fun AodDigitalClock(
 
     Text(
         text = now.format(timeFormatter),
-        color = appearance.color.color,
+        color = appearance.color,
         fontSize = 76.sp * appearance.scale,
         fontWeight = FontWeight.Thin,
         fontFamily = appearance.font.fontFamily,
@@ -78,7 +78,7 @@ private fun AodStackedClock(
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             text = now.format(hourFormatter),
-            color = appearance.color.color,
+            color = appearance.color,
             fontSize = fontSize,
             fontWeight = FontWeight.Light,
             fontFamily = appearance.font.fontFamily,
@@ -87,7 +87,7 @@ private fun AodStackedClock(
 
         Text(
             text = now.format(minuteFormatter),
-            color = appearance.color.color,
+            color = appearance.color,
             fontSize = fontSize,
             fontWeight = FontWeight.Light,
             fontFamily = appearance.font.fontFamily,
@@ -104,7 +104,7 @@ private fun AodAnalogClock(
 ) {
     val now = rememberZonedDateTime(nowMillis)
     val timeDescription = now.format(rememberTimeFormatter())
-    val color = appearance.color.color
+    val color = appearance.color
 
     Canvas(
         modifier = Modifier

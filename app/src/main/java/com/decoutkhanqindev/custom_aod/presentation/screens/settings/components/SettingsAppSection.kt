@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -44,7 +42,7 @@ fun SettingsAppSection(
     Column(modifier = modifier.fillMaxWidth()) {
         SettingsGroup(title = stringResource(R.string.section_app)) {
             SettingsValueItem(
-                icon = Icons.Outlined.Language,
+                iconRes = R.drawable.ic_translate_duotone,
                 label = stringResource(R.string.language),
                 value = language?.label.orEmpty(),
                 onClick = { onIntent(SettingsIntent.NavigateToLanguage) },

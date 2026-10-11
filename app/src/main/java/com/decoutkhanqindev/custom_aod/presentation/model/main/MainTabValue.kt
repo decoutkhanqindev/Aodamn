@@ -1,15 +1,8 @@
 package com.decoutkhanqindev.custom_aod.presentation.model.main
 
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccessTimeFilled
-import androidx.compose.material.icons.filled.EdgesensorHigh
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.outlined.AccessTime
-import androidx.compose.material.icons.outlined.EdgesensorHigh
-import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.runtime.Immutable
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation3.runtime.NavKey
 import com.decoutkhanqindev.custom_aod.R
 import com.decoutkhanqindev.custom_aod.presentation.navigation.AodTabDestination
@@ -20,26 +13,30 @@ import com.decoutkhanqindev.custom_aod.presentation.navigation.SettingsDestinati
 @Immutable
 enum class MainTabValue(
     val destination: NavKey,
-    val icon: ImageVector,
-    val selectedIcon: ImageVector,
+    @param:DrawableRes val iconRes: Int,
+    @param:DrawableRes val selectedIconRes: Int,
     @param:StringRes val labelRes: Int,
+    @param:StringRes val titleRes: Int,
 ) {
     AOD(
         destination = AodTabDestination,
-        icon = Icons.Outlined.AccessTime,
-        selectedIcon = Icons.Filled.AccessTimeFilled,
+        iconRes = R.drawable.ic_clock,
+        selectedIconRes = R.drawable.ic_clock_fill,
         labelRes = R.string.main_tab_aod,
+        titleRes = R.string.aod_tab_title,
     ),
     EDGE_LIGHT(
         destination = EdgeLightDestination,
-        icon = Icons.Outlined.EdgesensorHigh,
-        selectedIcon = Icons.Filled.EdgesensorHigh,
+        iconRes = R.drawable.ic_device_mobile,
+        selectedIconRes = R.drawable.ic_device_mobile_fill,
         labelRes = R.string.edge_light,
+        titleRes = R.string.edge_light,
     ),
     SETTINGS(
         destination = SettingsDestination,
-        icon = Icons.Outlined.Settings,
-        selectedIcon = Icons.Filled.Settings,
+        iconRes = R.drawable.ic_gear_six,
+        selectedIconRes = R.drawable.ic_gear_six_fill,
         labelRes = R.string.settings,
+        titleRes = R.string.settings,
     ),
 }

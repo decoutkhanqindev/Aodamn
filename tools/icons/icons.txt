@@ -1,0 +1,18 @@
+# Mỗi dòng: <độ đậm>: <tên icon Phosphor> ... (tên trong https://phosphoricons.com). Chạy python -I tools/icons/import_phosphor.py sau khi sửa.
+# Thêm icon mới: thêm tên vào đúng dòng độ đậm rồi chạy lại; tên file là ic_<tên>[_<độ đậm>].xml (gạch ngang thành gạch dưới).
+
+# Thanh trên, nút hành động, trạng thái, điều hướng (tab đang chưa chọn) và tab của màn Tùy chỉnh
+regular: arrow-left arrow-right arrow-u-up-left arrow-u-up-right arrow-counter-clockwise caret-right x check minus question info warning-circle wifi-slash
+regular: crown-simple share-network clock device-mobile gear-six calendar-blank battery-full image paint-brush note-pencil bell calendar-check cloud-sun music-notes sparkle
+
+# Tab đang chọn và dấu hoàn thành
+fill: clock device-mobile gear-six check-circle
+
+# Ô icon ở màn Cài đặt, thẻ quyền, thẻ giao diện
+duotone: sun eye-closed timer device-rotate plugs-connected calendar-dots battery-warning
+duotone: hand-tap arrow-fat-lines-up arrow-fat-lines-down speaker-high speaker-low arrow-u-up-left hand-waving moon
+duotone: stack lock-simple picture-in-picture bell bell-ringing calendar map-pin translate pencil-simple sparkle crown-simple
+
+# Màn AOD trên màn hình khoá: nét mảnh để hợp đồng hồ Thin và đỡ burn-in
+light: flashlight calendar-check skip-back play pause skip-forward
+light: sun moon-stars cloud-sun cloud-moon cloud cloud-fog drop cloud-rain cloud-snow cloud-lightning

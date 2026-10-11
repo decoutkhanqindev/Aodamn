@@ -1,13 +1,12 @@
 package com.decoutkhanqindev.custom_aod.presentation.screens.customize.components
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.HelpOutline
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.decoutkhanqindev.custom_aod.R
@@ -54,7 +53,7 @@ fun CustomizeTopBar(
 private fun GuideButton(onIntent: (CustomizeIntent) -> Unit) {
     IconButton(onClick = { onIntent(CustomizeIntent.Guide.ShowGuide) }) {
         Icon(
-            imageVector = Icons.AutoMirrored.Outlined.HelpOutline,
+            painter = painterResource(R.drawable.ic_question),
             contentDescription = stringResource(R.string.customize_show_guide),
         )
     }

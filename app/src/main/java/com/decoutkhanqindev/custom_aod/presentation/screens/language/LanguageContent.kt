@@ -37,7 +37,6 @@ import com.decoutkhanqindev.custom_aod.presentation.model.language.LanguageValue
 import com.decoutkhanqindev.custom_aod.presentation.model.onboarding.OnboardingStepValue
 import com.decoutkhanqindev.custom_aod.presentation.screens.language.state.LanguageIntent
 import com.decoutkhanqindev.custom_aod.presentation.screens.language.state.LanguageState
-import com.decoutkhanqindev.custom_aod.presentation.theme.BackgroundGradient
 import com.decoutkhanqindev.custom_aod.presentation.theme.GreyED
 import com.decoutkhanqindev.custom_aod.presentation.theme.HeadlineSmall
 import com.decoutkhanqindev.custom_aod.presentation.theme.Mint
@@ -55,9 +54,7 @@ fun LanguageContent(
     onIntent: (LanguageIntent) -> Unit,
 ) {
     Scaffold(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(BackgroundGradient),
+        modifier = Modifier.fillMaxSize(),
         topBar = {
             if (state.isFirstOpen) {
                 AppOnboardingTopBar(step = OnboardingStepValue.LANGUAGE)

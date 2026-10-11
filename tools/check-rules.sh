@@ -54,12 +54,18 @@ check "LottieAnimation ngoài AppLottie" \
 check "context.getString / activity.getString cho text UI" \
   "stringResource hoặc LocalResources.current.getString" \
   'grep -rn "context\.getString\|activity\.getString" $SRC --include="*.kt"'
+check "Slider của Material gọi thẳng" \
+  "AppSlider (thumb / track vẽ tuỳ chỉnh, đọc state ở pha vẽ)" \
+  'grep -rnE "(^|[^A-Za-z])Slider\(" $SRC --include="*.kt" | grep -v "/components/AppSlider.kt"'
+check "Icons.* / ImageVector của Material" \
+  "drawable ic_*.xml trong res/drawable (tools/icons/icons.txt) + painterResource" \
+  'grep -rnE "Icons\.|ImageVector|imageVector =|material\.icons" $SRC --include="*.kt"'
 check "TopAppBar / CenterAlignedTopAppBar gọi thẳng" \
-  "AppTopBar (màn) hoặc AppTabTopBar (tab)" \
-  'grep -rn "TopAppBar(" $SRC --include="*.kt" | grep -v "/components/AppTopBar.kt"'
-check "Nền gradient vẽ ở NavDisplay" \
-  "mỗi màn / tab tự vẽ BackgroundGradient ở Content" \
-  'grep -rn "BackgroundGradient" $PKG/presentation/navigation --include="*.kt"'
+  "AppTopBar (màn); thanh trên của tab là MainTopBar trong MainNavDisplay" \
+  'grep -rn "TopAppBar(" $SRC --include="*.kt" | grep -v "/components/AppTopBar.kt\|/navigation/MainNavDisplay.kt"'
+check "BackgroundGradient vẽ ngoài AppNavDisplay" \
+  "chỉ AppNavDisplay vẽ nền chung; màn / tab / Scaffold để trong suốt" \
+  'grep -rn "BackgroundGradient" $SRC --include="*.kt" | grep -v "/presentation/theme/Colors.kt\|/navigation/AppNavDisplay.kt"'
 
 # --- Component, tên và access --------------------------------------------------------------------
 check "Hàm composable dùng chung không có tiền tố App" \

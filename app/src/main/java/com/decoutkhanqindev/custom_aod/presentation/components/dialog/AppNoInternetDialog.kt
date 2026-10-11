@@ -1,14 +1,13 @@
 package com.decoutkhanqindev.custom_aod.presentation.components.dialog
 
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.WifiOff
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -18,7 +17,7 @@ import com.decoutkhanqindev.custom_aod.presentation.theme.Theme
 import com.decoutkhanqindev.custom_aod.presentation.theme.TitleMedium
 
 @Composable
-fun AppNoInternetDialog(modifier: Modifier = Modifier, onOpenSettings: () -> Unit) {
+fun AppNoInternetDialog(onOpenSettings: () -> Unit) {
     AlertDialog(
         onDismissRequest = {},
         confirmButton = {
@@ -30,10 +29,9 @@ fun AppNoInternetDialog(modifier: Modifier = Modifier, onOpenSettings: () -> Uni
                 )
             }
         },
-        modifier = modifier,
         icon = {
             Icon(
-                imageVector = Icons.Default.WifiOff,
+                painter = painterResource(R.drawable.ic_wifi_slash),
                 contentDescription = null,
             )
         },

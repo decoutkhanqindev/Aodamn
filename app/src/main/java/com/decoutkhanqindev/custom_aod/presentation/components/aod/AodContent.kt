@@ -37,7 +37,6 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.createBitmap
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.AodAppearanceUiModel
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.ClockColorValue
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.ClockFaceValue
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.WallpaperValue
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.info.AodNotificationsUiModel
@@ -240,7 +239,7 @@ private fun AodContentLandscapePreview() {
             nowMillis = System.currentTimeMillis(),
             appearance = AodAppearanceUiModel(
                 face = ClockFaceValue.ANALOG,
-                color = ClockColorValue.MINT
+                color = Mint
             ),
             battery = BatteryUiModel(percent = 72, isCharging = true),
         ),

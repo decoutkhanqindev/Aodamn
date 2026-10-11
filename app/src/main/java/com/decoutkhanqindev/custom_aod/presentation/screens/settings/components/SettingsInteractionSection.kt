@@ -1,9 +1,6 @@
 package com.decoutkhanqindev.custom_aod.presentation.screens.settings.components
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.DarkMode
-import androidx.compose.material.icons.outlined.PanTool
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -29,7 +26,7 @@ fun SettingsInteractionSection(
     ) {
         AodGestureValue.entries.forEach { gesture ->
             SettingsValueItem(
-                icon = gesture.icon,
+                iconRes = gesture.iconRes,
                 label = stringResource(gesture.labelRes),
                 value = stringResource(interaction.settings.actionOf(gesture).labelRes),
                 onClick = { onIntent(SettingsIntent.Interaction.ShowGestureActionPicker(gesture)) },
@@ -39,7 +36,7 @@ fun SettingsInteractionSection(
         }
 
         SettingsSwitchItem(
-            icon = Icons.Outlined.DarkMode,
+            iconRes = R.drawable.ic_moon_duotone,
             label = stringResource(R.string.opt_auto_dim),
             isChecked = interaction.settings.isAutoDimEnabled && interaction.isLightSensorAvailable,
             onCheckedChange = { onIntent(SettingsIntent.Interaction.ToggleAutoDim(it)) },
@@ -52,7 +49,7 @@ fun SettingsInteractionSection(
         SettingsDivider()
 
         SettingsSwitchItem(
-            icon = Icons.Outlined.PanTool,
+            iconRes = R.drawable.ic_hand_waving_duotone,
             label = stringResource(R.string.opt_raise_to_wake),
             isChecked = interaction.settings.isRaiseToWakeEnabled && interaction.isPickupSensorAvailable,
             onCheckedChange = { onIntent(SettingsIntent.Interaction.ToggleRaiseToWake(it)) },

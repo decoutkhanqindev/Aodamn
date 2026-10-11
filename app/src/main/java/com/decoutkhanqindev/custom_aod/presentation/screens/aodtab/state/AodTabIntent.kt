@@ -6,8 +6,6 @@ sealed interface AodTabIntent {
     data class ToggleAod(val isEnabled: Boolean) : AodTabIntent
     data object RefreshDesign : AodTabIntent
     data object NavigateToCustomize : AodTabIntent
-    data object NavigateToIap : AodTabIntent
-    data object ShareApp : AodTabIntent
     data object RefreshPermissions : AodTabIntent
     data object ShowPermissionSheet : AodTabIntent
     data object DismissPermissionSheet : AodTabIntent

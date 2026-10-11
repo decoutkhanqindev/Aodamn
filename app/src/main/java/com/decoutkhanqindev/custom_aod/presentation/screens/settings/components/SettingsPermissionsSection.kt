@@ -4,10 +4,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.CheckCircle
-import androidx.compose.material.icons.outlined.ErrorOutline
-import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
@@ -16,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.custom_aod.R
@@ -76,7 +73,7 @@ private fun PermissionItem(
         },
         leadingContent = {
             AppIconTile(
-                icon = permission.permission.icon,
+                iconRes = permission.permission.iconRes,
                 tint = if (isMissingRequired) Red else Mint,
                 containerColor = if (isMissingRequired) RedAlpha12 else MintAlpha12,
             )
@@ -84,7 +81,7 @@ private fun PermissionItem(
         trailingContent = {
             if (status == PermissionStatusValue.GRANTED) {
                 Icon(
-                    imageVector = Icons.Outlined.CheckCircle,
+                    painter = painterResource(R.drawable.ic_check_circle_fill),
                     contentDescription = null,
                     tint = Mint,
                 )
@@ -105,11 +102,13 @@ private fun LastWakeRow(
 ) {
     Row(modifier = modifier.padding(horizontal = 16.dp)) {
         Icon(
-            imageVector = when (lastWake) {
-                WakeResultValue.OK -> Icons.Outlined.CheckCircle
-                WakeResultValue.FAILED -> Icons.Outlined.ErrorOutline
-                WakeResultValue.UNKNOWN -> Icons.Outlined.Info
-            },
+            painter = painterResource(
+                when (lastWake) {
+                    WakeResultValue.OK -> R.drawable.ic_check_circle_fill
+                    WakeResultValue.FAILED -> R.drawable.ic_warning_circle
+                    WakeResultValue.UNKNOWN -> R.drawable.ic_info
+                },
+            ),
             contentDescription = null,
             modifier = Modifier.size(16.dp),
             tint = when (lastWake) {

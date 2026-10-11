@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
@@ -30,7 +29,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.custom_aod.R
-import com.decoutkhanqindev.custom_aod.presentation.components.AppTabTopBar
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionValue
 import com.decoutkhanqindev.custom_aod.presentation.screens.aodtab.components.AodTabDesignCard
@@ -40,7 +38,6 @@ import com.decoutkhanqindev.custom_aod.presentation.screens.aodtab.components.Ao
 import com.decoutkhanqindev.custom_aod.presentation.screens.aodtab.state.AodTabIntent
 import com.decoutkhanqindev.custom_aod.presentation.screens.aodtab.state.AodTabPermissionState
 import com.decoutkhanqindev.custom_aod.presentation.screens.aodtab.state.AodTabState
-import com.decoutkhanqindev.custom_aod.presentation.theme.BackgroundGradient
 import com.decoutkhanqindev.custom_aod.presentation.theme.BodyLarge
 import com.decoutkhanqindev.custom_aod.presentation.theme.GreyED
 import com.decoutkhanqindev.custom_aod.presentation.theme.MintAlpha12
@@ -54,9 +51,7 @@ fun AodTabContent(
     onIntent: (AodTabIntent) -> Unit,
 ) {
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(BackgroundGradient),
+        modifier = Modifier.fillMaxSize(),
     ) {
         AnimatedVisibility(
             visible = !state.isLoading,
@@ -67,22 +62,14 @@ fun AodTabContent(
                 modifier = Modifier
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
-                    .statusBarsPadding()
                     .padding(
                         horizontal = 20.dp,
                         vertical = 12.dp,
                     ),
             ) {
-                AppTabTopBar(
-                    title = stringResource(R.string.aod_tab_title),
-                    onIapClick = { onIntent(AodTabIntent.NavigateToIap) },
-                    onShareClick = { onIntent(AodTabIntent.ShareApp) },
-                )
-
                 AodSwitchBar(
                     isEnabled = state.isAodEnabled,
                     onIntent = onIntent,
-                    modifier = Modifier.padding(top = 16.dp),
                 )
 
                 AodTabPermissionWarning(

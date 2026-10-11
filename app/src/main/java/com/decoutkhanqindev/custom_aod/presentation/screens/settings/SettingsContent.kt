@@ -3,21 +3,16 @@ package com.decoutkhanqindev.custom_aod.presentation.screens.settings
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.decoutkhanqindev.custom_aod.R
-import com.decoutkhanqindev.custom_aod.presentation.components.AppTabTopBar
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.info.WakeResultValue
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodOptionsUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodRulesUiModel
@@ -34,7 +29,6 @@ import com.decoutkhanqindev.custom_aod.presentation.screens.settings.components.
 import com.decoutkhanqindev.custom_aod.presentation.screens.settings.state.SettingsIntent
 import com.decoutkhanqindev.custom_aod.presentation.screens.settings.state.SettingsRulesState
 import com.decoutkhanqindev.custom_aod.presentation.screens.settings.state.SettingsState
-import com.decoutkhanqindev.custom_aod.presentation.theme.BackgroundGradient
 import com.decoutkhanqindev.custom_aod.presentation.theme.Theme
 import kotlinx.collections.immutable.persistentListOf
 
@@ -44,9 +38,7 @@ fun SettingsContent(
     onIntent: (SettingsIntent) -> Unit,
 ) {
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(BackgroundGradient),
+        modifier = Modifier.fillMaxSize(),
     ) {
         AnimatedVisibility(
             visible = !state.isLoading,
@@ -57,18 +49,11 @@ fun SettingsContent(
                 modifier = Modifier
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
-                    .statusBarsPadding()
                     .padding(
                         horizontal = 20.dp,
                         vertical = 12.dp,
                     ),
             ) {
-                AppTabTopBar(
-                    title = stringResource(R.string.settings),
-                    onIapClick = { onIntent(SettingsIntent.NavigateToIap) },
-                    onShareClick = { onIntent(SettingsIntent.ShareApp) },
-                )
-
                 SettingsOptionsSection(
                     options = state.options,
                     isLandscape = state.appearance.isLandscape,

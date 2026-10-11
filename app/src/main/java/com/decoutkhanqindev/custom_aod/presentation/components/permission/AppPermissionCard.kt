@@ -1,5 +1,6 @@
 package com.decoutkhanqindev.custom_aod.presentation.components.permission
 
+import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
@@ -14,9 +15,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.ArrowForward
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,7 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
@@ -97,7 +95,7 @@ fun AppPermissionCard(
             contentAlignment = Alignment.Center,
         ) {
             Icon(
-                imageVector = permission.permission.icon,
+                painter = painterResource(permission.permission.iconRes),
                 contentDescription = null,
                 modifier = Modifier.size(24.dp),
                 tint = Mint,
@@ -138,12 +136,12 @@ fun AppPermissionCard(
         ) { granted ->
             if (granted) {
                 AppPermissionCardAction(
-                    icon = Icons.Filled.Check,
+                    iconRes = R.drawable.ic_check,
                     contentDescription = stringResource(R.string.permission_state_granted),
                 )
             } else {
                 AppPermissionCardAction(
-                    icon = Icons.AutoMirrored.Outlined.ArrowForward,
+                    iconRes = R.drawable.ic_arrow_right,
                     contentDescription = stringResource(R.string.action_allow),
                 )
             }
@@ -153,7 +151,7 @@ fun AppPermissionCard(
 
 @Composable
 private fun AppPermissionCardAction(
-    icon: ImageVector,
+    @DrawableRes iconRes: Int,
     contentDescription: String,
     modifier: Modifier = Modifier,
 ) {
@@ -164,7 +162,7 @@ private fun AppPermissionCardAction(
         contentAlignment = Alignment.Center,
     ) {
         Icon(
-            imageVector = icon,
+            painter = painterResource(iconRes),
             contentDescription = contentDescription,
             modifier = Modifier.size(24.dp),
             tint = Black,

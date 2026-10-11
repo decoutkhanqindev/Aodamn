@@ -18,8 +18,10 @@ sealed interface SettingsIntent {
     sealed interface Interaction : SettingsIntent {
         data class ShowGestureActionPicker(val gesture: AodGestureValue) : Interaction
         data object DismissGestureActionPicker : Interaction
-        data class ChangeGestureAction(val gesture: AodGestureValue, val action: AodActionValue) :
-            Interaction
+        data class ChangeGestureAction(
+            val gesture: AodGestureValue,
+            val action: AodActionValue
+        ) : Interaction
 
         data class ToggleAutoDim(val isEnabled: Boolean) : Interaction
         data class ToggleRaiseToWake(val isEnabled: Boolean) : Interaction
@@ -45,6 +47,4 @@ sealed interface SettingsIntent {
     }
 
     data object NavigateToLanguage : SettingsIntent
-    data object NavigateToIap : SettingsIntent
-    data object ShareApp : SettingsIntent
 }

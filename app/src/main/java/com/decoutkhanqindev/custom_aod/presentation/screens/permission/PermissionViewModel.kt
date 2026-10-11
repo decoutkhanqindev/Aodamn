@@ -44,7 +44,7 @@ class PermissionViewModel(
         val effect = when (permission) {
             PermissionValue.OVERLAY -> PermissionEffect.OpenOverlaySettings
             PermissionValue.MIUI_LOCK_SCREEN,
-            PermissionValue.MIUI_BACKGROUND_POPUP -> PermissionEffect.OpenMiuiPermissionSettings
+            PermissionValue.MIUI_BACKGROUND_POPUP -> PermissionEffect.OpenMiuiPermissionSettings(permission)
 
             PermissionValue.NOTIFICATIONS ->
                 if (permissionManager.needsNotificationPermission()) {

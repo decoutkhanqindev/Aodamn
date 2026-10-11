@@ -1,6 +1,5 @@
 package com.decoutkhanqindev.custom_aod.presentation.screens.permission
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,7 +23,6 @@ import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionU
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionValue
 import com.decoutkhanqindev.custom_aod.presentation.screens.permission.state.PermissionIntent
 import com.decoutkhanqindev.custom_aod.presentation.screens.permission.state.PermissionState
-import com.decoutkhanqindev.custom_aod.presentation.theme.BackgroundGradient
 import com.decoutkhanqindev.custom_aod.presentation.theme.GreyED
 import com.decoutkhanqindev.custom_aod.presentation.theme.Theme
 import kotlinx.collections.immutable.persistentListOf
@@ -35,9 +33,7 @@ fun PermissionContent(
     onIntent: (PermissionIntent) -> Unit,
 ) {
     Scaffold(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(BackgroundGradient),
+        modifier = Modifier.fillMaxSize(),
         topBar = {
             AppOnboardingTopBar(
                 step = OnboardingStepValue.PERMISSION,

@@ -1,7 +1,9 @@
 package com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance
 
 import androidx.compose.runtime.Immutable
+import androidx.compose.ui.graphics.Color
 import com.decoutkhanqindev.custom_aod.data.local.datastore.DataStoreManager
+import com.decoutkhanqindev.custom_aod.presentation.theme.GreyB4
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
@@ -10,7 +12,7 @@ import kotlinx.coroutines.flow.filterNotNull
 data class AodAppearanceUiModel(
     val face: ClockFaceValue = ClockFaceValue.DIGITAL,
     val font: ClockFontValue = ClockFontValue.DEFAULT,
-    val color: ClockColorValue = ClockColorValue.GREY,
+    val color: Color = GreyB4,
     val sizePercent: Int = DataStoreManager.DEFAULT_AOD_CLOCK_SIZE_PERCENT,
     val isLandscape: Boolean = DataStoreManager.DEFAULT_IS_AOD_LANDSCAPE,
 ) {
@@ -27,7 +29,7 @@ data class AodAppearanceUiModel(
 fun DataStoreManager.currentAodAppearance(): AodAppearanceUiModel = AodAppearanceUiModel(
     face = ClockFaceValue.fromCode(aodClockFace.value),
     font = ClockFontValue.fromCode(aodClockFont.value),
-    color = ClockColorValue.fromCode(aodClockColor.value),
+    color = clockColorOf(aodClockColor.value),
     sizePercent = aodClockSizePercent.value ?: DataStoreManager.DEFAULT_AOD_CLOCK_SIZE_PERCENT,
     isLandscape = isAodLandscape.value ?: DataStoreManager.DEFAULT_IS_AOD_LANDSCAPE,
 )
@@ -42,7 +44,7 @@ fun DataStoreManager.observeAodAppearance(): Flow<AodAppearanceUiModel> = combin
     AodAppearanceUiModel(
         face = ClockFaceValue.fromCode(face),
         font = ClockFontValue.fromCode(font),
-        color = ClockColorValue.fromCode(color),
+        color = clockColorOf(color),
         sizePercent = sizePercent,
         isLandscape = isLandscape,
     )

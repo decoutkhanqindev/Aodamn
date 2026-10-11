@@ -166,9 +166,6 @@ dependencies {
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
 
-    // Icons Extended
-    implementation(libs.androidx.compose.material.icons.extended)
-
     // Koin
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
@@ -181,6 +178,9 @@ dependencies {
 
     // Lottie
     implementation(libs.lottie.compose)
+
+    // Color picker
+    implementation(libs.colorpicker.compose)
 
     // Preferences DataStore
     implementation(libs.androidx.datastore.preferences)

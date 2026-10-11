@@ -116,12 +116,18 @@ bắt buộc (compiler không chặn hộ):
   `.copy(alpha = …)` trên màu theme (dùng biến thể `MintAlpha12`). Màu / chữ / bo góc mới → thêm
   `val` vào đúng file. `Theme { }` chỉ là cầu nối cho component Material 3. Không dựng tầng token
   hay object trung gian (đã thử và bỏ). Khoảng cách, `sp`, thời lượng, alpha viết số thẳng.
-- Nền màn app là `BackgroundGradient` (`Colors.kt`), mỗi màn / tab tự vẽ ở node gốc của Content
-  (Scaffold thì `containerColor = Color.Transparent` + `contentColor = GreyED`); `MainNavDisplay` không
-  vẽ nền. Màn AOD và Customize (khung xem trước AOD) giữ nền đen.
-- Thanh trên của màn dùng `AppTopBar` (căn giữa, nền trong suốt, chữ và icon `GreyED`), tab dùng
-  `AppTabTopBar`; không gọi `TopAppBar` / `CenterAlignedTopAppBar` thẳng, không tô màu riêng cho icon
-  trên thanh. Mint để cho trạng thái đang chọn / giá trị.
+- Nền màn app là `BackgroundGradient` (`Colors.kt`), vẽ một lần ở `AppNavDisplay`; màn, tab và
+  `Scaffold` để trong suốt (`containerColor = Color.Transparent` + `contentColor = GreyED`), không vẽ
+  lại. Màn AOD và Customize (khung xem trước AOD) tự vẽ nền đen.
+- Thanh trên của màn dùng `AppTopBar` (căn giữa, nền trong suốt, chữ và icon `GreyED`); không gọi
+  `TopAppBar` / `CenterAlignedTopAppBar` thẳng, không tô màu riêng cho icon trên thanh. Mint để cho
+  trạng thái đang chọn / giá trị.
+- Icon là VectorDrawable Phosphor (`res/drawable/ic_*.xml`, sinh từ `tools/icons/icons.txt` bằng
+  `tools/icons/import_phosphor.py`, không sửa tay) qua `painterResource`; không dùng `Icons.*` /
+  `ImageVector` của Material. Độ đậm theo chỗ: regular cho thanh / nút, fill cho tab đang chọn,
+  duotone cho ô `AppIconTile`, light trên màn AOD.
+- Slider và thanh tiến trình chỉ qua `AppSlider`: nhận `progress: () -> Int` và đọc trễ (snapshotFlow,
+  pha layout / vẽ), không đọc state trong composition; `onProgressChange = null` là chỉ hiển thị.
 - Màn AOD (`screens/aod/`) **không bọc `Theme`**, cả `@Preview`: bọc thì `Text` nhận
   `LocalTextStyle` làm đồng hồ đè lên dòng ngày. Cỡ chữ ở đó là `TextUnit` (`14.sp * scale`), chữ
   xám (`Grey8A` / `Grey6E` / `Grey5A`) để ít sáng, ít burn-in.
@@ -148,10 +154,11 @@ bắt buộc (compiler không chặn hộ):
   trong `AppNavDisplay` (hàm bọc `entry`, tự cấp `LocalTag` = tên class của destination;
   `AodActivity` tự cấp `"AodScreen"`). `NavDisplay` phải đủ 2 decorator (saveable state holder +
   ViewModel store).
-- Main = `MainNavDisplay` (theo mẫu `AppNavDisplay`): chỉ chứa `NavDisplay` của các tab và thanh tab,
-  không ViewModel. Tab là Screen đủ bộ (`AodTabScreen` / `EdgeLightScreen` / `SettingsScreen`, mỗi tab
-  ViewModel, effect, nền riêng), destination ở `navigation/MainDestinations.kt`, thứ tự và icon ở
-  `MainTabValue`. Tab AOD là gốc back stack tab; `screens/aod/` là màn AOD thật trên màn hình khoá.
+- Main = `MainNavDisplay` (theo mẫu `AppNavDisplay`): `Scaffold` chứa thanh trên chung của tab
+  (`MainTopBar`: tiêu đề theo tab, IAP / Share xử lý ngay đó), `NavDisplay` của các tab và thanh tab;
+  không ViewModel. Tab là Screen đủ bộ (`AodTabScreen` / `SettingsScreen` có ViewModel và effect
+  riêng; `EdgeLightScreen` còn là màn giữ chỗ), không tự vẽ thanh trên hay đệm thanh trạng thái;
+  destination ở `navigation/MainDestinations.kt`, thứ tự, icon và tiêu đề ở `MainTabValue`. Tab AOD là gốc back stack tab; `screens/aod/` là màn AOD thật trên màn hình khoá.
 - Chỉ Screen đụng `backStack`, ViewModel bắn Effect. Thay cả stack:
   `navigateTo(dest, preserveState = false)`; `navigateTo(dest)` xoá mọi màn giữa root và dest nên mở
   màn chồng lên dùng `backStack.add`; quay lại luôn `navigateBack()` (không `removeLast…`: back
