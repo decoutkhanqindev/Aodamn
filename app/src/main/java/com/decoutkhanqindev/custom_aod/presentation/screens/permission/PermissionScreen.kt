@@ -55,9 +55,7 @@ fun PermissionScreen(backStack: NavBackStack<NavKey>) {
 
                     is PermissionEffect.OpenNotificationSettings ->
                         context.openNotificationSettings {
-                            permissionManager.isGranted(
-                                PermissionValue.NOTIFICATIONS
-                            )
+                            permissionManager.isGranted(PermissionValue.NOTIFICATIONS)
                         }
 
                     is PermissionEffect.RequestNotificationPermission ->

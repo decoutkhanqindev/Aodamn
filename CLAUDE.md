@@ -126,6 +126,9 @@ bắt buộc (compiler không chặn hộ):
   `tools/icons/import_phosphor.py`, không sửa tay) qua `painterResource`; không dùng `Icons.*` /
   `ImageVector` của Material. Độ đậm theo chỗ: regular cho thanh / nút, fill cho tab đang chọn,
   duotone cho ô `AppIconTile`, light trên màn AOD.
+- Ảnh nền AOD mã 7–18 (`img_wallpaper_*.xml` có dòng "Sinh bằng") do `tools/wallpapers/generate_wallpapers.py`
+  sinh, không sửa tay. Thêm ảnh = hàm vẽ + dòng `WALLPAPERS` + mục `WallpaperValue` (alignment khớp dòng
+  script in ra) + chuỗi vi / en; vẽ chừa vùng đồng hồ, không logo / nhân vật / công trình có bản quyền.
 - Slider và thanh tiến trình chỉ qua `AppSlider`: nhận `progress: () -> Int` và đọc trễ (snapshotFlow,
   pha layout / vẽ), không đọc state trong composition; `onProgressChange = null` là chỉ hiển thị.
 - Màn AOD (`screens/aod/`) **không bọc `Theme`**, cả `@Preview`: bọc thì `Text` nhận

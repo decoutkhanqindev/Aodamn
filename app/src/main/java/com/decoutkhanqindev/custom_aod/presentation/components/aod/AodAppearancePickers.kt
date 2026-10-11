@@ -2,17 +2,18 @@ package com.decoutkhanqindev.custom_aod.presentation.components.aod
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -48,14 +49,19 @@ fun WallpaperPicker(
     selected: WallpaperValue?,
     onSelect: (WallpaperValue) -> Unit,
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .horizontalScroll(rememberScrollState())
-            .padding(vertical = 8.dp),
+    // Cuộn sẵn tới ảnh đang chọn (18 ảnh không vừa một màn hình); LazyRow chỉ dựng các ảnh đang thấy nên mở tab Nền không phải
+    // phân tích hết 18 vector một lượt.
+    val listState = rememberLazyListState(
+        initialFirstVisibleItemIndex = (WallpaperValue.entries.indexOf(selected) - 1).coerceAtLeast(0),
+    )
+
+    LazyRow(
+        modifier = Modifier.fillMaxWidth(),
+        state = listState,
+        contentPadding = PaddingValues(vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        WallpaperValue.entries.forEach { wallpaper ->
+        items(WallpaperValue.entries, key = { wallpaper -> wallpaper.code }) { wallpaper ->
             val isSelected = wallpaper == selected
 
             Column(

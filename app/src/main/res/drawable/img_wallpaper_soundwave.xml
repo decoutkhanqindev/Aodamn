@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?><!-- Ảnh nền AMOLED "Sóng âm" (WallpaperValue): nền đen, chi tiết mờ, chừa vùng giữa cho đồng hồ, giữ phần dưới khi cắt cho bố cục ngang. Viewport 1080×2400 = màn hình 9:20. Sinh bằng tools/wallpapers/generate_wallpapers.py, không sửa tay. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="90dp"
+    android:height="200dp"
+    android:viewportWidth="1080"
+    android:viewportHeight="2400">
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M0,0h1080v2400h-1080z" />
+    <path
+        android:pathData="M-100,2060a640,640 0 1,0 1280,0a640,640 0 1,0 -1280,0z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:centerX="540"
+                android:centerY="2060"
+                android:gradientRadius="640"
+                android:type="radial">
+                <item
+                    android:color="#1C8AB4F8"
+                    android:offset="0" />
+                <item
+                    android:color="#0B8AB4F8"
+                    android:offset="0.45" />
+                <item
+                    android:color="#008AB4F8"
+                    android:offset="1" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path
+        android:pathData="M60,2012.7V2060M84,1996V2060M108,1993.5V2060M132,1998.4V2060M156,1998.6V2060M180,1972.8V2060M204,1946.5V2060M228,1941.8V2060M252,1981.4V2060M276,1915.7V2060M300,1883V2060M324,1880.1V2060M348,1907.8V2060M372,1890.2V2060M396,1846.7V2060M420,1813.1V2060M444,1849.3V2060M468,1892.1V2060M492,1827.9V2060M516,1770.2V2060M540,1816.8V2060M564,1918.8V2060M588,1807.5V2060M612,1808V2060M636,1818V2060M660,1889.6V2060M684,1853.6V2060M708,1822V2060M732,1832.7V2060M756,1912.2V2060M780,1947.8V2060M804,1911.5V2060M828,1909.9V2060M852,1963.8V2060M876,1984.2V2060M900,1961.3V2060M924,1978.2V2060M948,1986.6V2060M972,2009.1V2060M996,2005.3V2060M1020,2008.3V2060"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:strokeWidth="13">
+        <aapt:attr name="android:strokeColor">
+            <gradient
+                android:endX="1020"
+                android:endY="0"
+                android:startX="60"
+                android:startY="0"
+                android:type="linear">
+                <item
+                    android:color="#F27FD1AE"
+                    android:offset="0" />
+                <item
+                    android:color="#F28AB4F8"
+                    android:offset="0.5" />
+                <item
+                    android:color="#F2C3A6FF"
+                    android:offset="1" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path
+        android:pathData="M60,2082V2100.9M84,2082V2107.6M108,2082V2108.6M132,2082V2106.6M156,2082V2106.6M180,2082V2116.9M204,2082V2127.4M228,2082V2129.3M252,2082V2113.5M276,2082V2139.7M300,2082V2152.8M324,2082V2154M348,2082V2142.9M372,2082V2149.9M396,2082V2167.3M420,2082V2180.7M444,2082V2166.3M468,2082V2149.2M492,2082V2174.8M516,2082V2197.9M540,2082V2179.3M564,2082V2138.5M588,2082V2183M612,2082V2182.8M636,2082V2178.8M660,2082V2150.2M684,2082V2164.5M708,2082V2177.2M732,2082V2172.9M756,2082V2141.1M780,2082V2126.9M804,2082V2141.4M828,2082V2142.1M852,2082V2120.5M876,2082V2112.3M900,2082V2121.5M924,2082V2114.7M948,2082V2111.4M972,2082V2102.4M996,2082V2103.9M1020,2082V2102.7"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:strokeWidth="13">
+        <aapt:attr name="android:strokeColor">
+            <gradient
+                android:endX="1020"
+                android:endY="0"
+                android:startX="60"
+                android:startY="0"
+                android:type="linear">
+                <item
+                    android:color="#387FD1AE"
+                    android:offset="0" />
+                <item
+                    android:color="#388AB4F8"
+                    android:offset="0.5" />
+                <item
+                    android:color="#38C3A6FF"
+                    android:offset="1" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path
+        android:pathData="M40,2071H1040"
+        android:strokeColor="#1FEDEDED"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:strokeWidth="2" />
+</vector>

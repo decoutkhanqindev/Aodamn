@@ -16,7 +16,7 @@ data class AodScheduleUiModel(
     fun isActiveAt(minuteOfDay: Int): Boolean = when {
         !isEnabled || startMinute == endMinute -> true
         startMinute < endMinute -> minuteOfDay in startMinute until endMinute
-        else -> minuteOfDay >= startMinute || minuteOfDay < endMinute
+        else -> minuteOfDay !in endMinute..<startMinute
     }
 
     fun minuteOf(time: ScheduleTimeValue): Int = when (time) {

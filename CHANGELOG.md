@@ -7,6 +7,19 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-10-11 – 12 ảnh nền AMOLED mới
+
+Build được (`assembleDebug`), `tools/check-rules.sh` ra 0 vi phạm (36 rule), đã test trên máy.
+
+### Thêm
+
+- 12 ảnh nền AMOLED có sẵn (`WallpaperValue` mã 7–18, tổng cộng 18 ảnh): Mưa sao băng, Hành tinh vành đai, Quỹ đạo, Núi trăng, Đom đóm, Hoa anh đào, Sứa phát sáng, Thành phố đêm, Pháo hoa, Đường đồng mức, Sóng âm, Đèn trời. Thiết kế duyệt trên canvas rồi sinh bằng code; nền đen, màu theo bảng màu app, chừa vùng giữa cho đồng hồ, tránh logo / nhân vật / công trình có bản quyền. Mỗi ảnh có chuỗi tiếng Việt và tiếng Anh.
+- `tools/wallpapers/generate_wallpapers.py`: sinh 12 file `res/drawable/img_wallpaper_*.xml` (VectorDrawable 1080×2400) từ các hàm vẽ, seed cố định nên chạy lại ra đúng file cũ; `--preview-svg <thư mục>` ghi thêm SVG để xem trong trình duyệt. Chạy: `python -I -X utf8 tools/wallpapers/generate_wallpapers.py`. Tổng thêm khoảng 280 KB XML (6 ảnh vẽ tay cũ giữ nguyên).
+
+### Thay đổi
+
+- Hàng chọn ảnh nền của Tùy chỉnh dùng `LazyRow` có key theo mã (chỉ dựng các ảnh đang thấy, không phân tích hết 18 vector một lượt) và tự cuộn tới ảnh đang chọn khi mở.
+
 ## [Chưa phát hành] – 2026-10-11 – Icon Phosphor, font Google Fonts, slider và color picker mới
 
 Build được (`assembleDebug`), `tools/check-rules.sh` ra 0 vi phạm (36 rule), đã test trên máy.
