@@ -7,6 +7,54 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-10-11 – Kiểu mặc định mới cho các khối AOD, màu riêng từng phần của Sỏi
+
+Build được (`assembleDebug`), lint không thêm cảnh báo, `tools/check-rules.sh` ra 0 vi phạm (36 rule), đã test trên máy.
+
+### Thay đổi
+
+- Kiểu mặc định của các khối dùng chung trên AOD lấy nét gradient mint → xanh → tím của app làm điểm nhận diện (`AccentGradient`, không tô nền để AOD ít sáng):
+  - Ngày: thứ in hoa theo màu chủ đề, chấm gradient, ngày tháng xám.
+  - Thông báo: mỗi app một vòng tròn viền mảnh, app mới nhất viền gradient; thông báo mới nhất trong thẻ viền gradient (`AodCard`).
+  - Pin và đèn pin gom thành một viên viền mảnh (`AodStatus`): pin tự vẽ theo mức, sạc thì tô gradient kèm tia sét, ≤ 15% thì đỏ.
+  - Nhạc (Cổ điển): thẻ viền gradient, nút phát trong vòng gradient, thanh tiến trình gradient như thanh trượt của app.
+  - Chữ của thông báo, sự kiện, pin, nhạc dùng font của app (Plus Jakarta Sans); ngày và ghi nhớ vẫn theo font chủ đề.
+- Sỏi: màu riêng cho khối giờ, số giờ, khối phút, số phút, ngày và nhạc (thay cho màu khối / màu số chung và lựa chọn "Số trên khối đặc"). Màn sửa: tab có nhiều màu thì gom thành chip chọn phần (chấm màu hiện tại) + một bảng màu. Icon trên nút phát tự đen / trắng theo độ sáng màu nhạc.
+- Lưới chủ đề ở tab AOD: bỏ khung thẻ, tên căn giữa; chủ đề đang dùng viền mint và có dấu tích phủ góc ảnh thay nhãn "Đang dùng".
+- Sự kiện và ghi nhớ thành thẻ viền gradient có vòng icon (như thẻ thông báo), thời tiết thành viên viền mảnh cạnh ngày (như viên pin). Khung dùng chung: `AodCard`, `AodPill`, `AodIconRing`. Icon mới bản light: note-pencil (calendar-check light giữ lại cho thẻ sự kiện).
+- Tùy chỉnh lúc onboarding có lại tab Đồng hồ (`CustomizeTabValue.isOnboardingOnly`) để user mới thấy hết app làm được gì: chỉ chủ đề Cổ điển như bản trước khi có chủ đề (mặt, font, màu, cỡ; `ClassicThemeSpec.OnboardingTab`), không chọn chủ đề; dùng đúng control của màn chủ đề (`AodThemeOptionList`, chuyển từ `screens/themeeditor/` sang `components/aod/`), Áp dụng thì lưu cấu hình. Mở từ tab AOD thì không có tab này và Đặt lại giữ chủ đề đang dùng. Hướng dẫn nhóm Giao diện đổi chữ theo.
+- `AppSlider` chỉ hiển thị (`onProgressChange = null`: splash, thanh nhạc) không đi qua Slider của Material nữa (nó đọc `value` trong composition): `progress` gọi ở pha vẽ của track, thumb ở pha layout, nên tiến trình đổi chỉ vẽ lại. `AodMediaProgress` dùng chung cho thanh nhạc của mọi chủ đề.
+
+### Xoá
+
+- Lựa chọn "Số trên khối đặc" (`AodDigitToneValue`) và chuỗi của nó, chuỗi "Màu khối" / "Màu số" chung của Sỏi.
+
+## [Chưa phát hành] – 2026-10-11 – Hệ chủ đề AOD, chủ đề Cổ điển và Sỏi (kèm trình phát nhạc riêng)
+
+Build được (`assembleDebug`), lint không thêm cảnh báo, `tools/check-rules.sh` ra 0 vi phạm (36 rule), đã test trên máy.
+
+### Thêm
+
+- Hệ chủ đề (`presentation/model/aod/theme/`): mỗi chủ đề khai báo tab và thuộc tính sửa được (`AodThemeOption`: lựa chọn, màu, khoảng số, bật tắt), giá trị lưu thành Int theo khoá trong `AodThemeConfig`; phần vẽ chọn trong `AodClockFace`. Chủ đề đang dùng lưu ở `aod_theme_id`, cấu hình mọi chủ đề ở một chuỗi `aod_theme_configs`.
+- Chủ đề Cổ điển: 4 mặt đồng hồ có từ trước (số, số xếp chồng, kim, kim tối giản) với font, màu, cỡ. Chưa lưu lần nào thì lấy mặt / font / màu / cỡ đã chọn ở bản trước, nên máy đang dùng không mất cài đặt.
+- Chủ đề Sỏi: giờ và phút mỗi số một khối hình mềm, 8 hình (vuông bo, viên sỏi, lục giác, bốn cánh, tròn, bánh quy, hoa, sao), mỗi khối đặc hoặc viền; font; số trên khối đặc tối hoặc theo màu số; cỡ; xếp giờ trên phút; màu khối, màu số (color picker có sẵn); dòng ngày in hoa đậm hoặc thường; animation khi đổi phút: trượt, phóng hoặc nảy hình (hình co và đổi dần sang tròn rồi về). Hình là hàm bán kính quanh tâm nên đổi hình chỉ là nội suy; giá trị animation đọc ở pha vẽ.
+- Trình phát nhạc riêng của Sỏi (`AodPebbleMedia`, chọn trong `AodMediaControls` theo chủ đề như `AodClockFace`): tên bài và nghệ sĩ theo font chủ đề, nút phát nằm trong khối hình màu khối (chọn 1 trong 8 hình, xoay khi phát / dừng, icon tối hoặc theo màu số như chữ số), thanh tiến trình gợn sóng lúc phát, duỗi thẳng lúc dừng, hoặc kiểu thẳng / ẩn (tab Nhạc). Vị trí bài lấy từ media session (vị trí, độ dài, tốc độ phát; `MediaProgress`) và nội suy mỗi giây trong `AppSlider` nên đồng hồ không recompose theo tiến trình; app nhạc không báo độ dài (radio, livestream) thì không có thanh.
+- Màn chủ đề (`screens/themeeditor/`, `ThemeEditorDestination`) dùng chung cho mọi chủ đề: xem trước toàn màn với phần chung đang dùng (Sửa / Áp dụng; Áp dụng xong ở lại màn, thanh trên ghi "Đang dùng" và nút đổi thành "Tùy chỉnh thêm" mở Tùy chỉnh, quay về thì khung xem trước nạp lại phần chung), sửa theo tab của chủ đề (hoàn tác, làm lại, đặt lại, Lưu), Back khi còn thay đổi chưa lưu thì hỏi bỏ thay đổi.
+- Tab AOD: lưới chủ đề thay phần "Chủ đề sắp có"; mỗi thẻ là AOD thu nhỏ của chủ đề đó, chủ đề đang dùng có nhãn "Đang dùng". Thẻ "Giao diện của bạn" ghi tên chủ đề đang dùng.
+- Component dùng chung: `AodThumbnail` (AOD thu nhỏ, dùng ở thẻ "Giao diện của bạn" và thẻ chủ đề), `AppEditorPanel` và `AppEditorTab` (tấm chỉnh và tab, dùng ở Tùy chỉnh và màn chủ đề). Icon mới: timer, text-aa, palette, magic-wand, pencil-simple; play, pause, skip-back, skip-forward bản fill cho trình phát Sỏi. Màu `Grey3A` cho phần chưa phát của thanh nhạc.
+- `AppSlider` nhận `track` để vẽ thanh riêng (thanh nhạc gợn sóng), mặc định vẫn là thanh gradient cũ.
+
+### Thay đổi
+
+- Tùy chỉnh bỏ tab Đồng hồ (mặt, font, màu, cỡ chuyển sang màn chủ đề); hướng dẫn nhóm Giao diện đổi chữ theo.
+- Ngày, thời tiết, ghi chú, nét vẽ lấy font và màu theo chủ đề đang dùng; chủ đề tự vẽ dòng ngày (Sỏi) thì khối chung không vẽ lại.
+- Màn chủ đề lúc Sửa luôn hiện dòng ngày và trình phát mẫu (kể cả khi đã tắt ở Tùy chỉnh) để tab Ngày / Nhạc thấy được thay đổi; bản xem trước có thanh tiến trình mẫu đứng yên.
+- Font variable khai báo đủ độ đậm Thin → Bold: chữ số Sỏi in đậm được, mặt Số của Cổ điển với font Mặc định về đúng nét mảnh (trước đó bị vẽ ở độ đậm Normal).
+
+### Xoá
+
+- `saveAodClockFace` / `Font` / `Color` / `SizePercent` của DataStore (key cũ chỉ còn đọc để chuyển sang chủ đề Cổ điển), các intent và panel đồng hồ của Tùy chỉnh, chuỗi "Chủ đề sắp có" và "Mặc định" của thẻ giao diện.
+
 ## [Chưa phát hành] – 2026-10-11 – 12 ảnh nền AMOLED mới
 
 Build được (`assembleDebug`), `tools/check-rules.sh` ra 0 vi phạm (36 rule), đã test trên máy.

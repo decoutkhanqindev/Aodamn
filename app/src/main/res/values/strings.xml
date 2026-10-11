@@ -44,10 +44,58 @@
     <string name="aod_tab_title" translatable="false">Always On Display</string>
     <string name="opt_enabled">Show the clock when the screen turns off</string>
     <string name="aod_tab_design_title">Your design</string>
-    <string name="aod_tab_design_default">Default</string>
     <string name="aod_tab_themes_title">Themes</string>
-    <string name="aod_tab_themes_soon_title">Ready-made themes are on the way</string>
-    <string name="aod_tab_themes_soon_desc">Meanwhile, you can customize your own design in the card above.</string>
+    <string name="theme_classic">Classic</string>
+    <string name="theme_pebble">Pebble</string>
+    <string name="theme_in_use">In use</string>
+    <string name="theme_customize_more">Customize more</string>
+    <string name="theme_edit">Edit</string>
+    <string name="theme_saved">Theme saved</string>
+    <string name="theme_applied">Theme applied</string>
+    <string name="theme_discard_title">Discard changes?</string>
+    <string name="theme_discard_desc">Your unsaved changes to this theme will be lost.</string>
+    <string name="theme_discard_confirm">Discard</string>
+    <string name="theme_tab_clock">Clock</string>
+    <string name="theme_tab_font">Font</string>
+    <string name="theme_tab_hour">Hour</string>
+    <string name="theme_tab_minute">Minute</string>
+    <string name="theme_tab_digits">Digits</string>
+    <string name="theme_tab_color">Color</string>
+    <string name="theme_tab_date">Date</string>
+    <string name="theme_tab_effects">Effects</string>
+    <string name="theme_tab_media">Music</string>
+    <string name="theme_opt_shape">Shape</string>
+    <string name="theme_opt_tile_style">Style</string>
+    <string name="tile_style_filled">Filled</string>
+    <string name="tile_style_outline">Outline</string>
+    <string name="theme_opt_stacked">Hour above minute</string>
+    <string name="theme_color_hour_tile">Hour tile</string>
+    <string name="theme_color_hour_digits">Hour digits</string>
+    <string name="theme_color_minute_tile">Minute tile</string>
+    <string name="theme_color_minute_digits">Minute digits</string>
+    <string name="theme_color_date">Date</string>
+    <string name="theme_color_media">Music</string>
+    <string name="theme_opt_date_style">Date style</string>
+    <string name="date_style_bold">Bold caps</string>
+    <string name="date_style_plain">Plain</string>
+    <string name="theme_opt_transition">When the minute changes</string>
+    <string name="theme_opt_play_shape">Play button shape</string>
+    <string name="theme_opt_progress_style">Progress bar</string>
+    <string name="transition_none">None</string>
+    <string name="transition_slide">Slide</string>
+    <string name="transition_zoom">Zoom</string>
+    <string name="transition_pulse">Pulse</string>
+    <string name="progress_style_wave">Wavy</string>
+    <string name="progress_style_line">Straight</string>
+    <string name="progress_style_hidden">Hidden</string>
+    <string name="shape_squircle">Rounded square</string>
+    <string name="shape_pebble">Pebble</string>
+    <string name="shape_hexagon">Hexagon</string>
+    <string name="shape_clover">Clover</string>
+    <string name="shape_circle">Circle</string>
+    <string name="shape_cookie">Cookie</string>
+    <string name="shape_flower">Flower</string>
+    <string name="shape_star">Star</string>
 
     <!-- Tab Edge Light -->
     <string name="edge_light_soon_title">Edge Light is coming soon</string>
@@ -216,6 +264,9 @@
     <string name="aod_hour_pattern_12h" translatable="false">hh</string>
     <string name="aod_minute_pattern" translatable="false">mm</string>
     <string name="aod_date_pattern" translatable="false">EEE, d MMM</string>
+    <string name="aod_date_weekday_pattern" translatable="false">EEEE</string>
+    <string name="aod_date_day_pattern" translatable="false">d MMMM</string>
+    <string name="aod_theme_date_pattern" translatable="false">EEEE • d MMM</string>
     <string name="aod_hint">Double-tap to exit</string>
     <string name="aod_battery" translatable="false">%1$d%%</string>
     <string name="aod_battery_charging">Charging · %1$d%%</string>
@@ -257,7 +308,7 @@
     <string name="customize_guide_preview_title">This is your clock</string>
     <string name="customize_guide_preview_desc">Everything you change shows up here right away, just like when the screen is off.</string>
     <string name="customize_guide_appearance_title">Clock, date and battery</string>
-    <string name="customize_guide_appearance_desc">Pick a clock face, font, color and size, and choose whether the date and battery level show.</string>
+    <string name="customize_guide_appearance_desc">Pick a clock face, font, color and size, and choose whether the date and battery level show. More themes are in AOD › Themes.</string>
     <string name="customize_guide_decor_title">Background, drawing and memo</string>
     <string name="customize_guide_decor_desc">Add a dark wallpaper or your own photo, a quick drawing or a short note.</string>
     <string name="customize_guide_info_title">Notifications, events and weather</string>

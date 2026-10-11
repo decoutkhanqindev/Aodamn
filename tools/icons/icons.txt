@@ -5,6 +5,9 @@
 regular: arrow-left arrow-right arrow-u-up-left arrow-u-up-right arrow-counter-clockwise caret-right x check minus question info warning-circle wifi-slash
 regular: crown-simple share-network clock device-mobile gear-six calendar-blank battery-full image paint-brush note-pencil bell calendar-check cloud-sun music-notes sparkle
 
+# Tab và nút của màn sửa chủ đề
+regular: timer text-aa palette magic-wand pencil-simple
+
 # Tab đang chọn và dấu hoàn thành
 fill: clock device-mobile gear-six check-circle
 
@@ -14,5 +17,8 @@ duotone: hand-tap arrow-fat-lines-up arrow-fat-lines-down speaker-high speaker-l
 duotone: stack lock-simple picture-in-picture bell bell-ringing calendar map-pin translate pencil-simple sparkle crown-simple
 
 # Màn AOD trên màn hình khoá: nét mảnh để hợp đồng hồ Thin và đỡ burn-in
-light: flashlight calendar-check skip-back play pause skip-forward
+light: flashlight calendar-check note-pencil skip-back play pause skip-forward lightning
 light: sun moon-stars cloud-sun cloud-moon cloud cloud-fog drop cloud-rain cloud-snow cloud-lightning
+
+# Trình phát nhạc của chủ đề Sỏi: nét đặc hợp chữ số đậm của khối
+fill: play pause skip-back skip-forward

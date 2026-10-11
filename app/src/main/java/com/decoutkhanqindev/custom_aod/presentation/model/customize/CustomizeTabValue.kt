@@ -6,15 +6,22 @@ import androidx.compose.runtime.Immutable
 import com.decoutkhanqindev.custom_aod.R
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionValue
 
-// Mỗi tab chỉnh một phần trên AOD; permission = quyền phải có thì phần đó mới hiện được trên AOD thật.
+// Mỗi tab chỉnh một phần trên AOD; permission = quyền phải có thì phần đó mới hiện được trên AOD thật. isOnboardingOnly: chỉ hiện
+// lúc mở app lần đầu để user mới thấy hết app làm được gì (chọn chủ đề đồng hồ); sau đó chỉnh ở tab AOD › Chủ đề.
 @Immutable
 enum class CustomizeTabValue(
     val cluster: CustomizeClusterValue,
     @param:DrawableRes val iconRes: Int,
     @param:StringRes val labelRes: Int,
     val permission: PermissionValue? = null,
+    val isOnboardingOnly: Boolean = false,
 ) {
-    CLOCK(CustomizeClusterValue.APPEARANCE, R.drawable.ic_clock, R.string.customize_tab_clock),
+    CLOCK(
+        CustomizeClusterValue.APPEARANCE,
+        R.drawable.ic_clock,
+        R.string.customize_tab_clock,
+        isOnboardingOnly = true,
+    ),
     DATE(
         CustomizeClusterValue.APPEARANCE,
         R.drawable.ic_calendar_blank,
@@ -63,3 +70,5 @@ enum class CustomizeTabValue(
         PermissionValue.NOTIFICATION_ACCESS,
     ),
 }
+
+fun CustomizeTabValue.isShown(isFirstOpen: Boolean): Boolean = isFirstOpen || !isOnboardingOnly

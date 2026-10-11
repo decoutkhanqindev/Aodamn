@@ -14,18 +14,17 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.snapshots.Snapshot
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithCache
@@ -34,7 +33,10 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.progressBarRangeInfo
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.tooling.preview.Preview
@@ -52,13 +54,11 @@ import com.decoutkhanqindev.custom_aod.utils.collectLatestCatching
 import timber.log.Timber
 import kotlin.math.roundToInt
 
-// Slider theo số nguyên có bước (giá trị = min + vị trí * step). Mọi đọc state đều trễ khỏi composition: progress chỉ được gọi trong
-// snapshotFlow, vị trí thumb do Slider đặt ở pha layout, track và hiệu ứng nhấn đọc ở pha vẽ; kéo không làm AppSlider recompose.
-// Thumb theo ngón tay bằng SliderState cục bộ, chỉ gọi onProgressChange khi sang bước khác nên không phụ thuộc độ trễ ghi DataStore /
-// ViewModel; giá trị đổi từ ngoài (hoàn tác, đặt lại, bị từ chối) kéo thumb theo khi không kéo. onProgressChange = null: chỉ hiển thị
-// tiến trình (splash), không nhận chạm nhưng không mờ như isEnabled = false, bỏ vùng chạm tối thiểu 48dp nên cao đúng bằng thumb / track.
-// isThumbVisible = false: không vẽ thumb, track trải hết chiều ngang.
-@OptIn(ExperimentalMaterial3Api::class)
+// Thanh theo số nguyên có bước (giá trị = min + vị trí * step). onProgressChange = null: chỉ hiển thị tiến trình (splash, thanh nhạc
+// trên AOD), không đi qua Slider của Material vì SliderImpl đọc state.value ngay trong composition (tham số slideOnKeyEvents) nên
+// recompose mỗi lần tiến trình đổi; progress được gọi ở pha vẽ của track và pha layout của thumb nên tiến trình đổi chỉ vẽ lại, cao
+// đúng bằng thumb / track. isThumbVisible = false: không vẽ thumb, track trải hết chiều ngang. track thay thanh mặc định (vd thanh nhạc
+// gợn sóng của chủ đề AOD), nhận fraction đọc ở pha vẽ.
 @Composable
 fun AppSlider(
     progress: () -> Int,
@@ -70,6 +70,99 @@ fun AppSlider(
     valueText: String? = null,
     isEnabled: Boolean = true,
     isThumbVisible: Boolean = true,
+    track: @Composable (fraction: () -> Float) -> Unit = { fraction -> AppSliderTrack(fraction = fraction, isEnabled = isEnabled) },
+) {
+    if (onProgressChange == null) {
+        AppProgressBar(
+            progress = progress,
+            valueRange = valueRange,
+            modifier = modifier,
+            label = label,
+            valueText = valueText,
+            isEnabled = isEnabled,
+            isThumbVisible = isThumbVisible,
+            track = track,
+        )
+    } else {
+        AppInteractiveSlider(
+            progress = progress,
+            valueRange = valueRange,
+            step = step,
+            onProgressChange = onProgressChange,
+            modifier = modifier,
+            label = label,
+            valueText = valueText,
+            isEnabled = isEnabled,
+            isThumbVisible = isThumbVisible,
+            track = track,
+        )
+    }
+}
+
+@Composable
+private fun AppProgressBar(
+    progress: () -> Int,
+    valueRange: IntRange,
+    modifier: Modifier,
+    label: String?,
+    valueText: String?,
+    isEnabled: Boolean,
+    isThumbVisible: Boolean,
+    track: @Composable (fraction: () -> Float) -> Unit,
+) {
+    val currentProgress by rememberUpdatedState(progress)
+    val fraction = remember(valueRange) {
+        {
+            val span = (valueRange.last - valueRange.first).coerceAtLeast(1)
+            ((currentProgress() - valueRange.first).toFloat() / span).coerceIn(0f, 1f)
+        }
+    }
+
+    Box(
+        modifier = modifier.semantics {
+            label?.let { contentDescription = it }
+            valueText?.let { stateDescription = it }
+            progressBarRangeInfo = ProgressBarRangeInfo(
+                current = currentProgress().toFloat(),
+                range = valueRange.first.toFloat()..valueRange.last.toFloat(),
+            )
+        },
+        contentAlignment = Alignment.CenterStart,
+    ) {
+        track(fraction)
+
+        if (isThumbVisible) {
+            Box(
+                modifier = Modifier.layout { measurable, constraints ->
+                    val placeable = measurable.measure(constraints.copy(minWidth = 0, minHeight = 0))
+                    val width = if (constraints.hasBoundedWidth) constraints.maxWidth else placeable.width
+                    layout(width, placeable.height) {
+                        placeable.placeRelative(x = ((width - placeable.width) * fraction()).roundToInt(), y = 0)
+                    }
+                },
+            ) {
+                AppSliderThumb(pressProgress = { 0f }, isEnabled = isEnabled)
+            }
+        }
+    }
+}
+
+// Thumb theo ngón tay bằng SliderState cục bộ, chỉ gọi onProgressChange khi sang bước khác nên không phụ thuộc độ trễ ghi DataStore /
+// ViewModel; giá trị đổi từ ngoài (hoàn tác, đặt lại, bị từ chối) kéo thumb theo khi không kéo. progress chỉ được gọi trong snapshotFlow,
+// track và hiệu ứng nhấn đọc ở pha vẽ nên kéo không làm AppSlider recompose (Slider của Material bên trong vẫn recompose theo value).
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun AppInteractiveSlider(
+    progress: () -> Int,
+    valueRange: IntRange,
+    step: Int,
+    onProgressChange: (Int) -> Unit,
+    modifier: Modifier,
+    label: String?,
+    valueText: String?,
+    isEnabled: Boolean,
+    isThumbVisible: Boolean,
+    track: @Composable (fraction: () -> Float) -> Unit,
 ) {
     val tag = LocalTag.current
     val stepCount = (valueRange.last - valueRange.first) / step
@@ -100,7 +193,7 @@ fun AppSlider(
         snapshotFlow { sliderState.value.roundToInt() }.collectCatching(
             block = { position ->
                 val value = valueRange.first + position * step
-                if (value != currentProgress()) currentOnProgressChange?.invoke(value)
+                if (value != currentProgress()) currentOnProgressChange(value)
             },
             catch = { e -> Timber.tag(tag).e(e.stackTraceToString()) },
         )
@@ -126,40 +219,29 @@ fun AppSlider(
         )
     }
 
-    CompositionLocalProvider(
-        LocalMinimumInteractiveComponentSize provides if (onProgressChange == null) {
-            0.dp
-        } else {
-            LocalMinimumInteractiveComponentSize.current
+    Slider(
+        state = sliderState,
+        modifier = modifier.semantics {
+            label?.let { contentDescription = it }
+            valueText?.let { stateDescription = it }
         },
-    ) {
-        Slider(
-            state = sliderState,
-            modifier = modifier.semantics {
-                label?.let { contentDescription = it }
-                valueText?.let { stateDescription = it }
-            },
-            enabled = isEnabled && onProgressChange != null,
-            interactionSource = interactionSource,
-            thumb = {
-                if (isThumbVisible) {
-                    AppSliderThumb(
-                        pressProgress = { pressProgress.value },
-                        isEnabled = isEnabled,
-                    )
-                }
-            },
-            track = {
-                AppSliderTrack(
-                    fraction = {
-                        val range = sliderState.valueRange
-                        ((sliderState.value - range.start) / (range.endInclusive - range.start)).coerceIn(0f, 1f)
-                    },
+        enabled = isEnabled,
+        interactionSource = interactionSource,
+        thumb = {
+            if (isThumbVisible) {
+                AppSliderThumb(
+                    pressProgress = { pressProgress.value },
                     isEnabled = isEnabled,
                 )
-            },
-        )
-    }
+            }
+        },
+        track = {
+            track {
+                val range = sliderState.valueRange
+                ((sliderState.value - range.start) / (range.endInclusive - range.start)).coerceIn(0f, 1f)
+            }
+        },
+    )
 }
 
 @Composable

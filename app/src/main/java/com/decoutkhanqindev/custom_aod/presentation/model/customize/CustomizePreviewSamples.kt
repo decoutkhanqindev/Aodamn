@@ -9,6 +9,7 @@ import androidx.core.graphics.createBitmap
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.info.AodNotificationsUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.info.BatteryUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.info.CalendarEventUiModel
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.info.MediaProgressUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.info.MediaUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.info.NotificationContentUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.info.NotificationIconUiModel
@@ -41,6 +42,8 @@ data class CustomizePreviewSamples(
         private const val TEMPERATURE_C = 28
         private const val TEMPERATURE_F = 82
         private const val HOUR_MILLIS = 60 * 60_000L
+        private const val MEDIA_DURATION_MILLIS = 210_000L
+        private const val MEDIA_POSITION_MILLIS = 130_000L
 
         // Thao tác và phím âm lượng của AOD tắt hết để không chặn thao tác của màn tùy chỉnh.
         private val PreviewInteraction = AodInteractionUiModel(
@@ -140,6 +143,12 @@ data class CustomizePreviewSamples(
                 isPlaying = true,
                 canSkipToPrevious = true,
                 canSkipToNext = true,
+                progress = MediaProgressUiModel(
+                    durationMillis = MEDIA_DURATION_MILLIS,
+                    positionMillis = MEDIA_POSITION_MILLIS,
+                    updatedAtMillis = 0L,
+                    speed = 0f,
+                ),
             ).takeIf { info.isMediaControlsEnabled },
             isHintVisible = false,
             isGlowing = isGlowing,

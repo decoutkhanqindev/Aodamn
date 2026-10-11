@@ -19,6 +19,7 @@ import com.decoutkhanqindev.custom_aod.presentation.effects.LaunchedWithLifecycl
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionValue
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.isGranted
 import com.decoutkhanqindev.custom_aod.presentation.navigation.CustomizeDestination
+import com.decoutkhanqindev.custom_aod.presentation.navigation.ThemeEditorDestination
 import com.decoutkhanqindev.custom_aod.presentation.screens.aodtab.state.AodTabEffect
 import com.decoutkhanqindev.custom_aod.presentation.screens.aodtab.state.AodTabIntent
 import com.decoutkhanqindev.custom_aod.utils.collectCatching
@@ -52,6 +53,8 @@ fun AodTabScreen(backStack: NavBackStack<NavKey>) {
                     is AodTabEffect.NavigateToCustomize -> backStack.add(
                         CustomizeDestination(isFirstOpen = false)
                     )
+
+                    is AodTabEffect.NavigateToThemeEditor -> backStack.add(ThemeEditorDestination(effect.themeId))
 
                     is AodTabEffect.OpenOverlaySettings ->
                         context.openOverlaySettings { permissionManager.isGranted(PermissionValue.OVERLAY) }

@@ -114,6 +114,7 @@ fun CustomizeContent(
             )
 
             CustomizeTabBar(
+                isFirstOpen = state.isFirstOpen,
                 selectedTab = state.selectedTab,
                 guideStep = state.guideStep,
                 onIntent = onIntent,
@@ -205,6 +206,22 @@ private fun CustomizeContentPreview() {
         CustomizeContent(
             state = CustomizeState(
                 isLoading = false,
+                nowMillis = System.currentTimeMillis(),
+                selectedTab = CustomizeTabValue.DATE,
+            ),
+            onIntent = {},
+        )
+    }
+}
+
+@Preview(widthDp = 360, heightDp = 760)
+@Composable
+private fun CustomizeContentOnboardingClockPreview() {
+    Theme {
+        CustomizeContent(
+            state = CustomizeState(
+                isLoading = false,
+                isFirstOpen = true,
                 nowMillis = System.currentTimeMillis(),
                 selectedTab = CustomizeTabValue.CLOCK,
             ),

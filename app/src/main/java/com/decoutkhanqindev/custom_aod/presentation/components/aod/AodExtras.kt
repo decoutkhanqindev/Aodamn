@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,19 +22,24 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.decoutkhanqindev.custom_aod.R
 import com.decoutkhanqindev.custom_aod.presentation.components.rememberTimeFormatter
 import com.decoutkhanqindev.custom_aod.presentation.components.rememberZonedDateTime
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.info.CalendarEventUiModel
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.info.WeatherConditionValue
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.info.WeatherUiModel
-import com.decoutkhanqindev.custom_aod.presentation.theme.Grey6E
+import com.decoutkhanqindev.custom_aod.presentation.theme.FontFamilyPlusJakartaSans
 import com.decoutkhanqindev.custom_aod.presentation.theme.Grey8A
+import com.decoutkhanqindev.custom_aod.presentation.theme.GreyB4
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
+// Viên viền mảnh cạnh dòng ngày, như viên pin.
 @Composable
 fun AodWeather(
     weather: WeatherUiModel?,
@@ -47,22 +51,18 @@ fun AodWeather(
         label = "AodWeather",
     ) { target ->
         if (target != null) {
-            Row(
-                modifier = Modifier.padding(start = 12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
+            AodPill(modifier = Modifier.padding(start = 12.dp)) {
                 Icon(
                     painter = painterResource(target.iconRes),
                     contentDescription = stringResource(target.condition.labelRes),
-                    modifier = Modifier.size(18.dp),
+                    modifier = Modifier.size(16.dp),
                     tint = Grey8A,
                 )
 
                 Text(
                     text = stringResource(R.string.aod_weather_temperature, target.temperature),
-                    modifier = Modifier.padding(start = 4.dp),
-                    color = Grey8A,
-                    fontSize = 16.sp,
+                    color = GreyB4,
+                    fontSize = 14.sp,
                     fontFamily = fontFamily,
                 )
             }
@@ -70,6 +70,7 @@ fun AodWeather(
     }
 }
 
+// Thẻ như thẻ thông báo: vòng icon lịch, mỗi sự kiện một dòng giờ bắt đầu + tên.
 @Composable
 fun AodEvents(events: ImmutableList<CalendarEventUiModel>) {
     val timeFormatter = rememberTimeFormatter()
@@ -80,44 +81,49 @@ fun AodEvents(events: ImmutableList<CalendarEventUiModel>) {
         label = "AodEvents",
     ) { target ->
         if (target.isNotEmpty()) {
-            Column(
-                modifier = Modifier
-                    .padding(top = 12.dp)
-                    .animateContentSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-            ) {
-                target.forEach { event ->
-                    key(event.beginMillis, event.title) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_calendar_check_light),
-                                contentDescription = null,
-                                modifier = Modifier.size(14.dp),
-                                tint = Grey6E,
-                            )
+            AodCard(modifier = Modifier.padding(top = 16.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    AodIconRing(size = 32.dp) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_calendar_check_light),
+                            contentDescription = null,
+                            modifier = Modifier.size(16.dp),
+                            tint = GreyB4,
+                        )
+                    }
 
-                            Text(
-                                text = if (event.isAllDay) {
-                                    stringResource(R.string.aod_event_all_day)
-                                } else {
-                                    rememberZonedDateTime(event.beginMillis).format(timeFormatter)
-                                },
-                                modifier = Modifier.padding(start = 6.dp),
-                                color = Grey6E,
-                                fontSize = 13.sp,
-                            )
+                    Column(
+                        modifier = Modifier
+                            .padding(start = 12.dp)
+                            .animateContentSize(),
+                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                    ) {
+                        target.forEach { event ->
+                            key(event.beginMillis, event.title) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text(
+                                        text = if (event.isAllDay) {
+                                            stringResource(R.string.aod_event_all_day)
+                                        } else {
+                                            rememberZonedDateTime(event.beginMillis).format(timeFormatter)
+                                        },
+                                        color = GreyB4,
+                                        fontSize = 13.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        fontFamily = FontFamilyPlusJakartaSans,
+                                    )
 
-                            Text(
-                                text = event.title,
-                                modifier = Modifier
-                                    .padding(start = 8.dp)
-                                    .widthIn(max = 220.dp),
-                                color = Grey8A,
-                                fontSize = 13.sp,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                            )
+                                    Text(
+                                        text = event.title,
+                                        modifier = Modifier.padding(start = 8.dp),
+                                        color = Grey8A,
+                                        fontSize = 14.sp,
+                                        fontFamily = FontFamilyPlusJakartaSans,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis,
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -126,24 +132,41 @@ fun AodEvents(events: ImmutableList<CalendarEventUiModel>) {
     }
 }
 
+// Thẻ như thẻ thông báo: vòng icon ghi chú, chữ theo font chủ đề.
 @Composable
 fun AodMemo(
     memo: String,
     fontFamily: FontFamily,
 ) {
-    if (memo.isNotBlank()) {
-        Text(
-            text = memo,
-            modifier = Modifier
-                .padding(top = 12.dp)
-                .widthIn(max = 280.dp),
-            color = Grey8A,
-            fontSize = 14.sp,
-            fontFamily = fontFamily,
-            textAlign = TextAlign.Center,
-            maxLines = 3,
-            overflow = TextOverflow.Ellipsis,
-        )
+    AnimatedContent(
+        targetState = memo.trim(),
+        contentKey = { it.isEmpty() },
+        label = "AodMemo",
+    ) { text ->
+        if (text.isNotEmpty()) {
+            AodCard(modifier = Modifier.padding(top = 12.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    AodIconRing(size = 32.dp) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_note_pencil_light),
+                            contentDescription = null,
+                            modifier = Modifier.size(16.dp),
+                            tint = GreyB4,
+                        )
+                    }
+
+                    Text(
+                        text = text,
+                        modifier = Modifier.padding(start = 12.dp),
+                        color = GreyB4,
+                        fontSize = 14.sp,
+                        fontFamily = fontFamily,
+                        maxLines = 3,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -167,5 +190,31 @@ fun AodDrawing(
                 colorFilter = ColorFilter.tint(color),
             )
         }
+    }
+}
+
+
+@Preview(widthDp = 360)
+@Composable
+private fun AodExtrasPreview() {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        AodWeather(
+            weather = WeatherUiModel(
+                temperature = 28,
+                condition = WeatherConditionValue.CLEAR,
+                isDay = true,
+                updatedAtMillis = 0L,
+            ),
+            fontFamily = FontFamilyPlusJakartaSans,
+        )
+
+        AodEvents(
+            events = persistentListOf(
+                CalendarEventUiModel(title = "Team meeting", beginMillis = 0L, endMillis = 0L, isAllDay = false),
+                CalendarEventUiModel(title = "Birthday", beginMillis = 1L, endMillis = 1L, isAllDay = true),
+            ),
+        )
+
+        AodMemo(memo = "Buy milk", fontFamily = FontFamilyPlusJakartaSans)
     }
 }

@@ -56,6 +56,14 @@ bắt buộc (compiler không chặn hộ):
   `data`) → UiModel (`toUiModel()` ở `presentation/model/<tính năng>/`).
 - Runtime AOD (`presentation/aod/`, `data/device/`) mã hoá hành vi phụ thuộc ROM: đọc comment "tại
   sao" ngay tại code và README › Các quyết định thiết kế trước khi sửa.
+- Chủ đề AOD (`model/aod/theme/`): một chủ đề = mục `AodThemeValue` (id lưu, không đổi) + `AodThemeSpec`
+  (tab và thuộc tính `AodThemeOption`: lựa chọn / màu / khoảng số / bật tắt, giá trị Int trong
+  `AodThemeConfig`) + một nhánh vẽ trong `AodClockFace` và `AodMediaControls` (không có trình phát
+  riêng thì gọi bản Cổ điển). Control dựng theo loại thuộc tính (`AodThemeOptionList`), không viết màn
+  riêng cho chủ đề; thêm thuộc tính không đổi cách lưu. Khối dùng chung (ngày, thời tiết, ghi chú, nét
+  vẽ) lấy font / màu qua `AodAppearanceUiModel`; chủ đề tự vẽ ngày thì `isDateBuiltIn = true`. Tùy
+  chỉnh chỉ giữ phần chung; riêng onboarding có tab Đồng hồ (`isOnboardingOnly`) chỉ với Cổ điển
+  (`ClassicThemeSpec.OnboardingTab`: mặt, font, màu, cỡ), chọn và chỉnh chủ đề khác ở tab AOD.
 
 ## Presentation: MVI
 
@@ -125,12 +133,14 @@ bắt buộc (compiler không chặn hộ):
 - Icon là VectorDrawable Phosphor (`res/drawable/ic_*.xml`, sinh từ `tools/icons/icons.txt` bằng
   `tools/icons/import_phosphor.py`, không sửa tay) qua `painterResource`; không dùng `Icons.*` /
   `ImageVector` của Material. Độ đậm theo chỗ: regular cho thanh / nút, fill cho tab đang chọn,
-  duotone cho ô `AppIconTile`, light trên màn AOD.
+  duotone cho ô `AppIconTile`, light trên màn AOD (chủ đề chữ số đậm như Sỏi dùng fill).
 - Ảnh nền AOD mã 7–18 (`img_wallpaper_*.xml` có dòng "Sinh bằng") do `tools/wallpapers/generate_wallpapers.py`
   sinh, không sửa tay. Thêm ảnh = hàm vẽ + dòng `WALLPAPERS` + mục `WallpaperValue` (alignment khớp dòng
   script in ra) + chuỗi vi / en; vẽ chừa vùng đồng hồ, không logo / nhân vật / công trình có bản quyền.
 - Slider và thanh tiến trình chỉ qua `AppSlider`: nhận `progress: () -> Int` và đọc trễ (snapshotFlow,
-  pha layout / vẽ), không đọc state trong composition; `onProgressChange = null` là chỉ hiển thị.
+  pha layout / vẽ), không đọc state trong composition; `onProgressChange = null` là chỉ hiển thị (không
+  qua Slider của Material, `progress` gọi ở pha vẽ); thanh vẽ riêng (thanh nhạc gợn sóng) truyền qua
+  `track`.
 - Màn AOD (`screens/aod/`) **không bọc `Theme`**, cả `@Preview`: bọc thì `Text` nhận
   `LocalTextStyle` làm đồng hồ đè lên dòng ngày. Cỡ chữ ở đó là `TextUnit` (`14.sp * scale`), chữ
   xám (`Grey8A` / `Grey6E` / `Grey5A`) để ít sáng, ít burn-in.

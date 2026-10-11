@@ -1,6 +1,8 @@
 package com.decoutkhanqindev.custom_aod.presentation.screens.aodtab.state
 
 import androidx.compose.runtime.Immutable
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeUiModel
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeValue
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeDraftUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.hasRequiredPermissions
@@ -13,8 +15,12 @@ data class AodTabState(
     val isAodEnabled: Boolean = false,
     val nowMillis: Long = 0L,
     val design: CustomizeDraftUiModel = CustomizeDraftUiModel(),
+    val themes: ImmutableList<AodThemeUiModel> = persistentListOf(),
     val permission: AodTabPermissionState = AodTabPermissionState(),
 ) {
+    val activeTheme: AodThemeValue
+        get() = design.appearance.clock.theme.value
+
     // Onboarding có màn quyền riêng nhưng user bỏ qua màn Customize thì vào thẳng Main; thiếu quyền bắt buộc thì nhắc bằng bottom sheet.
     private val isMissingRequiredPermissions: Boolean
         get() = !isLoading && permission.requiredPermissions.isNotEmpty() && !permission.requiredPermissions.hasRequiredPermissions

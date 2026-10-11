@@ -150,7 +150,7 @@ fun ClockColorPicker(
         modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+        verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
         HsvColorPicker(
             modifier = Modifier

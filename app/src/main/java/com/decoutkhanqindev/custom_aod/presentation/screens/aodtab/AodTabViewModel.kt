@@ -5,6 +5,9 @@ import com.decoutkhanqindev.custom_aod.data.device.permission.PermissionManager
 import com.decoutkhanqindev.custom_aod.data.local.datastore.DataStoreManager
 import com.decoutkhanqindev.custom_aod.data.local.image.AodImageManager
 import com.decoutkhanqindev.custom_aod.presentation.base.BaseViewModel
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeUiModel
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeValue
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.observeAodThemeConfigs
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.loadCustomizeDraft
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionValue
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.requiredAodPermissions
@@ -12,9 +15,11 @@ import com.decoutkhanqindev.custom_aod.presentation.screens.aodtab.state.AodTabE
 import com.decoutkhanqindev.custom_aod.presentation.screens.aodtab.state.AodTabIntent
 import com.decoutkhanqindev.custom_aod.presentation.screens.aodtab.state.AodTabState
 import com.decoutkhanqindev.custom_aod.utils.collectCatching
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -41,6 +46,9 @@ class AodTabViewModel(
             is AodTabIntent.RefreshDesign -> refreshDesign()
             is AodTabIntent.NavigateToCustomize ->
                 viewModelScope.launch { sendEffect(AodTabEffect.NavigateToCustomize) }
+
+            is AodTabIntent.OpenTheme ->
+                viewModelScope.launch { sendEffect(AodTabEffect.NavigateToThemeEditor(intent.theme.id)) }
 
             is AodTabIntent.RefreshPermissions -> refreshPermissions()
             is AodTabIntent.ShowPermissionSheet -> showPermissionSheet()
@@ -72,12 +80,17 @@ class AodTabViewModel(
         }
     }
 
-    // Giao diện đổi ở màn Customize, quyền đổi ở app Cài đặt (mục cần quyền chỉ hiện khi có quyền), nên đọc lại mỗi lần màn hình resume.
+    // Giao diện đổi ở màn Customize và màn chủ đề, quyền đổi ở app Cài đặt (mục cần quyền chỉ hiện khi có quyền), nên đọc lại mỗi lần
+    // màn hình resume.
     private fun refreshDesign() {
         designJob?.cancel()
         designJob = viewModelScope.launch {
             val design = dataStoreManager.loadCustomizeDraft(aodImageManager, permissionManager)
-            updateState { copy(design = design) }
+            val configs = dataStoreManager.observeAodThemeConfigs().first()
+            val themes = AodThemeValue.entries
+                .map { theme -> AodThemeUiModel(value = theme, config = configs.getValue(theme)) }
+                .toImmutableList()
+            updateState { copy(design = design, themes = themes) }
         }
     }
 

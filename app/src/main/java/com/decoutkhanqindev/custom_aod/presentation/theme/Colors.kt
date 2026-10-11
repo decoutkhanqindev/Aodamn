@@ -17,6 +17,7 @@ val Grey9A = Color(0xFF9A9A9A)
 val Grey8A = Color(0xFF8A8A8A)
 val Grey6E = Color(0xFF6E6E6E)
 val Grey5A = Color(0xFF5A5A5A)
+val Grey3A = Color(0xFF3A3A3A)
 
 // Ba màu trung tính mặc định của Material 3 (bản tối) mà app vẫn dùng, giữ đúng giá trị để giao diện không đổi.
 val Neutral12 = Color(0xFF211F26)
@@ -35,3 +36,7 @@ val BlackAlpha70 = Black.copy(alpha = 0.7f)
 val DarkMint = Color(0xFF192A23)
 val DarkPurple = Color(0xFF272133)
 val BackgroundGradient = Brush.linearGradient(0f to DarkMint, 0.5f to Black, 1f to DarkPurple)
+
+// Gradient nhận diện mint → xanh → tím (như thanh trượt của app) cho nét trên AOD: viền thẻ, vòng icon, thanh nhạc, pin đang sạc.
+// Không đặt start / end nên trải đúng theo khung đang vẽ.
+val AccentGradient = Brush.horizontalGradient(listOf(Mint, Blue, Purple))

@@ -9,17 +9,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.decoutkhanqindev.custom_aod.R
 
-// Khai báo trước các font bên dưới: val cấp file khởi tạo theo thứ tự trong file.
-private val ClockWeights = listOf(FontWeight.Thin, FontWeight.Light, FontWeight.Normal, FontWeight.Medium)
-
-// Font app: Plus Jakarta Sans bản variable (Google Fonts, OFL, có tiếng Việt), một file cho mọi độ đậm qua trục wght.
-val FontFamilyPlusJakartaSans = variableFontFamily(
-    resId = R.font.plus_jakarta_sans_variable,
-    weights = listOf(FontWeight.Normal, FontWeight.Medium, FontWeight.SemiBold, FontWeight.Bold),
+// Khai báo trước các font bên dưới: val cấp file khởi tạo theo thứ tự trong file. Đủ dải mảnh → đậm vì một font vừa là font app
+// vừa là font đồng hồ: đồng hồ Cổ điển dùng Thin / Light, chữ số chủ đề Sỏi dùng Bold, chữ phụ dùng Normal.
+private val VariableWeights = listOf(
+    FontWeight.Thin,
+    FontWeight.Light,
+    FontWeight.Normal,
+    FontWeight.Medium,
+    FontWeight.SemiBold,
+    FontWeight.Bold,
 )
 
-// Font đồng hồ (Google Fonts, OFL, bản variable có tiếng Việt vì ngày và ghi chú dùng chung font). Đồng hồ dùng Thin / Light, chữ
-// phụ dùng Normal; độ đậm ngoài dải của font được kẹp về mép dải (Dancing Script nhỏ nhất 400).
+// Font app: Plus Jakarta Sans bản variable (Google Fonts, OFL, có tiếng Việt), một file cho mọi độ đậm qua trục wght.
+val FontFamilyPlusJakartaSans = variableFontFamily(resId = R.font.plus_jakarta_sans_variable)
+
+// Font đồng hồ (Google Fonts, OFL, bản variable có tiếng Việt vì ngày và ghi chú dùng chung font); độ đậm ngoài dải của font được
+// kẹp về mép dải (Dancing Script nhỏ nhất 400, Plus Jakarta Sans nhỏ nhất 200).
 val FontFamilyFraunces = variableFontFamily(resId = R.font.fraunces_variable, FontVariation.Setting("SOFT", 100f))
 val FontFamilyJetBrainsMono = variableFontFamily(resId = R.font.jetbrains_mono_variable)
 val FontFamilyDancingScript = variableFontFamily(resId = R.font.dancing_script_variable)
@@ -70,7 +75,7 @@ val MaterialTypography = androidx.compose.material3.Typography(
 private fun variableFontFamily(
     @FontRes resId: Int,
     vararg settings: FontVariation.Setting,
-    weights: List<FontWeight> = ClockWeights,
+    weights: List<FontWeight> = VariableWeights,
 ): FontFamily = FontFamily(
     weights.map { weight ->
         Font(

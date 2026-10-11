@@ -4,6 +4,7 @@ import androidx.annotation.StringRes
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.text.font.FontFamily
 import com.decoutkhanqindev.custom_aod.R
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeChoice
 import com.decoutkhanqindev.custom_aod.presentation.theme.FontFamilyBigShouldersDisplay
 import com.decoutkhanqindev.custom_aod.presentation.theme.FontFamilyComfortaa
 import com.decoutkhanqindev.custom_aod.presentation.theme.FontFamilyDancingScript
@@ -15,10 +16,10 @@ import com.decoutkhanqindev.custom_aod.presentation.theme.FontFamilyPlusJakartaS
 // Font đóng gói sẵn trong app nên AOD không cần mạng lúc hiện. Mã 0–3 giữ từ bản dùng font hệ thống để máy cũ không mất lựa chọn.
 @Immutable
 enum class ClockFontValue(
-    val code: Int,
-    @param:StringRes val labelRes: Int,
+    override val code: Int,
+    @param:StringRes override val labelRes: Int,
     val fontFamily: FontFamily,
-) {
+) : AodThemeChoice {
     DEFAULT(code = 0, labelRes = R.string.clock_font_default, fontFamily = FontFamilyPlusJakartaSans),
     SERIF(code = 1, labelRes = R.string.clock_font_serif, fontFamily = FontFamilyFraunces),
     MONOSPACE(code = 2, labelRes = R.string.clock_font_monospace, fontFamily = FontFamilyJetBrainsMono),

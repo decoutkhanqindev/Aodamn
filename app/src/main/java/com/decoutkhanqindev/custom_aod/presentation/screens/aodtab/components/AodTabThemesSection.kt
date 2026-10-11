@@ -1,230 +1,187 @@
 package com.decoutkhanqindev.custom_aod.presentation.screens.aodtab.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.custom_aod.R
-import com.decoutkhanqindev.custom_aod.presentation.components.AppBadge
-import com.decoutkhanqindev.custom_aod.presentation.components.AppIconTile
-import com.decoutkhanqindev.custom_aod.presentation.theme.BodyLarge
-import com.decoutkhanqindev.custom_aod.presentation.theme.BodyMedium
-import com.decoutkhanqindev.custom_aod.presentation.theme.Grey9A
+import com.decoutkhanqindev.custom_aod.presentation.components.aod.AodThumbnail
+import com.decoutkhanqindev.custom_aod.presentation.components.aod.rememberAodPreview
+import com.decoutkhanqindev.custom_aod.presentation.components.onClick
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeUiModel
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeValue
+import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeDraftUiModel
+import com.decoutkhanqindev.custom_aod.presentation.model.customize.withTheme
+import com.decoutkhanqindev.custom_aod.presentation.screens.aodtab.state.AodTabIntent
+import com.decoutkhanqindev.custom_aod.presentation.theme.Black
 import com.decoutkhanqindev.custom_aod.presentation.theme.GreyED
-import com.decoutkhanqindev.custom_aod.presentation.theme.Neutral12
+import com.decoutkhanqindev.custom_aod.presentation.theme.Mint
 import com.decoutkhanqindev.custom_aod.presentation.theme.NeutralVariant30
+import com.decoutkhanqindev.custom_aod.presentation.theme.RoundedCornerShape12dp
 import com.decoutkhanqindev.custom_aod.presentation.theme.RoundedCornerShape16dp
-import com.decoutkhanqindev.custom_aod.presentation.theme.RoundedCornerShape8dp
 import com.decoutkhanqindev.custom_aod.presentation.theme.Theme
 import com.decoutkhanqindev.custom_aod.presentation.theme.TitleLarge
+import com.decoutkhanqindev.custom_aod.presentation.theme.TitleMedium
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 
-// TODO: Thay lưới giữ chỗ bằng danh sách chủ đề / kiểu AOD thật khi làm phần theme.
+// Lưới chủ đề, 2 cột: mỗi mục là AOD thu nhỏ của chủ đề đó (cấu hình đã lưu + phần chung đang dùng) với tên căn giữa, không khung
+// thẻ; chủ đề đang dùng viền mint và có dấu tích phủ góc trên.
 @Composable
-fun AodTabThemesSection(modifier: Modifier = Modifier) {
+fun AodTabThemesSection(
+    themes: ImmutableList<AodThemeUiModel>,
+    activeTheme: AodThemeValue,
+    design: CustomizeDraftUiModel,
+    nowMillis: Long,
+    onIntent: (AodTabIntent) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Column(modifier = modifier.fillMaxWidth()) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                text = stringResource(R.string.aod_tab_themes_title),
-                modifier = Modifier.semantics { heading() },
-                color = GreyED,
-                fontWeight = FontWeight.SemiBold,
-                style = TitleLarge,
-            )
-
-            AppBadge(
-                text = stringResource(R.string.coming_soon),
-                modifier = Modifier.padding(start = 10.dp),
-            )
-        }
+        Text(
+            text = stringResource(R.string.aod_tab_themes_title),
+            modifier = Modifier.semantics { heading() },
+            color = GreyED,
+            fontWeight = FontWeight.SemiBold,
+            style = TitleLarge,
+        )
 
         Column(
-            modifier = Modifier
-                .padding(top = 12.dp)
-                .clearAndSetSemantics { },
+            modifier = Modifier.padding(top = 12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                ThemeSkeleton(modifier = Modifier.weight(1f)) {
-                    SkeletonBlock(width = 46.dp, height = 28.dp, shape = RoundedCornerShape8dp)
-                    SkeletonBlock(width = 46.dp, height = 28.dp, shape = RoundedCornerShape8dp)
-                    SkeletonBlock(
-                        width = 34.dp,
-                        height = 6.dp,
-                        modifier = Modifier.padding(top = 6.dp),
-                    )
-                }
-
-                ThemeSkeleton(modifier = Modifier.weight(1f)) {
-                    Box(
-                        modifier = Modifier
-                            .size(58.dp)
-                            .border(
-                                width = 4.dp,
-                                color = NeutralVariant30,
-                                shape = CircleShape,
-                            ),
-                    )
-                    SkeletonBlock(
-                        width = 40.dp,
-                        height = 6.dp,
-                        modifier = Modifier.padding(top = 6.dp),
-                    )
-                }
-
-                ThemeSkeleton(
-                    modifier = Modifier.weight(1f),
-                    horizontalAlignment = Alignment.Start,
-                    verticalArrangement = Arrangement.SpaceBetween,
-                ) {
-                    Column(
-                        modifier = Modifier.padding(top = 10.dp),
-                        verticalArrangement = Arrangement.spacedBy(6.dp),
-                    ) {
-                        SkeletonBlock(width = 60.dp, height = 22.dp, shape = RoundedCornerShape8dp)
-                        SkeletonBlock(width = 38.dp, height = 6.dp)
-                    }
-
-                    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                        SkeletonBlock(width = 56.dp, height = 6.dp)
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(4.dp)
-                                .clip(CircleShape)
-                                .background(NeutralVariant30),
+            themes.chunked(2).forEach { row ->
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    row.forEach { theme ->
+                        ThemeCard(
+                            theme = theme,
+                            isActive = theme.value == activeTheme,
+                            design = design,
+                            nowMillis = nowMillis,
+                            onClick = { onIntent(AodTabIntent.OpenTheme(theme.value)) },
+                            modifier = Modifier.weight(1f),
                         )
                     }
+                    if (row.size == 1) Spacer(modifier = Modifier.weight(1f))
                 }
-            }
-
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                ThemeSkeleton(modifier = Modifier.weight(1f)) {
-                    SkeletonBlock(width = 66.dp, height = 34.dp, shape = RoundedCornerShape8dp)
-                    SkeletonBlock(width = 44.dp, height = 6.dp)
-                    SkeletonBlock(width = 30.dp, height = 6.dp)
-                }
-
-                ThemeSkeleton(
-                    modifier = Modifier.weight(1f),
-                    horizontalAlignment = Alignment.Start,
-                    verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Bottom),
-                ) {
-                    SkeletonBlock(width = 14.dp, height = 86.dp, shape = RoundedCornerShape8dp)
-                    SkeletonBlock(width = 30.dp, height = 6.dp)
-                }
-
-                ThemeSkeleton(modifier = Modifier.weight(1f)) {
-                    SkeletonBlock(width = 44.dp, height = 44.dp)
-                    SkeletonBlock(
-                        width = 52.dp,
-                        height = 6.dp,
-                        modifier = Modifier.padding(top = 6.dp),
-                    )
-                }
-            }
-        }
-
-        Row(
-            modifier = Modifier
-                .padding(top = 20.dp)
-                .fillMaxWidth()
-                .border(
-                    width = 1.dp,
-                    color = NeutralVariant30,
-                    shape = RoundedCornerShape16dp,
-                )
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            AppIconTile(iconRes = R.drawable.ic_sparkle_duotone)
-
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(start = 14.dp),
-            ) {
-                Text(
-                    text = stringResource(R.string.aod_tab_themes_soon_title),
-                    color = GreyED,
-                    fontWeight = FontWeight.Medium,
-                    style = BodyLarge,
-                )
-
-                Text(
-                    text = stringResource(R.string.aod_tab_themes_soon_desc),
-                    modifier = Modifier.padding(top = 4.dp),
-                    color = Grey9A,
-                    style = BodyMedium,
-                )
             }
         }
     }
 }
 
 @Composable
-private fun ThemeSkeleton(
+private fun ThemeCard(
+    theme: AodThemeUiModel,
+    isActive: Boolean,
+    design: CustomizeDraftUiModel,
+    nowMillis: Long,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    horizontalAlignment: Alignment.Horizontal = Alignment.CenterHorizontally,
-    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(6.dp, Alignment.CenterVertically),
-    content: @Composable ColumnScope.() -> Unit,
 ) {
+    val preview = rememberAodPreview(
+        draft = design.withTheme(theme),
+        nowMillis = nowMillis,
+    )
+
+    val borderColor = animateColorAsState(
+        targetValue = if (isActive) Mint else NeutralVariant30,
+        label = "ThemeCardBorder",
+    )
+
     Column(
         modifier = modifier
-            .aspectRatio(9f / 17f)
-            .clip(RoundedCornerShape16dp)
-            .background(Neutral12)
-            .padding(14.dp),
-        verticalArrangement = verticalArrangement,
-        horizontalAlignment = horizontalAlignment,
-        content = content,
-    )
+            .onClick(shape = RoundedCornerShape16dp, action = onClick)
+            .padding(4.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Box {
+            AodThumbnail(
+                state = preview,
+                height = 240.dp,
+                shape = RoundedCornerShape12dp,
+                borderColor = borderColor.value,
+            )
+
+            ActiveMark(
+                isActive = isActive,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(8.dp),
+            )
+        }
+
+        Text(
+            text = stringResource(theme.value.nameRes),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 10.dp),
+            color = GreyED,
+            fontWeight = FontWeight.SemiBold,
+            textAlign = TextAlign.Center,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            style = TitleMedium,
+        )
+    }
 }
 
 @Composable
-private fun SkeletonBlock(
-    width: Dp,
-    height: Dp,
+private fun ActiveMark(
+    isActive: Boolean,
     modifier: Modifier = Modifier,
-    shape: Shape = CircleShape,
 ) {
-    Box(
-        modifier = modifier
-            .size(
-                width = width,
-                height = height,
-            )
-            .clip(shape)
-            .background(NeutralVariant30),
-    )
+    AnimatedVisibility(
+        visible = isActive,
+        modifier = modifier,
+        enter = scaleIn() + fadeIn(),
+        exit = scaleOut() + fadeOut(),
+    ) {
+        Icon(
+            painter = painterResource(R.drawable.ic_check_circle_fill),
+            contentDescription = stringResource(R.string.theme_in_use),
+            modifier = Modifier
+                .size(24.dp)
+                .background(color = Black, shape = CircleShape),
+            tint = Mint,
+        )
+    }
 }
 
 @Preview(widthDp = 360)
 @Composable
 private fun AodTabThemesSectionPreview() {
     Theme {
-        AodTabThemesSection()
+        AodTabThemesSection(
+            themes = AodThemeValue.entries.map { AodThemeUiModel(value = it) }.toImmutableList(),
+            activeTheme = AodThemeValue.CLASSIC,
+            design = CustomizeDraftUiModel(),
+            nowMillis = System.currentTimeMillis(),
+            onIntent = {},
+        )
     }
 }

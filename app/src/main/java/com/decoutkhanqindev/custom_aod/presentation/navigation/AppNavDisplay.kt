@@ -23,6 +23,7 @@ import com.decoutkhanqindev.custom_aod.presentation.screens.iap.IapScreen
 import com.decoutkhanqindev.custom_aod.presentation.screens.language.LanguageScreen
 import com.decoutkhanqindev.custom_aod.presentation.screens.permission.PermissionScreen
 import com.decoutkhanqindev.custom_aod.presentation.screens.splash.SplashScreen
+import com.decoutkhanqindev.custom_aod.presentation.screens.themeeditor.ThemeEditorScreen
 import com.decoutkhanqindev.custom_aod.presentation.theme.BackgroundGradient
 import com.decoutkhanqindev.custom_aod.utils.navigateBack
 import com.decoutkhanqindev.custom_aod.utils.openWifiSettings
@@ -59,6 +60,7 @@ fun AppNavDisplay() {
                 screen<PermissionDestination> { PermissionScreen(backStack) }
                 screen<MainDestination> { MainNavDisplay(backStack) }
                 screen<IapDestination> { IapScreen(backStack) }
+                screen<ThemeEditorDestination> { dest -> ThemeEditorScreen(backStack, themeId = dest.themeId) }
                 // TODO: Đăng ký screen<XxxDestination> { dest -> XxxScreen(...) } cho màn mới
             },
         ),

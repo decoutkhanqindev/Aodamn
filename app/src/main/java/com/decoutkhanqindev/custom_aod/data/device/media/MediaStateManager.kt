@@ -7,6 +7,7 @@ import android.media.session.MediaSession
 import android.media.session.PlaybackState
 import android.os.Handler
 import android.os.Looper
+import android.os.SystemClock
 import com.decoutkhanqindev.custom_aod.data.device.notification.NotificationStateManager
 import com.decoutkhanqindev.custom_aod.utils.Tag
 import com.decoutkhanqindev.custom_aod.utils.collectCatching
@@ -89,6 +90,19 @@ class MediaStateManager(
             isPlaying = (state?.state ?: PlaybackState.STATE_NONE) in PLAYING_STATES,
             canSkipToPrevious = actions and PlaybackState.ACTION_SKIP_TO_PREVIOUS != 0L,
             canSkipToNext = actions and PlaybackState.ACTION_SKIP_TO_NEXT != 0L,
+            progress = state?.toMediaProgress(durationMillis = metadata.getLong(MediaMetadata.METADATA_KEY_DURATION)),
+        )
+    }
+
+    // Radio, livestream không có độ dài, app chưa báo vị trí thì không có tiến trình. Vài app để lastPositionUpdateTime = 0:
+    // lấy lúc nhận trạng thái làm mốc, nếu không nội suy từ 0 làm thanh nhảy hết ngay.
+    private fun PlaybackState.toMediaProgress(durationMillis: Long): MediaProgress? {
+        if (durationMillis <= 0L || position < 0L) return null
+        return MediaProgress(
+            durationMillis = durationMillis,
+            positionMillis = position,
+            updatedAtMillis = lastPositionUpdateTime.takeIf { it > 0L } ?: SystemClock.elapsedRealtime(),
+            speed = if (state == PlaybackState.STATE_PLAYING) playbackSpeed else 0f,
         )
     }
 

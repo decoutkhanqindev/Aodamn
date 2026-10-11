@@ -2,27 +2,17 @@ package com.decoutkhanqindev.custom_aod.presentation.screens.aodtab.components
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredSize
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -30,19 +20,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.custom_aod.R
 import com.decoutkhanqindev.custom_aod.presentation.components.AppIconTile
-import com.decoutkhanqindev.custom_aod.presentation.components.aod.AodContent
+import com.decoutkhanqindev.custom_aod.presentation.components.aod.AodThumbnail
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.rememberAodPreview
 import com.decoutkhanqindev.custom_aod.presentation.components.onClick
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeDraftUiModel
-import com.decoutkhanqindev.custom_aod.presentation.screens.aod.state.AodState
 import com.decoutkhanqindev.custom_aod.presentation.screens.aodtab.state.AodTabIntent
 import com.decoutkhanqindev.custom_aod.presentation.theme.BodyMedium
 import com.decoutkhanqindev.custom_aod.presentation.theme.Grey9A
 import com.decoutkhanqindev.custom_aod.presentation.theme.GreyED
 import com.decoutkhanqindev.custom_aod.presentation.theme.Neutral12
-import com.decoutkhanqindev.custom_aod.presentation.theme.NeutralVariant30
 import com.decoutkhanqindev.custom_aod.presentation.theme.RoundedCornerShape16dp
-import com.decoutkhanqindev.custom_aod.presentation.theme.RoundedCornerShape8dp
 import com.decoutkhanqindev.custom_aod.presentation.theme.Theme
 import com.decoutkhanqindev.custom_aod.presentation.theme.TitleMedium
 
@@ -71,8 +58,9 @@ fun AodTabDesignCard(
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        DesignThumbnail(
+        AodThumbnail(
             state = preview,
+            height = 64.dp,
             modifier = Modifier.alpha(previewAlpha),
         )
 
@@ -89,7 +77,7 @@ fun AodTabDesignCard(
             )
 
             Text(
-                text = stringResource(R.string.aod_tab_design_default),
+                text = stringResource(design.appearance.clock.theme.value.nameRes),
                 modifier = Modifier.padding(top = 4.dp),
                 color = Grey9A,
                 style = BodyMedium,
@@ -101,56 +89,6 @@ fun AodTabDesignCard(
         AppIconTile(
             iconRes = R.drawable.ic_pencil_simple_duotone,
             modifier = Modifier.semantics { contentDescription = customizeLabel },
-        )
-    }
-}
-
-@Composable
-private fun DesignThumbnail(
-    state: AodState,
-    modifier: Modifier = Modifier,
-) {
-    val density = LocalDensity.current
-    val windowSize = LocalWindowInfo.current.containerSize
-    val screenWidth = with(density) { windowSize.width.coerceAtLeast(1).toDp() }
-    val screenHeight = with(density) { windowSize.height.coerceAtLeast(1).toDp() }
-    val thumbnailHeight = 64.dp
-    val scale = thumbnailHeight / screenHeight
-
-    Box(
-        modifier = modifier
-            .size(
-                width = screenWidth * scale,
-                height = thumbnailHeight,
-            )
-            .clip(RoundedCornerShape8dp)
-            .border(
-                width = 1.dp,
-                color = NeutralVariant30,
-                shape = RoundedCornerShape8dp,
-            )
-            .clearAndSetSemantics { },
-        contentAlignment = Alignment.Center,
-    ) {
-        AodContent(
-            state = state,
-            onIntent = {},
-            modifier = Modifier
-                .requiredSize(
-                    width = screenWidth,
-                    height = screenHeight,
-                )
-                .graphicsLayer {
-                    scaleX = scale
-                    scaleY = scale
-                },
-            isInteractive = false,
-        )
-
-        Box(
-            modifier = Modifier
-                .matchParentSize()
-                .pointerInput(Unit) { },
         )
     }
 }

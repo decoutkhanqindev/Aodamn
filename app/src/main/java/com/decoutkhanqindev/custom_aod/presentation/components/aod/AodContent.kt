@@ -37,7 +37,6 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.createBitmap
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.AodAppearanceUiModel
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.ClockFaceValue
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.WallpaperValue
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.info.AodNotificationsUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.info.BatteryUiModel
@@ -49,6 +48,8 @@ import com.decoutkhanqindev.custom_aod.presentation.model.aod.info.WeatherUiMode
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodActionValue
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodExtrasUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodGestureValue
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeUiModel
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeValue
 import com.decoutkhanqindev.custom_aod.presentation.screens.aod.state.AodIntent
 import com.decoutkhanqindev.custom_aod.presentation.screens.aod.state.AodState
 import com.decoutkhanqindev.custom_aod.presentation.theme.Black
@@ -161,7 +162,11 @@ fun AodContent(
                     },
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    AodClockFace(nowMillis = state.nowMillis, appearance = state.appearance)
+                    AodClockFace(
+                        nowMillis = state.nowMillis,
+                        theme = state.appearance.theme,
+                        isDateEnabled = state.extras.isDateEnabled,
+                    )
 
                     Spacer(modifier = Modifier.width(40.dp))
 
@@ -177,7 +182,11 @@ fun AodContent(
                     },
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    AodClockFace(nowMillis = state.nowMillis, appearance = state.appearance)
+                    AodClockFace(
+                        nowMillis = state.nowMillis,
+                        theme = state.appearance.theme,
+                        isDateEnabled = state.extras.isDateEnabled,
+                    )
 
                     AodDetails(state = state, onIntent = currentOnIntent)
                 }
@@ -237,10 +246,7 @@ private fun AodContentLandscapePreview() {
     AodContent(
         state = AodState(
             nowMillis = System.currentTimeMillis(),
-            appearance = AodAppearanceUiModel(
-                face = ClockFaceValue.ANALOG,
-                color = Mint
-            ),
+            appearance = AodAppearanceUiModel(theme = AodThemeUiModel(value = AodThemeValue.PEBBLE)),
             battery = BatteryUiModel(percent = 72, isCharging = true),
         ),
         onIntent = {},

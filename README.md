@@ -210,6 +210,12 @@ app xin, nên không có trong danh sách trên: `AodTileService` (`BIND_QUICK_S
   hiện, màn hình tắt như bình thường.
 - **Thẻ "Giao diện của bạn" ở tab AOD:** AOD đang áp dụng, thu nhỏ; chạm để mở Tùy chỉnh và xem
   trước toàn màn hình.
+- **Kiểu mặc định của các khối** (dùng cho mọi chủ đề, trừ phần chủ đề tự vẽ): nét gradient mint →
+  xanh → tím của app làm điểm nhận diện, không tô nền để AOD ít sáng. Ngày: thứ in hoa theo màu chủ đề,
+  chấm gradient, ngày tháng xám; thời tiết là viên viền mảnh cạnh ngày. Thông báo: mỗi app một vòng
+  tròn (app mới nhất viền gradient). Thông báo mới nhất, sự kiện, ghi nhớ: thẻ viền gradient có vòng
+  icon bên trái. Pin và đèn pin: một viên viền mảnh, pin tự vẽ (sạc thì gradient, yếu thì đỏ). Nhạc:
+  thẻ viền gradient, nút phát trong vòng gradient, thanh tiến trình gradient.
 - **Thông báo** (cần quyền "Truy cập thông báo"): dưới ngày là icon của các app đang có thông báo,
   mỗi app một icon, tối đa 5, còn lại hiện "+N". Bật "Hiện nội dung thông báo mới nhất" thì dưới các
   icon có thêm tiêu đề và nội dung của thông báo mới nhất, theo đúng quy tắc của màn hình khóa: nội
@@ -217,7 +223,8 @@ app xin, nên không có trong danh sách trên: `AodTileService` (`BIND_QUICK_S
   thì 4 cạnh màn hình sáng nhấp nháy khoảng 4 giây, theo màu của app đó.
 - **Nhạc** (cần quyền "Truy cập thông báo"): khi có app nhạc đang phát hoặc tạm dừng, đồng hồ hiện
   tên bài, nghệ sĩ và 3 nút Bài trước, Phát/Tạm dừng, Bài tiếp theo. Như chạm 2 lần, nút bị bỏ qua
-  khi cảm biến tiệm cận đang bị che.
+  khi cảm biến tiệm cận đang bị che. Chủ đề Sỏi có trình phát riêng: nút phát nằm trong khối hình màu
+  nhạc và thanh tiến trình gợn sóng lúc đang phát (app nhạc không báo độ dài bài thì không có thanh).
 - **Thông tin thêm** (mục "Thông tin thêm trên đồng hồ", mặc định tắt hết): thời tiết hiện tại (icon
   trời và nhiệt độ) cạnh ngày; tối đa 2 sự kiện còn lại trong hôm nay từ lịch của máy (giờ bắt đầu
   hoặc "Cả ngày", rồi tên sự kiện); một ghi nhớ ngắn; một hình vẽ nhanh bằng ngón tay, hiện theo màu
@@ -262,10 +269,8 @@ Mục "Giao diện đồng hồ":
 
 | Tùy chọn                      | Key                                                    | Mặc định | Tác dụng                                                                                                                                                                                          |
 |-------------------------------|--------------------------------------------------------|----------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Mặt đồng hồ                   | `aod_clock_face`                                       | Số       | Số / Số xếp chồng (giờ trên, phút dưới) / Kim (có vạch giờ) / Kim tối giản                                                                                                                        |
-| Font chữ                      | `aod_clock_font`                                       | Mặc định | Mặc định (Plus Jakarta Sans) / Có chân (Fraunces) / Đơn cách (JetBrains Mono) / Viết tay (Dancing Script) / Bo tròn (Comfortaa) / Cao gầy (Big Shoulders Display) / Hình học (Josefin Sans) — font đóng gói sẵn, có tiếng Việt, áp cho giờ, ngày và ghi chú                                                                                                        |
-| Màu                           | `aod_clock_color`                                      | Xám      | Chọn tự do bằng wheel HSV + thanh độ sáng (skydoves/colorpicker-compose), lưu ARGB; mã 0–7 của bảng 8 màu cũ vẫn đọc được. Áp cho số giờ hoặc kim, ngày / pin / gợi ý vẫn xám                                                                                                                      |
-| Cỡ đồng hồ                    | `aod_clock_size_percent`                               | 100%     | Từ 60 đến 150%, mỗi nấc 10%                                                                                                                                                                       |
+| Chủ đề                        | `aod_theme_id`                                         | Cổ điển  | Cổ điển (4 mặt đồng hồ có từ trước) hoặc Sỏi. Chọn ở tab AOD › Chủ đề, xem trước rồi Áp dụng |
+| Cấu hình chủ đề               | `aod_theme_configs` (chuỗi theo chủ đề)                | Mặc định | Cổ điển: mặt (Số / Số xếp chồng / Kim / Kim tối giản), font, màu, cỡ 60–150%; chưa lưu thì lấy `aod_clock_face` / `_font` / `_color` / `_size_percent` của bản cũ. Sỏi: hình và kiểu (đặc / viền) của khối giờ và khối phút (8 hình), font, cỡ, xếp giờ trên phút, màu riêng của khối giờ, số giờ, khối phút, số phút, ngày và nhạc, kiểu ngày, hình nút phát, thanh tiến trình nhạc (gợn sóng / thẳng / ẩn), animation khi đổi phút (trượt / phóng / nảy hình) |
 | Luôn xoay ngang (đồng hồ đêm) | `is_aod_landscape`                                     | Tắt      | Đồng hồ luôn nằm ngang theo chiều dựng máy                                                                                                                                                        |
 | Ảnh nền có sẵn                | `aod_wallpaper`                                        | Không có | 18 ảnh AMOLED vẽ bằng vector, nền đen: 6 ảnh vẽ tay (Sao đêm, Cực quang, Nhật thực, Sóng, Tinh vân, Chân trời) và 12 ảnh sinh bằng script (Mưa sao băng, Hành tinh vành đai, Quỹ đạo, Núi trăng, Đom đóm, Hoa anh đào, Sứa phát sáng, Thành phố đêm, Pháo hoa, Đường đồng mức, Sóng âm, Đèn trời). Hiện mờ 50% sau đồng hồ                                                                           |
 | Ảnh từ máy                    | (file `aod_background.jpg` trong bộ nhớ riêng của app) | Không có | Chọn bằng Photo Picker, không cần quyền đọc ảnh. App lưu một bản sao đã thu về cỡ màn hình; ảnh hiện mờ 50% sau đồng hồ. Mỗi lúc chỉ một ảnh nền: chọn ảnh có sẵn thì bỏ ảnh từ máy, và ngược lại |
@@ -348,10 +353,14 @@ thông báo ──▶ AodNotificationListener ──▶ NotificationStateManager
 | `presentation/aod/BootReceiver.kt`                                                                                                                                                                                                                  | Chạy lại service sau khi khởi động máy hoặc cập nhật app                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | `presentation/aod/AodTileService.kt`                                                                                                                                                                                                                | Ô Cài đặt nhanh bật/tắt đồng hồ; mở app khi hệ thống không cho khởi động service                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | `presentation/screens/aod/AodViewModel.kt`                                                                                                                                                                                                          | Logic của AOD: giờ hiện tại và chống burn-in (cập nhật mỗi phút), pin, ẩn dòng gợi ý sau 3 giây, hết giờ, trong túi, quy tắc hiện, đóng khi có cuộc gọi hoặc báo thức, chạm 2 lần, thời tiết (tải lại khi bản đã lưu cũ), sự kiện lịch                                                                                                                                                                                                                                                            |
-| `presentation/components/aod/AodContent.kt` (+ `AodClockFace`, `AodDetails`, `AodExtras`, `AodNotifications`, `AodMediaControls`, `AodBackdrop`; `AppTimeFormat` ở `presentation/components/`) · `presentation/screens/aod/AodScreen.kt` · `state/` | Giao diện đồng hồ (4 mặt, ngày, thời tiết, sự kiện, ghi nhớ, hình vẽ, icon thông báo, pin, nhạc, gợi ý, viền sáng, ảnh nền, bố cục ngang, dịch vị trí) và phần nối với ViewModel                                                                                                                                                                                                                                                                                                                  |
+| `presentation/components/aod/AodContent.kt` (+ `AodClockFace`, `AodDetails`, `AodExtras`, `AodNotifications`, `AodMediaControls`, `AodStatus`, `AodCard`, `AodBackdrop`; `AppTimeFormat` ở `presentation/components/`) · `presentation/screens/aod/AodScreen.kt` · `state/` | Giao diện đồng hồ (4 mặt, ngày, thời tiết, sự kiện, ghi nhớ, hình vẽ, icon thông báo, pin, nhạc, gợi ý, viền sáng, ảnh nền, bố cục ngang, dịch vị trí) và phần nối với ViewModel                                                                                                                                                                                                                                                                                                                  |
 | `presentation/aod/AodNotificationListener.kt`                                                                                                                                                                                                       | Nhận thông báo từ hệ thống (khi đã cấp "Truy cập thông báo") và chuyển cho `NotificationStateManager`                                                                                                                                                                                                                                                                                                                                                                                             |
 | `presentation/navigation/MainNavDisplay.kt` · `MainDestinations.kt` | Main: `Scaffold` có thanh trên chung của tab (`MainTopBar`: tiêu đề theo tab, IAP, Share), `NavDisplay` của 3 tab (AOD, Viền sáng, Cài đặt) và thanh tab dưới, không ViewModel. Tab AOD là gốc: Back ở tab khác về tab AOD rồi mới thoát app |
-| `presentation/screens/aodtab/` | Tab AOD (MVI): công tắc AOD, thẻ "Giao diện của bạn" (AOD đang áp dụng, vẽ thu nhỏ bằng `AodContent`; chạm để mở Customize), lưới chủ đề giữ chỗ, sheet và dòng cảnh báo khi thiếu quyền bắt buộc |
+| `presentation/screens/aodtab/` | Tab AOD (MVI): công tắc AOD, thẻ "Giao diện của bạn" (AOD đang áp dụng, vẽ thu nhỏ bằng `AodThumbnail`; chạm để mở Customize), lưới chủ đề (mỗi thẻ là AOD thu nhỏ của chủ đề đó; chạm để mở màn chủ đề), sheet và dòng cảnh báo khi thiếu quyền bắt buộc |
+| `presentation/model/aod/theme/` | Hệ chủ đề: `AodThemeValue` (danh sách, id lưu), `AodThemeSpec` (tab + thuộc tính) của từng chủ đề (`ClassicThemeSpec`, `PebbleThemeSpec`), thuộc tính `AodThemeOption` (lựa chọn / màu / khoảng số / bật tắt, lưu thành Int trong `AodThemeConfig`), hình khối `AodShapeValue` (hàm bán kính quanh tâm), đọc / ghi `aod_theme_configs` |
+| `presentation/screens/themeeditor/` | Màn chủ đề (MVI) dùng chung cho mọi chủ đề: xem trước (Sửa / Áp dụng; chủ đề đang dùng thì "Tùy chỉnh thêm" mở Customize, quay về thì khung xem trước nạp lại phần chung), sửa theo tab của `AodThemeSpec` với control dựng theo loại thuộc tính, hoàn tác / làm lại / đặt lại, Lưu |
+| `presentation/components/aod/AodClockFace.kt` · `AodPebbleClock.kt` · `AodPebbleMedia.kt` · `AodShapePath.kt` · `AodThumbnail.kt` | Đồng hồ và trình phát nhạc theo chủ đề (Cổ điển, Sỏi), path của hình khối và nội suy giữa hai hình, AOD thu nhỏ |
+| `presentation/components/AppEditorPanel.kt` · `AppEditorTab.kt` | Tấm chỉnh trượt lên và tab của thanh tab, dùng chung cho Tùy chỉnh và màn chủ đề |
 | `presentation/screens/edgelight/` | Tab Viền sáng: màn giữ chỗ |
 | `presentation/screens/settings/` | Tab Cài đặt (MVI): hiển thị, khi nào hiện, thao tác và cảm biến, quyền (kèm kết quả lần hiện gần nhất), ngôn ngữ; quyền Lịch và Vị trí hỏi từ danh sách quyền. Mỗi nhóm một file `SettingsXxxSection.kt` trong `components/` |
 | `presentation/screens/language/`                                                                                                                                                                                                                    | Màn chọn ngôn ngữ (MVI): lần mở đầu tiên và từ màn hình cài đặt                                                                                                                                                                                                                                                                                                                                                                                                                                   |
@@ -463,7 +472,9 @@ Từ FakeAOD sang Custom AOD:
   app tự soạn nếu có. Phần bị che không bao giờ ra khỏi `NotificationStateManager`. Icon được nạp
   sẵn ở luồng nền mỗi khi có thông báo, nên khung đầu tiên của đồng hồ đã có icon. Nhạc lấy từ phiên
   nhạc trong thông báo nhạc mới nhất, giống trình phát trên màn hình khóa của hệ thống; không hiện
-  ảnh bìa vì sáng và dễ burn-in. Viền sáng vẽ bằng gradient vì làm mờ (`blur`) cần Android 12.
+  ảnh bìa vì sáng và dễ burn-in. Phiên nhạc chỉ báo vị trí bài lúc phát / dừng / tua, nên thanh tiến
+  trình tự nội suy theo tốc độ phát, mỗi giây vẽ lại một lần; sóng đứng yên, chỉ duỗi thẳng lúc dừng,
+  để đồng hồ không vẽ lại liên tục. Viền sáng vẽ bằng gradient vì làm mờ (`blur`) cần Android 12.
 - **Thao tác, đèn pin, cảm biến:** mỗi thao tác lưu một hành động, AOD đọc một lần lúc mở. Phím âm
   lượng chỉ bị app giữ lại khi đã gán hành động. Đèn pin dùng `setTorchMode`, nên không cần quyền
   camera. Tự giảm sáng có hai ngưỡng lệch nhau và phải giữ 2 giây để bóng tay hay đèn chớp không làm
@@ -520,8 +531,12 @@ Từ FakeAOD sang Custom AOD:
    mở lại: đi thẳng vào màn hình chính.
 2. Cấp các quyền bắt buộc. Nếu đã cho phép thông báo, kiểm tra đã có thông báo "Shows the clock each
    time the screen turns off".
+1a. Onboarding, màn Tùy chỉnh: có tab Đồng hồ đầu tiên, chỉ chủ đề Cổ điển như bản trước khi có chủ đề: 4 mặt, font, màu
+   (kéo màu xem trước theo tay, thả tay mới thành một bước hoàn tác), cỡ; không có chọn chủ đề. Áp dụng: tab AOD có Cổ điển
+   "Đang dùng" với đúng kiểu đã chỉnh. Muốn dùng Sỏi thì chọn ở tab AOD › Chủ đề.
 3. Chạm thẻ "Giao diện của bạn" ở tab AOD: Tùy chỉnh mở ra có nút quay lại và tiêu đề, không có
-   "Bỏ qua"; Áp dụng xong quay về tab AOD và thẻ đổi theo giao diện mới.
+   "Bỏ qua" và không có tab Đồng hồ; Đặt lại không đổi chủ đề đang dùng; Áp dụng xong quay về tab AOD và thẻ đổi theo
+   giao diện mới.
 4. Khóa máy: đồng hồ có hiện sau khoảng 1 giây không, có phủ kín cả thanh trạng thái và thanh điều
    hướng không, có thấy màn hình khóa lóe lên không. Xem dòng "Lần gần nhất" dưới nhóm Quyền ở tab
    Cài đặt.
@@ -562,10 +577,27 @@ Từ FakeAOD sang Custom AOD:
     dụng.
 23. Tắt từng công tắc trong "Thông báo trên đồng hồ": lần AOD sau không còn phần tương ứng. Thu
     hồi "Truy cập thông báo": icon và nhạc biến mất, đồng hồ vẫn chạy.
-24. Mặt đồng hồ: thử lần lượt 4 mặt ở Tùy chỉnh, rồi khóa máy với từng mặt. Mặt kim phải chỉ đúng
-    giờ và nhích mỗi phút; mặt số theo đúng 12/24 giờ của máy.
-25. Font, màu, cỡ: đổi từng tùy chọn ở Tùy chỉnh, Áp dụng rồi khóa máy. Ở cỡ 150%, đồng hồ, ngày, pin và nhạc không
+23a. Kiểu mặc định: bật đủ ngày, thời tiết, sự kiện, ghi nhớ, icon và nội dung thông báo, pin, nhạc (chủ đề Cổ điển) rồi
+    khóa máy: các khối như mục "Kiểu mặc định của các khối"; cắm sạc thì pin tô gradient kèm tia sét, pin ≤ 15% thì đỏ;
+    bật đèn pin bằng thao tác thì icon đèn pin vào cùng viên với pin. Lưới chủ đề ở tab AOD: không khung thẻ, tên căn
+    giữa, chủ đề đang dùng viền mint và có dấu tích ở góc ảnh.
+24. Chủ đề Cổ điển: tab AOD › Chủ đề › Cổ điển › Sửa, thử lần lượt 4 mặt, Lưu rồi khóa máy với từng mặt. Mặt kim
+    phải chỉ đúng giờ và nhích mỗi phút; mặt số theo đúng 12/24 giờ của máy. Máy đã chọn mặt / font / màu / cỡ ở bản
+    trước khi có chủ đề: mở lại app, Cổ điển vẫn giữ đúng các lựa chọn đó.
+25. Font, màu, cỡ: đổi từng tùy chọn ở màn chủ đề, Lưu rồi khóa máy. Ở cỡ 150%, đồng hồ, ngày, pin và nhạc không
     bị che hay tràn màn hình, cả khi dịch vị trí chống burn-in.
+25a. Chủ đề Sỏi: tab AOD › Chủ đề › Sỏi: xem trước đúng hai khối giờ / phút và dòng ngày in hoa; Sửa, đổi hình và kiểu
+    (đặc / viền) của từng khối, kéo màu khối và màu số (xem trước theo tay, thả tay mới thành một bước hoàn tác), hoàn
+    tác / làm lại / đặt lại, rồi Lưu. Back khi còn thay đổi chưa lưu thì hỏi bỏ thay đổi. Áp dụng: vẫn ở màn chủ đề,
+    thanh trên hiện "Đang dùng", nút đổi thành "Tùy chỉnh thêm"; bấm thì mở Tùy chỉnh, đổi phần chung (vd ảnh nền) rồi
+    Áp dụng: quay về màn chủ đề, khung xem trước có ảnh nền mới. Khóa máy: AOD là chủ đề Sỏi, thẻ "Giao diện của bạn" ghi
+    "Sỏi", thẻ chủ đề có nhãn "Đang dùng". Chờ đổi phút với từng animation (trượt, phóng, nảy hình): chỉ chạy lúc số
+    đổi, không giật; tắt ngày ở Tùy chỉnh thì dòng ngày của Sỏi cũng ẩn. Tab Màu: chọn chip Khối giờ / Số giờ / Khối
+    phút / Số phút / Ngày / Nhạc (chấm màu trên chip đúng màu hiện tại) rồi kéo bảng màu: chỉ phần đó đổi màu.
+25b. Nhạc của Sỏi: lúc Sửa, khung xem trước luôn có dòng ngày và trình phát mẫu; tab Nhạc đổi hình nút phát và kiểu
+    thanh tiến trình. Áp dụng, phát nhạc rồi khóa máy: nút phát nằm trong khối màu khối, xoay khi bấm Phát / Tạm dừng;
+    thanh chạy đúng vị trí bài (so với app nhạc), gợn sóng lúc phát, duỗi thẳng lúc dừng; tua trong app nhạc thì thanh
+    nhảy theo; chuyển bài thì thanh về đầu. Radio / livestream không có độ dài: không có thanh. Kiểu Ẩn: không có thanh.
 26. Ảnh nền: chọn một ảnh dọc và một ảnh ngang lớn (vd ảnh chụp 50 MP): dòng "Ảnh nền" chuyển sang "
     Đang lưu…" rồi "Đổi ảnh". Khóa máy: ảnh hiện dần sau đồng hồ, mờ, không méo. Đóng app, mở lại:
     ảnh nền vẫn còn. "Bỏ ảnh nền": lần AOD sau nền đen.

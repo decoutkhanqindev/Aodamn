@@ -108,6 +108,7 @@ class DataStoreManager(
     val isAodNotificationContentEnabled: StateFlow<Boolean?> =
         isAodNotificationContentEnabledKey.asStateFlow(default = DEFAULT_IS_AOD_NOTIFICATION_CONTENT_ENABLED)
 
+    // Mặt / font / màu / cỡ đồng hồ của bản trước khi có chủ đề: chỉ đọc, làm cấu hình ban đầu cho chủ đề Cổ điển.
     private val aodClockFaceKey: Preferences.Key<Int> = intPreferencesKey(AOD_CLOCK_FACE_KEY)
     val aodClockFace: StateFlow<Int?> =
         aodClockFaceKey.asStateFlow(default = DEFAULT_AOD_CLOCK_FACE)
@@ -124,6 +125,16 @@ class DataStoreManager(
         intPreferencesKey(AOD_CLOCK_SIZE_PERCENT_KEY)
     val aodClockSizePercent: StateFlow<Int?> =
         aodClockSizePercentKey.asStateFlow(default = DEFAULT_AOD_CLOCK_SIZE_PERCENT)
+
+    private val aodThemeIdKey: Preferences.Key<String> = stringPreferencesKey(AOD_THEME_ID_KEY)
+    val aodThemeId: StateFlow<String?> =
+        aodThemeIdKey.asStateFlow(default = DEFAULT_AOD_THEME_ID)
+
+    // Cấu hình mọi chủ đề trong một chuỗi; cách mã hoá nằm ở presentation (model/aod/theme/AodThemeUiModel.kt).
+    private val aodThemeConfigsKey: Preferences.Key<String> =
+        stringPreferencesKey(AOD_THEME_CONFIGS_KEY)
+    val aodThemeConfigs: StateFlow<String?> =
+        aodThemeConfigsKey.asStateFlow(default = DEFAULT_AOD_THEME_CONFIGS)
 
     private val isAodLandscapeKey: Preferences.Key<Boolean> =
         booleanPreferencesKey(IS_AOD_LANDSCAPE_KEY)
@@ -294,20 +305,16 @@ class DataStoreManager(
         edit { prefs -> prefs[isAodNotificationContentEnabledKey] = value }
     }
 
-    fun saveAodClockFace(value: Int) {
-        edit { prefs -> prefs[aodClockFaceKey] = value }
+    fun saveAodThemeId(value: String) {
+        edit { prefs -> prefs[aodThemeIdKey] = value }
     }
 
-    fun saveAodClockFont(value: Int) {
-        edit { prefs -> prefs[aodClockFontKey] = value }
-    }
-
-    fun saveAodClockColor(value: Int) {
-        edit { prefs -> prefs[aodClockColorKey] = value }
-    }
-
-    fun saveAodClockSizePercent(value: Int) {
-        edit { prefs -> prefs[aodClockSizePercentKey] = value }
+    // Đọc - sửa - ghi trong cùng một lần edit của DataStore để hai lần lưu gần nhau không đè mất cấu hình của nhau.
+    fun updateAodThemeConfigs(transform: (String) -> String) {
+        edit { prefs ->
+            prefs[aodThemeConfigsKey] =
+                transform(prefs[aodThemeConfigsKey] ?: DEFAULT_AOD_THEME_CONFIGS)
+        }
     }
 
     fun saveIsAodLandscape(value: Boolean) {
@@ -441,6 +448,8 @@ class DataStoreManager(
         private const val AOD_CLOCK_COLOR_KEY = "aod_clock_color"
         private const val AOD_CLOCK_SIZE_PERCENT_KEY = "aod_clock_size_percent"
         private const val IS_AOD_LANDSCAPE_KEY = "is_aod_landscape"
+        private const val AOD_THEME_ID_KEY = "aod_theme_id"
+        private const val AOD_THEME_CONFIGS_KEY = "aod_theme_configs"
         private const val AOD_WALLPAPER_KEY = "aod_wallpaper"
         private const val AOD_DOUBLE_TAP_ACTION_KEY = "aod_double_tap_action"
         private const val AOD_SWIPE_UP_ACTION_KEY = "aod_swipe_up_action"
@@ -483,6 +492,8 @@ class DataStoreManager(
         private const val DEFAULT_AOD_CLOCK_COLOR = 0
         const val DEFAULT_AOD_CLOCK_SIZE_PERCENT = 100
         const val DEFAULT_IS_AOD_LANDSCAPE = false
+        const val DEFAULT_AOD_THEME_ID = "classic"
+        const val DEFAULT_AOD_THEME_CONFIGS = ""
         private const val DEFAULT_AOD_WALLPAPER = 0
         const val DEFAULT_AOD_DOUBLE_TAP_ACTION = 1
         const val DEFAULT_AOD_SWIPE_UP_ACTION = 0

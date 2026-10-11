@@ -3,12 +3,13 @@ package com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Immutable
 import com.decoutkhanqindev.custom_aod.R
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeChoice
 
 @Immutable
 enum class ClockFaceValue(
-    val code: Int,
-    @param:StringRes val labelRes: Int,
-) {
+    override val code: Int,
+    @param:StringRes override val labelRes: Int,
+) : AodThemeChoice {
     DIGITAL(code = 0, labelRes = R.string.clock_face_digital),
     STACKED(code = 1, labelRes = R.string.clock_face_stacked),
     ANALOG(code = 2, labelRes = R.string.clock_face_analog),

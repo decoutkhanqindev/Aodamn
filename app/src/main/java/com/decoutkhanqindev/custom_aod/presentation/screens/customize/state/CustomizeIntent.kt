@@ -1,9 +1,6 @@
 package com.decoutkhanqindev.custom_aod.presentation.screens.customize.state
 
 import android.graphics.Bitmap
-import androidx.compose.ui.graphics.Color
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.ClockFaceValue
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.ClockFontValue
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.WallpaperValue
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeTabValue
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionValue
@@ -15,13 +12,12 @@ sealed interface CustomizeIntent {
     }
 
     sealed interface Appearance : CustomizeIntent {
-        data class ChangeClockFace(val face: ClockFaceValue) : Appearance
-        data class ChangeClockFont(val font: ClockFontValue) : Appearance
-        data class PreviewClockColor(val color: Color) : Appearance
-        data class ChangeClockColor(val color: Color) : Appearance
-        data class ChangeClockSize(val percent: Int) : Appearance
         data class ToggleDate(val isEnabled: Boolean) : Appearance
         data class ToggleBattery(val isEnabled: Boolean) : Appearance
+
+        // Giá trị đã mã hoá theo AodThemeOption.encode; Preview là lúc đang kéo (không ghi lịch sử hoàn tác).
+        data class PreviewThemeOption(val key: String, val raw: Int) : Appearance
+        data class ChangeThemeOption(val key: String, val raw: Int) : Appearance
     }
 
     sealed interface Decor : CustomizeIntent {

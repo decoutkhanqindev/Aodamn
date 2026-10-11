@@ -1,29 +1,16 @@
 package com.decoutkhanqindev.custom_aod.presentation.screens.customize.components
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.custom_aod.R
-import com.decoutkhanqindev.custom_aod.presentation.components.aod.ClockColorPicker
+import com.decoutkhanqindev.custom_aod.presentation.components.aod.AodThemeOptionList
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.WallpaperPicker
-import com.decoutkhanqindev.custom_aod.presentation.components.settings.AppSectionLabel
-import com.decoutkhanqindev.custom_aod.presentation.components.settings.AppSliderRow
 import com.decoutkhanqindev.custom_aod.presentation.components.settings.AppSwitchRow
 import com.decoutkhanqindev.custom_aod.presentation.components.settings.AppValueRow
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.AodAppearanceUiModel
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.ClockFaceValue
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.ClockFontValue
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeUiModel
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.ClassicThemeSpec
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeAppearanceUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeClusterValue
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeDecorUiModel
@@ -67,20 +54,35 @@ private fun AppearancePanel(
     onIntent: (CustomizeIntent) -> Unit,
 ) {
     when (tab) {
+        CustomizeTabValue.CLOCK -> ClockPanel(theme = appearance.clock.theme, onIntent = onIntent)
+
         CustomizeTabValue.DATE -> AppSwitchRow(
             label = stringResource(R.string.opt_date),
             isChecked = appearance.isDateEnabled,
             onCheckedChange = { onIntent(CustomizeIntent.Appearance.ToggleDate(it)) },
         )
 
-        CustomizeTabValue.BATTERY -> AppSwitchRow(
+        else -> AppSwitchRow(
             label = stringResource(R.string.opt_battery),
             isChecked = appearance.isBatteryEnabled,
             onCheckedChange = { onIntent(CustomizeIntent.Appearance.ToggleBattery(it)) },
         )
-
-        else -> ClockPanel(clock = appearance.clock, onIntent = onIntent)
     }
+}
+
+// Chỉ có lúc onboarding và chỉ Cổ điển (chủ đề mặc định): mặt, font, màu, cỡ như bản trước khi có chủ đề, cùng control với màn chủ đề.
+// Các chủ đề khác chọn và chỉnh ở tab AOD › Chủ đề.
+@Composable
+private fun ClockPanel(
+    theme: AodThemeUiModel,
+    onIntent: (CustomizeIntent) -> Unit,
+) {
+    AodThemeOptionList(
+        tab = ClassicThemeSpec.OnboardingTab,
+        config = theme.config,
+        onOptionPreview = { key, raw -> onIntent(CustomizeIntent.Appearance.PreviewThemeOption(key, raw)) },
+        onOptionChange = { key, raw -> onIntent(CustomizeIntent.Appearance.ChangeThemeOption(key, raw)) },
+    )
 }
 
 @Composable
@@ -180,59 +182,6 @@ private fun EffectsPanel(
 }
 
 @Composable
-private fun ClockPanel(
-    clock: AodAppearanceUiModel,
-    onIntent: (CustomizeIntent) -> Unit,
-) {
-    Column {
-        AppSectionLabel(text = stringResource(R.string.opt_clock_face))
-
-        ChipRow {
-            ClockFaceValue.entries.forEach { face ->
-                FilterChip(
-                    selected = clock.face == face,
-                    onClick = { onIntent(CustomizeIntent.Appearance.ChangeClockFace(face)) },
-                    label = { Text(text = stringResource(face.labelRes)) },
-                )
-            }
-        }
-
-        AppSectionLabel(text = stringResource(R.string.opt_clock_font))
-
-        ChipRow {
-            ClockFontValue.entries.forEach { font ->
-                FilterChip(
-                    selected = clock.font == font,
-                    onClick = { onIntent(CustomizeIntent.Appearance.ChangeClockFont(font)) },
-                    label = {
-                        Text(
-                            text = stringResource(font.labelRes),
-                            fontFamily = font.fontFamily
-                        )
-                    },
-                )
-            }
-        }
-
-        AppSectionLabel(text = stringResource(R.string.opt_clock_color))
-
-        ClockColorPicker(
-            color = clock.color,
-            onColorPreview = { color -> onIntent(CustomizeIntent.Appearance.PreviewClockColor(color)) },
-            onColorChange = { color -> onIntent(CustomizeIntent.Appearance.ChangeClockColor(color)) },
-        )
-
-        AppSliderRow(
-            label = stringResource(R.string.opt_clock_size_value, clock.sizePercent),
-            progress = { clock.sizePercent },
-            valueRange = AodAppearanceUiModel.SIZE_MIN_PERCENT..AodAppearanceUiModel.SIZE_MAX_PERCENT,
-            step = AodAppearanceUiModel.SIZE_STEP_PERCENT,
-            onProgressChange = { onIntent(CustomizeIntent.Appearance.ChangeClockSize(it)) },
-        )
-    }
-}
-
-@Composable
 private fun BackgroundPanel(
     decor: CustomizeDecorUiModel,
     isLoadingBackground: Boolean,
@@ -311,15 +260,3 @@ private fun MemoPanel(
     }
 }
 
-@Composable
-private fun ChipRow(content: @Composable () -> Unit) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .horizontalScroll(rememberScrollState())
-            .padding(vertical = 4.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        content()
-    }
-}

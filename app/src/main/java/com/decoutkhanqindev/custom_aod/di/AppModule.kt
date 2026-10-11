@@ -31,6 +31,7 @@ import com.decoutkhanqindev.custom_aod.presentation.screens.customize.CustomizeV
 import com.decoutkhanqindev.custom_aod.presentation.screens.language.LanguageViewModel
 import com.decoutkhanqindev.custom_aod.presentation.screens.permission.PermissionViewModel
 import com.decoutkhanqindev.custom_aod.presentation.screens.settings.SettingsViewModel
+import com.decoutkhanqindev.custom_aod.presentation.screens.themeeditor.ThemeEditorViewModel
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import org.koin.android.ext.koin.androidApplication
@@ -102,6 +103,7 @@ val viewModelModule = module {
         )
     }
     viewModel { PermissionViewModel(get(), get()) }
+    viewModel { (themeId: String) -> ThemeEditorViewModel(themeId, get(), get(), get()) }
     viewModel {
         AodViewModel(
             get(),

@@ -8,6 +8,7 @@ import com.decoutkhanqindev.custom_aod.data.local.image.AodImageManager
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.AodAppearanceUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.WallpaperValue
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.observeAodAppearance
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodExtrasUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.observeAodExtras
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.observeAodNotificationOptions
@@ -32,6 +33,10 @@ data class CustomizeDraftUiModel(
             isBatteryEnabled = appearance.isBatteryEnabled,
         )
 }
+
+// Xem trước một chủ đề khác với phần chung (nền, thông báo...) của bản nháp.
+fun CustomizeDraftUiModel.withTheme(theme: AodThemeUiModel): CustomizeDraftUiModel =
+    copy(appearance = appearance.copy(clock = appearance.clock.copy(theme = theme)))
 
 @Immutable
 data class CustomizeAppearanceUiModel(

@@ -21,4 +21,7 @@ data object PermissionDestination : NavKey
 @Serializable
 data object IapDestination : NavKey
 
+@Serializable
+data class ThemeEditorDestination(val themeId: String) : NavKey
+
 // TODO: Thêm destination của project — data object khi không có args, data class (field primitive/@Serializable) khi có args

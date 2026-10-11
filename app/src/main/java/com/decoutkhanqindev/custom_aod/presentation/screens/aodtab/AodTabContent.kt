@@ -85,7 +85,14 @@ fun AodTabContent(
                     modifier = Modifier.padding(top = 16.dp),
                 )
 
-                AodTabThemesSection(modifier = Modifier.padding(top = 32.dp))
+                AodTabThemesSection(
+                    themes = state.themes,
+                    activeTheme = state.activeTheme,
+                    design = state.design,
+                    nowMillis = state.nowMillis,
+                    onIntent = onIntent,
+                    modifier = Modifier.padding(top = 32.dp),
+                )
             }
         }
     }

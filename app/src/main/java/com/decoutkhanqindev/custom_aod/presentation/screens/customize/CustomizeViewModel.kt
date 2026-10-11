@@ -2,7 +2,6 @@ package com.decoutkhanqindev.custom_aod.presentation.screens.customize
 
 import android.graphics.Bitmap
 import androidx.annotation.StringRes
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewModelScope
 import com.decoutkhanqindev.custom_aod.R
 import com.decoutkhanqindev.custom_aod.data.device.permission.PermissionManager
@@ -11,14 +10,16 @@ import com.decoutkhanqindev.custom_aod.data.local.image.AodImageManager
 import com.decoutkhanqindev.custom_aod.domain.usecase.RefreshWeatherUseCase
 import com.decoutkhanqindev.custom_aod.presentation.base.BaseViewModel
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.WallpaperValue
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.toStoredClockColor
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodExtrasUiModel
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.isSame
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.saveAodThemeConfig
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeAppearanceUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeDecorUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeDraftUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeGuideStepValue
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeInfoUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.loadCustomizeDraft
+import com.decoutkhanqindev.custom_aod.presentation.model.customize.withTheme
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionValue
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.hasRequiredPermissions
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.requiredAodPermissions
@@ -51,8 +52,8 @@ class CustomizeViewModel(
     private var pendingChange: (CustomizeDraftUiModel.() -> CustomizeDraftUiModel)? = null
     private var glowPreviewJob: Job? = null
 
-    // Kéo wheel / thanh sáng của color picker: xem trước trực tiếp không ghi lịch sử, thả tay mới ghi một mục hoàn tác cho cả lần kéo.
-    private var colorDragBase: CustomizeDraftUiModel? = null
+    // Kéo color picker ở tab Đồng hồ (onboarding): xem trước trực tiếp không ghi lịch sử, thả tay mới ghi một bước hoàn tác cho cả lần kéo.
+    private var themeDragBase: CustomizeDraftUiModel? = null
 
     init {
         loadDraft()
@@ -92,30 +93,10 @@ class CustomizeViewModel(
 
     private fun onAppearanceIntent(intent: CustomizeIntent.Appearance) {
         when (intent) {
-            is CustomizeIntent.Appearance.ChangeClockFace -> editAppearance {
-                copy(
-                    clock = clock.copy(
-                        face = intent.face
-                    )
-                )
-            }
-
-            is CustomizeIntent.Appearance.ChangeClockFont -> editAppearance {
-                copy(
-                    clock = clock.copy(
-                        font = intent.font
-                    )
-                )
-            }
-
-            is CustomizeIntent.Appearance.PreviewClockColor -> previewClockColor(intent.color)
-            is CustomizeIntent.Appearance.ChangeClockColor -> commitClockColor(intent.color)
-
-            is CustomizeIntent.Appearance.ChangeClockSize ->
-                editAppearance { copy(clock = clock.copy(sizePercent = intent.percent)) }
-
             is CustomizeIntent.Appearance.ToggleDate -> editAppearance { copy(isDateEnabled = intent.isEnabled) }
             is CustomizeIntent.Appearance.ToggleBattery -> editAppearance { copy(isBatteryEnabled = intent.isEnabled) }
+            is CustomizeIntent.Appearance.PreviewThemeOption -> previewThemeOption(intent.key, intent.raw)
+            is CustomizeIntent.Appearance.ChangeThemeOption -> changeThemeOption(intent.key, intent.raw)
         }
     }
 
@@ -238,7 +219,7 @@ class CustomizeViewModel(
 
             is CustomizeIntent.History.ResetCustomization -> {
                 updateState { copy(history = history.copy(isResetConfirmVisible = false)) }
-                edit { CustomizeDraftUiModel() }
+                edit { defaultDraft() }
             }
         }
     }
@@ -311,30 +292,14 @@ class CustomizeViewModel(
     private fun editDecor(transform: CustomizeDecorUiModel.() -> CustomizeDecorUiModel) =
         edit { copy(decor = decor.transform()) }
 
-    private fun previewClockColor(color: Color) {
+    private fun edit(transform: CustomizeDraftUiModel.() -> CustomizeDraftUiModel) {
         val current = state.value.draft
-        if (colorDragBase == null) colorDragBase = current
-        publish(current.withClockColor(color))
+        commit(from = current, next = current.transform())
     }
 
-    private fun commitClockColor(color: Color) {
-        val base = colorDragBase ?: state.value.draft
-        colorDragBase = null
-        commit(from = base) { withClockColor(color) }
-    }
-
-    private fun CustomizeDraftUiModel.withClockColor(color: Color) =
-        copy(appearance = appearance.copy(clock = appearance.clock.copy(color = color)))
-
-    // Mỗi thay đổi đẩy bản trước vào lịch sử hoàn tác; thay đổi mới thì bỏ lịch sử làm lại.
-    private fun edit(transform: CustomizeDraftUiModel.() -> CustomizeDraftUiModel) =
-        commit(from = state.value.draft, transform = transform)
-
-    private fun commit(
-        from: CustomizeDraftUiModel,
-        transform: CustomizeDraftUiModel.() -> CustomizeDraftUiModel,
-    ) {
-        val next = from.transform()
+    // Mỗi thay đổi đẩy bản trước vào lịch sử hoàn tác; thay đổi mới thì bỏ lịch sử làm lại. from khác bản đang hiện khi vừa kéo xem
+    // trước: kéo về đúng chỗ cũ thì chỉ trả bản nháp về from.
+    private fun commit(from: CustomizeDraftUiModel, next: CustomizeDraftUiModel) {
         if (next == from) {
             if (state.value.draft != from) publish(from)
             return
@@ -343,6 +308,27 @@ class CustomizeViewModel(
         if (undoStack.size > MAX_HISTORY) undoStack.removeFirst()
         redoStack.clear()
         publish(next)
+    }
+
+    // Ngoài onboarding không có tab Đồng hồ: đặt lại giữ chủ đề đang dùng, nếu không Áp dụng sẽ âm thầm đổi chủ đề.
+    private fun defaultDraft(): CustomizeDraftUiModel =
+        if (isFirstOpen) CustomizeDraftUiModel() else CustomizeDraftUiModel().withTheme(initialDraft.appearance.clock.theme)
+
+    private fun previewThemeOption(key: String, raw: Int) {
+        val current = state.value.draft
+        if (themeDragBase == null) themeDragBase = current
+        publish(current.withThemeOption(key, raw))
+    }
+
+    private fun changeThemeOption(key: String, raw: Int) {
+        val base = themeDragBase ?: state.value.draft
+        themeDragBase = null
+        commit(from = base, next = base.withThemeOption(key, raw))
+    }
+
+    private fun CustomizeDraftUiModel.withThemeOption(key: String, raw: Int): CustomizeDraftUiModel {
+        val theme = appearance.clock.theme
+        return withTheme(theme.copy(config = theme.config.withRaw(key, raw)))
     }
 
     private fun undo() {
@@ -363,7 +349,7 @@ class CustomizeViewModel(
                 draft = draft,
                 history = history.copy(
                     hasChanges = draft != initialDraft,
-                    isDefault = draft == CustomizeDraftUiModel(),
+                    isDefault = draft == defaultDraft(),
                     canUndo = undoStack.isNotEmpty(),
                     canRedo = redoStack.isNotEmpty(),
                 ),
@@ -503,11 +489,13 @@ class CustomizeViewModel(
         draft: CustomizeAppearanceUiModel,
         initial: CustomizeAppearanceUiModel
     ) {
+        val chosen = draft.clock.theme
+        val previous = initial.clock.theme
         with(dataStoreManager) {
-            if (draft.clock.face != initial.clock.face) saveAodClockFace(draft.clock.face.code)
-            if (draft.clock.font != initial.clock.font) saveAodClockFont(draft.clock.font.code)
-            if (draft.clock.color != initial.clock.color) saveAodClockColor(draft.clock.color.toStoredClockColor())
-            if (draft.clock.sizePercent != initial.clock.sizePercent) saveAodClockSizePercent(draft.clock.sizePercent)
+            if (chosen.value != previous.value || !chosen.value.spec.isSame(chosen.config, previous.config)) {
+                saveAodThemeConfig(chosen.value, chosen.config)
+            }
+            if (chosen.value != previous.value) saveAodThemeId(chosen.value.id)
             if (draft.isDateEnabled != initial.isDateEnabled) saveIsAodDateEnabled(draft.isDateEnabled)
             if (draft.isBatteryEnabled != initial.isBatteryEnabled) saveIsAodBatteryEnabled(draft.isBatteryEnabled)
         }
