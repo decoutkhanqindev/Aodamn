@@ -40,6 +40,9 @@
     <string name="opt_enabled">Hiện đồng hồ khi màn hình tắt</string>
     <string name="aod_tab_design_title">Giao diện của bạn</string>
     <string name="aod_tab_themes_title">Chủ đề</string>
+    <string name="aod_tab_theme_reset">Đặt lại chủ đề mặc định</string>
+    <string name="aod_tab_theme_reset_title">Đặt lại chủ đề mặc định?</string>
+    <string name="aod_tab_theme_reset_desc">AOD sẽ dùng lại chủ đề %1$s. Những gì bạn đã chỉnh và lưu ở từng chủ đề vẫn được giữ.</string>
     <string name="theme_classic">Cổ điển</string>
     <string name="theme_pebble">Sỏi</string>
     <string name="theme_in_use">Đang dùng</string>
@@ -50,11 +53,9 @@
     <string name="theme_discard_desc">Các thay đổi chưa lưu của chủ đề này sẽ mất.</string>
     <string name="theme_discard_confirm">Bỏ</string>
     <string name="theme_tab_clock">Đồng hồ</string>
-    <string name="theme_tab_font">Font chữ</string>
     <string name="theme_tab_hour">Giờ</string>
     <string name="theme_tab_minute">Phút</string>
     <string name="theme_tab_digits">Chữ số</string>
-    <string name="theme_tab_color">Màu</string>
     <string name="theme_tab_date">Ngày</string>
     <string name="theme_tab_effects">Hiệu ứng</string>
     <string name="theme_tab_media">Nhạc</string>

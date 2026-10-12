@@ -7,6 +7,18 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-10-12 – Màn chủ đề chia tab theo phần như Tùy chỉnh
+
+Build được (`assembleDebug`), lint không thêm cảnh báo, `tools/check-rules.sh` ra 0 vi phạm (37 rule). Chưa test trên máy.
+
+### Thay đổi
+
+- Tab của màn chủ đề chia theo phần như khối ở Tùy chỉnh, mỗi tab có kiểu rồi màu của chính phần đó, bỏ tab Màu gom chung. Sỏi: Giờ (hình, kiểu, màu khối, màu số), Phút (tương tự), Chữ số (font, cỡ, xếp chồng), Ngày (kiểu, màu), Nhạc (nút phát, thanh tiến trình, màu), Hiệu ứng. Cổ điển: một tab Đồng hồ (mặt, font, cỡ, màu giờ / phút), cũng là tab Đồng hồ lúc onboarding (`ClassicThemeSpec.OnboardingTab` thành `ClockTab`). Khoá cấu hình không đổi nên cấu hình đã lưu giữ nguyên.
+- Đặt lại riêng từng tab ở màn chủ đề (`ThemeEditorIntent.Option.ResetTab`, một bước hoàn tác), giống khối ở Tùy chỉnh. Ở cả hai màn, nút này giờ là icon (mũi tên xoay, không chữ) bên phải tên tab ở thanh tiêu đề panel, chỉ hiện khi tab đã khác mặc định (`AppEditorPanel(action)` + `AppEditorResetButton`), thay cho dòng "Đặt lại mặc định" cuối danh sách (bỏ `StyleResetRow`).
+- Bỏ chuỗi `theme_tab_font`, `theme_tab_color` và icon `palette` không còn dùng.
+- Tab AOD: cả tab là một `LazyVerticalGrid` 3 cột thay cho `Column` + `verticalScroll` (lưới lazy không lồng được trong cột cuộn). Phần đầu (công tắc, cảnh báo quyền, thẻ "Giao diện của bạn") và tiêu đề "Chủ đề" chiếm cả hàng, mỗi chủ đề một ô có `key` / `contentType` (`LazyGridScope.aodTabThemesSection` thay cho composable `AodTabThemesSection` chia hàng bằng `chunked(2)`). Ảnh chủ đề rộng đúng bằng ô và cao theo tỉ lệ màn hình thay cho cao cố định 240dp.
+- Lưới chủ đề không còn ô Cổ điển (chủ đề mặc định). Tiêu đề "Chủ đề" có icon đặt lại (chỉ hiện khi đang dùng chủ đề khác), bấm thì hỏi bằng hộp thoại rồi đổi chủ đề đang dùng về Cổ điển; kiểu đã lưu của từng chủ đề giữ nguyên (`AodTabIntent.ResetTheme`). Sửa Cổ điển khi đang dùng: Tùy chỉnh › Đồng hồ › Chủ đề.
+
 ## [Chưa phát hành] – 2026-10-12 – Tự quay về app sau khi cấp quyền trên Xiaomi
 
 Build được (`assembleDebug`), lint không thêm cảnh báo, `tools/check-rules.sh` ra 0 vi phạm (37 rule). Chưa test trên máy.

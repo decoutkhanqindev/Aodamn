@@ -67,7 +67,9 @@ bắt buộc (compiler không chặn hộ):
   ngoài AOD thật không chạy theo giờ: giá trị mẫu cố định từ `CustomizePreviewSamples` (giờ 08:30); khối chủ đề tự vẽ
   khai báo trong `ownBlocks` (`AodBlockValue`: ngày, nhạc), kiểu do chủ đề quyết định, và luôn có trong
   xem trước chủ đề (`toThemePreviewDraft`). Tùy chỉnh không chỉnh chủ đề: tab Đồng hồ lúc onboarding
-  chỉ có Cổ điển (`ClassicThemeSpec.OnboardingTab`), sau đó là dòng dẫn sang màn chủ đề.
+  chỉ có Cổ điển (`ClassicThemeSpec.ClockTab`), sau đó là dòng dẫn sang màn chủ đề. Tab của chủ đề chia theo
+  phần như khối ở Tùy chỉnh (kiểu rồi màu của chính phần đó, không gom màu vào tab riêng), tab nào cũng có
+  icon đặt lại riêng ở thanh tiêu đề panel (`AppEditorPanel(action)` + `AppEditorResetButton`), cả ở Tùy chỉnh.
 
 ## Presentation: MVI
 

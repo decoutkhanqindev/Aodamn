@@ -279,7 +279,7 @@ Mục "Giao diện đồng hồ":
 
 | Tùy chọn                      | Key                                                    | Mặc định | Tác dụng                                                                                                                                                                                          |
 |-------------------------------|--------------------------------------------------------|----------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Chủ đề                        | `aod_theme_id`                                         | Cổ điển  | Cổ điển (4 mặt đồng hồ có từ trước) hoặc Sỏi. Chọn ở tab AOD › Chủ đề, xem trước rồi Áp dụng |
+| Chủ đề                        | `aod_theme_id`                                         | Cổ điển  | Cổ điển (4 mặt đồng hồ có từ trước) hoặc Sỏi. Chọn ở tab AOD › Chủ đề, xem trước rồi Áp dụng; Cổ điển (mặc định) không nằm trong lưới, quay về bằng icon đặt lại ở tiêu đề "Chủ đề" |
 | Kiểu từng khối                | `aod_component_styles` (chuỗi `khoá=giá trị,...`)      | Mặc định | Font, cỡ 60–150%, màu của từng khối dùng chung: ngày, pin, thời tiết, sự kiện, ghi nhớ, thông báo, nhạc, nét vẽ (không có font). Sửa ở Tùy chỉnh, không áp dụng cho khối chủ đề đang dùng tự vẽ |
 | Cấu hình chủ đề               | `aod_theme_configs` (chuỗi theo chủ đề)                | Mặc định | Cổ điển: mặt (Số / Số xếp chồng / Kim / Kim tối giản), font, màu giờ và màu phút riêng, cỡ 60–150%; chưa lưu thì lấy `aod_clock_face` / `_font` / `_color` / `_size_percent` của bản cũ. Sỏi: hình và kiểu (đặc / viền) của khối giờ và khối phút (8 hình), font, cỡ, xếp giờ trên phút, màu riêng của khối giờ, số giờ, khối phút, số phút, ngày và nhạc, kiểu ngày, hình nút phát, thanh tiến trình nhạc (gợn sóng / thẳng / ẩn), animation khi đổi phút (trượt / phóng / nảy hình) |
 | Luôn xoay ngang (đồng hồ đêm) | `is_aod_landscape`                                     | Tắt      | Đồng hồ luôn nằm ngang theo chiều dựng máy                                                                                                                                                        |
@@ -367,9 +367,9 @@ thông báo ──▶ AodNotificationListener ──▶ NotificationStateManager
 | `presentation/components/aod/AodContent.kt` (+ `AodClockFace`, `AodDetails`, `AodExtras`, `AodNotifications`, `AodMediaControls`, `AodStatus`, `AodBlock`, `AodBackdrop`; `AppTimeFormat` ở `presentation/components/`) · `presentation/screens/aod/AodScreen.kt` · `state/` | Giao diện đồng hồ (4 mặt, ngày, thời tiết, sự kiện, ghi nhớ, hình vẽ, icon thông báo, pin, nhạc, gợi ý, viền sáng, ảnh nền, bố cục ngang, dịch vị trí) và phần nối với ViewModel                                                                                                                                                                                                                                                                                                                  |
 | `presentation/aod/AodNotificationListener.kt`                                                                                                                                                                                                       | Nhận thông báo từ hệ thống (khi đã cấp "Truy cập thông báo") và chuyển cho `NotificationStateManager`                                                                                                                                                                                                                                                                                                                                                                                             |
 | `presentation/navigation/MainNavDisplay.kt` · `MainDestinations.kt` | Main: `Scaffold` có thanh trên chung của tab (`MainTopBar`: tiêu đề theo tab, IAP, Share), `NavDisplay` của 3 tab (AOD, Viền sáng, Cài đặt) và thanh tab dưới, không ViewModel. Tab AOD là gốc: Back ở tab khác về tab AOD rồi mới thoát app |
-| `presentation/screens/aodtab/` | Tab AOD (MVI): công tắc AOD, thẻ "Giao diện của bạn" (AOD đang áp dụng, vẽ thu nhỏ bằng `AodThumbnail`; chạm để mở Customize), lưới chủ đề (mỗi mục chỉ xem trước kiểu mặc định của chủ đề (không theo cấu hình đã chỉnh): đồng hồ, ngày và khối chủ đề tự vẽ như trình phát nhạc của Sỏi, không có nền, thông báo, pin... của user; chạm để mở màn chủ đề), sheet và dòng cảnh báo khi thiếu quyền bắt buộc |
+| `presentation/screens/aodtab/` | Tab AOD (MVI): cả tab là một `LazyVerticalGrid` 3 cột: công tắc AOD, thẻ "Giao diện của bạn" (AOD đang áp dụng, vẽ thu nhỏ bằng `AodThumbnail`; chạm để mở Customize) chiếm cả hàng, lưới chủ đề mỗi chủ đề một ô (mỗi mục chỉ xem trước kiểu mặc định của chủ đề (không theo cấu hình đã chỉnh): đồng hồ, ngày và khối chủ đề tự vẽ như trình phát nhạc của Sỏi, không có nền, thông báo, pin... của user; chạm để mở màn chủ đề), sheet và dòng cảnh báo khi thiếu quyền bắt buộc |
 | `presentation/model/aod/theme/` | Hệ chủ đề: `AodThemeValue` (danh sách, id lưu), `AodThemeSpec` (tab + thuộc tính) của từng chủ đề (`ClassicThemeSpec`, `PebbleThemeSpec`), thuộc tính `AodThemeOption` (lựa chọn / màu / khoảng số / bật tắt, lưu thành Int trong `AodThemeConfig`), hình khối `AodShapeValue` (hàm bán kính quanh tâm), khối chủ đề tự vẽ `AodBlockValue`, kiểu từng khối dùng chung `AodComponentSpec` / `AodComponentsUiModel`, đọc / ghi `aod_theme_configs` và `aod_component_styles` |
-| `presentation/screens/themeeditor/` | Màn chủ đề (MVI) dùng chung cho mọi chủ đề: xem trước riêng chủ đề: đồng hồ, ngày và khối chủ đề tự vẽ (Sửa / Áp dụng; chủ đề đang dùng thì "Tùy chỉnh" mở Customize), sửa theo tab của `AodThemeSpec` với control dựng theo loại thuộc tính, hoàn tác / làm lại / đặt lại, Lưu |
+| `presentation/screens/themeeditor/` | Màn chủ đề (MVI) dùng chung cho mọi chủ đề: xem trước riêng chủ đề: đồng hồ, ngày và khối chủ đề tự vẽ (Sửa / Áp dụng; chủ đề đang dùng thì "Tùy chỉnh" mở Customize), sửa theo tab của `AodThemeSpec` (mỗi tab một phần của chủ đề như khối ở Tùy chỉnh, icon đặt lại riêng ở thanh tiêu đề panel) với control dựng theo loại thuộc tính, hoàn tác / làm lại / đặt lại, Lưu |
 | `presentation/components/aod/AodClockFace.kt` · `AodPebbleClock.kt` · `AodPebbleMedia.kt` · `AodShapePath.kt` · `AodThumbnail.kt` | Đồng hồ và trình phát nhạc theo chủ đề (Cổ điển, Sỏi), path của hình khối và nội suy giữa hai hình, AOD thu nhỏ |
 | `presentation/components/AppEditorPanel.kt` · `AppEditorTab.kt` | Tấm chỉnh trượt lên và tab của thanh tab, dùng chung cho Tùy chỉnh và màn chủ đề |
 | `presentation/screens/edgelight/` | Tab Viền sáng: màn giữ chỗ |
@@ -598,12 +598,12 @@ Từ FakeAOD sang Custom AOD:
     khóa máy: các khối như mục "Kiểu mặc định của các khối", không có viền nào; cắm sạc thì pin tô Mint kèm tia sét, pin
     ≤ 15% thì đỏ; bật đèn pin bằng thao tác thì icon đèn pin nằm cạnh pin. Lưới chủ đề ở tab AOD: chỉ kiểu mặc định của
     từng chủ đề (đồng hồ, ngày, trình phát nhạc của Sỏi; không theo màu / font đã chỉnh, không có ảnh nền, thông báo,
-    pin... đã bật; thẻ "Giao diện của bạn" mới đủ), không khung thẻ, tên căn giữa, chủ đề đang dùng viền mint và có dấu
-    tích ở góc ảnh.
+    pin... đã bật; thẻ "Giao diện của bạn" mới đủ), không khung thẻ, tên căn giữa, chủ đề đang dùng viền mint và có nhãn
+    "Đang dùng" trên ảnh.
 23b. Kiểu từng khối: Tùy chỉnh › từng tab Ngày, Pin, Thời tiết, Sự kiện, Ghi nhớ, Thông báo, Nhạc, Nét vẽ: ngoài công tắc
     còn có Font (trừ nét vẽ), Cỡ, Màu; mở tab nào thì khung xem trước luôn có khối đó (dữ liệu mẫu nếu đang tắt hoặc trống); đổi từng cái, khung xem trước đổi theo (kéo màu thì xem trước theo tay, thả tay mới
-    thành một bước hoàn tác), Áp dụng rồi khóa máy: đúng kiểu đã chỉnh; "Đặt lại mặc định" ở cuối tab (chỉ hiện khi khối đã
-    đổi) chỉ đặt lại khối đó. Đặt ngón tay lên bánh xe màu rồi vuốt dọc: panel cuộn, màu không đổi; chạm nhẹ lên bánh xe:
+    thành một bước hoàn tác), Áp dụng rồi khóa máy: đúng kiểu đã chỉnh; icon đặt lại (mũi tên xoay, không chữ) bên phải tên tab
+    ở đầu panel, chỉ hiện khi khối đã đổi, chỉ đặt lại khối đó; tab nền, hiệu ứng và khối do chủ đề tự vẽ không có icon. Đặt ngón tay lên bánh xe màu rồi vuốt dọc: panel cuộn, màu không đổi; chạm nhẹ lên bánh xe:
     chọn màu ở chỗ chạm; chạm đúng nút chọn rồi kéo: đổi màu theo tay. Chủ đề Sỏi đang dùng: tab
     Ngày và Nhạc chỉ có dòng "Kiểu do chủ đề quyết định" (chạm: mở màn chủ đề). Tab Đồng hồ ngoài onboarding là dòng
     "Chủ đề" (chạm: mở màn chủ đề đang dùng); từ màn chủ đề bấm "Tùy chỉnh" thì quay về Tùy chỉnh, không mở chồng.
@@ -617,9 +617,16 @@ Từ FakeAOD sang Custom AOD:
     đề luôn hiện 08:30 hôm nay với dữ liệu mẫu cố định (pin 72%, nhạc dừng ở cùng một chỗ): để qua phút mới không có gì
     đổi; chỉ AOD thật chạy theo giờ.
 23d. Màn chủ đề: bấm Lưu (lúc Sửa) hoặc Áp dụng: hiện lớp phủ "Đang áp dụng…" chặn chạm và Back cho tới khi ghi xong rồi
-    mới báo đã lưu / đã áp dụng. Lưới chủ đề ở tab AOD: chủ đề đang dùng có nhãn "Đang dùng" trên ảnh.
-24. Chủ đề Cổ điển: tab AOD › Chủ đề › Cổ điển › Sửa (hoặc chạm vào khung xem trước), thử lần lượt 4 mặt, màu giờ và màu
-    phút khác nhau (số: phần trước dấu ":" là giờ; xếp chồng: hai dòng; kim: kim giờ, mốc giờ và kim phút), Lưu rồi khóa
+    mới báo đã lưu / đã áp dụng. Lưới chủ đề ở tab AOD: 3 cột, ảnh mỗi chủ đề vừa đúng bề rộng ô (không tràn, không
+    méo, cả máy màn hình hẹp), tên căn giữa; chủ đề đang dùng có nhãn "Đang dùng" trên ảnh. Cuộn tab AOD mượt từ công tắc
+    tới hết lưới.
+23e. Chủ đề mặc định: lưới không có Cổ điển. Đang dùng Cổ điển: tiêu đề "Chủ đề" không có icon, không ô nào "Đang dùng".
+    Áp dụng Sỏi rồi quay lại tab AOD: icon đặt lại hiện bên phải tiêu đề; bấm: hộp thoại "Đặt lại chủ đề mặc định?", Hủy
+    thì không đổi gì; Đặt lại thì thẻ "Giao diện của bạn" thành Cổ điển với đúng kiểu đã lưu trước đó, Sỏi mất nhãn "Đang
+    dùng", icon ẩn; mở lại Sỏi thì kiểu đã chỉnh của Sỏi vẫn còn. Khóa máy: AOD là Cổ điển.
+24. Chủ đề Cổ điển: đang dùng Cổ điển (đặt lại ở bước 23e nếu cần), Tùy chỉnh › Đồng hồ › Chủ đề › Sửa (hoặc chạm vào khung
+    xem trước): một tab Đồng hồ giống khối Clock lúc
+    onboarding (Mặt, Font, Cỡ, chip Giờ / Phút + bảng màu). Thử lần lượt 4 mặt, màu giờ và màu phút khác nhau (số: phần trước dấu ":" là giờ; xếp chồng: hai dòng; kim: kim giờ, mốc giờ và kim phút), Lưu rồi khóa
     máy với từng mặt. Mặt kim
     phải chỉ đúng giờ và nhích mỗi phút; mặt số theo đúng 12/24 giờ của máy. Máy đã chọn mặt / font / màu / cỡ ở bản
     trước khi có chủ đề: mở lại app, Cổ điển vẫn giữ đúng các lựa chọn đó.
@@ -631,8 +638,11 @@ Từ FakeAOD sang Custom AOD:
     thanh trên hiện "Đang dùng", nút đổi thành "Tùy chỉnh"; bấm thì mở Tùy chỉnh (nơi có AOD đầy đủ). Khung xem
     trước ở màn chủ đề chỉ có đồng hồ, ngày và trình phát nhạc của Sỏi, không có ảnh nền, thông báo, pin... đã bật. Khóa máy: AOD là chủ đề Sỏi, thẻ "Giao diện của bạn" ghi
     "Sỏi", thẻ chủ đề có nhãn "Đang dùng". Chờ đổi phút với từng animation (trượt, phóng, nảy hình): chỉ chạy lúc số
-    đổi, không giật; tắt ngày ở Tùy chỉnh thì dòng ngày của Sỏi trên AOD thật cũng ẩn. Tab Màu: chọn chip Khối giờ / Số giờ / Khối
-    phút / Số phút / Ngày / Nhạc (chấm màu trên chip đúng màu hiện tại) rồi kéo bảng màu: chỉ phần đó đổi màu.
+    đổi, không giật; tắt ngày ở Tùy chỉnh thì dòng ngày của Sỏi trên AOD thật cũng ẩn. Tab theo phần như khối ở Tùy
+    chỉnh: Giờ (hình, kiểu, chip Khối giờ / Số giờ + bảng màu), Phút (tương tự), Chữ số (font, cỡ, xếp chồng), Ngày (kiểu,
+    màu), Nhạc (nút phát, thanh tiến trình, màu), Hiệu ứng; không còn tab Màu. Chấm màu trên chip đúng màu hiện tại, kéo
+    bảng màu thì chỉ phần đó đổi. Đổi gì trong một tab thì icon đặt lại hiện bên phải tên tab ở đầu panel: bấm thì chỉ tab
+    đó về mặc định (các tab khác giữ nguyên), hoàn tác được; tab đang mặc định thì không có icon.
 25b. Nhạc của Sỏi: thẻ Sỏi ở lưới chủ đề và khung xem trước ở màn chủ đề luôn có trình phát mẫu (Cổ điển thì không, vì
     dùng trình phát chung); tab Nhạc đổi hình nút phát và kiểu thanh tiến trình. Áp dụng, phát nhạc rồi khóa máy: nút phát nằm trong khối màu khối, xoay khi bấm Phát / Tạm dừng;
     thanh chạy đúng vị trí bài (so với app nhạc), gợn sóng lúc phát, duỗi thẳng lúc dừng; tua trong app nhạc thì thanh

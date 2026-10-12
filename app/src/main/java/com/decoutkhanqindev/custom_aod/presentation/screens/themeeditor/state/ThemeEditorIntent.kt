@@ -12,10 +12,12 @@ sealed interface ThemeEditorIntent {
         data object ClosePanel : Edit
     }
 
-    // Giá trị đã mã hoá theo AodThemeOption.encode; Preview là lúc đang kéo (không ghi lịch sử hoàn tác).
+    // Giá trị đã mã hoá theo AodThemeOption.encode; Preview là lúc đang kéo (không ghi lịch sử hoàn tác). ResetTab: đặt lại riêng các
+    // thuộc tính của tab đó (một bước hoàn tác).
     sealed interface Option : ThemeEditorIntent {
         data class PreviewOption(val key: String, val raw: Int) : Option
         data class ChangeOption(val key: String, val raw: Int) : Option
+        data class ResetTab(val tab: AodThemeTab) : Option
     }
 
     sealed interface History : ThemeEditorIntent {

@@ -13,6 +13,7 @@ data class AodTabState(
     val isLoading: Boolean = true,
     val isAodEnabled: Boolean = false,
     val design: CustomizeDraftUiModel = CustomizeDraftUiModel(),
+    val isThemeResetConfirmVisible: Boolean = false,
     val permission: AodTabPermissionState = AodTabPermissionState(),
 ) {
     val activeTheme: AodThemeValue

@@ -32,7 +32,6 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.decoutkhanqindev.custom_aod.R
 import com.decoutkhanqindev.custom_aod.presentation.components.settings.AppSectionLabel
 import com.decoutkhanqindev.custom_aod.presentation.components.settings.AppSliderRow
 import com.decoutkhanqindev.custom_aod.presentation.components.settings.AppSwitchRow
@@ -55,8 +54,9 @@ import com.decoutkhanqindev.custom_aod.presentation.theme.NeutralVariant60
 import com.decoutkhanqindev.custom_aod.presentation.theme.RoundedCornerShape12dp
 import com.decoutkhanqindev.custom_aod.presentation.theme.Theme
 
-// Control của một tab chủ đề dựng theo loại thuộc tính, không biết chủ đề nào (màn chủ đề, tab Đồng hồ của Tùy chỉnh lúc onboarding): chủ đề mới chỉ khai báo thuộc tính trong AodThemeSpec. Tab có
-// nhiều màu thì gom thành chip chọn phần cần tô + một bảng màu, đặt ở chỗ màu đầu tiên.
+// Control của một tab dựng theo loại thuộc tính, không biết chủ đề nào (màn chủ đề, khối ở Tùy chỉnh): chủ đề mới chỉ khai báo thuộc tính
+// trong AodThemeSpec. Tab có nhiều màu thì gom thành chip chọn phần cần tô + một bảng màu, đặt ở chỗ màu đầu tiên. Nút đặt lại riêng tab
+// nằm ở thanh tiêu đề panel (AppEditorResetButton).
 @Composable
 fun AodThemeOptionList(
     tab: AodThemeTab,
@@ -328,7 +328,7 @@ private fun ShapeChoice(
 private fun AodThemeOptionListPreview() {
     Theme {
         AodThemeOptionList(
-            tab = PebbleThemeSpec.tabs.first { tab -> tab.labelRes == R.string.theme_tab_color },
+            tab = PebbleThemeSpec.tabs.first(),
             config = AodThemeConfig(),
             onOptionPreview = { _, _ -> },
             onOptionChange = { _, _ -> },

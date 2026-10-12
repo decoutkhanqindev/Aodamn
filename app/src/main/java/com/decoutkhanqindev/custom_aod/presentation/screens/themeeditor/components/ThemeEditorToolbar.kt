@@ -36,7 +36,7 @@ import com.decoutkhanqindev.custom_aod.presentation.theme.Neutral12
 import com.decoutkhanqindev.custom_aod.presentation.theme.NeutralVariant30
 import com.decoutkhanqindev.custom_aod.presentation.theme.Theme
 
-// Cùng kiểu thanh công cụ của Tùy chỉnh. Xem trước: Sửa · Áp dụng (chủ đề đang dùng thì Tùy chỉnh thêm, sang phần chung); đang sửa:
+// Cùng kiểu thanh công cụ của Tùy chỉnh. Xem trước: Sửa · Áp dụng (chủ đề đang dùng thì Tùy chỉnh, sang phần chung); đang sửa:
 // hoàn tác, làm lại, đặt lại · Lưu.
 @Composable
 fun ThemeEditorToolbar(

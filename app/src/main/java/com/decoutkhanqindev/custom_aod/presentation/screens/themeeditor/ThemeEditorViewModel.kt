@@ -85,6 +85,12 @@ class ThemeEditorViewModel(
                 dragBase = null
                 commit(from = base, next = base.withRaw(intent.key, intent.raw))
             }
+
+            is ThemeEditorIntent.Option.ResetTab -> {
+                dragBase = null
+                val current = state.value.config
+                commit(from = current, next = current.without(intent.tab.options))
+            }
         }
     }
 

@@ -6,7 +6,7 @@ regular: arrow-left arrow-right arrow-u-up-left arrow-u-up-right arrow-counter-c
 regular: crown-simple share-network clock device-mobile gear-six calendar-blank battery-full image paint-brush note-pencil bell calendar-check cloud-sun music-notes sparkle
 
 # Tab và nút của màn sửa chủ đề
-regular: timer text-aa palette magic-wand pencil-simple
+regular: timer text-aa magic-wand pencil-simple
 
 # Tab đang chọn và dấu hoàn thành
 fill: clock device-mobile gear-six check-circle

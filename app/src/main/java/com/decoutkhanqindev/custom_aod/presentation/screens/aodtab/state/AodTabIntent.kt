@@ -8,6 +8,9 @@ sealed interface AodTabIntent {
     data object RefreshDesign : AodTabIntent
     data object NavigateToCustomize : AodTabIntent
     data class OpenTheme(val theme: AodThemeValue) : AodTabIntent
+    data object ShowThemeResetConfirm : AodTabIntent
+    data object DismissThemeResetConfirm : AodTabIntent
+    data object ResetTheme : AodTabIntent
     data object RefreshPermissions : AodTabIntent
     data object ShowPermissionSheet : AodTabIntent
     data object DismissPermissionSheet : AodTabIntent

@@ -26,11 +26,13 @@ import com.decoutkhanqindev.custom_aod.R
 import com.decoutkhanqindev.custom_aod.presentation.components.AppApplyingOverlay
 import com.decoutkhanqindev.custom_aod.presentation.components.AppBadge
 import com.decoutkhanqindev.custom_aod.presentation.components.AppEditorPanel
+import com.decoutkhanqindev.custom_aod.presentation.components.AppEditorResetButton
 import com.decoutkhanqindev.custom_aod.presentation.components.AppTopBar
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.AodContent
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.AodThemeOptionList
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.rememberAodPreview
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeValue
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.isDefault
 import com.decoutkhanqindev.custom_aod.presentation.screens.themeeditor.components.ThemeEditorTabBar
 import com.decoutkhanqindev.custom_aod.presentation.screens.themeeditor.components.ThemeEditorToolbar
 import com.decoutkhanqindev.custom_aod.presentation.screens.themeeditor.state.ThemeEditorIntent
@@ -117,6 +119,12 @@ fun ThemeEditorContent(
                     selected = state.selectedTab,
                     title = { tab -> stringResource(tab.labelRes) },
                     initial = state.theme.spec.tabs.first(),
+                    action = { tab ->
+                        AppEditorResetButton(
+                            isVisible = !tab.isDefault(state.config),
+                            onClick = { onIntent(ThemeEditorIntent.Option.ResetTab(tab)) },
+                        )
+                    },
                 ) { tab ->
                     AodThemeOptionList(
                         tab = tab,

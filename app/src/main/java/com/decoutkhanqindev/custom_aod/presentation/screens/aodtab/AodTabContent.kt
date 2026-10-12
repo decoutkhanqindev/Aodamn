@@ -5,19 +5,24 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -29,12 +34,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.custom_aod.R
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeValue
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionValue
 import com.decoutkhanqindev.custom_aod.presentation.screens.aodtab.components.AodTabDesignCard
 import com.decoutkhanqindev.custom_aod.presentation.screens.aodtab.components.AodTabPermissionSheet
 import com.decoutkhanqindev.custom_aod.presentation.screens.aodtab.components.AodTabPermissionWarning
-import com.decoutkhanqindev.custom_aod.presentation.screens.aodtab.components.AodTabThemesSection
+import com.decoutkhanqindev.custom_aod.presentation.screens.aodtab.components.aodTabThemesSection
 import com.decoutkhanqindev.custom_aod.presentation.screens.aodtab.state.AodTabIntent
 import com.decoutkhanqindev.custom_aod.presentation.screens.aodtab.state.AodTabPermissionState
 import com.decoutkhanqindev.custom_aod.presentation.screens.aodtab.state.AodTabState
@@ -58,36 +64,42 @@ fun AodTabContent(
             enter = fadeIn(),
             exit = fadeOut(),
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(
-                        horizontal = 20.dp,
-                        vertical = 12.dp,
-                    ),
+            // Cả tab là một lưới 3 cột (lưới chủ đề lazy không lồng được trong verticalScroll): phần đầu chiếm cả hàng, mỗi chủ đề một ô.
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(3),
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                AodSwitchBar(
-                    isEnabled = state.isAodEnabled,
-                    onIntent = onIntent,
-                )
+                item(
+                    key = "header",
+                    span = { GridItemSpan(maxLineSpan) },
+                    contentType = "header",
+                ) {
+                    Column {
+                        AodSwitchBar(
+                            isEnabled = state.isAodEnabled,
+                            onIntent = onIntent,
+                        )
 
-                AodTabPermissionWarning(
-                    isVisible = state.isPermissionWarningVisible,
-                    onIntent = onIntent,
-                )
+                        AodTabPermissionWarning(
+                            isVisible = state.isPermissionWarningVisible,
+                            onIntent = onIntent,
+                        )
 
-                AodTabDesignCard(
-                    design = state.design,
-                    isAodEnabled = state.isAodEnabled,
-                    onIntent = onIntent,
-                    modifier = Modifier.padding(top = 16.dp),
-                )
+                        AodTabDesignCard(
+                            design = state.design,
+                            isAodEnabled = state.isAodEnabled,
+                            onIntent = onIntent,
+                            modifier = Modifier.padding(top = 16.dp),
+                        )
+                    }
+                }
 
-                AodTabThemesSection(
+                aodTabThemesSection(
                     activeTheme = state.activeTheme,
                     onIntent = onIntent,
-                    modifier = Modifier.padding(top = 32.dp),
                 )
             }
         }
@@ -98,6 +110,31 @@ fun AodTabContent(
         permissions = state.permission.requiredPermissions,
         onIntent = onIntent,
     )
+
+    if (state.isThemeResetConfirmVisible) {
+        AlertDialog(
+            onDismissRequest = { onIntent(AodTabIntent.DismissThemeResetConfirm) },
+            confirmButton = {
+                TextButton(onClick = { onIntent(AodTabIntent.ResetTheme) }) {
+                    Text(text = stringResource(R.string.customize_reset))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { onIntent(AodTabIntent.DismissThemeResetConfirm) }) {
+                    Text(text = stringResource(R.string.action_cancel))
+                }
+            },
+            title = { Text(text = stringResource(R.string.aod_tab_theme_reset_title)) },
+            text = {
+                Text(
+                    text = stringResource(
+                        R.string.aod_tab_theme_reset_desc,
+                        stringResource(AodThemeValue.DEFAULT.nameRes),
+                    ),
+                )
+            },
+        )
+    }
 }
 
 @Composable

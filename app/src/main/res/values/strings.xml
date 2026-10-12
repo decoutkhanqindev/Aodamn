@@ -45,6 +45,9 @@
     <string name="opt_enabled">Show the clock when the screen turns off</string>
     <string name="aod_tab_design_title">Your design</string>
     <string name="aod_tab_themes_title">Themes</string>
+    <string name="aod_tab_theme_reset">Reset to the default theme</string>
+    <string name="aod_tab_theme_reset_title">Reset to the default theme?</string>
+    <string name="aod_tab_theme_reset_desc">The always-on display goes back to the %1$s theme. Changes you saved in each theme are kept.</string>
     <string name="theme_classic">Classic</string>
     <string name="theme_pebble">Pebble</string>
     <string name="theme_in_use">In use</string>
@@ -55,11 +58,9 @@
     <string name="theme_discard_desc">Your unsaved changes to this theme will be lost.</string>
     <string name="theme_discard_confirm">Discard</string>
     <string name="theme_tab_clock">Clock</string>
-    <string name="theme_tab_font">Font</string>
     <string name="theme_tab_hour">Hour</string>
     <string name="theme_tab_minute">Minute</string>
     <string name="theme_tab_digits">Digits</string>
-    <string name="theme_tab_color">Color</string>
     <string name="theme_tab_date">Date</string>
     <string name="theme_tab_effects">Effects</string>
     <string name="theme_tab_media">Music</string>

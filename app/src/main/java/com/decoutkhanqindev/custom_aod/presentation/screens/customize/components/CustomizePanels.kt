@@ -14,7 +14,6 @@ import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodComponent
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodComponentValue
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.ClassicThemeSpec
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.isDefault
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeAppearanceUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeClusterValue
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeDecorUiModel
@@ -77,33 +76,11 @@ private fun ComponentStyle(
             onClick = { onIntent(CustomizeIntent.Appearance.OpenThemeEditor) },
         )
     } else {
-        val tab = AodComponentSpec.optionsOf(component).tab
-
         AodThemeOptionList(
-            tab = tab,
+            tab = AodComponentSpec.optionsOf(component).tab,
             config = clock.components.config,
             onOptionPreview = { key, raw -> onIntent(CustomizeIntent.Appearance.PreviewComponentOption(key, raw)) },
             onOptionChange = { key, raw -> onIntent(CustomizeIntent.Appearance.ChangeComponentOption(key, raw)) },
-        )
-
-        StyleResetRow(
-            isDefault = tab.isDefault(clock.components.config),
-            onClick = { onIntent(CustomizeIntent.Appearance.ResetComponentStyle(component)) },
-        )
-    }
-}
-
-// Đặt lại riêng khối đang mở về mặc định, chỉ hiện khi khối đã khác mặc định (nút Đặt lại trên thanh công cụ đặt lại cả bản nháp).
-@Composable
-private fun StyleResetRow(
-    isDefault: Boolean,
-    onClick: () -> Unit,
-) {
-    AnimatedVisibility(visible = !isDefault) {
-        AppValueRow(
-            label = stringResource(R.string.customize_style_reset),
-            value = "",
-            onClick = onClick,
         )
     }
 }
@@ -141,19 +118,12 @@ private fun ClockPanel(
     onIntent: (CustomizeIntent) -> Unit,
 ) {
     if (isFirstOpen) {
-        Column {
-            AodThemeOptionList(
-                tab = ClassicThemeSpec.OnboardingTab,
-                config = theme.config,
-                onOptionPreview = { key, raw -> onIntent(CustomizeIntent.Appearance.PreviewThemeOption(key, raw)) },
-                onOptionChange = { key, raw -> onIntent(CustomizeIntent.Appearance.ChangeThemeOption(key, raw)) },
-            )
-
-            StyleResetRow(
-                isDefault = ClassicThemeSpec.OnboardingTab.isDefault(theme.config),
-                onClick = { onIntent(CustomizeIntent.Appearance.ResetClockStyle) },
-            )
-        }
+        AodThemeOptionList(
+            tab = ClassicThemeSpec.ClockTab,
+            config = theme.config,
+            onOptionPreview = { key, raw -> onIntent(CustomizeIntent.Appearance.PreviewThemeOption(key, raw)) },
+            onOptionChange = { key, raw -> onIntent(CustomizeIntent.Appearance.ChangeThemeOption(key, raw)) },
+        )
     } else {
         AppValueRow(
             label = stringResource(R.string.customize_clock_theme),

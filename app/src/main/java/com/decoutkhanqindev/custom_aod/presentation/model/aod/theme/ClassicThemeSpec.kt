@@ -35,30 +35,14 @@ object ClassicThemeSpec : AodThemeSpec {
         default = 100,
     )
 
-    // Onboarding chỉ có Cổ điển, một danh sách (mặt rồi font, cỡ, màu như các khối khác của Tùy chỉnh) thay vì chia tab như màn chủ đề.
-    val OnboardingTab = AodThemeTab(
+    // Một tab như khối ở Tùy chỉnh (mặt rồi font, cỡ, màu giờ / phút), dùng ở màn chủ đề và tab Đồng hồ lúc onboarding.
+    val ClockTab = AodThemeTab(
         iconRes = R.drawable.ic_clock,
         labelRes = R.string.theme_tab_clock,
         options = persistentListOf(Face, Font, Size, HourColor, MinuteColor),
     )
 
-    override val tabs = persistentListOf(
-        AodThemeTab(
-            iconRes = R.drawable.ic_clock,
-            labelRes = R.string.theme_tab_clock,
-            options = persistentListOf(Face, Size),
-        ),
-        AodThemeTab(
-            iconRes = R.drawable.ic_text_aa,
-            labelRes = R.string.theme_tab_font,
-            options = persistentListOf(Font),
-        ),
-        AodThemeTab(
-            iconRes = R.drawable.ic_palette,
-            labelRes = R.string.theme_tab_color,
-            options = persistentListOf(HourColor, MinuteColor),
-        ),
-    )
+    override val tabs = persistentListOf(ClockTab)
 
     override val ownBlocks = persistentSetOf<AodBlockValue>()
 }

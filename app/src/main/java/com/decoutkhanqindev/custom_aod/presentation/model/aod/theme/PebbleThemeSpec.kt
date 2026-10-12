@@ -59,16 +59,17 @@ object PebbleThemeSpec : AodThemeSpec {
         default = AodProgressStyleValue.WAVE,
     )
 
+    // Mỗi tab một phần của chủ đề như khối ở Tùy chỉnh: kiểu rồi màu của chính phần đó (không gom màu vào một tab riêng).
     override val tabs = persistentListOf(
         AodThemeTab(
             iconRes = R.drawable.ic_clock,
             labelRes = R.string.theme_tab_hour,
-            options = persistentListOf(HourShape, HourStyle),
+            options = persistentListOf(HourShape, HourStyle, HourTileColor, HourDigitColor),
         ),
         AodThemeTab(
             iconRes = R.drawable.ic_timer,
             labelRes = R.string.theme_tab_minute,
-            options = persistentListOf(MinuteShape, MinuteStyle),
+            options = persistentListOf(MinuteShape, MinuteStyle, MinuteTileColor, MinuteDigitColor),
         ),
         AodThemeTab(
             iconRes = R.drawable.ic_text_aa,
@@ -76,19 +77,14 @@ object PebbleThemeSpec : AodThemeSpec {
             options = persistentListOf(Font, Size, Stacked),
         ),
         AodThemeTab(
-            iconRes = R.drawable.ic_palette,
-            labelRes = R.string.theme_tab_color,
-            options = persistentListOf(HourTileColor, HourDigitColor, MinuteTileColor, MinuteDigitColor, DateColor, MediaColor),
-        ),
-        AodThemeTab(
             iconRes = R.drawable.ic_calendar_blank,
             labelRes = R.string.theme_tab_date,
-            options = persistentListOf(DateStyle),
+            options = persistentListOf(DateStyle, DateColor),
         ),
         AodThemeTab(
             iconRes = R.drawable.ic_music_notes,
             labelRes = R.string.theme_tab_media,
-            options = persistentListOf(PlayShape, ProgressStyle),
+            options = persistentListOf(PlayShape, ProgressStyle, MediaColor),
         ),
         AodThemeTab(
             iconRes = R.drawable.ic_magic_wand,

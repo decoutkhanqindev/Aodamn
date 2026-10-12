@@ -5,6 +5,7 @@ import com.decoutkhanqindev.custom_aod.data.device.permission.PermissionManager
 import com.decoutkhanqindev.custom_aod.data.local.datastore.DataStoreManager
 import com.decoutkhanqindev.custom_aod.data.local.image.AodImageManager
 import com.decoutkhanqindev.custom_aod.presentation.base.BaseViewModel
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeValue
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.loadCustomizeDraft
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionValue
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.requiredAodPermissions
@@ -42,6 +43,10 @@ class AodTabViewModel(
             is AodTabIntent.OpenTheme ->
                 viewModelScope.launch { sendEffect(AodTabEffect.NavigateToThemeEditor(intent.theme.id)) }
 
+            is AodTabIntent.ShowThemeResetConfirm -> updateState { copy(isThemeResetConfirmVisible = true) }
+            is AodTabIntent.DismissThemeResetConfirm -> updateState { copy(isThemeResetConfirmVisible = false) }
+            is AodTabIntent.ResetTheme -> resetTheme()
+
             is AodTabIntent.RefreshPermissions -> refreshPermissions()
             is AodTabIntent.ShowPermissionSheet -> showPermissionSheet()
             is AodTabIntent.DismissPermissionSheet ->
@@ -68,6 +73,16 @@ class AodTabViewModel(
         designJob = viewModelScope.launch {
             val design = dataStoreManager.loadCustomizeDraft(aodImageManager, permissionManager)
             updateState { copy(design = design) }
+        }
+    }
+
+    // Đặt lại về chủ đề mặc định: chỉ đổi chủ đề đang dùng, kiểu đã lưu của từng chủ đề giữ nguyên. Chờ ghi xong rồi đọc lại thẻ
+    // "Giao diện của bạn" và chủ đề đang dùng.
+    private fun resetTheme() {
+        updateState { copy(isThemeResetConfirmVisible = false) }
+        viewModelScope.launch {
+            dataStoreManager.saveAodThemeId(AodThemeValue.DEFAULT.id).join()
+            refreshDesign()
         }
     }
 
