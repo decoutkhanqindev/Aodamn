@@ -2,6 +2,7 @@ package com.decoutkhanqindev.custom_aod.presentation.screens.customize.state
 
 import android.graphics.Bitmap
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.WallpaperValue
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodComponentValue
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeTabValue
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionValue
 
@@ -18,6 +19,16 @@ sealed interface CustomizeIntent {
         // Giá trị đã mã hoá theo AodThemeOption.encode; Preview là lúc đang kéo (không ghi lịch sử hoàn tác).
         data class PreviewThemeOption(val key: String, val raw: Int) : Appearance
         data class ChangeThemeOption(val key: String, val raw: Int) : Appearance
+
+        // Kiểu font / cỡ / màu của từng khối dùng chung (AodComponentSpec), cùng cách mã hoá giá trị.
+        data class PreviewComponentOption(val key: String, val raw: Int) : Appearance
+        data class ChangeComponentOption(val key: String, val raw: Int) : Appearance
+        data class ResetComponentStyle(val component: AodComponentValue) : Appearance
+        data object ResetClockStyle : Appearance
+        data object OpenThemeEditor : Appearance
+
+        // Chủ đề có thể đổi ở màn chủ đề trong lúc Tùy chỉnh đang mở (quay về từ màn đó).
+        data object RefreshTheme : Appearance
     }
 
     sealed interface Decor : CustomizeIntent {

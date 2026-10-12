@@ -2,6 +2,10 @@ package com.decoutkhanqindev.custom_aod.presentation.components.aod
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.drag
+import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -125,7 +130,9 @@ fun WallpaperPicker(
 
 // Wheel HSV + thanh độ sáng của skydoves/colorpicker-compose. Kéo thì onColorPreview (xem trước trực tiếp), thả tay mới onColorChange
 // (một lần cho cả lần kéo). Màu đổi từ ngoài (hoàn tác, làm lại) thì kéo wheel theo; màu do chính picker phát ra đã bằng selectedColor
-// nên không chạy lại.
+// nên không chạy lại. Picker nằm trong panel cuộn dọc mà wheel tự nhận kéo theo cả hai trục nên giữ mất cú vuốt cuộn: lớp phủ nhận cử chỉ
+// thay wheel, chạm đúng nút chọn rồi kéo thì chọn màu, chạm nhẹ chỗ khác thì chọn màu ở đó, vuốt thì để panel cuộn. Thanh độ sáng chỉ
+// nhận vuốt ngang nên không cần.
 @Composable
 fun ClockColorPicker(
     color: Color,
@@ -152,15 +159,43 @@ fun ClockColorPicker(
             .padding(vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
-        HsvColorPicker(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(176.dp),
-            controller = controller,
-            initialColor = color,
-            onColorChanged = { envelope -> if (envelope.fromUser) currentOnColorPreview(envelope.color) },
-            onColorPickingFinished = { envelope -> currentOnColorChange(envelope.color) },
-        )
+        ) {
+            HsvColorPicker(
+                modifier = Modifier.matchParentSize(),
+                controller = controller,
+                initialColor = color,
+                onColorChanged = { envelope -> if (envelope.fromUser) currentOnColorPreview(envelope.color) },
+            )
+
+            Box(
+                modifier = Modifier
+                    .matchParentSize()
+                    .pointerInput(controller) {
+                        val thumbRadius = 28.dp.toPx()
+                        awaitEachGesture {
+                            val down = awaitFirstDown()
+                            if ((down.position - controller.selectedPoint.value).getDistance() <= thumbRadius) {
+                                down.consume()
+                                controller.selectByCoordinate(down.position.x, down.position.y, true)
+                                drag(down.id) { change ->
+                                    change.consume()
+                                    controller.selectByCoordinate(change.position.x, change.position.y, true)
+                                }
+                                currentOnColorChange(controller.selectedColor.value)
+                            } else {
+                                val up = waitForUpOrCancellation() ?: return@awaitEachGesture
+                                up.consume()
+                                controller.selectByCoordinate(up.position.x, up.position.y, true)
+                                currentOnColorChange(controller.selectedColor.value)
+                            }
+                        }
+                    },
+            )
+        }
 
         BrightnessSlider(
             modifier = Modifier

@@ -36,15 +36,11 @@ import com.decoutkhanqindev.custom_aod.presentation.theme.TitleMedium
 @Composable
 fun AodTabDesignCard(
     design: CustomizeDraftUiModel,
-    nowMillis: Long,
     isAodEnabled: Boolean,
     onIntent: (AodTabIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val preview = rememberAodPreview(
-        draft = design,
-        nowMillis = nowMillis,
-    )
+    val preview = rememberAodPreview(draft = design)
     val previewAlpha by animateFloatAsState(
         targetValue = if (isAodEnabled) 1f else 0.4f,
         label = "DesignPreviewAlpha",
@@ -99,7 +95,6 @@ private fun AodTabDesignCardPreview() {
     Theme {
         AodTabDesignCard(
             design = CustomizeDraftUiModel(),
-            nowMillis = System.currentTimeMillis(),
             isAodEnabled = true,
             onIntent = {},
         )

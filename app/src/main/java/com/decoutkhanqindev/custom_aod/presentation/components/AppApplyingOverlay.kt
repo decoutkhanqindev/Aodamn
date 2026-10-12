@@ -1,4 +1,4 @@
-package com.decoutkhanqindev.custom_aod.presentation.screens.customize.components
+package com.decoutkhanqindev.custom_aod.presentation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -25,8 +25,12 @@ import com.decoutkhanqindev.custom_aod.presentation.theme.GreyED
 import com.decoutkhanqindev.custom_aod.presentation.theme.Mint
 import com.decoutkhanqindev.custom_aod.presentation.theme.Theme
 
+// Lớp phủ chặn chạm lúc đang ghi (Áp dụng ở Tùy chỉnh, Lưu / Áp dụng ở màn chủ đề); Back do màn tự chặn.
 @Composable
-fun CustomizeApplyingOverlay(modifier: Modifier = Modifier) {
+fun AppApplyingOverlay(
+    text: String,
+    modifier: Modifier = Modifier,
+) {
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -41,7 +45,7 @@ fun CustomizeApplyingOverlay(modifier: Modifier = Modifier) {
             CircularProgressIndicator(color = Mint)
 
             Text(
-                text = stringResource(R.string.customize_applying),
+                text = text,
                 modifier = Modifier.padding(top = 16.dp),
                 color = GreyED,
                 style = BodyMedium,
@@ -52,8 +56,8 @@ fun CustomizeApplyingOverlay(modifier: Modifier = Modifier) {
 
 @Preview(widthDp = 360, heightDp = 640)
 @Composable
-private fun CustomizeApplyingOverlayPreview() {
+private fun AppApplyingOverlayPreview() {
     Theme {
-        CustomizeApplyingOverlay()
+        AppApplyingOverlay(text = stringResource(R.string.customize_applying))
     }
 }

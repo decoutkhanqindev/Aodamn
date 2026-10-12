@@ -8,6 +8,7 @@ import com.decoutkhanqindev.custom_aod.data.local.image.AodImageManager
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.AodAppearanceUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.WallpaperValue
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.observeAodAppearance
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodBlockValue
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodExtrasUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.observeAodExtras
@@ -33,6 +34,17 @@ data class CustomizeDraftUiModel(
             isBatteryEnabled = appearance.isBatteryEnabled,
         )
 }
+
+// Xem trước riêng chủ đề (lưới chủ đề ở tab AOD, màn chủ đề): đồng hồ, ngày và các khối chủ đề tự vẽ (vd trình phát nhạc của Sỏi), không có
+// nền, thông báo, pin... của user; AOD đầy đủ chỉ ở Tùy chỉnh.
+fun AodThemeUiModel.toThemePreviewDraft(): CustomizeDraftUiModel = CustomizeDraftUiModel(
+    appearance = CustomizeAppearanceUiModel(
+        clock = AodAppearanceUiModel(theme = this),
+        isDateEnabled = true,
+        isBatteryEnabled = false,
+    ),
+    info = CustomizeInfoUiModel(isMediaControlsEnabled = AodBlockValue.MEDIA in value.spec.ownBlocks),
+)
 
 // Xem trước một chủ đề khác với phần chung (nền, thông báo...) của bản nháp.
 fun CustomizeDraftUiModel.withTheme(theme: AodThemeUiModel): CustomizeDraftUiModel =

@@ -9,6 +9,7 @@ sealed interface ThemeEditorIntent {
         data object ConfirmDiscard : Edit
         data object DismissDiscard : Edit
         data class SelectTab(val tab: AodThemeTab) : Edit
+        data object ClosePanel : Edit
     }
 
     // Giá trị đã mã hoá theo AodThemeOption.encode; Preview là lúc đang kéo (không ghi lịch sử hoàn tác).
@@ -27,7 +28,6 @@ sealed interface ThemeEditorIntent {
 
     data object SaveTheme : ThemeEditorIntent
     data object ApplyTheme : ThemeEditorIntent
-    data object RefreshBase : ThemeEditorIntent
     data object NavigateToCustomize : ThemeEditorIntent
     data object NavigateBack : ThemeEditorIntent
 }

@@ -1,13 +1,13 @@
 package com.decoutkhanqindev.custom_aod.presentation.model.aod.theme
 
 import androidx.annotation.StringRes
-import androidx.compose.ui.graphics.Color
 import com.decoutkhanqindev.custom_aod.R
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.ClockFontValue
 import com.decoutkhanqindev.custom_aod.presentation.theme.Black
 import com.decoutkhanqindev.custom_aod.presentation.theme.GreyB4
 import com.decoutkhanqindev.custom_aod.presentation.theme.Purple
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.collections.immutable.toImmutableList
 
 // Chủ đề Sỏi: giờ và phút mỗi số một khối hình mềm (8 hình, đặc hoặc viền), dòng ngày ngay dưới, số đổi có animation; trình phát
@@ -25,7 +25,7 @@ object PebbleThemeSpec : AodThemeSpec {
     )
     val Size = AodRangeOption(
         key = "size",
-        labelRes = R.string.opt_clock_size_value,
+        labelRes = R.string.opt_size_value,
         range = 60..150,
         step = 10,
         default = 100,
@@ -97,11 +97,7 @@ object PebbleThemeSpec : AodThemeSpec {
         ),
     )
 
-    override val isDateBuiltIn = true
-
-    override fun fontOf(config: AodThemeConfig): ClockFontValue = config[Font]
-
-    override fun accentOf(config: AodThemeConfig): Color = config[HourTileColor]
+    override val ownBlocks = persistentSetOf(AodBlockValue.DATE, AodBlockValue.MEDIA)
 
     private fun shapeOption(
         key: String,

@@ -79,17 +79,13 @@ fun AodTabContent(
 
                 AodTabDesignCard(
                     design = state.design,
-                    nowMillis = state.nowMillis,
                     isAodEnabled = state.isAodEnabled,
                     onIntent = onIntent,
                     modifier = Modifier.padding(top = 16.dp),
                 )
 
                 AodTabThemesSection(
-                    themes = state.themes,
                     activeTheme = state.activeTheme,
-                    design = state.design,
-                    nowMillis = state.nowMillis,
                     onIntent = onIntent,
                     modifier = Modifier.padding(top = 32.dp),
                 )
@@ -157,7 +153,6 @@ private fun AodTabContentPreview() {
             state = AodTabState(
                 isLoading = false,
                 isAodEnabled = true,
-                nowMillis = System.currentTimeMillis(),
             ),
             onIntent = {},
         )
@@ -171,7 +166,6 @@ private fun AodTabContentMissingPermissionPreview() {
         AodTabContent(
             state = AodTabState(
                 isLoading = false,
-                nowMillis = System.currentTimeMillis(),
                 permission = AodTabPermissionState(
                     requiredPermissions = persistentListOf(
                         PermissionUiModel(permission = PermissionValue.OVERLAY, isGranted = false),

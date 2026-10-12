@@ -9,8 +9,12 @@ import com.decoutkhanqindev.custom_aod.presentation.components.aod.AodThemeOptio
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.WallpaperPicker
 import com.decoutkhanqindev.custom_aod.presentation.components.settings.AppSwitchRow
 import com.decoutkhanqindev.custom_aod.presentation.components.settings.AppValueRow
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.AodAppearanceUiModel
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodComponentSpec
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodComponentValue
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.ClassicThemeSpec
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.isDefault
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeAppearanceUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeClusterValue
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeDecorUiModel
@@ -24,37 +28,95 @@ import com.decoutkhanqindev.custom_aod.presentation.screens.customize.state.Cust
 @Composable
 fun CustomizePanel(
     tab: CustomizeTabValue,
+    isFirstOpen: Boolean,
     draft: CustomizeDraftUiModel,
     decor: CustomizeDecorState,
     onIntent: (CustomizeIntent) -> Unit,
 ) {
-    when (tab.cluster) {
-        CustomizeClusterValue.APPEARANCE -> AppearancePanel(
+    Column {
+        when (tab.cluster) {
+            CustomizeClusterValue.APPEARANCE -> AppearancePanel(
+                tab = tab,
+                isFirstOpen = isFirstOpen,
+                appearance = draft.appearance,
+                onIntent = onIntent
+            )
+
+            CustomizeClusterValue.DECOR -> DecorPanel(
+                tab = tab,
+                decor = draft.decor,
+                decorState = decor,
+                onIntent = onIntent
+            )
+
+            CustomizeClusterValue.INFO -> InfoPanel(tab = tab, info = draft.info, onIntent = onIntent)
+            CustomizeClusterValue.EFFECT -> EffectsPanel(effects = draft.effects, onIntent = onIntent)
+        }
+
+        tab.component?.let { component ->
+            ComponentStyle(component = component, clock = draft.appearance.clock, onIntent = onIntent)
+        }
+    }
+}
+
+// Font, cỡ, màu riêng của khối (dưới phần bật / tắt và nội dung của tab). Khối mà chủ đề đang dùng tự vẽ (ngày, nhạc của Sỏi) thì kiểu do
+// chủ đề quyết định: dẫn sang màn chủ đề thay vì hiện tùy chọn không có tác dụng.
+@Composable
+private fun ComponentStyle(
+    component: AodComponentValue,
+    clock: AodAppearanceUiModel,
+    onIntent: (CustomizeIntent) -> Unit,
+) {
+    val theme = clock.theme.value
+    val ownBlock = component.ownBlock
+
+    if (ownBlock != null && ownBlock in theme.spec.ownBlocks) {
+        AppValueRow(
+            label = stringResource(R.string.customize_style_by_theme),
+            value = stringResource(theme.nameRes),
+            onClick = { onIntent(CustomizeIntent.Appearance.OpenThemeEditor) },
+        )
+    } else {
+        val tab = AodComponentSpec.optionsOf(component).tab
+
+        AodThemeOptionList(
             tab = tab,
-            appearance = draft.appearance,
-            onIntent = onIntent
+            config = clock.components.config,
+            onOptionPreview = { key, raw -> onIntent(CustomizeIntent.Appearance.PreviewComponentOption(key, raw)) },
+            onOptionChange = { key, raw -> onIntent(CustomizeIntent.Appearance.ChangeComponentOption(key, raw)) },
         )
 
-        CustomizeClusterValue.DECOR -> DecorPanel(
-            tab = tab,
-            decor = draft.decor,
-            decorState = decor,
-            onIntent = onIntent
+        StyleResetRow(
+            isDefault = tab.isDefault(clock.components.config),
+            onClick = { onIntent(CustomizeIntent.Appearance.ResetComponentStyle(component)) },
         )
+    }
+}
 
-        CustomizeClusterValue.INFO -> InfoPanel(tab = tab, info = draft.info, onIntent = onIntent)
-        CustomizeClusterValue.EFFECT -> EffectsPanel(effects = draft.effects, onIntent = onIntent)
+// Đặt lại riêng khối đang mở về mặc định, chỉ hiện khi khối đã khác mặc định (nút Đặt lại trên thanh công cụ đặt lại cả bản nháp).
+@Composable
+private fun StyleResetRow(
+    isDefault: Boolean,
+    onClick: () -> Unit,
+) {
+    AnimatedVisibility(visible = !isDefault) {
+        AppValueRow(
+            label = stringResource(R.string.customize_style_reset),
+            value = "",
+            onClick = onClick,
+        )
     }
 }
 
 @Composable
 private fun AppearancePanel(
     tab: CustomizeTabValue,
+    isFirstOpen: Boolean,
     appearance: CustomizeAppearanceUiModel,
     onIntent: (CustomizeIntent) -> Unit,
 ) {
     when (tab) {
-        CustomizeTabValue.CLOCK -> ClockPanel(theme = appearance.clock.theme, onIntent = onIntent)
+        CustomizeTabValue.CLOCK -> ClockPanel(isFirstOpen = isFirstOpen, theme = appearance.clock.theme, onIntent = onIntent)
 
         CustomizeTabValue.DATE -> AppSwitchRow(
             label = stringResource(R.string.opt_date),
@@ -70,19 +132,36 @@ private fun AppearancePanel(
     }
 }
 
-// Chỉ có lúc onboarding và chỉ Cổ điển (chủ đề mặc định): mặt, font, màu, cỡ như bản trước khi có chủ đề, cùng control với màn chủ đề.
-// Các chủ đề khác chọn và chỉnh ở tab AOD › Chủ đề.
+// Onboarding: chỉ Cổ điển (chủ đề mặc định), mặt, font, màu, cỡ như bản trước khi có chủ đề, cùng control với màn chủ đề, để user mới thấy
+// app chỉnh được gì. Sau đó: dòng dẫn sang màn chủ đề của chủ đề đang dùng (chọn chủ đề khác ở tab AOD).
 @Composable
 private fun ClockPanel(
+    isFirstOpen: Boolean,
     theme: AodThemeUiModel,
     onIntent: (CustomizeIntent) -> Unit,
 ) {
-    AodThemeOptionList(
-        tab = ClassicThemeSpec.OnboardingTab,
-        config = theme.config,
-        onOptionPreview = { key, raw -> onIntent(CustomizeIntent.Appearance.PreviewThemeOption(key, raw)) },
-        onOptionChange = { key, raw -> onIntent(CustomizeIntent.Appearance.ChangeThemeOption(key, raw)) },
-    )
+    if (isFirstOpen) {
+        Column {
+            AodThemeOptionList(
+                tab = ClassicThemeSpec.OnboardingTab,
+                config = theme.config,
+                onOptionPreview = { key, raw -> onIntent(CustomizeIntent.Appearance.PreviewThemeOption(key, raw)) },
+                onOptionChange = { key, raw -> onIntent(CustomizeIntent.Appearance.ChangeThemeOption(key, raw)) },
+            )
+
+            StyleResetRow(
+                isDefault = ClassicThemeSpec.OnboardingTab.isDefault(theme.config),
+                onClick = { onIntent(CustomizeIntent.Appearance.ResetClockStyle) },
+            )
+        }
+    } else {
+        AppValueRow(
+            label = stringResource(R.string.customize_clock_theme),
+            value = stringResource(theme.value.nameRes),
+            onClick = { onIntent(CustomizeIntent.Appearance.OpenThemeEditor) },
+            description = stringResource(R.string.customize_clock_theme_desc),
+        )
+    }
 }
 
 @Composable

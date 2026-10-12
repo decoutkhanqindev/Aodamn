@@ -1,7 +1,6 @@
 package com.decoutkhanqindev.custom_aod.presentation.model.aod.theme
 
 import androidx.compose.runtime.Immutable
-import androidx.compose.ui.graphics.Color
 import com.decoutkhanqindev.custom_aod.data.local.datastore.DataStoreManager
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.ClockFaceValue
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.ClockFontValue
@@ -9,6 +8,7 @@ import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.clockCo
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.toImmutableMap
 import kotlinx.collections.immutable.toPersistentMap
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
@@ -17,36 +17,27 @@ import kotlinx.coroutines.flow.filterNotNull
 data class AodThemeUiModel(
     val value: AodThemeValue = AodThemeValue.DEFAULT,
     val config: AodThemeConfig = AodThemeConfig(),
-) {
-    val font: ClockFontValue
-        get() = value.spec.fontOf(config)
-
-    val accent: Color
-        get() = value.spec.accentOf(config)
-}
+)
 
 // Cấu hình mọi chủ đề lưu chung một chuỗi "id:khoá=giá trị,khoá=giá trị;id:..." (id và khoá chỉ có chữ thường, số, gạch dưới),
 // tự mã hoá để kotlinx-serialization chỉ nằm ở data/network/api. Phần hỏng thì bỏ qua, thuộc tính đó về mặc định.
 private fun decodeThemeConfigs(raw: String?): Map<String, Map<String, Int>> =
     raw.orEmpty().split(';').mapNotNull { entry ->
         val id = entry.substringBefore(':', missingDelimiterValue = "").takeIf { it.isNotBlank() } ?: return@mapNotNull null
-        val values = entry.substringAfter(':').split(',').mapNotNull { pair ->
-            val value = pair.substringAfter('=', missingDelimiterValue = "").toIntOrNull() ?: return@mapNotNull null
-            pair.substringBefore('=') to value
-        }.toMap()
-        id to values
+        id to entry.substringAfter(':').toAodConfigValues()
     }.toMap()
 
 private fun encodeThemeConfigs(configs: Map<String, Map<String, Int>>): String =
     configs.entries.joinToString(separator = ";") { (id, values) ->
-        id + ":" + values.entries.joinToString(separator = ",") { (key, value) -> "$key=$value" }
+        id + ":" + values.toAodConfigString()
     }
 
 // Chủ đề Cổ điển chưa lưu lần nào thì dựng từ mặt / font / màu / cỡ đồng hồ đã chọn ở bản trước khi có chủ đề.
 private fun legacyClassicConfig(face: Int?, font: Int?, color: Int?, sizePercent: Int?): AodThemeConfig = AodThemeConfig()
     .with(ClassicThemeSpec.Face, ClockFaceValue.fromCode(face))
     .with(ClassicThemeSpec.Font, ClockFontValue.fromCode(font))
-    .with(ClassicThemeSpec.ClockColor, clockColorOf(color))
+    .with(ClassicThemeSpec.HourColor, clockColorOf(color))
+    .with(ClassicThemeSpec.MinuteColor, clockColorOf(color))
     .with(ClassicThemeSpec.Size, sizePercent ?: ClassicThemeSpec.Size.default)
 
 private fun buildThemeConfigs(raw: String?, legacyClassic: AodThemeConfig): ImmutableMap<AodThemeValue, AodThemeConfig> {
@@ -92,10 +83,9 @@ fun DataStoreManager.observeAodTheme(): Flow<AodThemeUiModel> = combine(
     AodThemeUiModel(value = theme, config = configs.getValue(theme))
 }
 
-fun DataStoreManager.saveAodThemeConfig(theme: AodThemeValue, config: AodThemeConfig) {
+fun DataStoreManager.saveAodThemeConfig(theme: AodThemeValue, config: AodThemeConfig): Job =
     updateAodThemeConfigs { raw ->
         val configs = decodeThemeConfigs(raw).toMutableMap()
         configs[theme.id] = config.values
         encodeThemeConfigs(configs)
     }
-}

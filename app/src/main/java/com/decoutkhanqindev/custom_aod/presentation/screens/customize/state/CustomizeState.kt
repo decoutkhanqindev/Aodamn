@@ -10,7 +10,6 @@ import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionV
 data class CustomizeState(
     val isLoading: Boolean = true,
     val isFirstOpen: Boolean = false,
-    val nowMillis: Long = 0L,
     val draft: CustomizeDraftUiModel = CustomizeDraftUiModel(),
     val selectedTab: CustomizeTabValue? = null,
     val history: CustomizeHistoryState = CustomizeHistoryState(),

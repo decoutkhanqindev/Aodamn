@@ -17,6 +17,7 @@ import com.decoutkhanqindev.custom_aod.utils.recoverCatching
 import com.decoutkhanqindev.custom_aod.utils.withContextCatching
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -135,6 +136,11 @@ class DataStoreManager(
         stringPreferencesKey(AOD_THEME_CONFIGS_KEY)
     val aodThemeConfigs: StateFlow<String?> =
         aodThemeConfigsKey.asStateFlow(default = DEFAULT_AOD_THEME_CONFIGS)
+
+    private val aodComponentStylesKey: Preferences.Key<String> =
+        stringPreferencesKey(AOD_COMPONENT_STYLES_KEY)
+    val aodComponentStyles: StateFlow<String?> =
+        aodComponentStylesKey.asStateFlow(default = DEFAULT_AOD_COMPONENT_STYLES)
 
     private val isAodLandscapeKey: Preferences.Key<Boolean> =
         booleanPreferencesKey(IS_AOD_LANDSCAPE_KEY)
@@ -305,16 +311,17 @@ class DataStoreManager(
         edit { prefs -> prefs[isAodNotificationContentEnabledKey] = value }
     }
 
-    fun saveAodThemeId(value: String) {
-        edit { prefs -> prefs[aodThemeIdKey] = value }
-    }
+    fun saveAodThemeId(value: String): Job = edit { prefs -> prefs[aodThemeIdKey] = value }
 
     // Đọc - sửa - ghi trong cùng một lần edit của DataStore để hai lần lưu gần nhau không đè mất cấu hình của nhau.
-    fun updateAodThemeConfigs(transform: (String) -> String) {
+    fun updateAodThemeConfigs(transform: (String) -> String): Job =
         edit { prefs ->
             prefs[aodThemeConfigsKey] =
                 transform(prefs[aodThemeConfigsKey] ?: DEFAULT_AOD_THEME_CONFIGS)
         }
+
+    fun saveAodComponentStyles(value: String) {
+        edit { prefs -> prefs[aodComponentStylesKey] = value }
     }
 
     fun saveIsAodLandscape(value: Boolean) {
@@ -412,7 +419,8 @@ class DataStoreManager(
                 initialValue = null,
             )
 
-    private fun edit(transform: (MutablePreferences) -> Unit) {
+    // Trả Job để nơi cần (màn chủ đề hiện màn đang áp dụng) chờ ghi xong; ghi vẫn chạy trên scope của manager nên rời màn không huỷ.
+    private fun edit(transform: (MutablePreferences) -> Unit): Job =
         scope.launch {
             withContextCatching(
                 block = { app.prefs.edit(transform) },
@@ -421,7 +429,6 @@ class DataStoreManager(
                 },
             )
         }
-    }
 
     companion object {
         private const val DATA_STORE_NAME = "custom_aod_prefs"
@@ -450,6 +457,7 @@ class DataStoreManager(
         private const val IS_AOD_LANDSCAPE_KEY = "is_aod_landscape"
         private const val AOD_THEME_ID_KEY = "aod_theme_id"
         private const val AOD_THEME_CONFIGS_KEY = "aod_theme_configs"
+        private const val AOD_COMPONENT_STYLES_KEY = "aod_component_styles"
         private const val AOD_WALLPAPER_KEY = "aod_wallpaper"
         private const val AOD_DOUBLE_TAP_ACTION_KEY = "aod_double_tap_action"
         private const val AOD_SWIPE_UP_ACTION_KEY = "aod_swipe_up_action"
@@ -494,6 +502,7 @@ class DataStoreManager(
         const val DEFAULT_IS_AOD_LANDSCAPE = false
         const val DEFAULT_AOD_THEME_ID = "classic"
         const val DEFAULT_AOD_THEME_CONFIGS = ""
+        const val DEFAULT_AOD_COMPONENT_STYLES = ""
         private const val DEFAULT_AOD_WALLPAPER = 0
         const val DEFAULT_AOD_DOUBLE_TAP_ACTION = 1
         const val DEFAULT_AOD_SWIPE_UP_ACTION = 0

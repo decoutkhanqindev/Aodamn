@@ -11,6 +11,7 @@ val Blue = Color(0xFF8AB4F8)
 val Purple = Color(0xFFC3A6FF)
 val Orange = Color(0xFFFFB27A)
 val Pink = Color(0xFFFF9EC4)
+
 val GreyED = Color(0xFFEDEDED)
 val GreyB4 = Color(0xFFB4B4B4)
 val Grey9A = Color(0xFF9A9A9A)
@@ -36,7 +37,3 @@ val BlackAlpha70 = Black.copy(alpha = 0.7f)
 val DarkMint = Color(0xFF192A23)
 val DarkPurple = Color(0xFF272133)
 val BackgroundGradient = Brush.linearGradient(0f to DarkMint, 0.5f to Black, 1f to DarkPurple)
-
-// Gradient nhận diện mint → xanh → tím (như thanh trượt của app) cho nét trên AOD: viền thẻ, vòng icon, thanh nhạc, pin đang sạc.
-// Không đặt start / end nên trải đúng theo khung đang vẽ.
-val AccentGradient = Brush.horizontalGradient(listOf(Mint, Blue, Purple))

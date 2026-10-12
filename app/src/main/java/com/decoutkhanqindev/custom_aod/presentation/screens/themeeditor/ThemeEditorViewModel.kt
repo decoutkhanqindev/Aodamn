@@ -2,33 +2,26 @@ package com.decoutkhanqindev.custom_aod.presentation.screens.themeeditor
 
 import androidx.lifecycle.viewModelScope
 import com.decoutkhanqindev.custom_aod.R
-import com.decoutkhanqindev.custom_aod.data.device.permission.PermissionManager
 import com.decoutkhanqindev.custom_aod.data.local.datastore.DataStoreManager
-import com.decoutkhanqindev.custom_aod.data.local.image.AodImageManager
 import com.decoutkhanqindev.custom_aod.presentation.base.BaseViewModel
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeConfig
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeValue
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.isDefault
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.observeAodThemeConfigs
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.saveAodThemeConfig
-import com.decoutkhanqindev.custom_aod.presentation.model.customize.loadCustomizeDraft
 import com.decoutkhanqindev.custom_aod.presentation.screens.themeeditor.state.ThemeEditorEffect
 import com.decoutkhanqindev.custom_aod.presentation.screens.themeeditor.state.ThemeEditorHistoryState
 import com.decoutkhanqindev.custom_aod.presentation.screens.themeeditor.state.ThemeEditorIntent
 import com.decoutkhanqindev.custom_aod.presentation.screens.themeeditor.state.ThemeEditorState
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class ThemeEditorViewModel(
     themeId: String,
     private val dataStoreManager: DataStoreManager,
-    private val aodImageManager: AodImageManager,
-    private val permissionManager: PermissionManager,
 ) : BaseViewModel<ThemeEditorState, ThemeEditorIntent, ThemeEditorEffect>(
     initialState = ThemeEditorState(theme = AodThemeValue.fromId(themeId)),
 ) {
@@ -38,11 +31,9 @@ class ThemeEditorViewModel(
 
     // Kéo color picker hay slider: xem trước trực tiếp không ghi lịch sử, thả tay mới ghi một bước hoàn tác cho cả lần kéo.
     private var dragBase: AodThemeConfig? = null
-    private var baseJob: Job? = null
 
     init {
         load()
-        tickClock()
     }
 
     override fun onIntent(intent: ThemeEditorIntent) {
@@ -53,12 +44,14 @@ class ThemeEditorViewModel(
             is ThemeEditorIntent.History -> onHistoryIntent(intent)
             is ThemeEditorIntent.SaveTheme -> saveTheme()
             is ThemeEditorIntent.ApplyTheme -> applyTheme()
-            is ThemeEditorIntent.RefreshBase -> refreshBase()
             is ThemeEditorIntent.NavigateToCustomize ->
                 viewModelScope.launch { sendEffect(ThemeEditorEffect.NavigateToCustomize) }
 
-            is ThemeEditorIntent.NavigateBack ->
-                if (state.value.isEditing) stopEditing() else viewModelScope.launch { sendEffect(ThemeEditorEffect.NavigateBack) }
+            is ThemeEditorIntent.NavigateBack -> when {
+                state.value.isApplying -> Unit
+                state.value.isEditing -> stopEditing()
+                else -> viewModelScope.launch { sendEffect(ThemeEditorEffect.NavigateBack) }
+            }
         }
     }
 
@@ -74,6 +67,8 @@ class ThemeEditorViewModel(
 
             is ThemeEditorIntent.Edit.SelectTab ->
                 updateState { copy(selectedTab = if (selectedTab == intent.tab) null else intent.tab) }
+
+            is ThemeEditorIntent.Edit.ClosePanel -> updateState { copy(selectedTab = null) }
         }
     }
 
@@ -122,29 +117,16 @@ class ThemeEditorViewModel(
 
     private fun load() {
         viewModelScope.launch {
-            val base = dataStoreManager.loadCustomizeDraft(aodImageManager, permissionManager)
             val config = dataStoreManager.observeAodThemeConfigs().first().getValue(state.value.theme)
             val activeId = dataStoreManager.aodThemeId.filterNotNull().first()
             updateState {
                 copy(
                     isLoading = false,
-                    base = base,
                     savedConfig = config,
                     isActive = activeId == theme.id,
                 )
             }
             publish(config)
-        }
-    }
-
-    // Đồng hồ trên khung xem trước nhảy đúng đầu mỗi phút như AOD thật, để thấy animation đổi số.
-    private fun tickClock() {
-        viewModelScope.launch {
-            while (isActive) {
-                val nowMillis = System.currentTimeMillis()
-                updateState { copy(nowMillis = nowMillis) }
-                delay(MINUTE_MILLIS - nowMillis % MINUTE_MILLIS)
-            }
         }
     }
 
@@ -162,31 +144,31 @@ class ThemeEditorViewModel(
         publish(state.value.savedConfig)
     }
 
+    // Chờ ghi xong dưới lớp phủ đang áp dụng (chặn chạm và Back) rồi mới thoát chế độ sửa.
     private fun saveTheme() {
+        if (state.value.isApplying) return
         val config = state.value.config
-        dataStoreManager.saveAodThemeConfig(state.value.theme, config)
-        clearHistory()
-        updateState { copy(savedConfig = config, isEditing = false, selectedTab = null) }
-        publish(config)
-        viewModelScope.launch { sendEffect(ThemeEditorEffect.ShowMessage(R.string.theme_saved)) }
+        viewModelScope.launch {
+            updateState { copy(isApplying = true, selectedTab = null) }
+            dataStoreManager.saveAodThemeConfig(state.value.theme, config).join()
+            clearHistory()
+            updateState { copy(isApplying = false, savedConfig = config, isEditing = false) }
+            publish(config)
+            sendEffect(ThemeEditorEffect.ShowMessage(R.string.theme_saved))
+        }
     }
 
     private fun applyTheme() {
         val current = state.value
-        if (current.hasChanges) dataStoreManager.saveAodThemeConfig(current.theme, current.config)
-        dataStoreManager.saveAodThemeId(current.theme.id)
-        updateState { copy(isActive = true, savedConfig = config) }
-        viewModelScope.launch { sendEffect(ThemeEditorEffect.ShowMessage(R.string.theme_applied)) }
-    }
-
-    // Phần chung đọc lại mỗi lần màn resume: quay về từ Tùy chỉnh thì khung xem trước theo phần chung mới. Lần resume đầu
-    // load() đang đọc nên bỏ qua.
-    private fun refreshBase() {
-        if (state.value.isLoading) return
-        baseJob?.cancel()
-        baseJob = viewModelScope.launch {
-            val base = dataStoreManager.loadCustomizeDraft(aodImageManager, permissionManager)
-            updateState { copy(base = base) }
+        if (current.isApplying) return
+        viewModelScope.launch {
+            updateState { copy(isApplying = true) }
+            listOfNotNull(
+                dataStoreManager.saveAodThemeConfig(current.theme, current.config).takeIf { current.hasChanges },
+                dataStoreManager.saveAodThemeId(current.theme.id),
+            ).joinAll()
+            updateState { copy(isApplying = false, isActive = true, savedConfig = current.config) }
+            sendEffect(ThemeEditorEffect.ShowMessage(R.string.theme_applied))
         }
     }
 
@@ -224,7 +206,6 @@ class ThemeEditorViewModel(
     }
 
     private companion object {
-        const val MINUTE_MILLIS = 60_000L
         const val MAX_HISTORY = 50
     }
 }

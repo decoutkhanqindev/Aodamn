@@ -1,6 +1,7 @@
 package com.decoutkhanqindev.custom_aod.presentation.screens.customize.state
 
 import androidx.annotation.StringRes
+import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionValue
 
 sealed interface CustomizeEffect {
     sealed interface Decor : CustomizeEffect {
@@ -11,11 +12,13 @@ sealed interface CustomizeEffect {
         data object RequestCalendarPermission : Permission
         data object RequestLocationPermission : Permission
         data object OpenNotificationAccessSettings : Permission
+        data class OpenAppSettings(val permission: PermissionValue) : Permission
     }
 
     sealed interface Navigation : CustomizeEffect {
         data object NavigateToPermission : Navigation
         data object NavigateToMain : Navigation
+        data class NavigateToThemeEditor(val themeId: String) : Navigation
         data object NavigateBack : Navigation
     }
 

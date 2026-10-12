@@ -18,13 +18,18 @@ import com.decoutkhanqindev.custom_aod.presentation.model.aod.info.WeatherUiMode
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodActionValue
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodGestureValue
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodInteractionUiModel
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodComponentValue
 import com.decoutkhanqindev.custom_aod.presentation.screens.aod.state.AodState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toImmutableMap
+import java.time.LocalDate
+import java.time.ZoneId
 
-// Dữ liệu mẫu cho phần cần dữ liệu thật trên khung xem trước (thông báo, sự kiện, nhạc); chữ lấy từ strings.xml ở Compose.
+// Dữ liệu mẫu cho phần cần dữ liệu thật trên khung xem trước (thông báo, sự kiện, nhạc, ghi nhớ); chữ lấy từ strings.xml ở Compose.
+// Khung xem trước ngoài AOD thật (Tùy chỉnh, màn chủ đề, tab AOD) không chạy theo giờ: mọi giá trị là mẫu cố định, giờ là 08:30 hôm
+// nay như icon app.
 @Immutable
 data class CustomizePreviewSamples(
     val notificationTitle: String,
@@ -32,12 +37,16 @@ data class CustomizePreviewSamples(
     val eventTitle: String,
     val mediaTitle: String,
     val mediaArtist: String,
+    val memo: String,
     val icons: ImmutableList<Bitmap> = sampleIcons(),
+    val nowMillis: Long = previewMillis(),
 ) {
     private enum class IconShape { CIRCLE, SQUARE, TRIANGLE }
 
     companion object {
         private const val ICON_SIZE = 48
+        private const val PREVIEW_HOUR = 8
+        private const val PREVIEW_MINUTE = 30
         private const val BATTERY_PERCENT = 72
         private const val TEMPERATURE_C = 28
         private const val TEMPERATURE_F = 82
@@ -52,6 +61,9 @@ data class CustomizePreviewSamples(
             isAutoDimEnabled = false,
             isRaiseToWakeEnabled = false,
         )
+
+        private fun previewMillis(): Long =
+            LocalDate.now().atTime(PREVIEW_HOUR, PREVIEW_MINUTE).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
 
         // Hình đơn giản màu trắng: AOD tự tô lại theo màu chữ như icon thông báo thật.
         private fun sampleIcons(): ImmutableList<Bitmap> = IconShape.entries.map { shape ->
@@ -86,29 +98,35 @@ data class CustomizePreviewSamples(
         }.toImmutableList()
 
         fun CustomizeDraftUiModel.toPreviewAodState(
-            nowMillis: Long,
             isGlowing: Boolean,
             samples: CustomizePreviewSamples,
+            shownComponent: AodComponentValue? = null,
         ): AodState = AodState(
-            nowMillis = nowMillis,
+            nowMillis = samples.nowMillis,
             appearance = appearance.clock.copy(isLandscape = false),
             interaction = PreviewInteraction,
-            extras = extras,
+            // Tab kiểu khối đang mở (shownComponent): khối đó luôn hiện bằng dữ liệu mẫu dù đang tắt, thiếu quyền hay chưa có nội dung,
+            // để đổi font / cỡ / màu là thấy ngay.
+            extras = extras.copy(
+                memo = if (shownComponent == AodComponentValue.MEMO && extras.memo.isBlank()) samples.memo else extras.memo,
+                isDateEnabled = extras.isDateEnabled || shownComponent == AodComponentValue.DATE,
+                isBatteryEnabled = extras.isBatteryEnabled || shownComponent == AodComponentValue.BATTERY,
+            ),
             wallpaper = decor.wallpaper,
             background = decor.background,
-            drawing = decor.drawing,
+            drawing = decor.drawing ?: samples.icons.first().takeIf { shownComponent == AodComponentValue.DRAWING },
             weather = WeatherUiModel(
                 temperature = if (info.isWeatherFahrenheit) TEMPERATURE_F else TEMPERATURE_C,
                 condition = WeatherConditionValue.CLEAR,
                 isDay = true,
-                updatedAtMillis = nowMillis,
-            ).takeIf { info.isWeatherEnabled },
-            events = if (info.isCalendarEnabled) {
+                updatedAtMillis = samples.nowMillis,
+            ).takeIf { info.isWeatherEnabled || shownComponent == AodComponentValue.WEATHER },
+            events = if (info.isCalendarEnabled || shownComponent == AodComponentValue.EVENTS) {
                 persistentListOf(
                     CalendarEventUiModel(
                         title = samples.eventTitle,
-                        beginMillis = nowMillis + HOUR_MILLIS,
-                        endMillis = nowMillis + 2 * HOUR_MILLIS,
+                        beginMillis = samples.nowMillis + HOUR_MILLIS,
+                        endMillis = samples.nowMillis + 2 * HOUR_MILLIS,
                         isAllDay = false,
                     ),
                 )
@@ -117,7 +135,7 @@ data class CustomizePreviewSamples(
             },
             battery = BatteryUiModel(percent = BATTERY_PERCENT, isCharging = false),
             notifications = AodNotificationsUiModel(
-                icons = if (info.isNotificationIconsEnabled) {
+                icons = if (info.isNotificationIconsEnabled || shownComponent == AodComponentValue.NOTIFICATIONS) {
                     samples.icons
                         .mapIndexed { index, icon ->
                             NotificationIconUiModel(
@@ -135,7 +153,7 @@ data class CustomizePreviewSamples(
                     title = samples.notificationTitle,
                     text = samples.notificationText,
                     isHidden = false,
-                ).takeIf { info.isNotificationContentEnabled },
+                ).takeIf { info.isNotificationContentEnabled || shownComponent == AodComponentValue.NOTIFICATIONS },
             ),
             media = MediaUiModel(
                 title = samples.mediaTitle,
@@ -149,7 +167,7 @@ data class CustomizePreviewSamples(
                     updatedAtMillis = 0L,
                     speed = 0f,
                 ),
-            ).takeIf { info.isMediaControlsEnabled },
+            ).takeIf { info.isMediaControlsEnabled || shownComponent == AodComponentValue.MEDIA },
             isHintVisible = false,
             isGlowing = isGlowing,
         )

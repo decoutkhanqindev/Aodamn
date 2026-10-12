@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,11 +22,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.decoutkhanqindev.custom_aod.R
+import com.decoutkhanqindev.custom_aod.presentation.components.AppApplyingOverlay
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.AodContent
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.DrawingPadDialog
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.MemoEditorDialog
@@ -35,7 +38,6 @@ import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeGui
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeTabValue
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionValue
-import com.decoutkhanqindev.custom_aod.presentation.screens.customize.components.CustomizeApplyingOverlay
 import com.decoutkhanqindev.custom_aod.presentation.screens.customize.components.CustomizeGuideOverlay
 import com.decoutkhanqindev.custom_aod.presentation.screens.customize.components.CustomizePanelHost
 import com.decoutkhanqindev.custom_aod.presentation.screens.customize.components.CustomizeTabBar
@@ -54,8 +56,8 @@ fun CustomizeContent(
 ) {
     val preview = rememberAodPreview(
         draft = state.draft,
-        nowMillis = state.nowMillis,
         isGlowing = state.effects.isGlowPreviewing,
+        shownComponent = state.selectedTab?.component,
     )
     val guideTargets = remember { mutableStateMapOf<CustomizeGuideStepValue, Rect>() }
     val onTargetPositioned = remember(guideTargets) {
@@ -75,6 +77,15 @@ fun CustomizeContent(
             .background(Black),
     ) {
         AodContent(state = preview, onIntent = {})
+
+        // Panel đang mở: chạm vào khung xem trước (ngoài panel, thanh tab, thanh trên) thì đóng panel.
+        if (state.selectedTab != null) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .pointerInput(Unit) { detectTapGestures { onIntent(CustomizeIntent.Panel.ClosePanel) } },
+            )
+        }
 
         Column(
             modifier = Modifier
@@ -108,13 +119,13 @@ fun CustomizeContent(
         ) {
             CustomizePanelHost(
                 selectedTab = state.selectedTab,
+                isFirstOpen = state.isFirstOpen,
                 draft = state.draft,
                 decor = state.decor,
                 onIntent = onIntent,
             )
 
             CustomizeTabBar(
-                isFirstOpen = state.isFirstOpen,
                 selectedTab = state.selectedTab,
                 guideStep = state.guideStep,
                 onIntent = onIntent,
@@ -139,7 +150,7 @@ fun CustomizeContent(
             enter = fadeIn(),
             exit = fadeOut(),
         ) {
-            CustomizeApplyingOverlay()
+            AppApplyingOverlay(text = stringResource(R.string.customize_applying))
         }
     }
 
@@ -206,7 +217,6 @@ private fun CustomizeContentPreview() {
         CustomizeContent(
             state = CustomizeState(
                 isLoading = false,
-                nowMillis = System.currentTimeMillis(),
                 selectedTab = CustomizeTabValue.DATE,
             ),
             onIntent = {},
@@ -222,7 +232,6 @@ private fun CustomizeContentOnboardingClockPreview() {
             state = CustomizeState(
                 isLoading = false,
                 isFirstOpen = true,
-                nowMillis = System.currentTimeMillis(),
                 selectedTab = CustomizeTabValue.CLOCK,
             ),
             onIntent = {},
@@ -237,7 +246,6 @@ private fun CustomizeContentGuidePreview() {
         CustomizeContent(
             state = CustomizeState(
                 isLoading = false,
-                nowMillis = System.currentTimeMillis(),
                 guideStep = CustomizeGuideStepValue.INFO,
             ),
             onIntent = {},

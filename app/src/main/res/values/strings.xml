@@ -48,7 +48,6 @@
     <string name="theme_classic">Classic</string>
     <string name="theme_pebble">Pebble</string>
     <string name="theme_in_use">In use</string>
-    <string name="theme_customize_more">Customize more</string>
     <string name="theme_edit">Edit</string>
     <string name="theme_saved">Theme saved</string>
     <string name="theme_applied">Theme applied</string>
@@ -75,6 +74,8 @@
     <string name="theme_color_minute_digits">Minute digits</string>
     <string name="theme_color_date">Date</string>
     <string name="theme_color_media">Music</string>
+    <string name="theme_color_hour">Hour</string>
+    <string name="theme_color_minute">Minute</string>
     <string name="theme_opt_date_style">Date style</string>
     <string name="date_style_bold">Bold caps</string>
     <string name="date_style_plain">Plain</string>
@@ -161,7 +162,40 @@
     <string name="clock_font_condensed">Condensed</string>
     <string name="clock_font_geometric">Geometric</string>
     <string name="opt_clock_color">Color</string>
-    <string name="opt_clock_size_value">Clock size: %1$d%%</string>
+    <string name="opt_size_value">Size: %1$d%%</string>
+    <string name="opt_layout">Style</string>
+    <string name="date_layout_spaced">Spaced</string>
+    <string name="date_layout_sentence">Sentence</string>
+    <string name="date_layout_calendar">Calendar</string>
+    <string name="date_layout_split">Split</string>
+    <string name="date_layout_numeric">Numeric</string>
+    <string name="battery_layout_icon">Icon</string>
+    <string name="battery_layout_ring">Ring</string>
+    <string name="battery_layout_bar">Bar</string>
+    <string name="battery_layout_dots">Dots</string>
+    <string name="battery_layout_text">Text</string>
+    <string name="weather_layout_inline">Inline</string>
+    <string name="weather_layout_temperature">Temperature</string>
+    <string name="weather_layout_stacked">Stacked</string>
+    <string name="weather_layout_detail">Detail</string>
+    <string name="events_layout_list">List</string>
+    <string name="events_layout_timeline">Timeline</string>
+    <string name="events_layout_next">Next up</string>
+    <string name="events_layout_inline">Inline</string>
+    <string name="memo_layout_icon">Icon</string>
+    <string name="memo_layout_quote">Quote</string>
+    <string name="memo_layout_plain">Plain</string>
+    <string name="memo_layout_tag">Label</string>
+    <string name="notifications_layout_icons">Icons</string>
+    <string name="notifications_layout_stack">Stacked</string>
+    <string name="notifications_layout_badge">Bell</string>
+    <string name="notifications_layout_dots">Dots</string>
+    <string name="media_layout_row">Row</string>
+    <string name="media_layout_center">Centered</string>
+    <string name="media_layout_compact">Compact</string>
+    <string name="aod_memo_label">MEMO</string>
+    <string name="aod_notifications_count" translatable="false">%1$d</string>
+    <string name="aod_events_more" translatable="false">+%1$d</string>
     <string name="opt_landscape">Always landscape (night clock)</string>
     <string name="wallpaper_stars">Stars</string>
     <string name="wallpaper_aurora">Aurora</string>
@@ -200,11 +234,9 @@
     <string name="drawing_save_failed">Could not save the drawing.</string>
     <string name="opt_calendar">Today\'s events</string>
     <string name="opt_calendar_desc">Upcoming events for today from your calendar. Needs calendar access.</string>
-    <string name="calendar_permission_denied">Calendar access was not allowed. You can allow it in the app\'s system settings.</string>
     <string name="opt_weather">Weather</string>
     <string name="opt_weather_desc">From Open-Meteo, using your approximate location. Needs location access.</string>
     <string name="opt_weather_fahrenheit">Show the temperature in °F</string>
-    <string name="location_permission_denied">Location access was not allowed. You can allow it in the app\'s system settings.</string>
 
     <string name="opt_notification_icons">Show notification icons</string>
     <string name="opt_notification_content">Show the latest notification\'s content</string>
@@ -266,6 +298,13 @@
     <string name="aod_date_pattern" translatable="false">EEE, d MMM</string>
     <string name="aod_date_weekday_pattern" translatable="false">EEEE</string>
     <string name="aod_date_day_pattern" translatable="false">d MMMM</string>
+    <string name="aod_date_full_pattern" translatable="false">EEEE, d MMMM</string>
+    <string name="aod_date_number_pattern" translatable="false">d</string>
+    <string name="aod_date_month_pattern" translatable="false">MMMM</string>
+    <string name="aod_date_month_year_pattern" translatable="false">MMMM yyyy</string>
+    <string name="aod_date_numeric_pattern" translatable="false">dd.MM.yyyy</string>
+    <string name="aod_date_weekday_short_pattern" translatable="false">EEE</string>
+    <string name="aod_font_sample" translatable="false">Aa 12</string>
     <string name="aod_theme_date_pattern" translatable="false">EEEE • d MMM</string>
     <string name="aod_hint">Double-tap to exit</string>
     <string name="aod_battery" translatable="false">%1$d%%</string>
@@ -291,6 +330,10 @@
     <string name="opt_date">Show the date</string>
     <string name="opt_battery">Show the battery level</string>
     <string name="customize_tab_clock">Clock</string>
+    <string name="customize_style_by_theme">Style set by the theme</string>
+    <string name="customize_style_reset">Reset to default</string>
+    <string name="customize_clock_theme">Theme</string>
+    <string name="customize_clock_theme_desc">Change the clock style, font and color, and the parts the theme draws itself</string>
     <string name="customize_tab_date">Date</string>
     <string name="customize_tab_battery">Battery</string>
     <string name="customize_tab_background">Background</string>
@@ -340,5 +383,6 @@
     <string name="customize_sample_event_title">Coffee with Minh</string>
     <string name="customize_sample_media_title">Night drive</string>
     <string name="customize_sample_media_artist">Lo-fi Radio</string>
+    <string name="customize_sample_memo">Buy milk on the way home</string>
     <string name="customize_guide_progress" translatable="false">%1$d/%2$d</string>
 </resources>

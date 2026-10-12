@@ -60,10 +60,14 @@ bắt buộc (compiler không chặn hộ):
   (tab và thuộc tính `AodThemeOption`: lựa chọn / màu / khoảng số / bật tắt, giá trị Int trong
   `AodThemeConfig`) + một nhánh vẽ trong `AodClockFace` và `AodMediaControls` (không có trình phát
   riêng thì gọi bản Cổ điển). Control dựng theo loại thuộc tính (`AodThemeOptionList`), không viết màn
-  riêng cho chủ đề; thêm thuộc tính không đổi cách lưu. Khối dùng chung (ngày, thời tiết, ghi chú, nét
-  vẽ) lấy font / màu qua `AodAppearanceUiModel`; chủ đề tự vẽ ngày thì `isDateBuiltIn = true`. Tùy
-  chỉnh chỉ giữ phần chung; riêng onboarding có tab Đồng hồ (`isOnboardingOnly`) chỉ với Cổ điển
-  (`ClassicThemeSpec.OnboardingTab`: mặt, font, màu, cỡ), chọn và chỉnh chủ đề khác ở tab AOD.
+  riêng cho chủ đề; thêm thuộc tính không đổi cách lưu. Khối dùng chung (ngày, pin, thời tiết, sự
+  kiện, ghi nhớ, thông báo, nhạc, nét vẽ) có kiểu hiển thị (`Aod*LayoutValue`), font / cỡ / màu riêng
+  từng khối (`AodComponentSpec`, `AodAppearanceUiModel.components`, chỉnh ở Tùy chỉnh) và không viền, không
+  nền; lựa chọn có ảnh xem trước vẽ bằng chính composable của AOD (`aodChoicePreview`). Khung xem trước
+  ngoài AOD thật không chạy theo giờ: giá trị mẫu cố định từ `CustomizePreviewSamples` (giờ 08:30); khối chủ đề tự vẽ
+  khai báo trong `ownBlocks` (`AodBlockValue`: ngày, nhạc), kiểu do chủ đề quyết định, và luôn có trong
+  xem trước chủ đề (`toThemePreviewDraft`). Tùy chỉnh không chỉnh chủ đề: tab Đồng hồ lúc onboarding
+  chỉ có Cổ điển (`ClassicThemeSpec.OnboardingTab`), sau đó là dòng dẫn sang màn chủ đề.
 
 ## Presentation: MVI
 
@@ -124,6 +128,10 @@ bắt buộc (compiler không chặn hộ):
   `.copy(alpha = …)` trên màu theme (dùng biến thể `MintAlpha12`). Màu / chữ / bo góc mới → thêm
   `val` vào đúng file. `Theme { }` chỉ là cầu nối cho component Material 3. Không dựng tầng token
   hay object trung gian (đã thử và bỏ). Khoảng cách, `sp`, thời lượng, alpha viết số thẳng.
+- Font trong `res/font` là file TTF tĩnh từng độ đậm, sinh từ font variable bằng
+  `tools/fonts/make_static_fonts.py` và khai báo `Font(R.font.x_bold, FontWeight.Bold)` ở `Typography.kt`;
+  không dùng font variable + `FontVariation` (Compose áp trục `wght` qua `Paint`, máy Xiaomi thay bằng font
+  hệ thống).
 - Nền màn app là `BackgroundGradient` (`Colors.kt`), vẽ một lần ở `AppNavDisplay`; màn, tab và
   `Scaffold` để trong suốt (`containerColor = Color.Transparent` + `contentColor = GreyED`), không vẽ
   lại. Màn AOD và Customize (khung xem trước AOD) tự vẽ nền đen.
@@ -223,7 +231,9 @@ bắt buộc (compiler không chặn hộ):
   (`CustomizeDestination(isFirstOpen = false)`): không bước / Bỏ qua, Áp dụng xong quay về Main.
 - Trang cấp quyền ở app Cài đặt mở bằng `context.openXxxSettings(isGranted)`
   (`utils/ContextExt.kt`): `returnAppWhen` kéo app về khi quyền được cấp (poll 200 ms, tối đa 60
-  giây; quyền đã có lúc mở thì không kéo). `isGranted` lấy từ
+  giây; quyền đã có lúc mở hoặc user tự quay lại thì không kéo). Trang mở bằng `startActivityForResult`
+  để đóng bằng `finishActivity` (Xiaomi chặn `startActivity` từ nền khi chưa có quyền cửa sổ bật lên),
+  `startActivity` chỉ là đường dự phòng; mở trang cấp quyền mới thì đi qua `openSettingsPage`. `isGranted` lấy từ
   `PermissionManager.isGranted(permission)`.
 - Icon app và Lottie `lottie_device_edge_light` sinh bằng script ở `tools/brand/`, không sửa tay
   file sinh ra (đọc `tools/brand/README.md`). XML layout chỉ cho native ad.

@@ -1,6 +1,7 @@
 package com.decoutkhanqindev.custom_aod.utils
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.BroadcastReceiver
 import android.content.ComponentName
@@ -14,6 +15,7 @@ import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.core.net.toUri
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.lifecycleScope
@@ -22,6 +24,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
+import java.lang.ref.WeakReference
 
 fun Context.showToast(message: String, duration: Int = Toast.LENGTH_SHORT) {
     Toast.makeText(this, message, duration).show()
@@ -47,7 +50,7 @@ fun Context.shareText(text: String, chooserTitle: String) {
 fun Context.openSettingsPage(vararg intents: Intent): Boolean {
     for (intent in intents) {
         try {
-            startActivity(intent)
+            startSettingsPage(intent)
             return true // Thành công mở được một trang
         } catch (e: Exception) {
             continue // Lỗi trang này thì thử Intent tiếp theo
@@ -56,10 +59,21 @@ fun Context.openSettingsPage(vararg intents: Intent): Boolean {
 
     // Nếu tất cả Intent truyền vào đều crash/không có trên ROM
     return try {
-        startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, packageUri()))
+        startSettingsPage(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, packageUri()))
         false
     } catch (e: Exception) {
         false
+    }
+}
+
+// Mở bằng startActivityForResult để returnAppWhen đóng được trang bằng finishActivity: đóng Activity mình đã mở không cần quyền mở
+// Activity từ nền (Xiaomi chặn startActivity từ nền tới khi có quyền "Hiển thị cửa sổ bật lên khi chạy nền").
+private fun Context.startSettingsPage(intent: Intent) {
+    val activity: Activity? = findActivity()
+    if (activity != null) {
+        activity.startActivityForResult(intent, SETTINGS_REQUEST_CODE)
+    } else {
+        startActivity(intent)
     }
 }
 
@@ -98,7 +112,7 @@ fun Context.openNotificationSettings(isGranted: () -> Boolean) {
 fun Context.openNotificationListenerSettings(listener: ComponentName, isGranted: () -> Boolean) {
     openPermissionPage(isGranted) {
         try {
-            startActivity(
+            startSettingsPage(
                 Intent(Settings.ACTION_NOTIFICATION_LISTENER_DETAIL_SETTINGS)
                     .putExtra(
                         Settings.EXTRA_NOTIFICATION_LISTENER_COMPONENT_NAME,
@@ -144,32 +158,50 @@ fun Context.registerSystemReceiver(receiver: BroadcastReceiver?, filter: IntentF
         registerReceiver(receiver, filter)
     }
 
+// Kéo app về khi condition đúng (poll, tối đa timeoutMs); user tự quay lại app trước đó thì thôi, không kéo nữa:
+// 1. finishActivity đóng trang Cài đặt mở bằng startSettingsPage: không cần quyền mở Activity từ nền.
+// 2. App vẫn chưa lên trước (trang nằm ở task khác, user đã đi sâu vào trang khác) thì startActivity, thử lại tới khi app lên trước:
+//    Xiaomi chặn lần mở từ nền khi chưa có quyền "Hiển thị cửa sổ bật lên khi chạy nền", user bật nó ngay sau đó (cùng trang "Quyền
+//    khác") thì lần thử sau mở được. CLEAR_TOP + SINGLE_TOP bỏ trang Cài đặt nằm trên MainActivity mà không tạo lại MainActivity.
+// Chạy trên scope của process (không mất khi Activity bị huỷ), giữ Activity bằng WeakReference.
 fun Context.returnAppWhen(
     timeoutMs: Long = DEFAULT_TIMEOUT_MS,
     condition: () -> Boolean,
 ) {
     val appContext = this.applicationContext
-    val scope = (this.findActivity() as? LifecycleOwner)?.lifecycleScope
-        ?: ProcessLifecycleOwner.get().lifecycleScope
-    scope.launch {
+    val activity = WeakReference<Activity>(findActivity())
+    val process = ProcessLifecycleOwner.get()
+    process.lifecycleScope.launch {
         withContextCatching(
             context = Dispatchers.Main,
             block = {
-                val canReturnApp = withTimeoutOrNull(timeoutMs) {
+                withTimeoutOrNull(timeoutMs) {
                     delay(FIRST_POLL_DELAY_MS)
-                    while (!condition()) delay(POLL_INTERVAL_MS)
-                } != null
-                if (canReturnApp) {
-                    appContext.startActivity(
-                        Intent(appContext, MainActivity::class.java)
-                            .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT or Intent.FLAG_ACTIVITY_NEW_TASK)
-                    )
+                    while (!condition()) {
+                        if (process.isInFront()) return@withTimeoutOrNull
+                        delay(POLL_INTERVAL_MS)
+                    }
+
+                    activity.get()?.finishActivity(SETTINGS_REQUEST_CODE)
+                    delay(RETURN_CHECK_MS)
+                    while (!process.isInFront()) {
+                        appContext.startActivity(
+                            Intent(appContext, MainActivity::class.java).addFlags(
+                                Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP,
+                            ),
+                        )
+                        delay(RETURN_RETRY_MS)
+                    }
                 }
             },
             catch = {}
         )
     }
 }
+
+// Một Activity của app đang resumed (ProcessLifecycleOwner báo ON_PAUSE trễ 700 ms nên poll đầu tiên chờ FIRST_POLL_DELAY_MS).
+// Panel Cài đặt nổi trên app (vd Wi-Fi) làm Activity bị pause nên vẫn tính là chưa lên trước.
+private fun LifecycleOwner.isInFront(): Boolean = lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)
 
 fun Context.findActivity(): ComponentActivity? = when (this) {
     is ComponentActivity -> this
@@ -180,6 +212,11 @@ fun Context.findActivity(): ComponentActivity? = when (this) {
 private const val POLL_INTERVAL_MS = 200L
 private const val FIRST_POLL_DELAY_MS = 1_000L
 private const val DEFAULT_TIMEOUT_MS = 60_000L
+private const val RETURN_CHECK_MS = 400L
+private const val RETURN_RETRY_MS = 500L
+
+// Dưới 0x10000: không trùng mã ActivityResultRegistry tự sinh.
+private const val SETTINGS_REQUEST_CODE = 0x0AD0
 
 private const val MIUI_PERMISSION_EDITOR_ACTION = "miui.intent.action.APP_PERM_EDITOR"
 private const val MIUI_SECURITY_CENTER_PACKAGE = "com.miui.securitycenter"

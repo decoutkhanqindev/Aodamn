@@ -1,7 +1,6 @@
 package com.decoutkhanqindev.custom_aod.presentation.screens.aodtab.state
 
 import androidx.compose.runtime.Immutable
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeValue
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeDraftUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionUiModel
@@ -13,9 +12,7 @@ import kotlinx.collections.immutable.persistentListOf
 data class AodTabState(
     val isLoading: Boolean = true,
     val isAodEnabled: Boolean = false,
-    val nowMillis: Long = 0L,
     val design: CustomizeDraftUiModel = CustomizeDraftUiModel(),
-    val themes: ImmutableList<AodThemeUiModel> = persistentListOf(),
     val permission: AodTabPermissionState = AodTabPermissionState(),
 ) {
     val activeTheme: AodThemeValue

@@ -7,6 +7,76 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-10-12 – Tự quay về app sau khi cấp quyền trên Xiaomi
+
+Build được (`assembleDebug`), lint không thêm cảnh báo, `tools/check-rules.sh` ra 0 vi phạm (37 rule). Chưa test trên máy.
+
+### Sửa
+
+- Xiaomi không tự quay về app sau khi bật "Hiển thị trên ứng dụng khác", "Hiển thị trên màn hình khóa"... (chỉ "Hiển thị cửa sổ bật lên khi chạy nền" quay về được): HyperOS chặn `startActivity` từ nền tới khi có quyền cửa sổ bật lên, và bản cũ chỉ thử một lần. Trang cấp quyền giờ mở bằng `startActivityForResult` (`startSettingsPage`), cấp xong thì `returnAppWhen` đóng trang bằng `finishActivity` (không cần quyền mở từ nền); app vẫn chưa lên trước thì `startActivity` với `CLEAR_TOP | SINGLE_TOP` (bỏ trang cài đặt nằm trên, không tạo lại `MainActivity`) và thử lại mỗi 500 ms tới khi app lên trước hoặc hết 60 giây.
+- Bỏ `REORDER_TO_FRONT`: trang cài đặt cùng task bị đẩy xuống dưới chứ không đóng, Back ở app lại về trang cài đặt.
+- User tự quay về app trước khi cấp quyền thì thôi chờ, không kéo app lên sau đó; vòng chờ chạy trên scope của process thay vì của Activity.
+- Tùy chỉnh: từ chối quyền lịch / vị trí (bật Sự kiện hôm nay / Thời tiết) trước đây chỉ hiện một dòng nhắc, từ chối hai lần là không cấp lại được từ app. Giờ mở Thông tin ứng dụng như Cài đặt › Quyền (`CustomizeEffect.Permission.OpenAppSettings`), cấp xong app tự về và bật luôn mục đang chờ; bỏ chuỗi `calendar_permission_denied`, `location_permission_denied`.
+
+## [Chưa phát hành] – 2026-10-12 – Kiểu hiển thị từng khối, ô xem trước, khung xem trước đứng yên, màn đang áp dụng ở màn chủ đề
+
+Build được (`assembleDebug`), lint không thêm cảnh báo, `tools/check-rules.sh` ra 0 vi phạm (37 rule). Chưa test trên máy.
+
+### Thêm
+
+- Kiểu hiển thị cho từng khối dùng chung (như mặt đồng hồ, ý tưởng lấy từ skill ui-ux-pro-max hướng OLED: nền đen, không viền, chữ dịu): Ngày 5 kiểu (Giãn chữ, Một câu, Tờ lịch, Hai cột, Số), Pin 5 (Biểu tượng, Vòng, Thanh, Chấm, Chữ), Thời tiết 4 (Một dòng, Nhiệt độ, Xếp chồng, Chi tiết), Sự kiện 4 (Danh sách, Dòng thời gian, Sắp tới, Một dòng), Ghi nhớ 4 (Biểu tượng, Trích dẫn, Chữ trơn, Nhãn), Thông báo 4 (Hàng icon, Xếp lớp, Chuông, Chấm), Nhạc 3 (Hàng ngang, Căn giữa, Gọn). Enum `Aod*LayoutValue`, thuộc tính `<khối>_layout` đứng đầu tab của khối; `AodDate` tách thành file riêng.
+- Ô xem trước ở danh sách lựa chọn (`aodChoicePreview`, `PreviewChoice`): kiểu từng khối vẽ bằng chính composable của AOD với dữ liệu mẫu ở font / màu / cỡ mặc định (đổi font, màu chỉ thấy ở khung xem trước AOD, ô không vẽ lại); font hiện "Aa 12" và tên bằng chính font đó; mặt đồng hồ Cổ điển là đồng hồ thu nhỏ 08:30 màu mặc định (`AodClassicFacePreview`).
+- Màn chủ đề có lớp phủ "Đang áp dụng…" lúc Lưu / Áp dụng (chặn chạm và Back), chờ DataStore ghi xong: `edit` của `DataStoreManager` trả `Job`, `saveAodThemeId` / `saveAodThemeConfig` trả `Job` để chờ (ghi vẫn chạy trên scope của manager). Lớp phủ dùng chung: `CustomizeApplyingOverlay` thành `AppApplyingOverlay`.
+- Chạm vào khung xem trước khi panel đang mở thì đóng panel (Tùy chỉnh và màn chủ đề lúc Sửa).
+- Icon `bell` bản light cho kiểu thông báo "Chuông".
+
+### Thay đổi
+
+- Lưới chủ đề ở tab AOD: chủ đề đang dùng có nhãn "Đang dùng" (`AppBadge`) trên ảnh thay cho dấu tích.
+- Khung xem trước ngoài AOD thật (Tùy chỉnh, màn chủ đề, thẻ "Giao diện của bạn", lưới chủ đề, ô xem trước) không chạy theo giờ nữa: bỏ vòng cập nhật mỗi phút và `nowMillis` khỏi state của 3 màn, giờ mẫu cố định 08:30 hôm nay như icon app (`CustomizePreviewSamples.nowMillis`), các khối khác vẫn là dữ liệu mẫu cố định.
+- Nút ở màn chủ đề đang dùng: "Tùy chỉnh thêm" thành "Tùy chỉnh" (dùng lại `customize_title`, bỏ `theme_customize_more`).
+
+## [Chưa phát hành] – 2026-10-12 – Kiểu riêng từng khối ở Tùy chỉnh, bỏ viền, lối từ Tùy chỉnh sang màn chủ đề, font trên Xiaomi
+
+Build được (`assembleDebug`), lint không thêm cảnh báo, `tools/check-rules.sh` ra 0 vi phạm (37 rule). Chưa test trên máy.
+
+### Thêm
+
+- Kiểu riêng từng khối dùng chung (`AodComponentSpec`, `AodComponentValue`: ngày, pin, thời tiết, sự kiện, ghi nhớ, thông báo, nhạc, nét vẽ): font (trừ nét vẽ), cỡ 60–150%, màu; chỉnh ở từng tab của Tùy chỉnh bằng đúng control của màn chủ đề (`AodThemeOptionList`), có xem trước theo tay, hoàn tác, đặt lại. Lưu ở khoá DataStore mới `aod_component_styles` (chuỗi `khoá=giá trị,...`, cùng cách mã hoá với cấu hình chủ đề, `toAodConfigValues` / `toAodConfigString`), nạp vào `AodAppearanceUiModel.components`; `AodThemeSpec` tách `AodOptionSpec` (danh sách tab + thuộc tính) để dùng chung `isSame` / `isDefault`.
+- Khối mà chủ đề đang dùng tự vẽ (`ownBlocks`: ngày, nhạc của Sỏi) thì tab đó ở Tùy chỉnh chỉ có công tắc kèm dòng "Kiểu do chủ đề quyết định" dẫn sang màn chủ đề.
+- Lối từ Tùy chỉnh sang màn chủ đề: tab Đồng hồ (luôn có) ngoài onboarding là dòng "Chủ đề: <tên>" mở màn chủ đề đang dùng; màn chủ đề đã nằm dưới trong back stack thì quay lại nó thay vì mở chồng, và "Tùy chỉnh thêm" ở màn chủ đề làm tương tự với Tùy chỉnh. Tùy chỉnh nạp lại chủ đề mỗi lần resume (bản nháp, lịch sử hoàn tác và bản gốc cùng lấy chủ đề mới) để Áp dụng không ghi đè chủ đề vừa đổi.
+- Cổ điển: màu giờ và màu phút riêng (số: phần trước dấu ":" và từ dấu ":" trở đi; xếp chồng: hai dòng; kim: kim giờ + mốc giờ + chấm giữa, kim phút). Màu giờ giữ khoá `color` nên cấu hình đã lưu không mất; `minute_color` mới, cấu hình cũ chưa có thì phút về màu mặc định (bản cũ chuyển từ `aod_clock_color` thì cả hai cùng màu).
+
+### Thay đổi
+
+- Bỏ mọi viền của các khối trên AOD (thẻ, viên, vòng icon, vòng quanh nút phát, vạch sự kiện): khối không viền, không nền; thanh tiến trình nhạc, chấm của ngày và pin theo màu của khối; pin sạc dùng Mint. `AodCard` / `AodPill` / `AodIconRing` thay bằng `AodBlock` (khối nhiều dòng, cùng bề ngang); bỏ `AccentGradient` và `RoundedCornerShape20dp` vì không còn chỗ dùng.
+- Ngày, thời tiết, ghi nhớ, nét vẽ không còn lấy font / màu từ chủ đề (bỏ `AodThemeSpec.fontOf` / `accentOf`, `AodAppearanceUiModel.font` / `color`): mỗi khối có kiểu riêng, mặc định font mặc định và màu xám dịu.
+- Tab Đồng hồ ở Tùy chỉnh không còn `isOnboardingOnly`: onboarding vẫn chỉ có Cổ điển (mặt rồi font, cỡ, màu giờ / phút theo cùng thứ tự với các khối khác), sau đó là dòng dẫn sang màn chủ đề.
+- Mỗi khối ở Tùy chỉnh (và khối Đồng hồ lúc onboarding) có dòng "Đặt lại mặc định", chỉ hiện khi khối đã khác mặc định, đặt lại riêng khối đó (`AodThemeConfig.without`, `AodThemeTab.isDefault`); nút Đặt lại trên thanh công cụ vẫn đặt lại cả bản nháp.
+- Khung xem trước của Tùy chỉnh luôn hiện khối của tab đang mở bằng dữ liệu mẫu (`shownComponent` trong `toPreviewAodState`), kể cả khi khối đang tắt, thiếu quyền hay chưa có nội dung (ghi nhớ mẫu, hình vẽ mẫu): trước đó đổi font / cỡ / màu của thời tiết, sự kiện, ghi nhớ, thông báo... không thấy gì vì khối không hiện.
+- Font không áp dụng trên máy Xiaomi (máy ảo vẫn đúng): font variable + `Font(resId, variationSettings)` của Compose đặt độ đậm qua `Paint.setFontVariationSettings` rồi lấy lại typeface của `Paint`, mà MIUI / HyperOS can thiệp `Paint` nên font của app bị thay bằng font hệ thống. Đổi sang file TTF tĩnh từng độ đậm (như Fredoka trong app tham khảo): `tools/fonts/make_static_fonts.py` (fonttools) tách 33 file từ 7 font variable (chuyển sang `tools/fonts/variable/`, không còn trong `res/font`), `Typography.kt` khai báo `Font(R.font.x_bold, FontWeight.Bold)`, bỏ `FontVariation` / `variationSettings`. APK nặng thêm khoảng 2–3 MB; dải độ đậm giữ như cũ (mảnh → đậm, độ đậm ngoài dải của font lấy gần nhất). Thêm rule 37 ở `tools/check-rules.sh`: không dùng `FontVariation` / `variationSettings`.
+- Nhãn cỡ của khối Clock và chủ đề Sỏi là "Cỡ: x%" như các khối khác (bỏ chuỗi "Cỡ đồng hồ").
+- Bánh xe màu (`ClockColorPicker`) không còn giữ cú vuốt dọc của panel: lớp phủ nhận cử chỉ thay bánh xe, chạm đúng nút chọn rồi kéo thì chọn màu, chạm nhẹ chỗ khác thì chọn màu ở đó, vuốt thì panel cuộn. Thanh độ sáng chỉ nhận vuốt ngang nên giữ nguyên.
+
+## [Chưa phát hành] – 2026-10-11 – Lưới chủ đề dùng kiểu mặc định, chạm xem trước để sửa
+
+Build được (`assembleDebug`), `tools/check-rules.sh` ra 0 vi phạm (36 rule). Chưa test trên máy.
+
+### Thay đổi
+
+- Lưới chủ đề ở tab AOD chỉ xem trước kiểu mặc định của từng chủ đề, không theo cấu hình user đã chỉnh (`AodTabState.themes` và việc nạp cấu hình ở `AodTabViewModel` bỏ). Cấu hình đã lưu chỉ hiện khi vào màn chủ đề.
+- Màn chủ đề: chạm vào khung xem trước (lúc chưa sửa) thì mở phần chỉnh, như nút Sửa.
+
+## [Chưa phát hành] – 2026-10-11 – Lưới chủ đề chỉ xem trước riêng chủ đề
+
+Build được (`assembleDebug`), lint không thêm cảnh báo, `tools/check-rules.sh` ra 0 vi phạm (36 rule). Chưa test trên máy.
+
+### Thay đổi
+
+- Lưới chủ đề ở tab AOD chỉ vẽ riêng chủ đề đó (đồng hồ, ngày và khối chủ đề tự vẽ, `AodThemeUiModel.toThemePreviewDraft()`), không còn hiện ảnh nền, thông báo, sự kiện, thời tiết, ghi nhớ, pin, nhạc... đã bật của user: các thẻ nhìn gọn, so sánh chủ đề dễ hơn. AOD đầy đủ chỉ còn ở thẻ "Giao diện của bạn" (Tùy chỉnh); khối chủ đề tự vẽ như trình phát nhạc của Sỏi vẫn có trong xem trước.
+- Màn chủ đề cũng chỉ xem trước riêng chủ đề (đồng hồ và ngày), không còn nạp phần chung của user: `ThemeEditorViewModel` bỏ `loadCustomizeDraft`, `ThemeEditorState.base` và `RefreshBase`. Lúc Sửa không còn ép hiện ngày và trình phát mẫu ở mọi tab.
+- Mỗi chủ đề khai báo khối nó tự vẽ trong `AodThemeSpec.ownBlocks` (`AodBlockValue`: ngày, nhạc; thay cho `isDateBuiltIn`); xem trước chủ đề (lưới và màn chủ đề) luôn hiện các khối đó, nên thẻ Sỏi có sẵn trình phát nhạc riêng còn Cổ điển (dùng trình phát chung) thì không. Chủ đề sau có khối riêng mới chỉ cần khai báo ở `ownBlocks` và thêm dữ liệu mẫu trong `toThemePreviewDraft`.
+
 ## [Chưa phát hành] – 2026-10-11 – Kiểu mặc định mới cho các khối AOD, màu riêng từng phần của Sỏi
 
 Build được (`assembleDebug`), lint không thêm cảnh báo, `tools/check-rules.sh` ra 0 vi phạm (36 rule), đã test trên máy.

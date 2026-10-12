@@ -5,7 +5,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
-import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
@@ -37,17 +36,18 @@ fun ThemeEditorScreen(
             block = { effect ->
                 when (effect) {
                     is ThemeEditorEffect.ShowMessage -> context.showToast(resources.getString(effect.messageRes))
-                    is ThemeEditorEffect.NavigateToCustomize -> backStack.add(CustomizeDestination(isFirstOpen = false))
+                    // Tùy chỉnh đã nằm ngay dưới thì quay lại nó thay vì mở chồng thêm một màn.
+                    is ThemeEditorEffect.NavigateToCustomize ->
+                        if (backStack.any { key -> key is CustomizeDestination }) {
+                            backStack.navigateBack()
+                        } else {
+                            backStack.add(CustomizeDestination(isFirstOpen = false))
+                        }
                     is ThemeEditorEffect.NavigateBack -> backStack.navigateBack()
                 }
             },
             catch = { e -> Timber.tag(tag).e(e.stackTraceToString()) },
         )
-    }
-
-    LifecycleResumeEffect(Unit) {
-        viewModel.onIntent(ThemeEditorIntent.RefreshBase)
-        onPauseOrDispose { }
     }
 
     // Đang sửa thì Back thoát chế độ sửa (hỏi trước nếu còn thay đổi chưa lưu), không rời màn.

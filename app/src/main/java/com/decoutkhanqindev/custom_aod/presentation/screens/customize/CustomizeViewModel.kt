@@ -1,7 +1,6 @@
 package com.decoutkhanqindev.custom_aod.presentation.screens.customize
 
 import android.graphics.Bitmap
-import androidx.annotation.StringRes
 import androidx.lifecycle.viewModelScope
 import com.decoutkhanqindev.custom_aod.R
 import com.decoutkhanqindev.custom_aod.data.device.permission.PermissionManager
@@ -11,7 +10,11 @@ import com.decoutkhanqindev.custom_aod.domain.usecase.RefreshWeatherUseCase
 import com.decoutkhanqindev.custom_aod.presentation.base.BaseViewModel
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.WallpaperValue
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodExtrasUiModel
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodComponentSpec
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeConfig
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.isSame
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.observeAodTheme
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.saveAodComponents
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.saveAodThemeConfig
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeAppearanceUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeDecorUiModel
@@ -30,7 +33,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -52,12 +54,11 @@ class CustomizeViewModel(
     private var pendingChange: (CustomizeDraftUiModel.() -> CustomizeDraftUiModel)? = null
     private var glowPreviewJob: Job? = null
 
-    // Kéo color picker ở tab Đồng hồ (onboarding): xem trước trực tiếp không ghi lịch sử, thả tay mới ghi một bước hoàn tác cho cả lần kéo.
-    private var themeDragBase: CustomizeDraftUiModel? = null
+    // Kéo color picker (đồng hồ, kiểu khối): xem trước trực tiếp không ghi lịch sử, thả tay mới ghi một bước hoàn tác cho cả lần kéo.
+    private var dragBase: CustomizeDraftUiModel? = null
 
     init {
         loadDraft()
-        tickClock()
         showGuideOnce()
     }
 
@@ -95,8 +96,33 @@ class CustomizeViewModel(
         when (intent) {
             is CustomizeIntent.Appearance.ToggleDate -> editAppearance { copy(isDateEnabled = intent.isEnabled) }
             is CustomizeIntent.Appearance.ToggleBattery -> editAppearance { copy(isBatteryEnabled = intent.isEnabled) }
-            is CustomizeIntent.Appearance.PreviewThemeOption -> previewThemeOption(intent.key, intent.raw)
-            is CustomizeIntent.Appearance.ChangeThemeOption -> changeThemeOption(intent.key, intent.raw)
+            is CustomizeIntent.Appearance.PreviewThemeOption -> previewOption { withThemeOption(intent.key, intent.raw) }
+            is CustomizeIntent.Appearance.ChangeThemeOption -> changeOption { withThemeOption(intent.key, intent.raw) }
+            is CustomizeIntent.Appearance.PreviewComponentOption ->
+                previewOption { withComponentOption(intent.key, intent.raw) }
+
+            is CustomizeIntent.Appearance.ChangeComponentOption ->
+                changeOption { withComponentOption(intent.key, intent.raw) }
+
+            is CustomizeIntent.Appearance.ResetComponentStyle -> edit {
+                val clock = appearance.clock
+                val options = AodComponentSpec.optionsOf(intent.component).tab.options
+                copy(
+                    appearance = appearance.copy(
+                        clock = clock.copy(components = clock.components.copy(config = clock.components.config.without(options))),
+                    ),
+                )
+            }
+
+            is CustomizeIntent.Appearance.ResetClockStyle -> edit {
+                withTheme(appearance.clock.theme.copy(config = AodThemeConfig()))
+            }
+
+            is CustomizeIntent.Appearance.OpenThemeEditor -> viewModelScope.launch {
+                sendEffect(CustomizeEffect.Navigation.NavigateToThemeEditor(state.value.draft.appearance.clock.theme.value.id))
+            }
+
+            is CustomizeIntent.Appearance.RefreshTheme -> refreshTheme()
         }
     }
 
@@ -229,10 +255,10 @@ class CustomizeViewModel(
             is CustomizeIntent.Permission.OpenPermissionSettings -> openPermissionSettings(intent.permission)
             is CustomizeIntent.Permission.DismissPermissionSheet -> dismissPermissionSheet()
             is CustomizeIntent.Permission.CalendarPermissionResult ->
-                onPermissionResult(intent.isGranted, R.string.calendar_permission_denied)
+                onPermissionResult(PermissionValue.CALENDAR, intent.isGranted)
 
             is CustomizeIntent.Permission.LocationPermissionResult ->
-                onPermissionResult(intent.isGranted, R.string.location_permission_denied)
+                onPermissionResult(PermissionValue.LOCATION, intent.isGranted)
 
             is CustomizeIntent.Permission.RefreshPermissions -> refreshPermissions()
         }
@@ -265,17 +291,6 @@ class CustomizeViewModel(
             redoStack.clear()
             publish(initialDraft)
             updateState { copy(isLoading = false) }
-        }
-    }
-
-    // Đồng hồ xem trước nhảy đúng đầu mỗi phút như AOD thật.
-    private fun tickClock() {
-        viewModelScope.launch {
-            while (isActive) {
-                val nowMillis = System.currentTimeMillis()
-                updateState { copy(nowMillis = nowMillis) }
-                delay(MINUTE_MILLIS - nowMillis % MINUTE_MILLIS)
-            }
         }
     }
 
@@ -314,21 +329,49 @@ class CustomizeViewModel(
     private fun defaultDraft(): CustomizeDraftUiModel =
         if (isFirstOpen) CustomizeDraftUiModel() else CustomizeDraftUiModel().withTheme(initialDraft.appearance.clock.theme)
 
-    private fun previewThemeOption(key: String, raw: Int) {
+    private fun previewOption(transform: CustomizeDraftUiModel.() -> CustomizeDraftUiModel) {
         val current = state.value.draft
-        if (themeDragBase == null) themeDragBase = current
-        publish(current.withThemeOption(key, raw))
+        if (dragBase == null) dragBase = current
+        publish(current.transform())
     }
 
-    private fun changeThemeOption(key: String, raw: Int) {
-        val base = themeDragBase ?: state.value.draft
-        themeDragBase = null
-        commit(from = base, next = base.withThemeOption(key, raw))
+    private fun changeOption(transform: CustomizeDraftUiModel.() -> CustomizeDraftUiModel) {
+        val base = dragBase ?: state.value.draft
+        dragBase = null
+        commit(from = base, next = base.transform())
+    }
+
+    // Chủ đề đổi ở màn chủ đề thì bản nháp, lịch sử hoàn tác và bản gốc đều lấy chủ đề mới, để Áp dụng không ghi đè lại chủ đề cũ.
+    // Ngoài onboarding Tùy chỉnh không tự đổi chủ đề nên bản nháp và bản gốc luôn cùng chủ đề.
+    private fun refreshTheme() {
+        if (isFirstOpen || state.value.isLoading) return
+        viewModelScope.launch {
+            val theme = dataStoreManager.observeAodTheme().first()
+            if (theme == initialDraft.appearance.clock.theme) return@launch
+            initialDraft = initialDraft.withTheme(theme)
+            val undone = undoStack.map { draft -> draft.withTheme(theme) }
+            val redone = redoStack.map { draft -> draft.withTheme(theme) }
+            undoStack.clear()
+            undoStack.addAll(undone)
+            redoStack.clear()
+            redoStack.addAll(redone)
+            publish(state.value.draft.withTheme(theme))
+        }
     }
 
     private fun CustomizeDraftUiModel.withThemeOption(key: String, raw: Int): CustomizeDraftUiModel {
         val theme = appearance.clock.theme
         return withTheme(theme.copy(config = theme.config.withRaw(key, raw)))
+    }
+
+    private fun CustomizeDraftUiModel.withComponentOption(key: String, raw: Int): CustomizeDraftUiModel {
+        val clock = appearance.clock
+        val components = clock.components
+        return copy(
+            appearance = appearance.copy(
+                clock = clock.copy(components = components.copy(config = components.config.withRaw(key, raw))),
+            ),
+        )
     }
 
     private fun undo() {
@@ -402,15 +445,17 @@ class CustomizeViewModel(
         viewModelScope.launch { sendEffect(effect) }
     }
 
-    private fun onPermissionResult(isGranted: Boolean, @StringRes deniedMessageRes: Int) {
+    // Bị từ chối thì mở Thông tin ứng dụng (từ chối hai lần thì hệ thống không hỏi nữa), cấp xong app tự quay về và refreshPermissions
+    // bật mục đang chờ; sheet quyền giữ nguyên trong lúc đó.
+    private fun onPermissionResult(permission: PermissionValue, isGranted: Boolean) {
         if (isGranted) {
             applyPendingChange()
         } else {
-            viewModelScope.launch { sendEffect(CustomizeEffect.ShowMessage(deniedMessageRes)) }
+            viewModelScope.launch { sendEffect(CustomizeEffect.Permission.OpenAppSettings(permission)) }
         }
     }
 
-    // Truy cập thông báo cấp ở app Cài đặt: quay lại màn này thì kiểm lại.
+    // Quyền cấp ở app Cài đặt (truy cập thông báo, lịch / vị trí đã bị từ chối): quay lại màn này thì kiểm lại.
     private fun refreshPermissions() {
         val permission = state.value.permissionRequest ?: return
         if (isGranted(permission)) applyPendingChange()
@@ -496,6 +541,9 @@ class CustomizeViewModel(
                 saveAodThemeConfig(chosen.value, chosen.config)
             }
             if (chosen.value != previous.value) saveAodThemeId(chosen.value.id)
+            if (!AodComponentSpec.isSame(draft.clock.components.config, initial.clock.components.config)) {
+                saveAodComponents(draft.clock.components)
+            }
             if (draft.isDateEnabled != initial.isDateEnabled) saveIsAodDateEnabled(draft.isDateEnabled)
             if (draft.isBatteryEnabled != initial.isBatteryEnabled) saveIsAodBatteryEnabled(draft.isBatteryEnabled)
         }
@@ -562,7 +610,6 @@ class CustomizeViewModel(
     }
 
     private companion object {
-        const val MINUTE_MILLIS = 60_000L
         const val GLOW_PREVIEW_MILLIS = 3_000L
         const val MAX_HISTORY = 50
     }

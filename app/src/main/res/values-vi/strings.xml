@@ -43,7 +43,6 @@
     <string name="theme_classic">Cổ điển</string>
     <string name="theme_pebble">Sỏi</string>
     <string name="theme_in_use">Đang dùng</string>
-    <string name="theme_customize_more">Tùy chỉnh thêm</string>
     <string name="theme_edit">Sửa</string>
     <string name="theme_saved">Đã lưu chủ đề</string>
     <string name="theme_applied">Đã áp dụng chủ đề</string>
@@ -70,6 +69,8 @@
     <string name="theme_color_minute_digits">Số phút</string>
     <string name="theme_color_date">Ngày</string>
     <string name="theme_color_media">Nhạc</string>
+    <string name="theme_color_hour">Giờ</string>
+    <string name="theme_color_minute">Phút</string>
     <string name="theme_opt_date_style">Kiểu ngày</string>
     <string name="date_style_bold">In hoa đậm</string>
     <string name="date_style_plain">Thường</string>
@@ -155,7 +156,38 @@
     <string name="clock_font_condensed">Cao gầy</string>
     <string name="clock_font_geometric">Hình học</string>
     <string name="opt_clock_color">Màu</string>
-    <string name="opt_clock_size_value">Cỡ đồng hồ: %1$d%%</string>
+    <string name="opt_size_value">Cỡ: %1$d%%</string>
+    <string name="opt_layout">Kiểu</string>
+    <string name="date_layout_spaced">Giãn chữ</string>
+    <string name="date_layout_sentence">Một câu</string>
+    <string name="date_layout_calendar">Tờ lịch</string>
+    <string name="date_layout_split">Hai cột</string>
+    <string name="date_layout_numeric">Số</string>
+    <string name="battery_layout_icon">Biểu tượng</string>
+    <string name="battery_layout_ring">Vòng</string>
+    <string name="battery_layout_bar">Thanh</string>
+    <string name="battery_layout_dots">Chấm</string>
+    <string name="battery_layout_text">Chữ</string>
+    <string name="weather_layout_inline">Một dòng</string>
+    <string name="weather_layout_temperature">Nhiệt độ</string>
+    <string name="weather_layout_stacked">Xếp chồng</string>
+    <string name="weather_layout_detail">Chi tiết</string>
+    <string name="events_layout_list">Danh sách</string>
+    <string name="events_layout_timeline">Dòng thời gian</string>
+    <string name="events_layout_next">Sắp tới</string>
+    <string name="events_layout_inline">Một dòng</string>
+    <string name="memo_layout_icon">Biểu tượng</string>
+    <string name="memo_layout_quote">Trích dẫn</string>
+    <string name="memo_layout_plain">Chữ trơn</string>
+    <string name="memo_layout_tag">Nhãn</string>
+    <string name="notifications_layout_icons">Hàng icon</string>
+    <string name="notifications_layout_stack">Xếp lớp</string>
+    <string name="notifications_layout_badge">Chuông</string>
+    <string name="notifications_layout_dots">Chấm</string>
+    <string name="media_layout_row">Hàng ngang</string>
+    <string name="media_layout_center">Căn giữa</string>
+    <string name="media_layout_compact">Gọn</string>
+    <string name="aod_memo_label">GHI NHỚ</string>
     <string name="opt_landscape">Luôn xoay ngang (đồng hồ đêm)</string>
     <string name="wallpaper_stars">Sao đêm</string>
     <string name="wallpaper_aurora">Cực quang</string>
@@ -193,11 +225,9 @@
     <string name="drawing_save_failed">Không lưu được hình vẽ.</string>
     <string name="opt_calendar">Sự kiện hôm nay</string>
     <string name="opt_calendar_desc">Các sự kiện sắp tới trong hôm nay từ lịch của bạn. Cần quyền đọc lịch.</string>
-    <string name="calendar_permission_denied">Chưa được cấp quyền đọc lịch. Bạn có thể cấp trong cài đặt hệ thống của ứng dụng.</string>
     <string name="opt_weather">Thời tiết</string>
     <string name="opt_weather_desc">Lấy từ Open-Meteo theo vị trí gần đúng. Cần quyền vị trí.</string>
     <string name="opt_weather_fahrenheit">Hiện nhiệt độ theo °F</string>
-    <string name="location_permission_denied">Chưa được cấp quyền vị trí. Bạn có thể cấp trong cài đặt hệ thống của ứng dụng.</string>
 
     <string name="opt_notification_icons">Hiện biểu tượng thông báo</string>
     <string name="opt_notification_content">Hiện nội dung thông báo mới nhất</string>
@@ -272,6 +302,10 @@
     <string name="opt_date">Hiện ngày</string>
     <string name="opt_battery">Hiện phần trăm pin</string>
     <string name="customize_tab_clock">Đồng hồ</string>
+    <string name="customize_style_by_theme">Kiểu do chủ đề quyết định</string>
+    <string name="customize_style_reset">Đặt lại mặc định</string>
+    <string name="customize_clock_theme">Chủ đề</string>
+    <string name="customize_clock_theme_desc">Chỉnh kiểu, font, màu của đồng hồ và các phần chủ đề tự vẽ</string>
     <string name="customize_tab_date">Ngày</string>
     <string name="customize_tab_battery">Pin</string>
     <string name="customize_tab_background">Nền</string>
@@ -321,4 +355,5 @@
     <string name="customize_sample_event_title">Cà phê với Minh</string>
     <string name="customize_sample_media_title">Chuyến xe đêm</string>
     <string name="customize_sample_media_artist">Lo-fi Radio</string>
+    <string name="customize_sample_memo">Mua sữa trên đường về</string>
 </resources>

@@ -3,117 +3,96 @@ package com.decoutkhanqindev.custom_aod.presentation.components.aod
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.decoutkhanqindev.custom_aod.R
-import com.decoutkhanqindev.custom_aod.presentation.components.rememberFormatter
-import com.decoutkhanqindev.custom_aod.presentation.components.rememberZonedDateTime
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodBlockValue
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodComponentValue
 import com.decoutkhanqindev.custom_aod.presentation.screens.aod.state.AodIntent
 import com.decoutkhanqindev.custom_aod.presentation.screens.aod.state.AodState
-import com.decoutkhanqindev.custom_aod.presentation.theme.AccentGradient
 import com.decoutkhanqindev.custom_aod.presentation.theme.Grey5A
-import com.decoutkhanqindev.custom_aod.presentation.theme.Grey8A
 
 @Composable
 fun AodDetails(
     state: AodState,
     onIntent: (AodIntent) -> Unit,
 ) {
+    val components = state.appearance.components
+
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Spacer(modifier = Modifier.height(8.dp))
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             // Chủ đề tự vẽ dòng ngày cạnh đồng hồ thì ở đây không vẽ lại.
-            AnimatedVisibility(visible = state.extras.isDateEnabled && !state.appearance.theme.value.spec.isDateBuiltIn) {
+            AnimatedVisibility(visible = state.extras.isDateEnabled && AodBlockValue.DATE !in state.appearance.theme.value.spec.ownBlocks) {
                 AodDate(
                     nowMillis = state.nowMillis,
-                    accent = state.appearance.color,
-                    fontFamily = state.appearance.font.fontFamily,
+                    style = components.styleOf(AodComponentValue.DATE),
+                    layout = components.dateLayout,
                 )
             }
 
-            AodWeather(weather = state.weather, fontFamily = state.appearance.font.fontFamily)
+            AodWeather(
+                weather = state.weather,
+                style = components.styleOf(AodComponentValue.WEATHER),
+                layout = components.weatherLayout,
+            )
         }
 
-        AodEvents(events = state.events)
+        AodEvents(
+            events = state.events,
+            style = components.styleOf(AodComponentValue.EVENTS),
+            layout = components.eventsLayout,
+        )
 
-        AodMemo(memo = state.extras.memo, fontFamily = state.appearance.font.fontFamily)
+        AodMemo(
+            memo = state.extras.memo,
+            style = components.styleOf(AodComponentValue.MEMO),
+            layout = components.memoLayout,
+        )
 
-        AodDrawing(drawing = state.drawing, color = state.appearance.color)
+        AodDrawing(drawing = state.drawing, style = components.styleOf(AodComponentValue.DRAWING))
 
-        AodNotificationIcons(notifications = state.notifications)
+        AodNotificationIcons(
+            notifications = state.notifications,
+            style = components.styleOf(AodComponentValue.NOTIFICATIONS),
+            layout = components.notificationsLayout,
+        )
 
-        AodNotificationContent(content = state.notifications.latest)
+        AodNotificationContent(
+            content = state.notifications.latest,
+            style = components.styleOf(AodComponentValue.NOTIFICATIONS),
+            layout = components.notificationsLayout,
+        )
 
         AodStatus(
             battery = state.battery,
             isBatteryEnabled = state.extras.isBatteryEnabled,
             isFlashlightOn = state.isFlashlightOn,
+            style = components.styleOf(AodComponentValue.BATTERY),
+            layout = components.batteryLayout,
         )
 
         AodMediaControls(
             media = state.media,
             theme = state.appearance.theme,
+            style = components.styleOf(AodComponentValue.MEDIA),
+            layout = components.mediaLayout,
             onIntent = onIntent,
         )
 
         Spacer(modifier = Modifier.height(28.dp))
         AodExitHint(isVisible = state.isExitHintVisible)
-    }
-}
-
-// Thứ in hoa theo màu chủ đề, chấm gradient của app, ngày tháng xám.
-@Composable
-private fun AodDate(
-    nowMillis: Long,
-    accent: Color,
-    fontFamily: FontFamily,
-) {
-    val now = rememberZonedDateTime(nowMillis)
-    val weekdayFormatter = rememberFormatter(R.string.aod_date_weekday_pattern)
-    val dayFormatter = rememberFormatter(R.string.aod_date_day_pattern)
-
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Text(
-            text = now.format(weekdayFormatter).uppercase(),
-            color = accent,
-            fontSize = 13.sp,
-            fontWeight = FontWeight.SemiBold,
-            fontFamily = fontFamily,
-            letterSpacing = 1.5.sp,
-        )
-
-        Box(
-            modifier = Modifier
-                .padding(horizontal = 8.dp)
-                .size(5.dp)
-                .background(brush = AccentGradient, shape = CircleShape),
-        )
-
-        Text(
-            text = now.format(dayFormatter),
-            color = Grey8A,
-            fontSize = 15.sp,
-            fontFamily = fontFamily,
-        )
     }
 }
 

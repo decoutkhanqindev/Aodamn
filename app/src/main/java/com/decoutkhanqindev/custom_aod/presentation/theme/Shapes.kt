@@ -6,7 +6,6 @@ import androidx.compose.ui.unit.dp
 val RoundedCornerShape8dp = RoundedCornerShape(8.dp)
 val RoundedCornerShape12dp = RoundedCornerShape(12.dp)
 val RoundedCornerShape16dp = RoundedCornerShape(16.dp)
-val RoundedCornerShape20dp = RoundedCornerShape(20.dp)
 val RoundedCornerTopShape16dp = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
 
 // Cầu nối cho component Material 3.

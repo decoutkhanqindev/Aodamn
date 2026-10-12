@@ -3,8 +3,7 @@ package com.decoutkhanqindev.custom_aod.presentation.components.aod
 import android.os.SystemClock
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.Crossfade
-import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -21,31 +21,35 @@ import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.decoutkhanqindev.custom_aod.R
 import com.decoutkhanqindev.custom_aod.presentation.components.AppSlider
 import com.decoutkhanqindev.custom_aod.presentation.components.onClick
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.ClockFontValue
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.info.MediaProgressUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.info.MediaUiModel
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodComponentStyle
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodMediaLayoutValue
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeValue
 import com.decoutkhanqindev.custom_aod.presentation.screens.aod.state.AodIntent
-import com.decoutkhanqindev.custom_aod.presentation.theme.AccentGradient
-import com.decoutkhanqindev.custom_aod.presentation.theme.FontFamilyPlusJakartaSans
 import com.decoutkhanqindev.custom_aod.presentation.theme.Grey3A
 import com.decoutkhanqindev.custom_aod.presentation.theme.Grey5A
-import com.decoutkhanqindev.custom_aod.presentation.theme.Grey8A
 import com.decoutkhanqindev.custom_aod.presentation.theme.GreyB4
 import kotlinx.coroutines.delay
 
@@ -54,6 +58,8 @@ import kotlinx.coroutines.delay
 fun AodMediaControls(
     media: MediaUiModel?,
     theme: AodThemeUiModel,
+    style: AodComponentStyle,
+    layout: AodMediaLayoutValue,
     onIntent: (AodIntent) -> Unit,
 ) {
     AnimatedContent(
@@ -63,7 +69,7 @@ fun AodMediaControls(
     ) { target ->
         if (target != null) {
             when (theme.value) {
-                AodThemeValue.CLASSIC -> AodClassicMedia(media = target, onIntent = onIntent)
+                AodThemeValue.CLASSIC -> AodClassicMedia(media = target, style = style, layout = layout, onIntent = onIntent)
                 AodThemeValue.PEBBLE -> AodPebbleMedia(media = target, config = theme.config, onIntent = onIntent)
             }
         }
@@ -104,12 +110,14 @@ fun AodMediaButton(
     isEnabled: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    size: Dp = 40.dp,
+    tint: Color = GreyB4,
 ) {
     Icon(
         painter = painterResource(iconRes),
         contentDescription = contentDescription,
         modifier = modifier
-            .size(40.dp)
+            .size(size)
             .then(
                 if (isEnabled) {
                     Modifier.onClick(shape = CircleShape, ripple = false, action = onClick)
@@ -118,58 +126,76 @@ fun AodMediaButton(
                 },
             )
             .padding(8.dp),
-        tint = if (isEnabled) GreyB4 else Grey5A,
+        tint = if (isEnabled) tint else Grey5A,
     )
 }
 
-// Trình phát chung: thẻ viền gradient của app, nút phát trong vòng gradient, thanh tiến trình gradient như thanh trượt của app.
+// Trình phát chung, không viền, font / cỡ / màu theo khối nhạc; mỗi kiểu một bố cục.
 @Composable
 private fun AodClassicMedia(
     media: MediaUiModel,
+    style: AodComponentStyle,
+    layout: AodMediaLayoutValue,
     onIntent: (AodIntent) -> Unit,
 ) {
     val progress = media.progress
 
-    AodCard(modifier = Modifier.padding(top = 20.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(end = 8.dp),
-            ) {
-                Text(
-                    text = media.title,
-                    color = GreyB4,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    fontFamily = FontFamilyPlusJakartaSans,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
+    when (layout) {
+        // Tên bài bên trái, 3 nút bên phải, thanh tiến trình bên dưới
+        AodMediaLayoutValue.ROW -> AodBlock(modifier = Modifier.padding(top = 20.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                TrackInfo(
+                    media = media,
+                    style = style,
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 8.dp),
                 )
 
-                media.artist?.let { artist ->
-                    Text(
-                        text = artist,
-                        color = Grey8A,
-                        fontSize = 12.sp,
-                        fontFamily = FontFamilyPlusJakartaSans,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                }
+                MediaButtons(media = media, style = style, onIntent = onIntent)
             }
 
-            AodMediaButton(
-                iconRes = R.drawable.ic_skip_back_light,
-                contentDescription = stringResource(R.string.aod_media_previous),
-                isEnabled = media.canSkipToPrevious,
-                onClick = { onIntent(AodIntent.SkipToPreviousTrack) },
+            if (progress != null) MediaProgress(progress = progress, style = style)
+        }
+
+        // Tên bài căn giữa, nút ở giữa bên dưới, thanh tiến trình dưới cùng
+        AodMediaLayoutValue.CENTER -> AodBlock(modifier = Modifier.padding(top = 20.dp)) {
+            TrackInfo(
+                media = media,
+                style = style,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
             )
 
-            ClassicPlayButton(
-                isPlaying = media.isPlaying,
-                onClick = { onIntent(AodIntent.PlayPauseMedia) },
-                modifier = Modifier.padding(horizontal = 2.dp),
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 4.dp),
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                MediaButtons(media = media, style = style, onIntent = onIntent)
+            }
+
+            if (progress != null) MediaProgress(progress = progress, style = style)
+        }
+
+        // Một dòng: nút phát, tên bài · nghệ sĩ, bài tiếp theo; không thanh tiến trình
+        AodMediaLayoutValue.COMPACT -> Row(
+            modifier = Modifier
+                .padding(top = 16.dp)
+                .widthIn(max = 296.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            PlayPauseButton(media = media, style = style, onIntent = onIntent)
+
+            Text(
+                text = listOfNotNull(media.title, media.artist).joinToString(separator = "  ·  "),
+                modifier = Modifier.weight(1f, fill = false),
+                color = style.color,
+                fontSize = 13.sp * style.scale,
+                fontFamily = style.fontFamily,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
 
             AodMediaButton(
@@ -177,45 +203,110 @@ private fun AodClassicMedia(
                 contentDescription = stringResource(R.string.aod_media_next),
                 isEnabled = media.canSkipToNext,
                 onClick = { onIntent(AodIntent.SkipToNextTrack) },
-            )
-        }
-
-        if (progress != null) {
-            AodMediaProgress(
-                progress = progress,
-                track = { fraction -> ClassicProgressTrack(fraction = fraction) },
-                modifier = Modifier.padding(top = 10.dp),
+                size = 36.dp * style.scale,
+                tint = style.color,
             )
         }
     }
 }
 
 @Composable
-private fun ClassicPlayButton(
-    isPlaying: Boolean,
-    onClick: () -> Unit,
+private fun TrackInfo(
+    media: MediaUiModel,
+    style: AodComponentStyle,
     modifier: Modifier = Modifier,
+    textAlign: TextAlign? = null,
 ) {
-    Box(
-        modifier = modifier
-            .size(44.dp)
-            .border(width = 1.5.dp, brush = AccentGradient, shape = CircleShape)
-            .onClick(shape = CircleShape, ripple = false, action = onClick),
-        contentAlignment = Alignment.Center,
-    ) {
-        Crossfade(targetState = isPlaying, label = "ClassicPlayIcon") { playing ->
-            Icon(
-                painter = painterResource(if (playing) R.drawable.ic_pause_light else R.drawable.ic_play_light),
-                contentDescription = stringResource(if (playing) R.string.aod_media_pause else R.string.aod_media_play),
-                modifier = Modifier.size(20.dp),
-                tint = GreyB4,
+    Column(modifier = modifier) {
+        Text(
+            text = media.title,
+            modifier = Modifier.fillMaxWidth(),
+            color = style.color,
+            fontSize = 14.sp * style.scale,
+            fontWeight = FontWeight.SemiBold,
+            fontFamily = style.fontFamily,
+            textAlign = textAlign,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+
+        media.artist?.let { artist ->
+            Text(
+                text = artist,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .alpha(0.7f),
+                color = style.color,
+                fontSize = 12.sp * style.scale,
+                fontFamily = style.fontFamily,
+                textAlign = textAlign,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
         }
     }
 }
 
 @Composable
-private fun ClassicProgressTrack(fraction: () -> Float) {
+private fun MediaButtons(
+    media: MediaUiModel,
+    style: AodComponentStyle,
+    onIntent: (AodIntent) -> Unit,
+) {
+    AodMediaButton(
+        iconRes = R.drawable.ic_skip_back_light,
+        contentDescription = stringResource(R.string.aod_media_previous),
+        isEnabled = media.canSkipToPrevious,
+        onClick = { onIntent(AodIntent.SkipToPreviousTrack) },
+        size = 40.dp * style.scale,
+        tint = style.color,
+    )
+
+    PlayPauseButton(media = media, style = style, onIntent = onIntent)
+
+    AodMediaButton(
+        iconRes = R.drawable.ic_skip_forward_light,
+        contentDescription = stringResource(R.string.aod_media_next),
+        isEnabled = media.canSkipToNext,
+        onClick = { onIntent(AodIntent.SkipToNextTrack) },
+        size = 40.dp * style.scale,
+        tint = style.color,
+    )
+}
+
+@Composable
+private fun PlayPauseButton(
+    media: MediaUiModel,
+    style: AodComponentStyle,
+    onIntent: (AodIntent) -> Unit,
+) {
+    AodMediaButton(
+        iconRes = if (media.isPlaying) R.drawable.ic_pause_light else R.drawable.ic_play_light,
+        contentDescription = stringResource(if (media.isPlaying) R.string.aod_media_pause else R.string.aod_media_play),
+        isEnabled = true,
+        onClick = { onIntent(AodIntent.PlayPauseMedia) },
+        size = 40.dp * style.scale,
+        tint = style.color,
+    )
+}
+
+@Composable
+private fun MediaProgress(
+    progress: MediaProgressUiModel,
+    style: AodComponentStyle,
+) {
+    AodMediaProgress(
+        progress = progress,
+        track = { fraction -> ClassicProgressTrack(fraction = fraction, color = style.color) },
+        modifier = Modifier.padding(top = 10.dp),
+    )
+}
+
+@Composable
+private fun ClassicProgressTrack(
+    fraction: () -> Float,
+    color: Color,
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -228,7 +319,7 @@ private fun ClassicProgressTrack(fraction: () -> Float) {
                     withTransform({ if (isRtl) scale(scaleX = -1f, scaleY = 1f, pivot = center) }) {
                         drawRoundRect(color = Grey3A, cornerRadius = radius)
                         drawRoundRect(
-                            brush = AccentGradient,
+                            color = color,
                             size = Size(width = size.width * fraction(), height = size.height),
                             cornerRadius = radius,
                         )
@@ -256,6 +347,8 @@ private fun AodMediaControlsPreview() {
             ),
         ),
         theme = AodThemeUiModel(),
+        style = AodComponentStyle(font = ClockFontValue.DEFAULT, scale = 1f, color = GreyB4),
+        layout = AodMediaLayoutValue.ROW,
         onIntent = {},
     )
 }

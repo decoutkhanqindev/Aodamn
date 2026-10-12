@@ -1,36 +1,70 @@
 package com.decoutkhanqindev.custom_aod.presentation.theme
 
-import androidx.annotation.FontRes
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontVariation
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.decoutkhanqindev.custom_aod.R
 
-// Khai báo trước các font bên dưới: val cấp file khởi tạo theo thứ tự trong file. Đủ dải mảnh → đậm vì một font vừa là font app
-// vừa là font đồng hồ: đồng hồ Cổ điển dùng Thin / Light, chữ số chủ đề Sỏi dùng Bold, chữ phụ dùng Normal.
-private val VariableWeights = listOf(
-    FontWeight.Thin,
-    FontWeight.Light,
-    FontWeight.Normal,
-    FontWeight.Medium,
-    FontWeight.SemiBold,
-    FontWeight.Bold,
+// Font (Google Fonts, OFL, có tiếng Việt) là file TTF tĩnh từng độ đậm trong res/font, sinh từ font variable bằng
+// tools/fonts/make_static_fonts.py (đổi danh sách độ đậm ở đó thì đổi ở đây). Không để Compose áp trục độ đậm cho font variable: nó áp trục
+// wght qua Paint, máy Xiaomi (MIUI / HyperOS) thay font của app bằng font hệ thống. Một font vừa là font app vừa là font đồng hồ nên đủ dải
+// mảnh → đậm: đồng hồ Cổ điển dùng Thin / Light, chữ số chủ đề Sỏi dùng Bold, chữ phụ dùng Normal. Độ đậm font không có thì Compose lấy
+// độ đậm gần nhất (Plus Jakarta Sans nhỏ nhất 200, Comfortaa 300, Dancing Script 400).
+val FontFamilyPlusJakartaSans = FontFamily(
+    Font(R.font.plus_jakarta_sans_extralight, FontWeight.ExtraLight),
+    Font(R.font.plus_jakarta_sans_light, FontWeight.Light),
+    Font(R.font.plus_jakarta_sans_regular, FontWeight.Normal),
+    Font(R.font.plus_jakarta_sans_medium, FontWeight.Medium),
+    Font(R.font.plus_jakarta_sans_semibold, FontWeight.SemiBold),
+    Font(R.font.plus_jakarta_sans_bold, FontWeight.Bold),
 )
 
-// Font app: Plus Jakarta Sans bản variable (Google Fonts, OFL, có tiếng Việt), một file cho mọi độ đậm qua trục wght.
-val FontFamilyPlusJakartaSans = variableFontFamily(resId = R.font.plus_jakarta_sans_variable)
+val FontFamilyFraunces = FontFamily(
+    Font(R.font.fraunces_thin, FontWeight.Thin),
+    Font(R.font.fraunces_light, FontWeight.Light),
+    Font(R.font.fraunces_regular, FontWeight.Normal),
+    Font(R.font.fraunces_semibold, FontWeight.SemiBold),
+    Font(R.font.fraunces_bold, FontWeight.Bold),
+)
 
-// Font đồng hồ (Google Fonts, OFL, bản variable có tiếng Việt vì ngày và ghi chú dùng chung font); độ đậm ngoài dải của font được
-// kẹp về mép dải (Dancing Script nhỏ nhất 400, Plus Jakarta Sans nhỏ nhất 200).
-val FontFamilyFraunces = variableFontFamily(resId = R.font.fraunces_variable, FontVariation.Setting("SOFT", 100f))
-val FontFamilyJetBrainsMono = variableFontFamily(resId = R.font.jetbrains_mono_variable)
-val FontFamilyDancingScript = variableFontFamily(resId = R.font.dancing_script_variable)
-val FontFamilyComfortaa = variableFontFamily(resId = R.font.comfortaa_variable)
-val FontFamilyBigShouldersDisplay = variableFontFamily(resId = R.font.big_shoulders_display_variable)
-val FontFamilyJosefinSans = variableFontFamily(resId = R.font.josefin_sans_variable)
+val FontFamilyJetBrainsMono = FontFamily(
+    Font(R.font.jetbrains_mono_thin, FontWeight.Thin),
+    Font(R.font.jetbrains_mono_light, FontWeight.Light),
+    Font(R.font.jetbrains_mono_regular, FontWeight.Normal),
+    Font(R.font.jetbrains_mono_semibold, FontWeight.SemiBold),
+    Font(R.font.jetbrains_mono_bold, FontWeight.Bold),
+)
+
+val FontFamilyDancingScript = FontFamily(
+    Font(R.font.dancing_script_regular, FontWeight.Normal),
+    Font(R.font.dancing_script_semibold, FontWeight.SemiBold),
+    Font(R.font.dancing_script_bold, FontWeight.Bold),
+)
+
+val FontFamilyComfortaa = FontFamily(
+    Font(R.font.comfortaa_light, FontWeight.Light),
+    Font(R.font.comfortaa_regular, FontWeight.Normal),
+    Font(R.font.comfortaa_semibold, FontWeight.SemiBold),
+    Font(R.font.comfortaa_bold, FontWeight.Bold),
+)
+
+val FontFamilyBigShouldersDisplay = FontFamily(
+    Font(R.font.big_shoulders_display_thin, FontWeight.Thin),
+    Font(R.font.big_shoulders_display_light, FontWeight.Light),
+    Font(R.font.big_shoulders_display_regular, FontWeight.Normal),
+    Font(R.font.big_shoulders_display_semibold, FontWeight.SemiBold),
+    Font(R.font.big_shoulders_display_bold, FontWeight.Bold),
+)
+
+val FontFamilyJosefinSans = FontFamily(
+    Font(R.font.josefin_sans_thin, FontWeight.Thin),
+    Font(R.font.josefin_sans_light, FontWeight.Light),
+    Font(R.font.josefin_sans_regular, FontWeight.Normal),
+    Font(R.font.josefin_sans_semibold, FontWeight.SemiBold),
+    Font(R.font.josefin_sans_bold, FontWeight.Bold),
+)
 
 // Type scale mặc định của Material 3 (kèm lineHeightStyle, platformStyle của nó), chỉ đổi font sang Plus Jakarta Sans; BodyLarge là bản riêng của app.
 private val MaterialTypeScale = androidx.compose.material3.Typography()
@@ -70,18 +104,4 @@ val MaterialTypography = androidx.compose.material3.Typography(
     labelLarge = LabelLarge,
     labelMedium = LabelMedium,
     labelSmall = MaterialTypeScale.labelSmall.copy(fontFamily = FontFamilyPlusJakartaSans),
-)
-
-private fun variableFontFamily(
-    @FontRes resId: Int,
-    vararg settings: FontVariation.Setting,
-    weights: List<FontWeight> = VariableWeights,
-): FontFamily = FontFamily(
-    weights.map { weight ->
-        Font(
-            resId = resId,
-            weight = weight,
-            variationSettings = FontVariation.Settings(FontVariation.weight(weight.weight), *settings),
-        )
-    },
 )

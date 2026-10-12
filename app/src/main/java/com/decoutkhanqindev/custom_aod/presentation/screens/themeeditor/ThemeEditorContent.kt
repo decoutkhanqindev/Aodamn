@@ -6,6 +6,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,10 +18,12 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.custom_aod.R
+import com.decoutkhanqindev.custom_aod.presentation.components.AppApplyingOverlay
 import com.decoutkhanqindev.custom_aod.presentation.components.AppBadge
 import com.decoutkhanqindev.custom_aod.presentation.components.AppEditorPanel
 import com.decoutkhanqindev.custom_aod.presentation.components.AppTopBar
@@ -40,10 +43,7 @@ fun ThemeEditorContent(
     state: ThemeEditorState,
     onIntent: (ThemeEditorIntent) -> Unit,
 ) {
-    val preview = rememberAodPreview(
-        draft = state.preview,
-        nowMillis = state.nowMillis,
-    )
+    val preview = rememberAodPreview(draft = state.preview)
 
     Box(
         modifier = Modifier
@@ -53,8 +53,22 @@ fun ThemeEditorContent(
         AodContent(
             state = preview,
             onIntent = {},
+            modifier = Modifier.pointerInput(state.isEditing || state.isLoading) {
+                if (!state.isEditing && !state.isLoading) {
+                    detectTapGestures(onTap = { onIntent(ThemeEditorIntent.Edit.StartEditing) })
+                }
+            },
             isInteractive = false,
         )
+
+        // Đang sửa và panel đang mở: chạm vào khung xem trước (ngoài panel, thanh tab, thanh trên) thì đóng panel.
+        if (state.isEditing && state.selectedTab != null) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .pointerInput(Unit) { detectTapGestures { onIntent(ThemeEditorIntent.Edit.ClosePanel) } },
+            )
+        }
 
         Column(
             modifier = Modifier
@@ -119,6 +133,14 @@ fun ThemeEditorContent(
                 )
             }
         }
+
+        AnimatedVisibility(
+            visible = state.isApplying,
+            enter = fadeIn(),
+            exit = fadeOut(),
+        ) {
+            AppApplyingOverlay(text = stringResource(R.string.customize_applying))
+        }
     }
 
     if (state.history.isResetConfirmVisible) {
@@ -166,7 +188,6 @@ private fun ThemeEditorContentPreview() {
             state = ThemeEditorState(
                 theme = AodThemeValue.PEBBLE,
                 isLoading = false,
-                nowMillis = System.currentTimeMillis(),
             ),
             onIntent = {},
         )
@@ -181,7 +202,6 @@ private fun ThemeEditorContentEditingPreview() {
             state = ThemeEditorState(
                 theme = AodThemeValue.PEBBLE,
                 isLoading = false,
-                nowMillis = System.currentTimeMillis(),
                 isEditing = true,
                 selectedTab = AodThemeValue.PEBBLE.spec.tabs.first(),
             ),

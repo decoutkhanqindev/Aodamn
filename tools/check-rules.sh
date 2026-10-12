@@ -39,6 +39,9 @@ check "Tầng token / đường vòng của theme" \
 check "Accessor Theme.xxx" \
   "import từng giá trị top-level của theme" \
   'grep -rn "Theme\.[a-z]" $SRC --include="*.kt"'
+check "Font variable (FontVariation)" \
+  "font tĩnh từng độ đậm (tools/fonts/make_static_fonts.py): Compose áp trục wght qua Paint, Xiaomi thay bằng font hệ thống" \
+  'grep -rn "FontVariation\|variationSettings" $SRC --include="*.kt"'
 check "MaterialTheme.* ngoài theme" \
   "Colors / Typography / Shapes" \
   'grep -rn "MaterialTheme\." $SRC --include="*.kt" | grep -v "/presentation/theme/"'

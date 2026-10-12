@@ -28,7 +28,6 @@ import com.decoutkhanqindev.custom_aod.presentation.components.onClick
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeClusterValue
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeGuideStepValue
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeTabValue
-import com.decoutkhanqindev.custom_aod.presentation.model.customize.isShown
 import com.decoutkhanqindev.custom_aod.presentation.screens.customize.state.CustomizeIntent
 import com.decoutkhanqindev.custom_aod.presentation.theme.Grey9A
 import com.decoutkhanqindev.custom_aod.presentation.theme.Neutral12
@@ -37,7 +36,6 @@ import kotlin.math.roundToInt
 
 @Composable
 fun CustomizeTabBar(
-    isFirstOpen: Boolean,
     selectedTab: CustomizeTabValue?,
     guideStep: CustomizeGuideStepValue?,
     onIntent: (CustomizeIntent) -> Unit,
@@ -94,7 +92,7 @@ fun CustomizeTabBar(
                         onClusterPositioned(step, Rect(position, coordinates.size.toSize()))
                     },
                 ) {
-                    CustomizeTabValue.entries.filter { it.cluster == cluster && it.isShown(isFirstOpen) }.forEach { tab ->
+                    CustomizeTabValue.entries.filter { it.cluster == cluster }.forEach { tab ->
                         AppEditorTab(
                             iconRes = tab.iconRes,
                             label = stringResource(tab.labelRes),

@@ -25,8 +25,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.custom_aod.R
@@ -43,9 +46,11 @@ import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeOpti
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeTab
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodToggleOption
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.PebbleThemeSpec
+import com.decoutkhanqindev.custom_aod.presentation.theme.Black
 import com.decoutkhanqindev.custom_aod.presentation.theme.Grey9A
 import com.decoutkhanqindev.custom_aod.presentation.theme.LabelMedium
 import com.decoutkhanqindev.custom_aod.presentation.theme.Mint
+import com.decoutkhanqindev.custom_aod.presentation.theme.NeutralVariant30
 import com.decoutkhanqindev.custom_aod.presentation.theme.NeutralVariant60
 import com.decoutkhanqindev.custom_aod.presentation.theme.RoundedCornerShape12dp
 import com.decoutkhanqindev.custom_aod.presentation.theme.Theme
@@ -125,7 +130,8 @@ private fun ThemeOptionControl(
     }
 }
 
-// Mục là hình thì hiện hình thu nhỏ, là font thì chip viết bằng font đó, còn lại chip chữ.
+// Mục là hình thì hiện hình thu nhỏ; mục có ảnh xem trước (font, mặt đồng hồ, kiểu từng khối) thì ô xem trước vẽ bằng chính AOD;
+// còn lại chip chữ.
 @Composable
 private fun ChoiceControl(
     option: AodChoiceOption<*>,
@@ -146,18 +152,23 @@ private fun ChoiceControl(
     ) {
         option.entries.forEach { entry ->
             val isSelected = entry.code == selectedCode
-            if (entry is AodShapeValue) {
-                ShapeChoice(shape = entry, isSelected = isSelected, onClick = { onSelect(entry.code) })
-            } else {
-                FilterChip(
+            val preview = remember(entry) { aodChoicePreview(entry) }
+            when {
+                entry is AodShapeValue ->
+                    ShapeChoice(shape = entry, isSelected = isSelected, onClick = { onSelect(entry.code) })
+
+                preview != null -> PreviewChoice(
+                    label = stringResource(entry.labelRes),
+                    labelFontFamily = (entry as? ClockFontValue)?.fontFamily,
+                    isSelected = isSelected,
+                    onClick = { onSelect(entry.code) },
+                    preview = preview,
+                )
+
+                else -> FilterChip(
                     selected = isSelected,
                     onClick = { onSelect(entry.code) },
-                    label = {
-                        Text(
-                            text = stringResource(entry.labelRes),
-                            fontFamily = (entry as? ClockFontValue)?.fontFamily,
-                        )
-                    },
+                    label = { Text(text = stringResource(entry.labelRes)) },
                 )
             }
         }
@@ -223,6 +234,59 @@ private fun ColorGroupControl(
         onOptionPreview = onOptionPreview,
         onOptionChange = onOptionChange,
     )
+}
+
+// Ô xem trước 112 × 64dp nền đen như AOD, tên bên dưới (font thì viết bằng chính font đó). Lớp phủ trong ô chặn chạm vào nút của ảnh xem
+// trước (vd nút nhạc) để chạm rơi về ô.
+@Composable
+private fun PreviewChoice(
+    label: String,
+    labelFontFamily: FontFamily?,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    preview: @Composable () -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .clip(RoundedCornerShape12dp)
+            .selectable(
+                selected = isSelected,
+                role = Role.RadioButton,
+                onClick = onClick,
+            )
+            .padding(4.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Box(
+            modifier = Modifier
+                .size(width = 112.dp, height = 64.dp)
+                .clip(RoundedCornerShape12dp)
+                .background(Black)
+                .border(
+                    width = if (isSelected) 1.5.dp else 1.dp,
+                    color = if (isSelected) Mint else NeutralVariant30,
+                    shape = RoundedCornerShape12dp,
+                )
+                .clearAndSetSemantics { },
+            contentAlignment = Alignment.Center,
+        ) {
+            preview()
+
+            Box(
+                modifier = Modifier
+                    .matchParentSize()
+                    .pointerInput(Unit) { },
+            )
+        }
+
+        Text(
+            text = label,
+            modifier = Modifier.padding(top = 6.dp),
+            color = if (isSelected) Mint else Grey9A,
+            fontFamily = labelFontFamily,
+            style = LabelMedium,
+        )
+    }
 }
 
 @Composable

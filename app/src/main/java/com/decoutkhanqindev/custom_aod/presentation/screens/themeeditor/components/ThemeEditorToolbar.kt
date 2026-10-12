@@ -144,7 +144,7 @@ fun ThemeEditorToolbar(
                         text = stringResource(
                             when {
                                 editing -> R.string.action_save
-                                isActive -> R.string.theme_customize_more
+                                isActive -> R.string.customize_title
                                 else -> R.string.customize_apply
                             },
                         ),

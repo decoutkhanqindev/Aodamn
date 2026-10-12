@@ -21,11 +21,13 @@ import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionV
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.isGranted
 import com.decoutkhanqindev.custom_aod.presentation.navigation.MainDestination
 import com.decoutkhanqindev.custom_aod.presentation.navigation.PermissionDestination
+import com.decoutkhanqindev.custom_aod.presentation.navigation.ThemeEditorDestination
 import com.decoutkhanqindev.custom_aod.presentation.screens.customize.state.CustomizeEffect
 import com.decoutkhanqindev.custom_aod.presentation.screens.customize.state.CustomizeIntent
 import com.decoutkhanqindev.custom_aod.utils.collectCatching
 import com.decoutkhanqindev.custom_aod.utils.navigateBack
 import com.decoutkhanqindev.custom_aod.utils.navigateTo
+import com.decoutkhanqindev.custom_aod.utils.openAppSettings
 import com.decoutkhanqindev.custom_aod.utils.showToast
 import kotlinx.coroutines.flow.filterIsInstance
 import org.koin.compose.koinInject
@@ -84,6 +86,9 @@ fun CustomizeScreen(
                         AodNotificationListener.openAccessSettings(context) {
                             permissionManager.isGranted(PermissionValue.NOTIFICATION_ACCESS)
                         }
+
+                    is CustomizeEffect.Permission.OpenAppSettings ->
+                        context.openAppSettings { permissionManager.isGranted(effect.permission) }
                 }
             },
             catch = { e -> Timber.tag(tag).e(e.stackTraceToString()) },
@@ -102,6 +107,14 @@ fun CustomizeScreen(
                         backStack.navigateTo(MainDestination, preserveState = false)
 
                     is CustomizeEffect.Navigation.NavigateBack -> backStack.navigateBack()
+
+                    // Màn chủ đề đã nằm ngay dưới thì quay lại nó thay vì mở chồng thêm một màn.
+                    is CustomizeEffect.Navigation.NavigateToThemeEditor ->
+                        if (backStack.any { key -> key is ThemeEditorDestination }) {
+                            backStack.navigateBack()
+                        } else {
+                            backStack.add(ThemeEditorDestination(effect.themeId))
+                        }
                 }
             },
             catch = { e -> Timber.tag(tag).e(e.stackTraceToString()) },
@@ -119,6 +132,7 @@ fun CustomizeScreen(
 
     LifecycleResumeEffect(Unit) {
         viewModel.onIntent(CustomizeIntent.Permission.RefreshPermissions)
+        viewModel.onIntent(CustomizeIntent.Appearance.RefreshTheme)
         onPauseOrDispose { }
     }
 

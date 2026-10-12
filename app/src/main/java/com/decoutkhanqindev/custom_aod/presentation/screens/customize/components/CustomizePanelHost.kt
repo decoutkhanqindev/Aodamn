@@ -13,6 +13,7 @@ import com.decoutkhanqindev.custom_aod.presentation.screens.customize.state.Cust
 @Composable
 fun CustomizePanelHost(
     selectedTab: CustomizeTabValue?,
+    isFirstOpen: Boolean,
     draft: CustomizeDraftUiModel,
     decor: CustomizeDecorState,
     onIntent: (CustomizeIntent) -> Unit,
@@ -24,6 +25,7 @@ fun CustomizePanelHost(
     ) { tab ->
         CustomizePanel(
             tab = tab,
+            isFirstOpen = isFirstOpen,
             draft = draft,
             decor = decor,
             onIntent = onIntent,
