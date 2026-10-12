@@ -2,6 +2,9 @@ package com.decoutkhanqindev.custom_aod.presentation.model.aod.settings
 
 import androidx.compose.runtime.Immutable
 import com.decoutkhanqindev.custom_aod.data.local.datastore.DataStoreManager
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodBlockValue
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeSpec
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.component.AodComponentValue
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
@@ -39,3 +42,9 @@ fun DataStoreManager.observeAodNotificationOptions(): Flow<AodNotificationOption
         isMediaControlsEnabled = isMediaControlsEnabled,
     )
 }
+
+// Chủ đề không có nhạc thì không theo dõi phiên nhạc; chủ đề tự vẽ dòng trạng thái (chỉ có icon) thì không cần nội dung thông báo.
+fun AodNotificationOptionsUiModel.shownIn(spec: AodThemeSpec): AodNotificationOptionsUiModel = copy(
+    isContentEnabled = isContentEnabled && AodBlockValue.STATUS !in spec.ownBlocks,
+    isMediaControlsEnabled = isMediaControlsEnabled && AodComponentValue.MEDIA in spec.components,
+)

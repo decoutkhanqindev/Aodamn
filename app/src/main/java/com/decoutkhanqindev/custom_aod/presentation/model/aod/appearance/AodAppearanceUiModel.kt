@@ -2,11 +2,11 @@ package com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance
 
 import androidx.compose.runtime.Immutable
 import com.decoutkhanqindev.custom_aod.data.local.datastore.DataStoreManager
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodComponentsUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeUiModel
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.currentAodComponents
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.component.AodComponentsUiModel
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.component.currentAodComponents
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.component.observeAodComponents
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.currentAodTheme
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.observeAodComponents
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.observeAodTheme
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine

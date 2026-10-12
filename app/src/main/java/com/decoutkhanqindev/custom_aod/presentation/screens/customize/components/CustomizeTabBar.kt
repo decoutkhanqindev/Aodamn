@@ -23,8 +23,9 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
-import com.decoutkhanqindev.custom_aod.presentation.components.AppEditorTab
+import com.decoutkhanqindev.custom_aod.presentation.components.editor.AppEditorTab
 import com.decoutkhanqindev.custom_aod.presentation.components.onClick
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeSpec
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeClusterValue
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeGuideStepValue
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeTabValue
@@ -37,6 +38,7 @@ import kotlin.math.roundToInt
 @Composable
 fun CustomizeTabBar(
     selectedTab: CustomizeTabValue?,
+    spec: AodThemeSpec,
     guideStep: CustomizeGuideStepValue?,
     onIntent: (CustomizeIntent) -> Unit,
     onClusterPositioned: (CustomizeGuideStepValue, Rect) -> Unit,
@@ -92,7 +94,7 @@ fun CustomizeTabBar(
                         onClusterPositioned(step, Rect(position, coordinates.size.toSize()))
                     },
                 ) {
-                    CustomizeTabValue.entries.filter { it.cluster == cluster }.forEach { tab ->
+                    CustomizeTabValue.entries.filter { it.cluster == cluster && it.isShownIn(spec) }.forEach { tab ->
                         AppEditorTab(
                             iconRes = tab.iconRes,
                             label = stringResource(tab.labelRes),

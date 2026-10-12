@@ -2,7 +2,7 @@ package com.decoutkhanqindev.custom_aod.presentation.screens.customize.state
 
 import android.graphics.Bitmap
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.WallpaperValue
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodComponentValue
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.component.AodComponentValue
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeTabValue
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionValue
 

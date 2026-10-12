@@ -9,4 +9,7 @@ import androidx.compose.runtime.Immutable
 enum class AodBlockValue {
     DATE,
     MEDIA,
+
+    // Dòng trạng thái: pin, đèn pin và icon thông báo chung một dòng (thay khối Pin và Thông báo dùng chung)
+    STATUS,
 }

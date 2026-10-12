@@ -9,8 +9,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.decoutkhanqindev.custom_aod.R
 import com.decoutkhanqindev.custom_aod.presentation.components.settings.AppRadioRow
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodActionValue
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodGestureValue
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.interaction.AodActionValue
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.interaction.AodGestureValue
 import com.decoutkhanqindev.custom_aod.presentation.screens.settings.state.SettingsIntent
 import com.decoutkhanqindev.custom_aod.presentation.screens.settings.state.SettingsInteractionState
 

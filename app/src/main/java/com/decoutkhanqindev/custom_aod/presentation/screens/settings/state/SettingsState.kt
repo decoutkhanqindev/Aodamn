@@ -3,11 +3,11 @@ package com.decoutkhanqindev.custom_aod.presentation.screens.settings.state
 import androidx.compose.runtime.Immutable
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.AodAppearanceUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.info.WakeResultValue
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodGestureValue
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodInteractionUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodOptionsUiModel
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodRulesUiModel
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.ScheduleTimeValue
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.interaction.AodGestureValue
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.interaction.AodInteractionUiModel
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.rules.AodRulesUiModel
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.rules.ScheduleTimeValue
 import com.decoutkhanqindev.custom_aod.presentation.model.language.LanguageUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionUiModel
 import kotlinx.collections.immutable.ImmutableList

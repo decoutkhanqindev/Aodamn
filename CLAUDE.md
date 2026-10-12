@@ -58,14 +58,16 @@ bắt buộc (compiler không chặn hộ):
   sao" ngay tại code và README › Các quyết định thiết kế trước khi sửa.
 - Chủ đề AOD (`model/aod/theme/`): một chủ đề = mục `AodThemeValue` (id lưu, không đổi) + `AodThemeSpec`
   (tab và thuộc tính `AodThemeOption`: lựa chọn / màu / khoảng số / bật tắt, giá trị Int trong
-  `AodThemeConfig`) + một nhánh vẽ trong `AodClockFace` và `AodMediaControls` (không có trình phát
-  riêng thì gọi bản Cổ điển). Control dựng theo loại thuộc tính (`AodThemeOptionList`), không viết màn
+  `AodThemeConfig`; khối tự vẽ `ownBlocks`; khối dùng chung có hiện `components`) ở `model/aod/theme/<chủ đề>/` +
+  phần vẽ ở `components/aod/theme/<chủ đề>/` nối vào `AodClockFace`, `AodLandscape` (bố cục ngang riêng),
+  `AodMediaControls`, `AodThemeStatus`. Các bước
+  thêm chủ đề và những chỗ dễ vướng: README › Thêm chủ đề mới. Control dựng theo loại thuộc tính (`AodThemeOptionList`), không viết màn
   riêng cho chủ đề; thêm thuộc tính không đổi cách lưu. Khối dùng chung (ngày, pin, thời tiết, sự
   kiện, ghi nhớ, thông báo, nhạc, nét vẽ) có kiểu hiển thị (`Aod*LayoutValue`), font / cỡ / màu riêng
   từng khối (`AodComponentSpec`, `AodAppearanceUiModel.components`, chỉnh ở Tùy chỉnh) và không viền, không
   nền; lựa chọn có ảnh xem trước vẽ bằng chính composable của AOD (`aodChoicePreview`). Khung xem trước
   ngoài AOD thật không chạy theo giờ: giá trị mẫu cố định từ `CustomizePreviewSamples` (giờ 08:30); khối chủ đề tự vẽ
-  khai báo trong `ownBlocks` (`AodBlockValue`: ngày, nhạc), kiểu do chủ đề quyết định, và luôn có trong
+  khai báo trong `ownBlocks` (`AodBlockValue`: ngày, nhạc, dòng trạng thái), kiểu do chủ đề quyết định, và luôn có trong
   xem trước chủ đề (`toThemePreviewDraft`). Tùy chỉnh không chỉnh chủ đề: tab Đồng hồ lúc onboarding
   chỉ có Cổ điển (`ClassicThemeSpec.ClockTab`), sau đó là dòng dẫn sang màn chủ đề. Tab của chủ đề chia theo
   phần như khối ở Tùy chỉnh (kiểu rồi màu của chính phần đó, không gom màu vào tab riêng), tab nào cũng có
@@ -76,7 +78,8 @@ bắt buộc (compiler không chặn hộ):
 - Đặt tên theo code có sẵn (`XxxScreen` / `XxxContent` / `XxxViewModel` +
   `state/{XxxState, XxxIntent, XxxEffect}`, `XxxUiModel` + `toUiModel()`, enum giá trị UI
   `XxxValue`). Component dùng chung (`presentation/components/`) là `AppXxx`, file cùng tên; riêng
-  AOD (`components/aod/`) là `Aod…`; riêng một màn (`screens/<màn>/components/`) là tên thường theo
+  AOD (`components/aod/`) là `Aod…`, chia thư mục: gốc ghép màn AOD, `block/` khối dùng chung, `theme/` chọn
+  theo chủ đề + `theme/<chủ đề>/` phần vẽ riêng, `editor/` control chỉnh của Tùy chỉnh / màn chủ đề; riêng một màn (`screens/<màn>/components/`) là tên thường theo
   việc nó làm.
 - `XxxScreen` lấy ViewModel (`koinViewModel()`), collect `state` + `effect`, điều hướng,
   `koinInject()` manager, load / show ad full-screen. `XxxContent` là UI thuần nhận `state` +
@@ -156,7 +159,7 @@ bắt buộc (compiler không chặn hộ):
   xám (`Grey8A` / `Grey6E` / `Grey5A`) để ít sáng, ít burn-in.
 - Text qua `stringResource` / `LocalResources.current`, không hardcode, không `context.getString`
   (Context của Activity bỏ qua locale override).
-- Click dùng `Modifier.onClick` (debounce 300ms), không `clickable`; hàng công tắc / radio dùng
+- Click dùng `Modifier.onClick` (debounce 300ms), nhấn giữ dùng `Modifier.onLongClick`, không `clickable`; hàng công tắc / radio dùng
   `toggleable` / `selectable` cho TalkBack. Lottie chỉ qua `AppLottie`. Component nhận
   `modifier: Modifier = Modifier` đầu tiên và áp vào node gốc.
 - `LaunchedEffect` chỉ khi body gọi hàm suspend; việc đồng bộ chạy lại theo key dùng

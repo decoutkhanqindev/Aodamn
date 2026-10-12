@@ -5,15 +5,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.decoutkhanqindev.custom_aod.R
-import com.decoutkhanqindev.custom_aod.presentation.components.aod.AodThemeOptionList
-import com.decoutkhanqindev.custom_aod.presentation.components.aod.WallpaperPicker
+import com.decoutkhanqindev.custom_aod.presentation.components.aod.editor.AodThemeOptionList
+import com.decoutkhanqindev.custom_aod.presentation.components.aod.editor.WallpaperPicker
 import com.decoutkhanqindev.custom_aod.presentation.components.settings.AppSwitchRow
 import com.decoutkhanqindev.custom_aod.presentation.components.settings.AppValueRow
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.AodAppearanceUiModel
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodComponentSpec
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodComponentValue
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodBlockValue
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeUiModel
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.ClassicThemeSpec
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.classic.ClassicThemeSpec
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.component.AodComponentSpec
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.component.AodComponentValue
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeAppearanceUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeClusterValue
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeDecorUiModel
@@ -48,7 +49,13 @@ fun CustomizePanel(
                 onIntent = onIntent
             )
 
-            CustomizeClusterValue.INFO -> InfoPanel(tab = tab, info = draft.info, onIntent = onIntent)
+            CustomizeClusterValue.INFO -> InfoPanel(
+                tab = tab,
+                info = draft.info,
+                isStatusByTheme = AodBlockValue.STATUS in draft.appearance.clock.theme.value.spec.ownBlocks,
+                onIntent = onIntent,
+            )
+
             CustomizeClusterValue.EFFECT -> EffectsPanel(effects = draft.effects, onIntent = onIntent)
         }
 
@@ -156,10 +163,12 @@ private fun DecorPanel(
     }
 }
 
+// isStatusByTheme: chủ đề tự vẽ dòng trạng thái (Số áo) chỉ có icon thông báo, không có nội dung thông báo.
 @Composable
 private fun InfoPanel(
     tab: CustomizeTabValue,
     info: CustomizeInfoUiModel,
+    isStatusByTheme: Boolean,
     onIntent: (CustomizeIntent) -> Unit,
 ) {
     when (tab) {
@@ -200,12 +209,14 @@ private fun InfoPanel(
                 onCheckedChange = { onIntent(CustomizeIntent.Info.ToggleNotificationIcons(it)) },
             )
 
-            AppSwitchRow(
-                label = stringResource(R.string.opt_notification_content),
-                isChecked = info.isNotificationContentEnabled,
-                onCheckedChange = { onIntent(CustomizeIntent.Info.ToggleNotificationContent(it)) },
-                description = stringResource(R.string.opt_notification_content_desc),
-            )
+            if (!isStatusByTheme) {
+                AppSwitchRow(
+                    label = stringResource(R.string.opt_notification_content),
+                    isChecked = info.isNotificationContentEnabled,
+                    onCheckedChange = { onIntent(CustomizeIntent.Info.ToggleNotificationContent(it)) },
+                    description = stringResource(R.string.opt_notification_content_desc),
+                )
+            }
         }
     }
 }

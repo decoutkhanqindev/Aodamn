@@ -45,6 +45,9 @@
     <string name="aod_tab_theme_reset_desc">AOD sẽ dùng lại chủ đề %1$s. Những gì bạn đã chỉnh và lưu ở từng chủ đề vẫn được giữ.</string>
     <string name="theme_classic">Cổ điển</string>
     <string name="theme_pebble">Sỏi</string>
+    <string name="theme_jersey">Số áo</string>
+    <string name="aod_jersey_date_first_pattern">dd</string>
+    <string name="aod_jersey_date_second_pattern">MM</string>
     <string name="theme_in_use">Đang dùng</string>
     <string name="theme_edit">Sửa</string>
     <string name="theme_saved">Đã lưu chủ đề</string>

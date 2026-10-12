@@ -1,7 +1,7 @@
 package com.decoutkhanqindev.custom_aod.presentation.components.aod
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -9,13 +9,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
@@ -23,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
@@ -32,10 +32,14 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.graphics.createBitmap
+import com.decoutkhanqindev.custom_aod.R
+import com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.AodClockFace
+import com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.AodLandscape
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.AodAppearanceUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.WallpaperValue
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.info.AodNotificationsUiModel
@@ -45,14 +49,15 @@ import com.decoutkhanqindev.custom_aod.presentation.model.aod.info.MediaUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.info.NotificationContentUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.info.WeatherConditionValue
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.info.WeatherUiModel
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodActionValue
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodExtrasUiModel
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodGestureValue
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.interaction.AodActionValue
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.interaction.AodGestureValue
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeValue
 import com.decoutkhanqindev.custom_aod.presentation.screens.aod.state.AodIntent
 import com.decoutkhanqindev.custom_aod.presentation.screens.aod.state.AodState
 import com.decoutkhanqindev.custom_aod.presentation.theme.Black
+import com.decoutkhanqindev.custom_aod.presentation.theme.Grey5A
 import com.decoutkhanqindev.custom_aod.presentation.theme.Mint
 import kotlinx.collections.immutable.persistentListOf
 
@@ -65,16 +70,6 @@ fun AodContent(
 ) {
     val currentOnIntent by rememberUpdatedState(onIntent)
     val focusRequester = remember { FocusRequester() }
-    val shiftX = animateDpAsState(
-        targetValue = state.shiftXDp.dp,
-        animationSpec = tween(durationMillis = 1500),
-        label = "AodShiftX",
-    )
-    val shiftY = animateDpAsState(
-        targetValue = state.shiftYDp.dp,
-        animationSpec = tween(durationMillis = 1500),
-        label = "AodShiftY",
-    )
 
     // Bản thu nhỏ nằm trong màn khác: lấy focus thì màn đó tự cuộn về chỗ nó, nhận chạm thì chặn click của khung bọc ngoài.
     SideEffect(Unit) {
@@ -147,52 +142,59 @@ fun AodContent(
             color = state.glowColorArgb?.let { Color(it) } ?: Mint,
         )
 
+        // Cụm đồng hồ + thông tin đứng yên giữa màn hình, đúng như khung xem trước của chủ đề (không dịch vị trí theo phút). Dòng gợi ý
+        // thoát ghim ở đáy màn hình nên không đẩy cụm lệch lên.
         AnimatedVisibility(
             visible = !state.isDark,
             enter = fadeIn(),
             exit = fadeOut(),
         ) {
-            if (isLandscape) {
-                Row(
-                    modifier = Modifier.offset {
-                        IntOffset(
-                            x = shiftY.value.roundToPx(),
-                            y = shiftX.value.roundToPx(),
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center,
+            ) {
+                if (isLandscape) {
+                    AodLandscape(state = state, onIntent = currentOnIntent)
+                } else {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        AodClockFace(
+                            nowMillis = state.nowMillis,
+                            theme = state.appearance.theme,
+                            isDateEnabled = state.extras.isDateEnabled,
                         )
-                    },
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    AodClockFace(
-                        nowMillis = state.nowMillis,
-                        theme = state.appearance.theme,
-                        isDateEnabled = state.extras.isDateEnabled,
-                    )
 
-                    Spacer(modifier = Modifier.width(40.dp))
-
-                    AodDetails(state = state, onIntent = currentOnIntent)
+                        AodDetails(state = state, onIntent = currentOnIntent)
+                    }
                 }
-            } else {
-                Column(
-                    modifier = Modifier.offset {
-                        IntOffset(
-                            x = shiftX.value.roundToPx(),
-                            y = shiftY.value.roundToPx(),
-                        )
-                    },
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    AodClockFace(
-                        nowMillis = state.nowMillis,
-                        theme = state.appearance.theme,
-                        isDateEnabled = state.extras.isDateEnabled,
-                    )
 
-                    AodDetails(state = state, onIntent = currentOnIntent)
-                }
+                AodExitHint(
+                    isVisible = state.isExitHintVisible,
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(bottom = 48.dp),
+                )
             }
         }
     }
+}
+
+@Composable
+private fun AodExitHint(
+    isVisible: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    val alpha = animateFloatAsState(
+        targetValue = if (isVisible) 1f else 0f,
+        animationSpec = tween(durationMillis = 600),
+        label = "AodExitHint",
+    )
+
+    Text(
+        text = stringResource(R.string.aod_hint),
+        modifier = modifier.alpha(alpha.value),
+        color = Grey5A,
+        fontSize = 12.sp,
+    )
 }
 
 @Preview(widthDp = 360, heightDp = 720)

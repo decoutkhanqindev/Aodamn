@@ -3,8 +3,9 @@ package com.decoutkhanqindev.custom_aod.presentation.screens.customize
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,17 +23,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.decoutkhanqindev.custom_aod.R
-import com.decoutkhanqindev.custom_aod.presentation.components.AppApplyingOverlay
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.AodContent
-import com.decoutkhanqindev.custom_aod.presentation.components.aod.DrawingPadDialog
-import com.decoutkhanqindev.custom_aod.presentation.components.aod.MemoEditorDialog
+import com.decoutkhanqindev.custom_aod.presentation.components.aod.editor.DrawingPadDialog
+import com.decoutkhanqindev.custom_aod.presentation.components.aod.editor.MemoEditorDialog
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.rememberAodPreview
+import com.decoutkhanqindev.custom_aod.presentation.components.editor.AppApplyingOverlay
+import com.decoutkhanqindev.custom_aod.presentation.components.onLongClick
 import com.decoutkhanqindev.custom_aod.presentation.components.permission.AppPermissionSheet
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeGuideStepValue
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeTabValue
@@ -67,6 +68,9 @@ fun CustomizeContent(
     }
     var lastGuideStep by remember { mutableStateOf(CustomizeGuideStepValue.PREVIEW) }
 
+    // Nhấn giữ khung xem trước: ẩn thanh trên, thanh công cụ, panel và thanh tab để xem AOD toàn màn hình, thả tay thì hiện lại.
+    var isPeeking by remember { mutableStateOf(false) }
+
     SideEffect(state.guideStep) {
         state.guideStep?.let { step -> lastGuideStep = step }
     }
@@ -76,61 +80,73 @@ fun CustomizeContent(
             .fillMaxSize()
             .background(Black),
     ) {
-        AodContent(state = preview, onIntent = {})
+        AodContent(state = preview, onIntent = {}, isInteractive = false)
 
-        // Panel đang mở: chạm vào khung xem trước (ngoài panel, thanh tab, thanh trên) thì đóng panel.
-        if (state.selectedTab != null) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .pointerInput(Unit) { detectTapGestures { onIntent(CustomizeIntent.Panel.ClosePanel) } },
-            )
-        }
-
-        Column(
+        // Chạm vào khung xem trước (ngoài panel, thanh tab, thanh trên) khi panel đang mở thì đóng panel; nhấn giữ thì xem toàn màn hình.
+        Box(
             modifier = Modifier
-                .align(Alignment.TopCenter)
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            CustomizeTopBar(
-                isFirstOpen = state.isFirstOpen,
-                isApplying = state.isApplying,
-                onIntent = onIntent,
-            )
-
-            CustomizeToolbar(
-                history = state.history,
-                isApplying = state.isApplying || state.isLoading,
-                onIntent = onIntent,
-                modifier = Modifier.onGloballyPositioned { coordinates ->
-                    onTargetPositioned(
-                        CustomizeGuideStepValue.ACTIONS,
-                        coordinates.boundsInWindow()
-                    )
+                .fillMaxSize()
+                .onLongClick(
+                    onRelease = { isPeeking = false },
+                    onClick = { if (state.selectedTab != null) onIntent(CustomizeIntent.Panel.ClosePanel) },
+                ) {
+                    isPeeking = true
                 },
-            )
+        )
+
+        AnimatedVisibility(
+            visible = !isPeeking,
+            modifier = Modifier.align(Alignment.TopCenter),
+            enter = fadeIn() + slideInVertically { height -> -height },
+            exit = fadeOut() + slideOutVertically { height -> -height },
+        ) {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                CustomizeTopBar(
+                    isFirstOpen = state.isFirstOpen,
+                    isApplying = state.isApplying,
+                    onIntent = onIntent,
+                )
+
+                CustomizeToolbar(
+                    history = state.history,
+                    isApplying = state.isApplying || state.isLoading,
+                    onIntent = onIntent,
+                    modifier = Modifier.onGloballyPositioned { coordinates ->
+                        onTargetPositioned(
+                            CustomizeGuideStepValue.ACTIONS,
+                            coordinates.boundsInWindow()
+                        )
+                    },
+                )
+            }
         }
 
-        Column(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth(),
+        AnimatedVisibility(
+            visible = !isPeeking,
+            modifier = Modifier.align(Alignment.BottomCenter),
+            enter = fadeIn() + slideInVertically { height -> height },
+            exit = fadeOut() + slideOutVertically { height -> height },
         ) {
-            CustomizePanelHost(
-                selectedTab = state.selectedTab,
-                isFirstOpen = state.isFirstOpen,
-                draft = state.draft,
-                decor = state.decor,
-                onIntent = onIntent,
-            )
+            Column(modifier = Modifier.fillMaxWidth()) {
+                CustomizePanelHost(
+                    selectedTab = state.selectedTab,
+                    isFirstOpen = state.isFirstOpen,
+                    draft = state.draft,
+                    decor = state.decor,
+                    onIntent = onIntent,
+                )
 
-            CustomizeTabBar(
-                selectedTab = state.selectedTab,
-                guideStep = state.guideStep,
-                onIntent = onIntent,
-                onClusterPositioned = onTargetPositioned,
-            )
+                CustomizeTabBar(
+                    selectedTab = state.selectedTab,
+                    spec = state.draft.appearance.clock.theme.value.spec,
+                    guideStep = state.guideStep,
+                    onIntent = onIntent,
+                    onClusterPositioned = onTargetPositioned,
+                )
+            }
         }
 
         AnimatedVisibility(

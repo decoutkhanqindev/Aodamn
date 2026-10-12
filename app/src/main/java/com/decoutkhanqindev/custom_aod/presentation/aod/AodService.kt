@@ -20,8 +20,8 @@ import com.decoutkhanqindev.custom_aod.data.local.datastore.DataStoreManager
 import com.decoutkhanqindev.custom_aod.data.local.locale.LanguageManager
 import com.decoutkhanqindev.custom_aod.presentation.MainActivity
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.info.WakeResultValue
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodScheduleUiModel
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.currentAodRules
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.rules.AodScheduleUiModel
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.rules.currentAodRules
 import com.decoutkhanqindev.custom_aod.presentation.model.language.LanguageValue
 import com.decoutkhanqindev.custom_aod.utils.Tag
 import com.decoutkhanqindev.custom_aod.utils.collectCatching

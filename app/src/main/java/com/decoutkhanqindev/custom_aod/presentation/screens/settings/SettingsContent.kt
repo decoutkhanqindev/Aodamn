@@ -15,8 +15,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.info.WakeResultValue
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodOptionsUiModel
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodRulesUiModel
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.ChargingRuleValue
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.rules.AodRulesUiModel
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.rules.ChargingRuleValue
 import com.decoutkhanqindev.custom_aod.presentation.model.language.LanguageUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.language.LanguageValue
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionUiModel

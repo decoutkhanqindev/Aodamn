@@ -2,6 +2,8 @@ package com.decoutkhanqindev.custom_aod.presentation.model.aod.settings
 
 import androidx.compose.runtime.Immutable
 import com.decoutkhanqindev.custom_aod.data.local.datastore.DataStoreManager
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeSpec
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.component.AodComponentValue
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
@@ -51,3 +53,9 @@ fun DataStoreManager.observeAodExtras(): Flow<AodExtrasUiModel> = combine(
 ) { extras, isDateEnabled, isBatteryEnabled ->
     extras.copy(isDateEnabled = isDateEnabled, isBatteryEnabled = isBatteryEnabled)
 }
+
+// Chủ đề không có sự kiện / thời tiết (AodThemeSpec.components) thì coi như tắt để AOD không đọc lịch, tải thời tiết vô ích.
+fun AodExtrasUiModel.shownIn(spec: AodThemeSpec): AodExtrasUiModel = copy(
+    isCalendarEnabled = isCalendarEnabled && AodComponentValue.EVENTS in spec.components,
+    isWeatherEnabled = isWeatherEnabled && AodComponentValue.WEATHER in spec.components,
+)

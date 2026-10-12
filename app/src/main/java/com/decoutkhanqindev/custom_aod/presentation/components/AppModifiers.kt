@@ -11,6 +11,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.material3.ripple
@@ -32,7 +33,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalHapticFeedback
 import com.decoutkhanqindev.custom_aod.presentation.theme.Neutral12
 import com.decoutkhanqindev.custom_aod.presentation.theme.WhiteAlpha30
 import kotlinx.collections.immutable.ImmutableList
@@ -99,6 +102,39 @@ fun Modifier.onClick(
                 )
             }
         )
+}
+
+// Nhấn giữ: action khi giữ đủ lâu (kèm rung nhẹ), onRelease khi thả tay hay bị huỷ sau lúc đã giữ, chạm nhanh thì onClick (nếu có).
+// Vd khung xem trước ở màn sửa: giữ để xem toàn màn hình, thả tay thì hiện lại các thanh.
+@Composable
+fun Modifier.onLongClick(
+    onRelease: () -> Unit = {},
+    onClick: (() -> Unit)? = null,
+    action: () -> Unit,
+): Modifier {
+    val haptic = LocalHapticFeedback.current
+    val latestAction by rememberUpdatedState(action)
+    val latestOnRelease by rememberUpdatedState(onRelease)
+    val latestOnClick by rememberUpdatedState(onClick)
+
+    return this.pointerInput(Unit) {
+        var isHolding = false
+        detectTapGestures(
+            onPress = {
+                tryAwaitRelease()
+                if (isHolding) {
+                    isHolding = false
+                    latestOnRelease()
+                }
+            },
+            onLongPress = {
+                isHolding = true
+                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                latestAction()
+            },
+            onTap = { latestOnClick?.invoke() },
+        )
+    }
 }
 
 private val ShimmerCosA by lazy { cos((20.0 * PI / 180.0).toFloat()) }

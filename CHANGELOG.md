@@ -7,6 +7,32 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-10-13 – Chủ đề Số áo, Sỏi bỏ chọn font, nhấn giữ để xem toàn màn hình, chia thư mục, AOD đứng yên giữa màn hình
+
+Build được (`assembleDebug`), lint không thêm cảnh báo, `tools/check-rules.sh` ra 0 vi phạm (37 rule). Chưa test trên máy.
+
+### Thêm
+
+- Chủ đề Số áo (Jersey, clone từ ảnh app mẫu): giờ và phút hai hàng chữ số rất cao chỉ có nét viền, ngày "tháng / ngày" xếp dọc sát mép phải với thứ in hoa xoay dọc trong viên thuốc viền, dòng "pin • icon thông báo" dưới đồng hồ. Tuỳ chọn: cỡ 50–100% (100% to như app mẫu), màu giờ, màu phút (cả dòng pin), màu ngày; chia tab Đồng hồ / Ngày. Chữ số là Big Shoulders Display Black (thêm file tĩnh `big_shoulders_display_black.ttf` sinh từ font variable có sẵn), lấy đường viền chữ bằng `Paint.getTextPath` rồi kéo cao path trước khi vẽ nét nên nét dày đều; kích thước theo chỗ trống, màn ngang ngày đứng cạnh số. Màu mới `Lavender`.
+- Chủ đề khai báo khối dùng chung nó có (`AodThemeSpec.components`, mặc định tất cả): Số áo chỉ có ngày, pin, thông báo, nên Tùy chỉnh ẩn tab Vẽ, Ghi chú, Sự kiện, Thời tiết, Nhạc, AOD không vẽ và AOD thật không đọc lịch, tải thời tiết, theo dõi nhạc (`shownIn`); cài đặt của các khối đó vẫn giữ cho chủ đề khác. Khối tự vẽ mới `AodBlockValue.STATUS` (dòng pin + icon thông báo, `AodThemeStatus`): tab Pin / Thông báo dẫn sang màn chủ đề, tab Thông báo ẩn công tắc nội dung.
+- Nhấn giữ khung xem trước ở Tùy chỉnh và màn chủ đề: rung nhẹ, ẩn thanh trên, thanh công cụ, panel và thanh tab để xem AOD toàn màn hình, thả tay thì hiện lại. Extension mới `Modifier.onLongClick` (nhấn giữ, thả tay, chạm nhanh) ở `AppModifiers`.
+- README › Thêm chủ đề mới: các bước clone chủ đề từ ảnh mẫu và những chỗ dễ vướng.
+- Màn ngang riêng cho từng chủ đề (`theme/AodLandscape.kt` chọn theo chủ đề, thay cho bố cục chung đồng hồ trái / khối phải): Cổ điển hai cột (đồng hồ + ngày, vạch mảnh, các khối còn lại; không có khối nào thì chỉ còn đồng hồ), Sỏi khối giờ và khối phút kẹp hai bên ngày + các khối + trình phát (khối to theo chiều cao màn hình), Số áo bốn chữ số một hàng, ngày nằm ngang ở giữa màn hình, giờ bám trái / phút bám phải ngày, pin + icon thông báo góc dưới trái. `AodDetails(isDateShown)` và `AodState.hasDetails()` cho bố cục ngang dùng lại.
+
+### Thay đổi
+
+- Sỏi bỏ tuỳ chọn Font: chữ số, ngày và trình phát luôn dùng font gốc của chủ đề (`PebbleThemeSpec.Font`); khoá "font" đã lưu bị bỏ qua.
+- `components/aod` chia thư mục: gốc ghép màn AOD (`AodContent`, `AodDetails`, `AodBackdrop`, `AodThumbnail`, `AodPreview`), `block/` khối dùng chung, `theme/` chọn theo chủ đề (`AodClockFace`, `AodThemeStatus`, `AodShapePath`) + `theme/classic/`, `theme/pebble/`, `theme/jersey/`, `editor/` control chỉnh. Đồng hồ Cổ điển tách khỏi `AodClockFace` sang `theme/classic/AodClassicClock.kt`.
+- Khung xem trước ở Tùy chỉnh không còn nhận thao tác của AOD (`isInteractive = false`), chạm và nhấn giữ đi qua một lớp chung.
+- Chia thêm thư mục: `model/aod/theme/` (gốc là hệ chủ đề; `classic/`, `pebble/` gồm cả `AodShapeValue` và các lựa chọn của Sỏi, `jersey/` là spec từng chủ đề; `component/` là kiểu khối dùng chung), `components/editor/` (`AppEditorPanel`, `AppEditorTab`, `AppApplyingOverlay`), `model/aod/settings/` (`interaction/`: thao tác, hành động; `rules/`: quy tắc sạc, khung giờ). Chỉ đổi package và import, không đổi code.
+- AOD thật không còn dịch cả cụm sang vị trí ngẫu nhiên mỗi phút (bỏ `shiftXDp` / `shiftYDp`): cụm đứng yên giữa màn hình đúng như khung xem trước của chủ đề. Đổi lại đồng hồ đứng yên nên để lâu trên OLED dễ lưu ảnh hơn (README › Giới hạn đã biết).
+
+### Sửa
+
+- Số áo: chữ số nằm giữa ô rộng cố định nên số 1 hẹp làm hàng "12" lệch phải, "21" lệch trái. Giờ mỗi số một ô rộng đúng nét (co giãn dần khi số đổi), khoảng cách giữa hai số cố định, hai hàng cùng nằm giữa một trục; trục đặt sao cho hàng giờ + ngày là một cụm nằm giữa màn hình (`Layout` riêng), nên phút đổi chỉ làm số phút trượt lại cho cân. Bỏ cách dịch cả cụm theo phần trống của số chục (`sideSpace`).
+- Số áo trên máy thật trông lệch phải (lề trái rộng hơn lề phải nhiều): ngày bị ghim sát mép phải còn số căn giữa riêng, và số 1 hẹp nằm giữa ô rộng cố định để trống bên trái. Giờ số và ngày là một cụm căn giữa (ngày ngay bên phải hàng giờ), cụm dịch sang trái nửa phần trống bên trái của số hàng chục (`JerseyGlyphs.sideSpace`) để phần nhìn thấy nằm giữa; chỉ đổi khi số hàng chục đổi, trượt 500 ms cùng lúc số mờ chéo.
+- Cụm đồng hồ + thông tin bị lệch lên ở mọi chủ đề (rõ nhất ở Số áo): cuối khối thông tin có `Spacer(28dp)` và dòng "Chạm 2 lần để thoát" vẫn chiếm chỗ khi đã mờ. Dòng gợi ý chuyển ra ghim đáy màn hình (`AodContent`), bỏ khoảng trống đó, nên cả AOD thật lẫn khung xem trước đều căn giữa.
+
 ## [Chưa phát hành] – 2026-10-12 – Màn chủ đề chia tab theo phần như Tùy chỉnh
 
 Build được (`assembleDebug`), lint không thêm cảnh báo, `tools/check-rules.sh` ra 0 vi phạm (37 rule). Chưa test trên máy.

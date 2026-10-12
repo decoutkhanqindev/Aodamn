@@ -22,7 +22,9 @@ ROOT = Path(__file__).resolve().parents[2]
 SOURCE = ROOT / "tools/fonts/variable"
 OUT = ROOT / "app/src/main/res/font"
 
-NAMES = {100: "thin", 200: "extralight", 300: "light", 400: "regular", 500: "medium", 600: "semibold", 700: "bold"}
+NAMES = {
+    100: "thin", 200: "extralight", 300: "light", 400: "regular", 500: "medium", 600: "semibold", 700: "bold", 900: "black",
+}
 
 # họ font -> (độ đậm cần dùng, trục đặt cố định ngoài wght)
 FONTS = {
@@ -31,7 +33,7 @@ FONTS = {
     "jetbrains_mono": ([100, 300, 400, 600, 700], {}),
     "dancing_script": ([400, 600, 700], {}),
     "comfortaa": ([300, 400, 600, 700], {}),
-    "big_shoulders_display": ([100, 300, 400, 600, 700], {}),
+    "big_shoulders_display": ([100, 300, 400, 600, 700, 900], {}),
     "josefin_sans": ([100, 300, 400, 600, 700], {}),
 }
 

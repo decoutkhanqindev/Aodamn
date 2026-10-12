@@ -4,7 +4,8 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Immutable
 import com.decoutkhanqindev.custom_aod.R
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodComponentValue
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeSpec
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.component.AodComponentValue
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionValue
 
 // Mỗi tab chỉnh một phần trên AOD; permission = quyền phải có thì phần đó mới hiện được trên AOD thật. component: khối dùng chung mà tab
@@ -81,5 +82,8 @@ enum class CustomizeTabValue(
         R.drawable.ic_sparkle,
         R.string.customize_tab_effects,
         PermissionValue.NOTIFICATION_ACCESS,
-    ),
+    );
+
+    // Tab của khối mà chủ đề không có (AodThemeSpec.components) thì ẩn; tab không gắn khối (đồng hồ, nền, hiệu ứng) luôn hiện.
+    fun isShownIn(spec: AodThemeSpec): Boolean = component == null || component in spec.components
 }

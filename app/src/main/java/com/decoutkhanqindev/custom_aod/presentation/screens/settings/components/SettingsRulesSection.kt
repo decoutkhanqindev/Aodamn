@@ -16,10 +16,10 @@ import androidx.compose.ui.res.stringResource
 import com.decoutkhanqindev.custom_aod.R
 import com.decoutkhanqindev.custom_aod.presentation.components.rememberTimeFormatter
 import com.decoutkhanqindev.custom_aod.presentation.components.settings.AppRadioRow
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodRulesUiModel
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodScheduleUiModel
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.ChargingRuleValue
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.ScheduleTimeValue
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.rules.AodRulesUiModel
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.rules.AodScheduleUiModel
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.rules.ChargingRuleValue
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.rules.ScheduleTimeValue
 import com.decoutkhanqindev.custom_aod.presentation.screens.settings.state.SettingsIntent
 import com.decoutkhanqindev.custom_aod.presentation.screens.settings.state.SettingsRulesState
 import java.time.LocalTime

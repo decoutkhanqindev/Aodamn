@@ -8,7 +8,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.decoutkhanqindev.custom_aod.presentation.components.LocalTag
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.AodContent
 import com.decoutkhanqindev.custom_aod.presentation.effects.LaunchedWithLifecycleEffect
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodGestureValue
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.interaction.AodGestureValue
 import com.decoutkhanqindev.custom_aod.presentation.screens.aod.state.AodEffect
 import com.decoutkhanqindev.custom_aod.presentation.screens.aod.state.AodIntent
 import com.decoutkhanqindev.custom_aod.utils.collectCatching

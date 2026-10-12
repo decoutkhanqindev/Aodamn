@@ -14,9 +14,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.decoutkhanqindev.custom_aod.presentation.components.AppEditorTab
+import com.decoutkhanqindev.custom_aod.presentation.components.editor.AppEditorTab
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeTab
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.PebbleThemeSpec
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.pebble.PebbleThemeSpec
 import com.decoutkhanqindev.custom_aod.presentation.screens.themeeditor.state.ThemeEditorIntent
 import com.decoutkhanqindev.custom_aod.presentation.theme.GreyED
 import com.decoutkhanqindev.custom_aod.presentation.theme.Neutral12

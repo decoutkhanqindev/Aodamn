@@ -15,10 +15,10 @@ import com.decoutkhanqindev.custom_aod.presentation.model.aod.info.NotificationC
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.info.NotificationIconUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.info.WeatherConditionValue
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.info.WeatherUiModel
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodActionValue
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodGestureValue
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodInteractionUiModel
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodComponentValue
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.interaction.AodActionValue
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.interaction.AodGestureValue
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.interaction.AodInteractionUiModel
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.component.AodComponentValue
 import com.decoutkhanqindev.custom_aod.presentation.screens.aod.state.AodState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf

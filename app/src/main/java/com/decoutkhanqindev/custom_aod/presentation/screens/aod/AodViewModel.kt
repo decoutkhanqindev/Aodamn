@@ -22,13 +22,15 @@ import com.decoutkhanqindev.custom_aod.presentation.model.aod.info.CalendarEvent
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.info.glowColorArgb
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.info.toAodNotificationsUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.info.toUiModel
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodActionValue
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodGestureValue
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodScheduleUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.currentAodExtras
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.currentAodInteraction
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.currentAodNotificationOptions
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.currentAodRules
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.interaction.AodActionValue
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.interaction.AodGestureValue
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.interaction.currentAodInteraction
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.rules.AodScheduleUiModel
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.rules.currentAodRules
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.shownIn
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeValue
 import com.decoutkhanqindev.custom_aod.presentation.screens.aod.state.AodEffect
 import com.decoutkhanqindev.custom_aod.presentation.screens.aod.state.AodIntent
 import com.decoutkhanqindev.custom_aod.presentation.screens.aod.state.AodState
@@ -46,7 +48,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import kotlin.random.Random
 
 class AodViewModel(
     dataStoreManager: DataStoreManager,
@@ -71,7 +72,8 @@ class AodViewModel(
     private val timeoutMinutes =
         dataStoreManager.aodTimeoutMinutes.value ?: DataStoreManager.DEFAULT_AOD_TIMEOUT_MINUTES
     private val rules = dataStoreManager.currentAodRules()
-    private val notificationOptions = dataStoreManager.currentAodNotificationOptions()
+    private val notificationOptions =
+        dataStoreManager.currentAodNotificationOptions().shownIn(state.value.appearance.theme.value.spec)
 
     // Tối vì bị che (khác với hết giờ, pin yếu, ngoài quy tắc): chỉ trường hợp này mới sáng lại khi lấy máy ra.
     private var isDarkUntilUncovered = false
@@ -386,11 +388,7 @@ class AodViewModel(
     private fun onMinuteTick() {
         val nowMillis = System.currentTimeMillis()
         updateState {
-            if (isDark) {
-                copy(nowMillis = nowMillis)
-            } else {
-                copy(nowMillis = nowMillis, shiftXDp = randomShiftX(), shiftYDp = randomShiftY())
-            }
+            copy(nowMillis = nowMillis)
         }
         if (state.value.extras.isWeatherEnabled) updateWeather(nowMillis)
         if (state.value.extras.isCalendarEnabled) updateEvents(nowMillis)
@@ -437,8 +435,6 @@ class AodViewModel(
         private const val UNDIM_LUX = 20f
         private const val EVENTS_RELOAD_MILLIS = 15 * 60_000L
         private const val WEATHER_RETRY_MILLIS = 10 * 60_000L
-        private const val MAX_SHIFT_X_DP = 24
-        private const val MAX_SHIFT_Y_DP = 64
 
         // Pin đọc đồng bộ từ broadcast sticky để khung đầu tiên đã có dòng pin, bố cục không bị nhảy; giao diện đồng hồ cũng có ngay từ khung đầu.
         private fun initialState(
@@ -448,7 +444,7 @@ class AodViewModel(
             nowMillis = System.currentTimeMillis(),
             appearance = dataStoreManager.currentAodAppearance(),
             interaction = dataStoreManager.currentAodInteraction(),
-            extras = dataStoreManager.currentAodExtras(),
+            extras = dataStoreManager.currentAodExtras().shownIn(AodThemeValue.fromId(dataStoreManager.aodThemeId.value).spec),
             wallpaper = WallpaperValue.fromCode(dataStoreManager.aodWallpaper.value),
             battery = batteryStateManager.readLevelPercent()?.let { percent ->
                 BatteryUiModel(
@@ -456,13 +452,6 @@ class AodViewModel(
                     isCharging = batteryStateManager.readIsCharging() == true
                 )
             },
-            shiftXDp = randomShiftX(),
-            shiftYDp = randomShiftY(),
         )
-
-        // Chống burn-in: mỗi phút nội dung sang một vị trí ngẫu nhiên.
-        private fun randomShiftX(): Int = Random.nextInt(-MAX_SHIFT_X_DP, MAX_SHIFT_X_DP + 1)
-
-        private fun randomShiftY(): Int = Random.nextInt(-MAX_SHIFT_Y_DP, MAX_SHIFT_Y_DP + 1)
     }
 }

@@ -10,11 +10,11 @@ import com.decoutkhanqindev.custom_aod.domain.usecase.RefreshWeatherUseCase
 import com.decoutkhanqindev.custom_aod.presentation.base.BaseViewModel
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.WallpaperValue
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodExtrasUiModel
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodComponentSpec
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeConfig
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.component.AodComponentSpec
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.component.saveAodComponents
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.isSame
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.observeAodTheme
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.saveAodComponents
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.saveAodThemeConfig
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeAppearanceUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeDecorUiModel
@@ -356,6 +356,7 @@ class CustomizeViewModel(
             redoStack.clear()
             redoStack.addAll(redone)
             publish(state.value.draft.withTheme(theme))
+            if (state.value.selectedTab?.isShownIn(theme.value.spec) == false) updateState { copy(selectedTab = null) }
         }
     }
 

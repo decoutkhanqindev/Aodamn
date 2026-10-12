@@ -10,10 +10,10 @@ import com.decoutkhanqindev.custom_aod.presentation.model.aod.info.BatteryUiMode
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.info.CalendarEventUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.info.MediaUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.info.WeatherUiModel
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodActionValue
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodExtrasUiModel
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodGestureValue
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodInteractionUiModel
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.interaction.AodActionValue
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.interaction.AodGestureValue
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.interaction.AodInteractionUiModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -32,8 +32,6 @@ data class AodState(
     val notifications: AodNotificationsUiModel = AodNotificationsUiModel(),
     val media: MediaUiModel? = null,
     val isFlashlightOn: Boolean = false,
-    val shiftXDp: Int = 0,
-    val shiftYDp: Int = 0,
     val isHintVisible: Boolean = true,
     val isGlowing: Boolean = false,
     @param:ColorInt val glowColorArgb: Int? = null,

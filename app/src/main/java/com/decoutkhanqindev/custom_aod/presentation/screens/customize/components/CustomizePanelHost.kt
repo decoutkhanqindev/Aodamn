@@ -4,11 +4,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
-import com.decoutkhanqindev.custom_aod.presentation.components.AppEditorPanel
-import com.decoutkhanqindev.custom_aod.presentation.components.AppEditorResetButton
+import com.decoutkhanqindev.custom_aod.presentation.components.editor.AppEditorPanel
+import com.decoutkhanqindev.custom_aod.presentation.components.editor.AppEditorResetButton
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.AodAppearanceUiModel
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodComponentSpec
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.ClassicThemeSpec
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.classic.ClassicThemeSpec
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.component.AodComponentSpec
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.isDefault
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeDraftUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeTabValue

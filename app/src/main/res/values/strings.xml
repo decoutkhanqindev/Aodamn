@@ -50,6 +50,7 @@
     <string name="aod_tab_theme_reset_desc">The always-on display goes back to the %1$s theme. Changes you saved in each theme are kept.</string>
     <string name="theme_classic">Classic</string>
     <string name="theme_pebble">Pebble</string>
+    <string name="theme_jersey">Jersey</string>
     <string name="theme_in_use">In use</string>
     <string name="theme_edit">Edit</string>
     <string name="theme_saved">Theme saved</string>
@@ -307,6 +308,8 @@
     <string name="aod_date_weekday_short_pattern" translatable="false">EEE</string>
     <string name="aod_font_sample" translatable="false">Aa 12</string>
     <string name="aod_theme_date_pattern" translatable="false">EEEE • d MMM</string>
+    <string name="aod_jersey_date_first_pattern">MM</string>
+    <string name="aod_jersey_date_second_pattern">dd</string>
     <string name="aod_hint">Double-tap to exit</string>
     <string name="aod_battery" translatable="false">%1$d%%</string>
     <string name="aod_battery_charging">Charging · %1$d%%</string>

@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.res.stringResource
 import com.decoutkhanqindev.custom_aod.R
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodComponentValue
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.component.AodComponentValue
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeDraftUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizePreviewSamples
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizePreviewSamples.Companion.toPreviewAodState

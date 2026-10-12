@@ -4,6 +4,9 @@ import androidx.annotation.StringRes
 import androidx.compose.runtime.Immutable
 import com.decoutkhanqindev.custom_aod.R
 import com.decoutkhanqindev.custom_aod.data.local.datastore.DataStoreManager
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.classic.ClassicThemeSpec
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.jersey.JerseyThemeSpec
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.pebble.PebbleThemeSpec
 
 // Các chủ đề AOD. id lưu trong DataStore nên không đổi; thêm chủ đề = một mục ở đây + đặc tả AodThemeSpec + phần vẽ ở
 // components/aod/theme/ (AodClockFace chọn theo mục này).
@@ -14,7 +17,8 @@ enum class AodThemeValue(
     val spec: AodThemeSpec,
 ) {
     CLASSIC(id = DataStoreManager.DEFAULT_AOD_THEME_ID, nameRes = R.string.theme_classic, spec = ClassicThemeSpec),
-    PEBBLE(id = "pebble", nameRes = R.string.theme_pebble, spec = PebbleThemeSpec);
+    PEBBLE(id = "pebble", nameRes = R.string.theme_pebble, spec = PebbleThemeSpec),
+    JERSEY(id = "jersey", nameRes = R.string.theme_jersey, spec = JerseyThemeSpec);
 
     companion object {
         val DEFAULT = CLASSIC

@@ -1,9 +1,9 @@
 package com.decoutkhanqindev.custom_aod.presentation.screens.settings.state
 
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodActionValue
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodGestureValue
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.ChargingRuleValue
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.ScheduleTimeValue
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.interaction.AodActionValue
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.interaction.AodGestureValue
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.rules.ChargingRuleValue
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.rules.ScheduleTimeValue
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionValue
 
 sealed interface SettingsIntent {

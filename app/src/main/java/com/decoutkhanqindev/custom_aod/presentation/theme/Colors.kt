@@ -9,6 +9,7 @@ val Mint = Color(0xFF7FD1AE)
 val Red = Color(0xFFE5484D)
 val Blue = Color(0xFF8AB4F8)
 val Purple = Color(0xFFC3A6FF)
+val Lavender = Color(0xFFBAB8F8)
 val Orange = Color(0xFFFFB27A)
 val Pink = Color(0xFFFF9EC4)
 

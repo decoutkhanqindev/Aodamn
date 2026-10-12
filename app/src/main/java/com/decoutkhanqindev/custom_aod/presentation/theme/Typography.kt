@@ -56,6 +56,7 @@ val FontFamilyBigShouldersDisplay = FontFamily(
     Font(R.font.big_shoulders_display_regular, FontWeight.Normal),
     Font(R.font.big_shoulders_display_semibold, FontWeight.SemiBold),
     Font(R.font.big_shoulders_display_bold, FontWeight.Bold),
+    Font(R.font.big_shoulders_display_black, FontWeight.Black),
 )
 
 val FontFamilyJosefinSans = FontFamily(
