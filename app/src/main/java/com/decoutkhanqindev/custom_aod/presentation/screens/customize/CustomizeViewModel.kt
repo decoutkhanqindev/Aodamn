@@ -77,6 +77,9 @@ class CustomizeViewModel(
             is CustomizeIntent.SkipCustomization ->
                 viewModelScope.launch { sendEffect(CustomizeEffect.Navigation.NavigateToMain) }
 
+            is CustomizeIntent.ToggleLandscapePreview ->
+                updateState { copy(isLandscapePreview = !isLandscapePreview) }
+
             is CustomizeIntent.NavigateBack ->
                 viewModelScope.launch { sendEffect(CustomizeEffect.Navigation.NavigateBack) }
         }
@@ -254,6 +257,10 @@ class CustomizeViewModel(
         when (intent) {
             is CustomizeIntent.Permission.OpenPermissionSettings -> openPermissionSettings(intent.permission)
             is CustomizeIntent.Permission.DismissPermissionSheet -> dismissPermissionSheet()
+            is CustomizeIntent.Permission.DismissApplyPermissionSheet ->
+                updateState { copy(isApplyPermissionSheetVisible = false) }
+
+            is CustomizeIntent.Permission.NotificationPermissionResult -> onNotificationPermissionResult(intent.isGranted)
             is CustomizeIntent.Permission.CalendarPermissionResult ->
                 onPermissionResult(PermissionValue.CALENDAR, intent.isGranted)
 
@@ -409,7 +416,7 @@ class CustomizeViewModel(
             val background = aodImageManager.decodeBackground(uri)
             updateState { copy(decor = decor.copy(isLoadingBackground = false)) }
             if (background == null) {
-                sendEffect(CustomizeEffect.ShowMessage(R.string.background_save_failed))
+                sendEffect(CustomizeEffect.ShowMessage(R.string.background_save_failed, isError = true))
             } else {
                 editDecor { copy(background = background, wallpaper = null) }
             }
@@ -438,10 +445,20 @@ class CustomizeViewModel(
 
     private fun openPermissionSettings(permission: PermissionValue) {
         val effect = when (permission) {
+            PermissionValue.OVERLAY -> CustomizeEffect.Permission.OpenOverlaySettings
+            PermissionValue.MIUI_LOCK_SCREEN,
+            PermissionValue.MIUI_BACKGROUND_POPUP -> CustomizeEffect.Permission.OpenMiuiPermissionSettings(permission)
+
+            PermissionValue.NOTIFICATIONS ->
+                if (permissionManager.needsNotificationPermission()) {
+                    CustomizeEffect.Permission.RequestNotificationPermission
+                } else {
+                    CustomizeEffect.Permission.OpenNotificationSettings
+                }
+
             PermissionValue.CALENDAR -> CustomizeEffect.Permission.RequestCalendarPermission
             PermissionValue.LOCATION -> CustomizeEffect.Permission.RequestLocationPermission
             PermissionValue.NOTIFICATION_ACCESS -> CustomizeEffect.Permission.OpenNotificationAccessSettings
-            else -> return
         }
         viewModelScope.launch { sendEffect(effect) }
     }
@@ -456,10 +473,30 @@ class CustomizeViewModel(
         }
     }
 
-    // Quyền cấp ở app Cài đặt (truy cập thông báo, lịch / vị trí đã bị từ chối): quay lại màn này thì kiểm lại.
+    // Quyền cấp ở app Cài đặt (truy cập thông báo, lịch / vị trí đã bị từ chối, quyền bắt buộc lúc áp dụng): quay lại màn này thì kiểm lại.
     private fun refreshPermissions() {
-        val permission = state.value.permissionRequest ?: return
-        if (isGranted(permission)) applyPendingChange()
+        state.value.permissionRequest?.let { permission -> if (isGranted(permission)) applyPendingChange() }
+        if (state.value.isApplyPermissionSheetVisible) refreshApplyPermissions()
+    }
+
+    // Đủ quyền bắt buộc thì đóng sheet và áp dụng luôn, như user vừa bấm lại Áp dụng.
+    private fun refreshApplyPermissions() {
+        val required = permissionManager.requiredAodPermissions()
+        if (required.hasRequiredPermissions) {
+            updateState { copy(requiredPermissions = required, isApplyPermissionSheetVisible = false) }
+            confirmCustomization()
+        } else {
+            updateState { copy(requiredPermissions = required) }
+        }
+    }
+
+    // Bị từ chối thì mở trang cài đặt thông báo (sau 2 lần từ chối hệ thống không hiện hộp thoại nữa).
+    private fun onNotificationPermissionResult(isGranted: Boolean) {
+        if (isGranted) {
+            refreshPermissions()
+        } else {
+            viewModelScope.launch { sendEffect(CustomizeEffect.Permission.OpenNotificationSettings) }
+        }
     }
 
     private fun applyPendingChange() {
@@ -493,9 +530,17 @@ class CustomizeViewModel(
         updateState { copy(guideStep = null) }
     }
 
-    // Chỉ bấm được khi bản nháp đã khác lúc vào màn; ghi phần đã đổi rồi sang bước sau.
+    // Chỉ bấm được khi bản nháp đã khác lúc vào màn; ghi phần đã đổi rồi sang bước sau. Mở từ màn chính mà còn thiếu quyền bắt buộc thì
+    // chưa ghi gì, hiện sheet quyền; cấp đủ thì tự áp dụng (refreshApplyPermissions). Onboarding thì sang màn quyền như cũ (navigateNext).
     private fun confirmCustomization() {
         if (state.value.isApplying || !state.value.history.hasChanges) return
+        if (!isFirstOpen) {
+            val required = permissionManager.requiredAodPermissions()
+            if (!required.hasRequiredPermissions) {
+                updateState { copy(requiredPermissions = required, isApplyPermissionSheetVisible = true) }
+                return
+            }
+        }
         viewModelScope.launch {
             updateState { copy(isApplying = true, selectedTab = null) }
             val draft = state.value.draft
@@ -507,7 +552,7 @@ class CustomizeViewModel(
 
     // Onboarding: đủ quyền bắt buộc thì vào thẳng Main, không thì sang màn quyền. Bỏ qua không đi qua đây: không ghi gì và vào thẳng Main
     // (thiếu quyền thì Main hiện bottom sheet nhắc), vì user đã muốn bỏ qua mà còn bắt cấp quyền thì dễ bỏ app.
-    // Mở từ Main thì quay lại Main, việc nhắc quyền để Main lo.
+    // Mở từ Main thì quay lại Main (quyền bắt buộc đã đủ, confirmCustomization kiểm trước).
     private suspend fun navigateNext() {
         val isReady = permissionManager.requiredAodPermissions().hasRequiredPermissions
         sendEffect(
@@ -585,7 +630,7 @@ class CustomizeViewModel(
                 if (aodImageManager.saveBackground(background)) {
                     dataStoreManager.saveAodWallpaper(WallpaperValue.NONE_CODE)
                 } else {
-                    sendEffect(CustomizeEffect.ShowMessage(R.string.background_save_failed))
+                    sendEffect(CustomizeEffect.ShowMessage(R.string.background_save_failed, isError = true))
                 }
             }
 
@@ -606,7 +651,7 @@ class CustomizeViewModel(
         if (drawing == null) {
             aodImageManager.removeDrawing()
         } else if (!aodImageManager.saveDrawing(drawing)) {
-            sendEffect(CustomizeEffect.ShowMessage(R.string.drawing_save_failed))
+            sendEffect(CustomizeEffect.ShowMessage(R.string.drawing_save_failed, isError = true))
         }
     }
 

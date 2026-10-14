@@ -4,7 +4,10 @@ import androidx.compose.runtime.Immutable
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeDraftUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeGuideStepValue
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeTabValue
+import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionValue
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 @Immutable
 data class CustomizeState(
@@ -17,7 +20,11 @@ data class CustomizeState(
     val effects: CustomizeEffectsState = CustomizeEffectsState(),
     val guideStep: CustomizeGuideStepValue? = null,
     val permissionRequest: PermissionValue? = null,
+    // Áp dụng khi còn thiếu quyền bắt buộc: sheet liệt kê các quyền đó, cấp đủ thì tự áp dụng, đóng sheet thì không áp dụng.
+    val requiredPermissions: ImmutableList<PermissionUiModel> = persistentListOf(),
+    val isApplyPermissionSheetVisible: Boolean = false,
     val isApplying: Boolean = false,
+    val isLandscapePreview: Boolean = false,
 )
 
 @Immutable

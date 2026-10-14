@@ -4,20 +4,13 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,11 +20,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.custom_aod.R
+import com.decoutkhanqindev.custom_aod.presentation.components.AppPrimaryButton
+import com.decoutkhanqindev.custom_aod.presentation.components.AppTextButton
 import com.decoutkhanqindev.custom_aod.presentation.screens.themeeditor.state.ThemeEditorHistoryState
 import com.decoutkhanqindev.custom_aod.presentation.screens.themeeditor.state.ThemeEditorIntent
-import com.decoutkhanqindev.custom_aod.presentation.theme.Black
 import com.decoutkhanqindev.custom_aod.presentation.theme.GreyED
-import com.decoutkhanqindev.custom_aod.presentation.theme.Mint
 import com.decoutkhanqindev.custom_aod.presentation.theme.Neutral12
 import com.decoutkhanqindev.custom_aod.presentation.theme.NeutralVariant30
 import com.decoutkhanqindev.custom_aod.presentation.theme.Theme
@@ -93,24 +86,11 @@ fun ThemeEditorToolbar(
                         )
                     }
                 } else {
-                    TextButton(
+                    AppTextButton(
+                        text = stringResource(R.string.theme_edit),
                         onClick = { onIntent(ThemeEditorIntent.Edit.StartEditing) },
-                        modifier = Modifier.heightIn(min = 40.dp),
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_pencil_simple),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .padding(end = 6.dp)
-                                .size(18.dp),
-                            tint = GreyED,
-                        )
-
-                        Text(
-                            text = stringResource(R.string.theme_edit),
-                            color = GreyED,
-                        )
-                    }
+                        iconRes = R.drawable.ic_pencil_simple,
+                    )
                 }
 
                 VerticalDivider(
@@ -120,7 +100,14 @@ fun ThemeEditorToolbar(
                     color = NeutralVariant30,
                 )
 
-                Button(
+                AppPrimaryButton(
+                    text = stringResource(
+                        when {
+                            editing -> R.string.action_save
+                            isActive -> R.string.customize_title
+                            else -> R.string.customize_apply
+                        },
+                    ),
                     onClick = {
                         onIntent(
                             when {
@@ -130,26 +117,9 @@ fun ThemeEditorToolbar(
                             },
                         )
                     },
-                    modifier = Modifier
-                        .padding(start = 4.dp)
-                        .heightIn(min = 40.dp),
-                    enabled = !editing || hasChanges,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Mint,
-                        contentColor = Black,
-                    ),
-                    contentPadding = PaddingValues(horizontal = 16.dp),
-                ) {
-                    Text(
-                        text = stringResource(
-                            when {
-                                editing -> R.string.action_save
-                                isActive -> R.string.customize_title
-                                else -> R.string.customize_apply
-                            },
-                        ),
-                    )
-                }
+                    modifier = Modifier.padding(start = 4.dp),
+                    isEnabled = !editing || hasChanges,
+                )
             }
         }
     }

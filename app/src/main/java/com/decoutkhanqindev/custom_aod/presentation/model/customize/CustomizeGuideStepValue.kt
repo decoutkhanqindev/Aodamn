@@ -12,6 +12,8 @@ enum class CustomizeGuideStepValue(
     val cluster: CustomizeClusterValue? = null,
 ) {
     PREVIEW(R.string.customize_guide_preview_title, R.string.customize_guide_preview_desc),
+    PEEK(R.string.customize_guide_peek_title, R.string.customize_guide_peek_desc),
+    ROTATE(R.string.customize_guide_rotate_title, R.string.customize_guide_rotate_desc),
     APPEARANCE(
         R.string.customize_guide_appearance_title,
         R.string.customize_guide_appearance_desc,

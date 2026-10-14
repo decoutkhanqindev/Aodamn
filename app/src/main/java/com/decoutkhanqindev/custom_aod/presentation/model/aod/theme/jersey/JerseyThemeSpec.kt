@@ -7,7 +7,6 @@ import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodColorOpti
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodRangeOption
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeSpec
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeTab
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.component.AodComponentValue
 import com.decoutkhanqindev.custom_aod.presentation.theme.FontFamilyPlusJakartaSans
 import com.decoutkhanqindev.custom_aod.presentation.theme.GreyED
 import com.decoutkhanqindev.custom_aod.presentation.theme.Lavender
@@ -15,10 +14,10 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentSetOf
 
 // Chủ đề Số áo: giờ và phút hai hàng chữ số rất cao chỉ có nét viền như số áo thể thao, ngày xếp dọc bên phải hàng giờ, pin và icon
-// thông báo chung một dòng dưới đồng hồ. Ít tuỳ chọn: cỡ và màu từng phần; chỉ có đồng hồ, ngày, pin, thông báo (không sự kiện, thời
-// tiết, ghi chú, nét vẽ, nhạc; nền và hiệu ứng vẫn dùng được).
+// thông báo chung một dòng dưới đồng hồ. Ít tuỳ chọn: cỡ và màu từng phần. Các khối dùng chung khác (thời tiết, sự kiện, ghi nhớ, nét vẽ,
+// nhạc) nằm dưới dòng trạng thái, kiểu / font / cỡ / màu chỉnh ở Tùy chỉnh như Cổ điển; thông báo mới nhất không có (dòng trạng thái chỉ có icon).
 object JerseyThemeSpec : AodThemeSpec {
-    // Font cố định của chủ đề cho ngày và dòng trạng thái; chữ số là Big Shoulders Display Black (AodJerseyClock).
+    // Font cố định của chủ đề cho ngày và dòng trạng thái; chữ số là Big Shoulders Display Black (JerseyGlyphs).
     val Font: FontFamily = FontFamilyPlusJakartaSans
 
     // 100% to như app mẫu (mỗi hàng số ~35% chiều cao màn hình), không to hơn để còn chỗ cho dòng trạng thái.
@@ -49,10 +48,4 @@ object JerseyThemeSpec : AodThemeSpec {
     )
 
     override val ownBlocks = persistentSetOf(AodBlockValue.DATE, AodBlockValue.STATUS)
-
-    override val components = persistentSetOf(
-        AodComponentValue.DATE,
-        AodComponentValue.BATTERY,
-        AodComponentValue.NOTIFICATIONS,
-    )
 }

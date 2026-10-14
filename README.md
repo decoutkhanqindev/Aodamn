@@ -225,8 +225,8 @@ app xin, nên không có trong danh sách trên: `AodTileService` (`BIND_QUICK_S
     hiện thông báo mới nhất thành một dòng gọn.
   - Nhạc: Hàng ngang, Căn giữa, Gọn (một dòng, không thanh tiến trình).
   Khối mà chủ đề đang dùng tự vẽ (ngày, nhạc của Sỏi; ngày, pin và thông báo của Số áo) thì kiểu do chủ đề
-  quyết định và tab đó chỉ dẫn sang màn chủ đề. Khối chủ đề không có (Số áo không có sự kiện, thời tiết, ghi chú,
-  nét vẽ, nhạc) thì tab đó ẩn và AOD không vẽ, cài đặt vẫn giữ cho lúc dùng chủ đề khác.
+  quyết định và tab đó chỉ dẫn sang màn chủ đề. Khối mà bố cục của chủ đề không có chỗ (`AodThemeSpec.components`)
+  thì tab đó ẩn và AOD không vẽ, cài đặt vẫn giữ cho lúc dùng chủ đề khác; hiện cả ba chủ đề đều có đủ khối.
 - **Thông báo** (cần quyền "Truy cập thông báo"): dưới ngày là icon của các app đang có thông báo,
   mỗi app một icon, tối đa 5, còn lại hiện "+N". Bật "Hiện nội dung thông báo mới nhất" thì dưới các
   icon có thêm tiêu đề và nội dung của thông báo mới nhất, theo đúng quy tắc của màn hình khóa: nội
@@ -243,10 +243,12 @@ app xin, nên không có trong danh sách trên: `AodTileService` (`BIND_QUICK_S
 - **Giao diện đồng hồ:** 4 mặt (Số, Số xếp chồng, Kim, Kim tối giản), 4 font, 8 màu, cỡ 60–150%, ảnh
   nền: 18 ảnh AMOLED có sẵn (Sao đêm, Cực quang, Nhật thực, Sóng, Tinh vân, Chân trời, Mưa sao băng, Hành tinh vành đai, Quỹ đạo,
   Núi trăng, Đom đóm, Hoa anh đào, Sứa phát sáng, Thành phố đêm, Pháo hoa, Đường đồng mức, Sóng âm, Đèn trời) hoặc ảnh từ
-  máy. Bật "Luôn xoay ngang" để dùng làm đồng hồ đêm khi dựng máy; mỗi chủ đề một bố cục ngang
-  riêng: Cổ điển hai cột (đồng hồ + ngày | vạch mảnh | các khối còn lại), Sỏi khối giờ và khối phút kẹp hai bên
-  ngày + các khối + trình phát, Số áo bốn chữ số một hàng với ngày nằm ngang ở giữa, pin + icon thông báo ở góc dưới
-  trái.
+  máy. Bật "Luôn xoay ngang" để dùng làm đồng hồ đêm khi dựng máy. Màn ngang tự chọn bố cục theo các khối
+  đang hiện: không có khối nào thì đồng hồ giữa màn hình; chỉ có nhạc thì đồng hồ | trình phát; lịch trình (thời tiết +
+  sự kiện, ghi nhớ), nét vẽ (sự kiện đứng cạnh) hay thông báo mới nhất thì đồng hồ | cột các khối; nhạc cùng nhóm khác
+  thì ba cột (thông tin | đồng hồ giữa màn hình | nhạc). Sỏi giữ kiểu kẹp giữa khi chỉ có nhạc (khối giờ trái, khối phút
+  phải) và xếp nhạc dưới các khối thay vì ba cột; Số áo là một cột giữa màn hình: ngày nằm ngang, bốn chữ số một hàng,
+  pin + icon thông báo, rồi các khối thêm.
 
 Đồng hồ hiện giờ (theo định dạng 12 hoặc 24 giờ của máy), ngày, và phần trăm pin kèm trạng thái sạc.
 Dòng "Chạm 2 lần để thoát" hiện 3 giây ở đáy màn hình rồi mờ đi. Cụm đồng hồ và thông tin đứng yên giữa
@@ -367,13 +369,13 @@ thông báo ──▶ AodNotificationListener ──▶ NotificationStateManager
 | `presentation/aod/BootReceiver.kt`                                                                                                                                                                                                                  | Chạy lại service sau khi khởi động máy hoặc cập nhật app                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | `presentation/aod/AodTileService.kt`                                                                                                                                                                                                                | Ô Cài đặt nhanh bật/tắt đồng hồ; mở app khi hệ thống không cho khởi động service                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | `presentation/screens/aod/AodViewModel.kt`                                                                                                                                                                                                          | Logic của AOD: giờ hiện tại (cập nhật mỗi phút), pin, ẩn dòng gợi ý sau 3 giây, hết giờ, trong túi, quy tắc hiện, đóng khi có cuộc gọi hoặc báo thức, chạm 2 lần, thời tiết (tải lại khi bản đã lưu cũ), sự kiện lịch                                                                                                                                                                                                                                                            |
-| `presentation/components/aod/AodContent.kt` (+ `AodDetails`, `AodBackdrop` cùng thư mục; khối dùng chung ở `block/`: `AodDate`, `AodExtras`, `AodNotifications`, `AodMediaControls`, `AodStatus`, `AodBlock`; `AppTimeFormat` ở `presentation/components/`) · `presentation/screens/aod/AodScreen.kt` · `state/` | Giao diện đồng hồ (4 mặt, ngày, thời tiết, sự kiện, ghi nhớ, hình vẽ, icon thông báo, pin, nhạc, gợi ý, viền sáng, ảnh nền, bố cục ngang) và phần nối với ViewModel                                                                                                                                                                                                                                                                                                                  |
+| `presentation/components/aod/AodContent.kt` (+ `AodDetails`, `AodLandscapeLayout` (bố cục ngang chung), `AodBackdrop` cùng thư mục; khối dùng chung ở `block/`: `AodDate`, `AodExtras`, `AodNotifications`, `AodMediaControls`, `AodStatus`, `AodBlock`; `AppTimeFormat` ở `presentation/components/`) · `presentation/screens/aod/AodScreen.kt` · `state/` | Giao diện đồng hồ (4 mặt, ngày, thời tiết, sự kiện, ghi nhớ, hình vẽ, icon thông báo, pin, nhạc, gợi ý, viền sáng, ảnh nền, bố cục ngang) và phần nối với ViewModel                                                                                                                                                                                                                                                                                                                  |
 | `presentation/aod/AodNotificationListener.kt`                                                                                                                                                                                                       | Nhận thông báo từ hệ thống (khi đã cấp "Truy cập thông báo") và chuyển cho `NotificationStateManager`                                                                                                                                                                                                                                                                                                                                                                                             |
 | `presentation/navigation/MainNavDisplay.kt` · `MainDestinations.kt` | Main: `Scaffold` có thanh trên chung của tab (`MainTopBar`: tiêu đề theo tab, IAP, Share), `NavDisplay` của 3 tab (AOD, Viền sáng, Cài đặt) và thanh tab dưới, không ViewModel. Tab AOD là gốc: Back ở tab khác về tab AOD rồi mới thoát app |
 | `presentation/screens/aodtab/` | Tab AOD (MVI): cả tab là một `LazyVerticalGrid` 3 cột: công tắc AOD, thẻ "Giao diện của bạn" (AOD đang áp dụng, vẽ thu nhỏ bằng `AodThumbnail`; chạm để mở Customize) chiếm cả hàng, lưới chủ đề mỗi chủ đề một ô (mỗi mục chỉ xem trước kiểu mặc định của chủ đề (không theo cấu hình đã chỉnh): đồng hồ, ngày và khối chủ đề tự vẽ như trình phát nhạc của Sỏi, không có nền, thông báo, pin... của user; chạm để mở màn chủ đề), sheet và dòng cảnh báo khi thiếu quyền bắt buộc |
 | `presentation/model/aod/theme/` (+ `classic/`, `pebble/`, `jersey/` spec từng chủ đề, `component/` kiểu khối dùng chung) | Hệ chủ đề: `AodThemeValue` (danh sách, id lưu), `AodThemeSpec` (tab + thuộc tính) của từng chủ đề (`ClassicThemeSpec`, `PebbleThemeSpec`, `JerseyThemeSpec`), thuộc tính `AodThemeOption` (lựa chọn / màu / khoảng số / bật tắt, lưu thành Int trong `AodThemeConfig`), hình khối `AodShapeValue` (hàm bán kính quanh tâm), khối chủ đề tự vẽ `AodBlockValue`, kiểu từng khối dùng chung `AodComponentSpec` / `AodComponentsUiModel`, đọc / ghi `aod_theme_configs` và `aod_component_styles` |
 | `presentation/screens/themeeditor/` | Màn chủ đề (MVI) dùng chung cho mọi chủ đề: xem trước riêng chủ đề: đồng hồ, ngày và khối chủ đề tự vẽ (Sửa / Áp dụng; chủ đề đang dùng thì "Tùy chỉnh" mở Customize), sửa theo tab của `AodThemeSpec` (mỗi tab một phần của chủ đề như khối ở Tùy chỉnh, icon đặt lại riêng ở thanh tiêu đề panel) với control dựng theo loại thuộc tính, hoàn tác / làm lại / đặt lại, Lưu |
-| `presentation/components/aod/theme/` (`AodClockFace`, `AodLandscape`, `AodThemeStatus`, `AodShapePath`; `classic/`, `pebble/`, `jersey/`) · `components/aod/AodThumbnail.kt` | Chọn phần vẽ theo chủ đề và phần vẽ riêng từng chủ đề, gồm cả bố cục màn ngang (đồng hồ Cổ điển; khối hình + trình phát của Sỏi; chữ số viền, ngày dọc, dòng pin + thông báo của Số áo), path của hình khối, AOD thu nhỏ |
+| `presentation/components/aod/theme/` (`AodThemeLayout`: `AodPortrait` / `AodLandscape` chọn bố cục theo chủ đề; `AodShapePath`; `classic/`, `pebble/`, `jersey/`) · `components/aod/AodThumbnail.kt` | Chọn phần vẽ theo chủ đề và phần vẽ riêng từng chủ đề, gồm cả bố cục màn ngang (đồng hồ Cổ điển; khối hình + trình phát của Sỏi; chữ số viền, ngày dọc, dòng pin + thông báo của Số áo), path của hình khối, AOD thu nhỏ |
 | `presentation/components/aod/editor/` | Control chỉnh dùng ở Tùy chỉnh và màn chủ đề: `AodThemeOptionList` (dựng theo `AodThemeSpec`), ảnh xem trước lựa chọn `aodChoicePreview`, bảng màu, chọn ảnh nền, hộp thoại ghi chú / nét vẽ |
 | `presentation/components/editor/` (`AppEditorPanel`, `AppEditorTab`, `AppApplyingOverlay`) | Tấm chỉnh trượt lên, tab của thanh tab và lớp phủ "Đang áp dụng…", dùng chung cho Tùy chỉnh và màn chủ đề |
 | `presentation/screens/edgelight/` | Tab Viền sáng: màn giữ chỗ |
@@ -437,33 +439,74 @@ chủ đề mới không cần màn riêng; chỉ tách màn khi chủ đề c�
 
 1. Đọc ảnh mẫu và chốt với user trước khi code:
    - Phần chủ đề tự vẽ (`ownBlocks`): đồng hồ luôn tự vẽ; ngày, nhạc, dòng pin + thông báo nếu khác khối dùng chung.
-   - Khối dùng chung ảnh không có thì bỏ khỏi `components`: tab ẩn ở Tùy chỉnh, AOD không vẽ, AOD thật không tải dữ
-     liệu của khối đó (`AodExtrasUiModel.shownIn`, `AodNotificationOptionsUiModel.shownIn`).
+   - Khối dùng chung mà bố cục của chủ đề không có chỗ thì bỏ khỏi `components`: tab ẩn ở Tùy chỉnh, AOD không vẽ, AOD
+     thật không tải dữ liệu của khối đó (`AodExtrasUiModel.shownIn`, `AodNotificationOptionsUiModel.shownIn`). Ảnh mẫu
+     không có khối nào thì hỏi user: Số áo lúc đầu bỏ, sau user muốn có đủ (xếp dưới dòng trạng thái, kiểu chỉnh như Cổ điển).
    - Tuỳ chọn của app mẫu thành `AodThemeOption`, chia tab theo phần (kiểu rồi màu của chính phần đó). App mẫu không
      có thì không thêm (vd Số áo không chọn font, không có màu điều khiển nhạc).
    - Tên chủ đề (en + vi), cỡ mặc định (Số áo: to như ảnh).
-2. Đo trên ảnh bằng script (PIL): tỉ lệ các phần theo một kích thước chính (vd chiều cao hàng số), độ dày nét, màu
-   (lấy màu phổ biến nhất của vùng nét). Các tỉ lệ để thành hằng số ở cuối file vẽ, kèm comment "lấy từ app mẫu".
+2. Chép ảnh mẫu vào `reference/theme_N/` ngay (thư mục không đưa lên git; thư mục Downloads của user có thể bị xoá),
+   rồi đo trên ảnh bằng script (PIL + numpy): tách từng chữ số / khối bằng hình chiếu của pixel sáng, ra toạ độ, bề rộng,
+   độ dày nét, màu (màu phổ biến nhất của vùng nét). Quy mọi số đo về một kích thước chính R (vd chiều cao hàng số) và để
+   thành hằng số trong một `object XxxMetrics` kèm comment "đo trên ảnh mẫu WxH". So lại với code bằng cách đo ảnh chụp
+   trên máy bằng cùng script: lần Số áo đầu lệch tới 40% (chữ ngày) mà chỉ nhìn bằng mắt không thấy. Ảnh cắt từ transcript:
+   ảnh đã đọc nằm nhúng trong `~/.claude/projects/<dự án>/<phiên>.jsonl` (base64) nếu cần lấy lại.
 3. Model `presentation/model/aod/theme/<chủ đề>/`: `XxxThemeSpec : AodThemeSpec` (tabs, `ownBlocks`, `components`, font cố
    định là `val Font`), mục mới trong `AodThemeValue` (id chữ thường, không đổi về sau), chuỗi `theme_xxx`. Cấu hình
    lưu tự động theo id, khoá thuộc tính chỉ chữ thường, số, gạch dưới. Màu mới thêm vào `theme/Colors.kt`.
 4. Vẽ ở `components/aod/theme/<chủ đề>/`, nối vào các chỗ chọn theo chủ đề (`when` đủ mọi chủ đề nên quên là không
-   build được): `theme/AodClockFace.kt`, `theme/AodLandscape.kt` (bố cục màn ngang riêng của chủ đề),
-   `block/AodMediaControls.kt`, `theme/AodThemeStatus.kt`. Ngày tự vẽ thì vẽ
-   trong đồng hồ theo `isDateEnabled`. Khối tự vẽ loại mới: thêm `AodBlockValue`, gắn `AodComponentValue.ownBlock`,
-   nhánh trong `AodDetails`, mẫu trong `toThemePreviewDraft`.
-5. Kích thước tính theo chỗ trống (`BoxWithConstraints`, kiểm cả `maxWidth > maxHeight` cho màn ngang) chứ không cố
-   định dp, để vừa máy màn hẹp, màn ngang và ảnh thu nhỏ ở lưới chủ đề. Căn giữa theo phần nhìn thấy chứ không theo
-   ô: chữ số trong ô rộng cố định thì số 1 hẹp để trống một bên (`AodJerseyClock` bù nửa phần trống đó); khối phụ (ngày)
-   đi cùng cụm số thay vì ghim mép màn hình; không để `Spacer` / dòng mờ chiếm chỗ ở đáy cụm (cụm bị đẩy lệch). Chữ
-   số mỗi số một ô rộng đúng nét (`AodJerseyClock`): ô rộng cố định thì số 1 hẹp làm hàng "12" lệch phải, "21" lệch
-   trái. `Layout` tự viết đọc con theo thứ tự thì bọc khối có thể ẩn (`AnimatedVisibility`) trong `Box`: ẩn hẳn là
-   không còn node, thiếu con sẽ crash.
+   build được): `theme/AodThemeLayout.kt` (`AodPortrait` và `AodLandscape`, mỗi chủ đề một bố cục dọc và một bố cục
+   ngang riêng nhận cả `AodState`), `block/AodMediaControls.kt`. Chủ đề tự vẽ cả cụm (số, ngày, dòng trạng thái) thì
+   `AodPortrait` gọi thẳng bố cục của nó và `AodDetails` bỏ qua pin / thông báo chung (`AodBlockValue.STATUS`). Khối tự vẽ
+   loại mới: thêm `AodBlockValue`, gắn `AodComponentValue.ownBlock`, nhánh trong `AodDetails`, mẫu trong
+   `toThemePreviewDraft`. Bố cục ngang dựng trên bố cục chung (mục Bố cục ngang bên dưới). Xem trước màn ngang: nút
+   xoay ở thanh trên Tùy chỉnh / màn chủ đề (`AodPreviewFrame`).
+5. Kích thước tính theo chỗ trống (`BoxWithConstraints`, kiểm cả `maxWidth > maxHeight` cho màn ngang) và theo R,
+   không dùng dp / sp cố định (cả chữ ngày, dòng pin): vừa máy màn hẹp, màn ngang, ảnh thu nhỏ ở lưới chủ đề và đúng tỉ lệ
+   ảnh mẫu. Bố cục: giữ đúng như ảnh mẫu (chữ số ô rộng cố định, số đứng giữa màn hình) và để khối phụ (ngày) treo
+   ngoài, không ảnh hưởng vị trí số; đừng căn giữa cả cụm "số + ngày" (số bị đẩy lệch trái, user thấy lệch) hay co
+   ô theo nét chữ (hàng số đổi bề ngang theo giờ, ngày nhảy). Màn ngang (Số áo): ngày, hàng số, dòng pin mỗi thứ tự
+   căn giữa màn hình nên thứ dài hay ngắn không làm số dời chỗ. Không để `Spacer` / dòng mờ chiếm chỗ ở đáy cụm (cụm bị đẩy lệch).
+   `Layout` tự viết đọc con theo thứ tự thì bọc khối có thể ẩn (`AnimatedVisibility`) trong `Box`: ẩn hẳn là không còn
+   node, thiếu con sẽ crash. Ví dụ đầy đủ: `theme/jersey/` (`JerseyMetrics`, `AodJerseyLayout`).
 6. Font: dùng font có sẵn. Cần độ đậm khác thì thêm vào `tools/fonts/make_static_fonts.py`, sinh riêng file đó (không
    sinh lại file cũ, tránh đổi byte), khai báo ở `Typography.kt`. Chữ viền nét dày đều: lấy đường viền chữ bằng
-   `Paint.getTextPath`, kéo giãn path rồi mới vẽ nét (`AodJerseyClock`); `TextStyle.drawStyle = Stroke` rồi phóng cả
+   `Paint.getTextPath`, kéo giãn path rồi mới vẽ nét (`JerseyGlyphs`); chữ số nào hình dạng khác font (số 1 của Số áo có cờ vuông) thì tự vẽ đa giác
+   theo số đo ảnh mẫu; `TextStyle.drawStyle = Stroke` rồi phóng cả
    chữ thì nét dày ngang mỏng dọc.
 7. Kiểm: build, lint, `tools/check-rules.sh`; thêm bước test vào "Kiểm tra trên máy thật"; CHANGELOG.
+
+### Bố cục ngang
+
+Màn ngang thấp (máy 2400 × 1080 là 873 × 393 dp) nên các khối không xếp chồng dưới đồng hồ như màn dọc được; bố cục
+chọn theo các khối đang có dữ liệu, dùng chung cho mọi chủ đề.
+
+1. Mock trước, code sau: `tools/mockups/aod_landscape_mockups.py <thư mục ra>` sinh mỗi chủ đề một đoạn HTML + SVG
+   khung 873 × 393 dp (font thật, chữ số Số áo lấy đường viền từ font), vẽ thẳng trong khung chat cho user xem (user
+   không muốn mở file HTML). Chốt các khung với user rồi mới code; chủ đề mới thì thêm một nhóm khung vào script.
+2. Chọn bố cục (thuần Kotlin, test ở `AodLandscapePlanTest`): `AodState.shownPanelBlocks()` (khối chủ đề có và đang có dữ
+   liệu) → `AodLandscapePlan.of(...)`. Thời tiết đứng cạnh ngày, trừ khi có sự kiện (lúc đó là đầu cột lịch trình);
+   `info` là cột thông tin (thời tiết + sự kiện, thông báo mới nhất, ghi nhớ); nét vẽ và nhạc là khối lớn đứng riêng.
+3. `AodLandscapeLayout(plan, hero)` (`components/aod/AodLandscapeLayout.kt`):
+
+   | Đang hiện thêm (ngoài đồng hồ, ngày, pin, icon thông báo) | Bố cục |
+   |---|---|
+   | không có, hoặc chỉ thời tiết | hero giữa màn hình, thời tiết cạnh ngày |
+   | nhạc | hero \| trình phát |
+   | thời tiết + sự kiện (± ghi nhớ), thông báo mới nhất (± ghi nhớ) | hero \| cột thông tin |
+   | nét vẽ (± sự kiện, ghi nhớ) | hero \| nét vẽ cạnh cột thông tin |
+   | nhạc + nhóm khác | ba cột: thông tin (không có thì nét vẽ) \| hero giữa màn hình \| nét vẽ + nhạc |
+
+   Hai cột là `AodSplitRow` + `AodLandscapePanel`; ba cột là `AodThreeColumns` (cột giữa đúng giữa màn hình, hai cột
+   bên rộng bằng nhau tối đa 280dp, khối rộng 296dp tự hẹp lại theo cột).
+4. Chủ đề mới: hero = đồng hồ của chủ đề + `AodHeroDetails(isWeatherShown = plan.isWeatherBesideDate)` (ngày dùng chung,
+   thời tiết, icon thông báo + pin một dòng), bọc `Crossfade(state.landscapePlan())` để bật / tắt khối hay nhạc
+   phát / dừng thì đổi bố cục bằng mờ chéo (`AodClassicLandscape` là mẫu ngắn nhất). Nét riêng thì rẽ nhánh trước khi
+   gọi bố cục chung: Sỏi `plan.isMediaOnly` → kẹp giữa, `isThreeColumnAllowed = false` → nhạc xếp dưới các khối. Chủ đề
+   có cột riêng (Số áo) thì đặt các khối thêm dưới cụm đồng hồ bằng `AodPanelColumn` (dọc) / `FlowRow` của
+   `AodPanelBlock` (ngang), đo khối thêm trước (`SubcomposeLayout`, `JerseyWithExtras`) rồi mới chọn cỡ chữ số cho vừa.
+   Mọi khung lấp đầy và căn giữa (`fillMaxSize` + `Alignment.Center`) để lúc mờ chéo không dạt về góc.
+5. Kiểm bằng nút xoay ngang ở Tùy chỉnh, bật lần lượt từng nhóm khối như bảng trên (test 27).
 
 ## Các quyết định thiết kế
 
@@ -579,8 +622,10 @@ chủ đề mới không cần màn riêng; chỉ tách màn khi chủ đề c�
    vùng EEA) và quảng cáo test không, rồi tới màn chọn ngôn ngữ, đã chọn sẵn ngôn ngữ của máy, không
    có nút back. Chọn "Tiếng Việt", bấm "Xong": vào màn hình chính bằng tiếng Việt. Đóng hẳn app rồi
    mở lại: đi thẳng vào màn hình chính.
-2. Cấp các quyền bắt buộc. Nếu đã cho phép thông báo, kiểm tra đã có thông báo "Shows the clock each
-   time the screen turns off".
+2. Cấp các quyền bắt buộc. Màn quyền: hình điện thoại viền sáng có khiên, dòng "1/4 đã cấp" ở trên thanh chia đoạn (xếp
+   dọc), mỗi quyền một hàng có số thứ tự, quyền cần cấp tiếp theo viền mint. Nút dưới cùng không mờ đi: thiếu quyền thì là
+   "Cấp quyền tiếp theo" (mở đúng quyền đó, trên nút có dòng "Còn N quyền…"), đủ quyền thì thành "Bắt đầu". Nếu đã cho phép
+   thông báo, kiểm tra đã có thông báo "Shows the clock each time the screen turns off".
 2a. Tự quay về app (nhất là Xiaomi, máy mới cài chưa cấp quyền nào): lần lượt bật "Hiển thị trên ứng dụng khác", "Hiển
    thị trên màn hình khóa", "Hiển thị cửa sổ bật lên khi chạy nền", thông báo, "Truy cập thông báo"; ở Cài đặt › Quyền
    và ở Tùy chỉnh (bật Sự kiện hôm nay / Thời tiết › Cấp quyền) thử thêm lịch / vị trí: từ chối ở hộp thoại thì mở Thông
@@ -593,6 +638,12 @@ chủ đề mới không cần màn riêng; chỉ tách màn khi chủ đề c�
 3. Chạm thẻ "Giao diện của bạn" ở tab AOD: Tùy chỉnh mở ra có nút quay lại và tiêu đề, không có
    "Bỏ qua"; tab Đồng hồ chỉ có dòng dẫn sang màn chủ đề (không có chọn mặt, font, màu); Đặt lại không đổi chủ đề đang dùng; Áp dụng xong quay về tab AOD và thẻ đổi theo
    giao diện mới.
+3a. Áp dụng khi thiếu quyền bắt buộc: thu hồi một quyền bắt buộc (vd "Hiển thị trên ứng dụng khác"), đổi gì đó ở Tùy chỉnh
+   (mở từ tab AOD) rồi Áp dụng: không quay về, hiện sheet "Cấp quyền để áp dụng" liệt kê các quyền bắt buộc; bấm Để sau
+   (hoặc vuốt sheet xuống): sheet đóng, chưa áp dụng gì, bấm Áp dụng lại thì sheet hiện lại. Cấp quyền từ sheet: app tự quay
+   về, dòng quyền thành "Đã cấp"; cấp đủ thì sheet đóng và tự áp dụng (lớp phủ "Đang áp dụng…" rồi về tab AOD). Tương tự ở
+   màn chủ đề (tab AOD › Chủ đề › một chủ đề chưa dùng › Áp dụng): cấp đủ thì tự áp dụng, ở lại màn chủ đề và báo đã áp
+   dụng. Lưu (lúc Sửa) không đòi quyền. Onboarding vẫn như cũ: Áp dụng thiếu quyền thì sang màn quyền.
 4. Khóa máy: đồng hồ có hiện sau khoảng 1 giây không, có phủ kín cả thanh trạng thái và thanh điều
    hướng không, có thấy màn hình khóa lóe lên không. Xem dòng "Lần gần nhất" dưới nhóm Quyền ở tab
    Cài đặt.
@@ -690,26 +741,48 @@ chủ đề mới không cần màn riêng; chỉ tách màn khi chủ đề c�
     thanh chạy đúng vị trí bài (so với app nhạc), gợn sóng lúc phát, duỗi thẳng lúc dừng; tua trong app nhạc thì thanh
     nhảy theo; chuyển bài thì thanh về đầu. Radio / livestream không có độ dài: không có thanh. Kiểu Ẩn: không có thanh.
 25c. Chủ đề Số áo: tab AOD › Chủ đề › Số áo: hai hàng chữ số rất cao chỉ có nét viền (giờ tím nhạt, phút trắng), nét
-    dày đều; ngày "10 / 12" (tiếng Việt "12 / 10") xếp dọc ngay bên phải hàng giờ, dưới là thứ in hoa xoay dọc trong
-    viên thuốc viền; mỗi hàng số tự nằm giữa (số 1 không để trống một bên) trên cùng một trục, hàng giờ + ngày là một
-    cụm nằm giữa màn hình, thử các giờ có số 1 như 12:15, 12:21, 11:11, 21:12: hai hàng không lệch nhau; dòng "pin 72% • icon thông báo" dưới đồng hồ. Sửa: tab Đồng hồ (Cỡ 50–100%, chip Giờ / Phút + bảng
+    dày đều, số 1 có cờ vuông, mỗi số một ô rộng cố định; hai hàng nằm giữa màn hình; ngày "10 / 12" (tiếng Việt "12 / 10") xếp
+    dọc treo bên phải hàng giờ và không đẩy số (bật / tắt ngày: số đứng yên), dưới là thứ in hoa xoay dọc trong viên thuốc
+    viền; cỡ chữ ngày và viên thuốc nhỏ như app mẫu (số cao khoảng 3,6% chiều cao hàng số). Thử các giờ có số 1 như 12:15,
+    12:21, 11:11, 21:12: số không nhảy vị trí; dòng "pin 72% • icon thông báo" dưới đồng hồ, cỡ chữ và icon nhỏ như mẫu, chữ phần trăm pin hiện đủ cả dòng (không bị cắt đáy), thử cả cỡ chữ hệ thống lớn. Sửa: tab Đồng hồ (Cỡ 50–100%, chip Giờ / Phút + bảng
     màu, dòng pin theo màu phút), tab Ngày (màu ngày). Áp dụng rồi khóa máy: đổi phút thì số mờ chéo; cắm sạc: pin có tia
-    sét; pin yếu: mức pin đỏ; bật đèn pin: icon Mint cạnh pin. Phút đổi (vd 12:20 → 12:21): chỉ số phút
-    trượt nhẹ cho cân, hàng giờ và ngày đứng yên. Tùy chỉnh khi đang dùng Số áo: chỉ còn tab Đồng hồ, Ngày, Pin, Nền, Thông báo, Hiệu ứng; tab Ngày / Pin /
-    Thông báo ghi "Kiểu do chủ đề quyết định", tab Thông báo không có công tắc nội dung. Đã bật thời tiết / sự kiện /
-    ghi chú / nhạc ở chủ đề khác: AOD Số áo không hiện chúng; đặt lại về Cổ điển thì hiện lại như cũ.
-25d. Nhấn giữ khung xem trước ở Tùy chỉnh và màn chủ đề (cả lúc panel đang mở): rung nhẹ, thanh trên, thanh công cụ,
+    sét; pin yếu: mức pin đỏ; bật đèn pin: icon Mint cạnh pin. Phút đổi (vd 12:20 → 12:21): chỉ số phút mờ chéo
+    trong ô, mọi thứ khác đứng yên. Tùy chỉnh khi đang dùng Số áo: đủ các tab như Cổ điển; tab Ngày / Pin /
+    Thông báo ghi "Kiểu do chủ đề quyết định", tab Thông báo không có công tắc nội dung. Bật thời tiết, sự kiện, ghi nhớ,
+    nét vẽ, nhạc: các khối nằm dưới dòng pin theo kiểu / font / cỡ / màu chọn ở tab của từng khối, hàng số nhỏ lại cho cả
+    cột vừa màn hình (ngày và dòng pin giữ cỡ, số vẫn giữa màn hình); tắt hết thì số to lại như cũ, có animation.
+25f. Overlay mới (không còn hộp thoại / nút Material): mọi sheet có mép trên là viền sáng mint → xanh → tím và thanh kéo
+    cùng màu. Đặt lại (tab AOD › Chủ đề, Tùy chỉnh, màn chủ đề): sheet có hình điện thoại với huy hiệu mũi tên xoay, nút
+    "Đặt lại" mint, Hủy bằng chữ. Màn chủ đề đang sửa, Back khi còn thay đổi: "Lưu trước khi thoát?" với Lưu rồi thoát (lưu,
+    thoát chế độ sửa, toast "Đã lưu chủ đề") / Bỏ thay đổi (đỏ nhạt) / Tiếp tục sửa. Cài đặt › Chạm 2 lần (và các thao tác
+    khác), Nguồn điện: sheet chọn, mỗi mục có icon, chạm là lưu và đóng. Khung giờ › Bắt đầu / Kết thúc: bánh xe giờ : phút
+    (thêm SA / CH nếu máy dùng 12 giờ), cuộn tự dừng đúng số, giờ và phút cuộn vòng, chạm số bên cạnh để cuộn tới, nút
+    "Đặt 22:30" đổi theo; kéo bánh xe không kéo sheet xuống. Tùy chỉnh › Ghi nhớ: ô nhập nền đen viền mint, số ký tự, 3 gợi
+    ý chạm là điền. Tùy chỉnh › Vẽ: Hoàn tác nét xoá nét cuối, Xóa hết, Lưu hình (mờ khi chưa vẽ); vẽ nét dọc không kéo
+    sheet. Áp dụng: lớp phủ là animation viền sáng của icon app và vệt sáng chạy qua lại. Toast (đã lưu / đã áp dụng ở màn
+    chủ đề, lỗi lưu ảnh nền / hình vẽ ở Tùy chỉnh) hiện dưới thanh trên, viền sáng (lỗi: viền đỏ, icon cảnh báo). Tắt mạng:
+    hộp giữa màn hình hình điện thoại xám, không đóng được, tự đóng khi có mạng lại. Ngôn ngữ: hàng chọn có dấu tích tròn,
+    không còn nút radio Material.
+25d. Hướng dẫn ở Tùy chỉnh (nút ? ở thanh trên, cả lúc onboarding): sau bước đầu có bước "Nhấn giữ để xem toàn màn hình"
+    (khung giữa màn hình) và "Xem màn ngang" (vòng sáng quanh nút xoay ngang trên thanh trên, khung chỉ vào nút); đếm bước
+    ra 8. Nhấn giữ khung xem trước ở Tùy chỉnh và màn chủ đề (cả lúc panel đang mở): rung nhẹ, thanh trên, thanh công cụ,
     panel và thanh tab ẩn đi để xem AOD toàn màn hình; thả tay thì hiện lại đúng như trước. Chạm nhanh vẫn như cũ
     (đóng panel; ở màn chủ đề lúc chưa sửa thì vào Sửa).
 26. Ảnh nền: chọn một ảnh dọc và một ảnh ngang lớn (vd ảnh chụp 50 MP): dòng "Ảnh nền" chuyển sang "
     Đang lưu…" rồi "Đổi ảnh". Khóa máy: ảnh hiện dần sau đồng hồ, mờ, không méo. Đóng app, mở lại:
     ảnh nền vẫn còn. "Bỏ ảnh nền": lần AOD sau nền đen.
-27. Luôn xoay ngang: bật, dựng máy nằm ngang rồi khóa máy với từng chủ đề, cả cụm nằm giữa màn hình, không tràn:
-    Cổ điển: đồng hồ + ngày bên trái, vạch mảnh, các khối còn lại bên phải (không bật khối nào thì không có vạch, chỉ
-    còn đồng hồ ở giữa). Sỏi: khối giờ bên trái, khối phút bên phải, giữa là ngày in hoa, các khối và trình phát của Sỏi.
-    Số áo: bốn chữ số một hàng, ngày "10 / 13" + viên thuốc thứ nằm ngang đúng giữa màn hình, giờ bên trái, phút bên phải;
-    pin + icon thông báo ở góc dưới bên trái thẳng mép hàng giờ; tắt ngày thì giờ và phút cách nhau một khoảng ở giữa;
-    phút đổi không làm giờ và ngày dời chỗ. Lật ngược máy thì đồng hồ xoay theo. Mở khóa: màn hình khóa và app trở về
+27. Luôn xoay ngang: bật, dựng máy nằm ngang rồi khóa máy với từng chủ đề, cả cụm nằm giữa màn hình, không tràn.
+    Cổ điển, bật lần lượt các nhóm khối (README › Thêm chủ đề mới › Bố cục ngang): chỉ đồng hồ, ngày, pin, icon thông
+    báo (± thời tiết cạnh ngày): cả cụm giữa màn hình, không có vạch; phát nhạc: đồng hồ | vạch | trình phát; thời tiết +
+    sự kiện (+ ghi nhớ): thời tiết đầu cột phải, rồi sự kiện, ghi nhớ; nét vẽ + sự kiện: nét vẽ đứng cạnh sự kiện; thông
+    báo mới nhất + ghi nhớ: cột phải; phát nhạc khi đang có khối khác: ba cột, đồng hồ đúng giữa màn hình, trình phát bên
+    phải. Nhạc dừng / phát hay bật / tắt khối: bố cục đổi bằng mờ chéo, không nhảy về góc. Sỏi: chỉ có nhạc: khối giờ
+    trái, khối phút phải, giữa là ngày, trình phát Sỏi, pin; không có khối nào: hai khối to giữa màn hình; có khối khác:
+    cụm khối trái | các khối phải, nhạc dưới cùng. Số áo: một cột giữa màn hình: ngày "13 / 10" + viên thuốc thứ nằm
+    ngang, bốn chữ số một hàng (giờ và phút cách một khoảng), pin + icon thông báo, rồi các khối thêm cạnh nhau; tắt ngày
+    thì số to ra; đổi thứ (dài hay ngắn) hay phút đổi: số không dời chỗ. Xem bằng nút xoay ngang ở thanh trên Tùy chỉnh / màn chủ đề
+    (không cần bật "Luôn xoay ngang"): màn hình app và các thanh vẫn dọc, chỉ AOD đổi sang bố cục ngang ở cỡ đầy đủ và
+    xoay 90° cho vừa màn dọc; tự xoay máy sang ngang (quay trái) để xem đúng chiều, nhấn giữ khung xem trước để ẩn các thanh. Lật ngược máy thì đồng hồ xoay theo. Mở khóa: màn hình khóa và app trở về
     dọc như cũ.
 28. Tự xoay của hệ thống (tắt "Luôn xoay ngang", bật tự xoay của máy): xoay máy khi đồng hồ đang
     hiện, bố cục chuyển ngang/dọc đúng.

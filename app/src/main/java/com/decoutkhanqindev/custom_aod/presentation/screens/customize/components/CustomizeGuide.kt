@@ -20,10 +20,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -48,6 +46,8 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.custom_aod.R
+import com.decoutkhanqindev.custom_aod.presentation.components.AppPrimaryButton
+import com.decoutkhanqindev.custom_aod.presentation.components.AppTextButton
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeGuideStepValue
 import com.decoutkhanqindev.custom_aod.presentation.screens.customize.state.CustomizeIntent
 import com.decoutkhanqindev.custom_aod.presentation.theme.Black
@@ -211,9 +211,11 @@ private fun CustomizeGuideBubble(
                         .padding(top = 12.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    TextButton(onClick = { onIntent(CustomizeIntent.Guide.DismissGuide) }) {
-                        Text(text = stringResource(R.string.customize_guide_skip))
-                    }
+                    AppTextButton(
+                        text = stringResource(R.string.customize_guide_skip),
+                        onClick = { onIntent(CustomizeIntent.Guide.DismissGuide) },
+                        contentColor = Grey9A,
+                    )
 
                     Spacer(modifier = Modifier.weight(1f))
 
@@ -221,14 +223,12 @@ private fun CustomizeGuideBubble(
 
                     Spacer(modifier = Modifier.weight(1f))
 
-                    Button(onClick = { onIntent(CustomizeIntent.Guide.ShowNextGuideStep) }) {
-                        Text(
-                            text = stringResource(
-                                if (step.next == null) R.string.customize_guide_done
-                                else R.string.customize_guide_next,
-                            ),
-                        )
-                    }
+                    AppPrimaryButton(
+                        text = stringResource(
+                            if (step.next == null) R.string.customize_guide_done else R.string.customize_guide_next,
+                        ),
+                        onClick = { onIntent(CustomizeIntent.Guide.ShowNextGuideStep) },
+                    )
                 }
             }
         }

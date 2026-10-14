@@ -70,6 +70,8 @@ sealed interface CustomizeIntent {
     sealed interface Permission : CustomizeIntent {
         data class OpenPermissionSettings(val permission: PermissionValue) : Permission
         data object DismissPermissionSheet : Permission
+        data object DismissApplyPermissionSheet : Permission
+        data class NotificationPermissionResult(val isGranted: Boolean) : Permission
         data class CalendarPermissionResult(val isGranted: Boolean) : Permission
         data class LocationPermissionResult(val isGranted: Boolean) : Permission
         data object RefreshPermissions : Permission
@@ -81,6 +83,7 @@ sealed interface CustomizeIntent {
         data object DismissGuide : Guide
     }
 
+    data object ToggleLandscapePreview : CustomizeIntent
     data object ConfirmCustomization : CustomizeIntent
     data object SkipCustomization : CustomizeIntent
     data object NavigateBack : CustomizeIntent

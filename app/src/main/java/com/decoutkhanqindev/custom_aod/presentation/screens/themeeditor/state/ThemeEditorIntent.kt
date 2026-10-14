@@ -1,6 +1,7 @@
 package com.decoutkhanqindev.custom_aod.presentation.screens.themeeditor.state
 
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeTab
+import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionValue
 
 sealed interface ThemeEditorIntent {
     sealed interface Edit : ThemeEditorIntent {
@@ -28,6 +29,14 @@ sealed interface ThemeEditorIntent {
         data object ResetTheme : History
     }
 
+    sealed interface Permission : ThemeEditorIntent {
+        data class OpenPermissionSettings(val permission: PermissionValue) : Permission
+        data object DismissPermissionSheet : Permission
+        data class NotificationPermissionResult(val isGranted: Boolean) : Permission
+        data object RefreshPermissions : Permission
+    }
+
+    data object ToggleLandscapePreview : ThemeEditorIntent
     data object SaveTheme : ThemeEditorIntent
     data object ApplyTheme : ThemeEditorIntent
     data object NavigateToCustomize : ThemeEditorIntent

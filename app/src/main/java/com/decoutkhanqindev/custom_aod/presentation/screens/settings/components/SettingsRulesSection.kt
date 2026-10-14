@@ -1,28 +1,33 @@
 package com.decoutkhanqindev.custom_aod.presentation.screens.settings.components
 
-import android.text.format.DateFormat
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TimePicker
-import androidx.compose.material3.rememberTimePickerState
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.custom_aod.R
+import com.decoutkhanqindev.custom_aod.presentation.components.AppOptionIcon
+import com.decoutkhanqindev.custom_aod.presentation.components.AppOptionRow
+import com.decoutkhanqindev.custom_aod.presentation.components.AppPrimaryButton
+import com.decoutkhanqindev.custom_aod.presentation.components.AppTextButton
+import com.decoutkhanqindev.custom_aod.presentation.components.AppTimeWheel
+import com.decoutkhanqindev.custom_aod.presentation.components.is24HourFormat
 import com.decoutkhanqindev.custom_aod.presentation.components.rememberTimeFormatter
-import com.decoutkhanqindev.custom_aod.presentation.components.settings.AppRadioRow
+import com.decoutkhanqindev.custom_aod.presentation.components.sheet.AppSheet
+import com.decoutkhanqindev.custom_aod.presentation.components.sheet.AppSheetToolHeader
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.rules.AodRulesUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.rules.AodScheduleUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.rules.ChargingRuleValue
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.rules.ScheduleTimeValue
 import com.decoutkhanqindev.custom_aod.presentation.screens.settings.state.SettingsIntent
 import com.decoutkhanqindev.custom_aod.presentation.screens.settings.state.SettingsRulesState
-import java.time.LocalTime
 
 @Composable
 fun SettingsRulesSection(
@@ -82,94 +87,67 @@ fun SettingsRulesSection(
         )
     }
 
-    if (rules.isChargingRulePickerVisible) {
-        ChargingRuleDialog(
-            selected = settings.chargingRule,
-            onSelect = { rule -> onIntent(SettingsIntent.Rules.ChangeChargingRule(rule)) },
-            onDismiss = { onIntent(SettingsIntent.Rules.DismissChargingRulePicker) },
+    AppSheet(
+        isVisible = rules.isChargingRulePickerVisible,
+        onDismissRequest = { onIntent(SettingsIntent.Rules.DismissChargingRulePicker) },
+    ) {
+        AppSheetToolHeader(
+            iconRes = R.drawable.ic_plugs_connected,
+            title = stringResource(R.string.opt_charging_rule),
+            onClose = { onIntent(SettingsIntent.Rules.DismissChargingRulePicker) },
+            description = stringResource(R.string.opt_charging_rule_desc),
         )
+
+        ChargingRuleValue.entries.forEach { rule ->
+            val isSelected = rule == settings.chargingRule
+            AppOptionRow(
+                label = stringResource(rule.labelRes),
+                isSelected = isSelected,
+                onClick = { onIntent(SettingsIntent.Rules.ChangeChargingRule(rule)) },
+                modifier = Modifier.padding(top = 6.dp),
+            ) {
+                AppOptionIcon(iconRes = rule.iconRes, isSelected = isSelected)
+            }
+        }
     }
 
-    rules.editingScheduleTime?.let { time ->
-        ScheduleTimeDialog(
-            time = time,
-            initialTime = AodScheduleUiModel.timeOf(settings.schedule.minuteOf(time)),
-            onConfirm = { picked ->
-                onIntent(
-                    SettingsIntent.Rules.ChangeScheduleTime(
-                        time,
-                        AodScheduleUiModel.minuteOfDay(picked)
-                    )
-                )
-            },
-            onDismiss = { onIntent(SettingsIntent.Rules.DismissScheduleTimePicker) },
+    // Bánh xe cuộn dọc nên sheet không kéo được (kéo bánh xe không kéo theo sheet).
+    AppSheet(
+        value = rules.editingScheduleTime,
+        onDismissRequest = { onIntent(SettingsIntent.Rules.DismissScheduleTimePicker) },
+        isDragEnabled = false,
+    ) { time ->
+        val initialTime = AodScheduleUiModel.timeOf(settings.schedule.minuteOf(time))
+        var picked by remember(time) { mutableStateOf(initialTime) }
+
+        AppSheetToolHeader(
+            iconRes = R.drawable.ic_clock,
+            title = stringResource(time.labelRes),
+            onClose = { onIntent(SettingsIntent.Rules.DismissScheduleTimePicker) },
+            description = stringResource(time.descriptionRes),
+        )
+
+        AppTimeWheel(
+            initialTime = initialTime,
+            is24Hour = is24HourFormat(),
+            onTimeChange = { newTime -> picked = newTime },
+        )
+
+        AppPrimaryButton(
+            text = stringResource(R.string.time_set, picked.format(rememberTimeFormatter())),
+            onClick = { onIntent(SettingsIntent.Rules.ChangeScheduleTime(time, AodScheduleUiModel.minuteOfDay(picked))) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp),
+            iconRes = R.drawable.ic_check,
+        )
+
+        AppTextButton(
+            text = stringResource(R.string.action_cancel),
+            onClick = { onIntent(SettingsIntent.Rules.DismissScheduleTimePicker) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 4.dp),
         )
     }
-}
-
-@Composable
-private fun ChargingRuleDialog(
-    selected: ChargingRuleValue,
-    onSelect: (ChargingRuleValue) -> Unit,
-    onDismiss: () -> Unit,
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        confirmButton = {
-            TextButton(onClick = onDismiss) {
-                Text(text = stringResource(R.string.action_cancel))
-            }
-        },
-        title = { Text(text = stringResource(R.string.opt_charging_rule)) },
-        text = {
-            Column {
-                ChargingRuleValue.entries.forEach { rule ->
-                    AppRadioRow(
-                        label = stringResource(rule.labelRes),
-                        isSelected = rule == selected,
-                        onClick = { onSelect(rule) },
-                    )
-                }
-            }
-        },
-    )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun ScheduleTimeDialog(
-    time: ScheduleTimeValue,
-    initialTime: LocalTime,
-    onConfirm: (LocalTime) -> Unit,
-    onDismiss: () -> Unit,
-) {
-    val context = LocalContext.current
-    val pickerState = rememberTimePickerState(
-        initialHour = initialTime.hour,
-        initialMinute = initialTime.minute,
-        is24Hour = DateFormat.is24HourFormat(context),
-    )
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        confirmButton = {
-            TextButton(onClick = {
-                onConfirm(
-                    LocalTime.of(
-                        pickerState.hour,
-                        pickerState.minute
-                    )
-                )
-            }) {
-                Text(text = stringResource(R.string.action_ok))
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(text = stringResource(R.string.action_cancel))
-            }
-        },
-        title = { Text(text = stringResource(time.labelRes)) },
-        text = { TimePicker(state = pickerState) },
-    )
 }

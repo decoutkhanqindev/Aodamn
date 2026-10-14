@@ -103,7 +103,7 @@ val viewModelModule = module {
         )
     }
     viewModel { PermissionViewModel(get(), get()) }
-    viewModel { (themeId: String) -> ThemeEditorViewModel(themeId, get()) }
+    viewModel { (themeId: String) -> ThemeEditorViewModel(themeId, get(), get()) }
     viewModel {
         AodViewModel(
             get(),

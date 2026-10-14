@@ -11,7 +11,6 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
@@ -38,8 +37,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.createBitmap
 import com.decoutkhanqindev.custom_aod.R
-import com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.AodClockFace
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.AodLandscape
+import com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.AodPortrait
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.AodAppearanceUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.WallpaperValue
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.info.AodNotificationsUiModel
@@ -156,15 +155,7 @@ fun AodContent(
                 if (isLandscape) {
                     AodLandscape(state = state, onIntent = currentOnIntent)
                 } else {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        AodClockFace(
-                            nowMillis = state.nowMillis,
-                            theme = state.appearance.theme,
-                            isDateEnabled = state.extras.isDateEnabled,
-                        )
-
-                        AodDetails(state = state, onIntent = currentOnIntent)
-                    }
+                    AodPortrait(state = state, onIntent = currentOnIntent)
                 }
 
                 AodExitHint(

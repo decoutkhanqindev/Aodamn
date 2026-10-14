@@ -15,7 +15,6 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -46,7 +45,6 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.decoutkhanqindev.custom_aod.R
-import com.decoutkhanqindev.custom_aod.presentation.components.aod.AodDetails
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.lerpRadii
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.radialShapePath
 import com.decoutkhanqindev.custom_aod.presentation.components.is24HourFormat
@@ -59,154 +57,71 @@ import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.pebble.AodSh
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.pebble.AodTileStyleValue
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.pebble.AodTransitionValue
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.pebble.PebbleThemeSpec
-import com.decoutkhanqindev.custom_aod.presentation.screens.aod.state.AodIntent
-import com.decoutkhanqindev.custom_aod.presentation.screens.aod.state.AodState
 
 // Chủ đề Sỏi: giờ và phút mỗi số một khối hình mềm, dòng ngày ngay dưới. Animation chỉ chạy lúc số đổi; giá trị animation đọc ở
-// pha vẽ (graphicsLayer, drawWithCache) nên không recompose từng khung hình.
+// pha vẽ (graphicsLayer, drawWithCache) nên không recompose từng khung hình. tileSize là cỡ khối lúc Cỡ 100% (màn ngang to hơn màn dọc),
+// xếp chồng chỉ dùng cho màn dọc.
 @Composable
 fun AodPebbleClock(
     nowMillis: Long,
     config: AodThemeConfig,
     isDateEnabled: Boolean,
+    tileSize: Dp = 112.dp,
+    isStackable: Boolean = true,
 ) {
-    val now = rememberZonedDateTime(nowMillis)
-    val hourFormatter = rememberFormatter(
-        if (is24HourFormat()) R.string.aod_hour_pattern_24h else R.string.aod_hour_pattern_12h,
-    )
-    val minuteFormatter = rememberFormatter(R.string.aod_minute_pattern)
-    val timeDescription = now.format(rememberTimeFormatter())
-    val scale = config[PebbleThemeSpec.Size] / 100f
-    val spacing = 14.dp * scale
-    val fontFamily = PebbleThemeSpec.Font
-    val transition = config[PebbleThemeSpec.Transition]
-
-    val hourTile = @Composable {
-        PebbleTile(
-            text = now.format(hourFormatter),
-            shape = config[PebbleThemeSpec.HourShape],
-            isFilled = config[PebbleThemeSpec.HourStyle] == AodTileStyleValue.FILLED,
-            tileColor = config[PebbleThemeSpec.HourTileColor],
-            digitColor = config[PebbleThemeSpec.HourDigitColor],
-            fontFamily = fontFamily,
-            size = 112.dp * scale,
-            fontSize = 50.sp * scale,
-            transition = transition,
-        )
-    }
-    val minuteTile = @Composable {
-        PebbleTile(
-            text = now.format(minuteFormatter),
-            shape = config[PebbleThemeSpec.MinuteShape],
-            isFilled = config[PebbleThemeSpec.MinuteStyle] == AodTileStyleValue.FILLED,
-            tileColor = config[PebbleThemeSpec.MinuteTileColor],
-            digitColor = config[PebbleThemeSpec.MinuteDigitColor],
-            fontFamily = fontFamily,
-            size = 112.dp * scale,
-            fontSize = 50.sp * scale,
-            transition = transition,
-        )
-    }
+    val timeDescription = rememberZonedDateTime(nowMillis).format(rememberTimeFormatter())
+    val size = tileSize * (config[PebbleThemeSpec.Size] / 100f)
+    val spacing = size / 8
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         val tilesModifier = Modifier.clearAndSetSemantics { contentDescription = timeDescription }
-        if (config[PebbleThemeSpec.Stacked]) {
+        if (isStackable && config[PebbleThemeSpec.Stacked]) {
             Column(modifier = tilesModifier, verticalArrangement = Arrangement.spacedBy(spacing)) {
-                hourTile()
-                minuteTile()
+                PebbleTimeTile(nowMillis = nowMillis, config = config, isHour = true, size = size)
+                PebbleTimeTile(nowMillis = nowMillis, config = config, isHour = false, size = size)
             }
         } else {
             Row(modifier = tilesModifier, horizontalArrangement = Arrangement.spacedBy(spacing)) {
-                hourTile()
-                minuteTile()
+                PebbleTimeTile(nowMillis = nowMillis, config = config, isHour = true, size = size)
+                PebbleTimeTile(nowMillis = nowMillis, config = config, isHour = false, size = size)
             }
         }
 
         AnimatedVisibility(visible = isDateEnabled) {
-            PebbleDate(
-                nowMillis = nowMillis,
-                style = config[PebbleThemeSpec.DateStyle],
-                color = config[PebbleThemeSpec.DateColor],
-                fontFamily = fontFamily,
-                scale = scale,
-                modifier = Modifier.padding(top = 16.dp * scale),
-            )
+            PebbleDate(nowMillis = nowMillis, config = config, modifier = Modifier.padding(top = size / 7))
         }
     }
 }
 
-// Màn ngang của Sỏi: khối giờ bên trái, khối phút bên phải, kẹp giữa là dòng ngày và các khối thông tin (gồm trình phát của Sỏi). Khối to
-// hơn bản dọc vì có cả bề ngang nhưng vẫn vừa chiều cao và chừa chỗ cho cột giữa; tuỳ chọn xếp chồng chỉ dùng cho màn dọc.
+// Khối giờ hoặc phút theo cấu hình chủ đề; chữ số theo tỉ lệ khối như bản dọc (50sp trong khối 112dp) nên khối to nhỏ thế nào cũng vừa.
 @Composable
-fun AodPebbleLandscape(
-    state: AodState,
-    onIntent: (AodIntent) -> Unit,
+fun PebbleTimeTile(
+    nowMillis: Long,
+    config: AodThemeConfig,
+    isHour: Boolean,
+    size: Dp,
+    modifier: Modifier = Modifier,
 ) {
-    val config = state.appearance.theme.config
-    val now = rememberZonedDateTime(state.nowMillis)
-    val hourFormatter = rememberFormatter(
-        if (is24HourFormat()) R.string.aod_hour_pattern_24h else R.string.aod_hour_pattern_12h,
+    val formatter = rememberFormatter(
+        when {
+            !isHour -> R.string.aod_minute_pattern
+            is24HourFormat() -> R.string.aod_hour_pattern_24h
+            else -> R.string.aod_hour_pattern_12h
+        },
     )
-    val minuteFormatter = rememberFormatter(R.string.aod_minute_pattern)
-    val timeDescription = now.format(rememberTimeFormatter())
-    val scale = config[PebbleThemeSpec.Size] / 100f
-    val fontFamily = PebbleThemeSpec.Font
-    val transition = config[PebbleThemeSpec.Transition]
-    val density = LocalDensity.current
 
-    BoxWithConstraints {
-        val tileSize = minOf(
-            maxHeight * LANDSCAPE_TILE_HEIGHT_RATIO * scale,
-            (maxWidth - LandscapeCenterWidth - LandscapeSpacing * 2) / 2,
-            maxHeight * LANDSCAPE_TILE_MAX_HEIGHT_RATIO,
-        )
-        val fontSize = with(density) { (tileSize * DIGIT_TILE_RATIO).toSp() }
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(LandscapeSpacing),
-        ) {
-            PebbleTile(
-                text = now.format(hourFormatter),
-                shape = config[PebbleThemeSpec.HourShape],
-                isFilled = config[PebbleThemeSpec.HourStyle] == AodTileStyleValue.FILLED,
-                tileColor = config[PebbleThemeSpec.HourTileColor],
-                digitColor = config[PebbleThemeSpec.HourDigitColor],
-                fontFamily = fontFamily,
-                size = tileSize,
-                fontSize = fontSize,
-                transition = transition,
-                modifier = Modifier.clearAndSetSemantics { contentDescription = timeDescription },
-            )
-
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                AnimatedVisibility(visible = state.extras.isDateEnabled) {
-                    PebbleDate(
-                        nowMillis = state.nowMillis,
-                        style = config[PebbleThemeSpec.DateStyle],
-                        color = config[PebbleThemeSpec.DateColor],
-                        fontFamily = fontFamily,
-                        scale = scale,
-                    )
-                }
-
-                AodDetails(state = state, onIntent = onIntent)
-            }
-
-            PebbleTile(
-                text = now.format(minuteFormatter),
-                shape = config[PebbleThemeSpec.MinuteShape],
-                isFilled = config[PebbleThemeSpec.MinuteStyle] == AodTileStyleValue.FILLED,
-                tileColor = config[PebbleThemeSpec.MinuteTileColor],
-                digitColor = config[PebbleThemeSpec.MinuteDigitColor],
-                fontFamily = fontFamily,
-                size = tileSize,
-                fontSize = fontSize,
-                transition = transition,
-                modifier = Modifier.clearAndSetSemantics { },
-            )
-        }
-    }
+    PebbleTile(
+        text = rememberZonedDateTime(nowMillis).format(formatter),
+        shape = config[if (isHour) PebbleThemeSpec.HourShape else PebbleThemeSpec.MinuteShape],
+        isFilled = config[if (isHour) PebbleThemeSpec.HourStyle else PebbleThemeSpec.MinuteStyle] == AodTileStyleValue.FILLED,
+        tileColor = config[if (isHour) PebbleThemeSpec.HourTileColor else PebbleThemeSpec.MinuteTileColor],
+        digitColor = config[if (isHour) PebbleThemeSpec.HourDigitColor else PebbleThemeSpec.MinuteDigitColor],
+        fontFamily = PebbleThemeSpec.Font,
+        size = size,
+        fontSize = with(LocalDensity.current) { (size * 50f / 112f).toSp() },
+        transition = config[PebbleThemeSpec.Transition],
+        modifier = modifier,
+    )
 }
 
 @Composable
@@ -326,38 +241,29 @@ private fun digitTransition(transition: AodTransitionValue): ContentTransform = 
                     fadeOut(animationSpec = tween(durationMillis = 300)))
 }
 
+// Dòng ngày của Sỏi: kiểu và màu theo chủ đề, cỡ theo tuỳ chọn Cỡ.
 @Composable
-private fun PebbleDate(
+fun PebbleDate(
     nowMillis: Long,
-    style: AodDateStyleValue,
-    color: Color,
-    fontFamily: FontFamily,
-    scale: Float,
+    config: AodThemeConfig,
     modifier: Modifier = Modifier,
 ) {
     val now = rememberZonedDateTime(nowMillis)
-    val isBold = style == AodDateStyleValue.BOLD
+    val isBold = config[PebbleThemeSpec.DateStyle] == AodDateStyleValue.BOLD
+    val scale = config[PebbleThemeSpec.Size] / 100f
     val formatter = rememberFormatter(if (isBold) R.string.aod_theme_date_pattern else R.string.aod_date_pattern)
     val text = now.format(formatter)
 
     Text(
         text = if (isBold) text.uppercase() else text,
         modifier = modifier,
-        color = color,
+        color = config[PebbleThemeSpec.DateColor],
         fontSize = (if (isBold) 15.sp else 16.sp) * scale,
         fontWeight = if (isBold) FontWeight.Bold else FontWeight.Normal,
-        fontFamily = fontFamily,
+        fontFamily = PebbleThemeSpec.Font,
         letterSpacing = if (isBold) 0.6.sp else 0.sp,
     )
 }
-
-// Chữ số trong khối như bản dọc (50sp trong khối 112dp); màn ngang khối chiếm 42% chiều cao (tối đa 80% khi kéo cỡ), cột giữa rộng như các
-// khối thông tin.
-private const val DIGIT_TILE_RATIO = 50f / 112f
-private const val LANDSCAPE_TILE_HEIGHT_RATIO = 0.42f
-private const val LANDSCAPE_TILE_MAX_HEIGHT_RATIO = 0.8f
-private val LandscapeCenterWidth = 296.dp
-private val LandscapeSpacing = 32.dp
 
 @Preview(widthDp = 360, heightDp = 360)
 @Composable

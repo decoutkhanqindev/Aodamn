@@ -2,11 +2,11 @@
 # Thêm icon mới: thêm tên vào đúng dòng độ đậm rồi chạy lại; tên file là ic_<tên>[_<độ đậm>].xml (gạch ngang thành gạch dưới).
 
 # Thanh trên, nút hành động, trạng thái, điều hướng (tab đang chưa chọn) và tab của màn Tùy chỉnh
-regular: arrow-left arrow-right arrow-u-up-left arrow-u-up-right arrow-counter-clockwise caret-right x check minus question info warning-circle wifi-slash
+regular: arrow-left arrow-u-up-left arrow-u-up-right arrow-counter-clockwise caret-right x check minus question info warning-circle wifi-slash
 regular: crown-simple share-network clock device-mobile gear-six calendar-blank battery-full image paint-brush note-pencil bell calendar-check cloud-sun music-notes sparkle
 
 # Tab và nút của màn sửa chủ đề
-regular: timer text-aa magic-wand pencil-simple
+regular: timer text-aa magic-wand pencil-simple device-rotate
 
 # Tab đang chọn và dấu hoàn thành
 fill: clock device-mobile gear-six check-circle
@@ -22,3 +22,7 @@ light: sun moon-stars cloud-sun cloud-moon cloud cloud-fog drop cloud-rain cloud
 
 # Trình phát nhạc của chủ đề Sỏi: nét đặc hợp chữ số đậm của khối
 fill: play pause skip-back skip-forward
+
+# Sheet, hộp thoại, toast: icon từng lựa chọn (thao tác, nguồn điện), công cụ bảng vẽ, huy hiệu của hình minh hoạ
+regular: prohibit lock-key moon flashlight play-pause skip-back skip-forward infinity plugs-connected battery-charging eraser
+fill: shield-check warning-circle

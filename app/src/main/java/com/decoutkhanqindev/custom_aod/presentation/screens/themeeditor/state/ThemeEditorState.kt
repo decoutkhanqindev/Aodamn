@@ -8,6 +8,9 @@ import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeValu
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.isSame
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeDraftUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.toThemePreviewDraft
+import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionUiModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 // Một màn cho mọi chủ đề: xem trước (Sửa / Áp dụng, đang dùng thì Tùy chỉnh) rồi sửa (tab theo AodThemeSpec.tabs, Lưu). Khung xem
 // trước chỉ riêng chủ đề (đồng hồ, ngày, khối chủ đề tự vẽ), không có nền, thông báo, pin... của user: AOD đầy đủ chỉ ở Tùy chỉnh.
@@ -22,6 +25,10 @@ data class ThemeEditorState(
     val selectedTab: AodThemeTab? = null,
     val history: ThemeEditorHistoryState = ThemeEditorHistoryState(),
     val isApplying: Boolean = false,
+    val isLandscapePreview: Boolean = false,
+    // Áp dụng khi còn thiếu quyền bắt buộc: sheet liệt kê các quyền đó, cấp đủ thì tự áp dụng, đóng sheet thì không áp dụng.
+    val requiredPermissions: ImmutableList<PermissionUiModel> = persistentListOf(),
+    val isPermissionSheetVisible: Boolean = false,
 ) {
     val preview: CustomizeDraftUiModel
         get() = AodThemeUiModel(value = theme, config = config).toThemePreviewDraft()

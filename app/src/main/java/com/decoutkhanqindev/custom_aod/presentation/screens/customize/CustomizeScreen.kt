@@ -1,22 +1,35 @@
 package com.decoutkhanqindev.custom_aod.presentation.screens.customize
 
 import android.Manifest
+import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import com.decoutkhanqindev.custom_aod.data.device.permission.PermissionManager
 import com.decoutkhanqindev.custom_aod.presentation.aod.AodNotificationListener
+import com.decoutkhanqindev.custom_aod.presentation.components.AppToastHost
 import com.decoutkhanqindev.custom_aod.presentation.components.LocalTag
 import com.decoutkhanqindev.custom_aod.presentation.effects.LaunchedWithLifecycleEffect
+import com.decoutkhanqindev.custom_aod.presentation.model.ToastUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionValue
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.isGranted
 import com.decoutkhanqindev.custom_aod.presentation.navigation.MainDestination
@@ -28,8 +41,11 @@ import com.decoutkhanqindev.custom_aod.utils.collectCatching
 import com.decoutkhanqindev.custom_aod.utils.navigateBack
 import com.decoutkhanqindev.custom_aod.utils.navigateTo
 import com.decoutkhanqindev.custom_aod.utils.openAppSettings
-import com.decoutkhanqindev.custom_aod.utils.showToast
+import com.decoutkhanqindev.custom_aod.utils.openMiuiPermissionSettings
+import com.decoutkhanqindev.custom_aod.utils.openNotificationSettings
+import com.decoutkhanqindev.custom_aod.utils.openOverlaySettings
 import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -46,6 +62,8 @@ fun CustomizeScreen(
     val viewModel: CustomizeViewModel = koinViewModel { parametersOf(isFirstOpen) }
     val permissionManager: PermissionManager = koinInject()
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val scope = rememberCoroutineScope()
+    val toastState = remember { SnackbarHostState() }
     val backgroundPicker = rememberLauncherForActivityResult(
         ActivityResultContracts.PickVisualMedia(),
     ) { uri ->
@@ -60,6 +78,11 @@ fun CustomizeScreen(
         ActivityResultContracts.RequestPermission(),
     ) { isGranted ->
         viewModel.onIntent(CustomizeIntent.Permission.LocationPermissionResult(isGranted))
+    }
+    val notificationPermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission(),
+    ) { isGranted ->
+        viewModel.onIntent(CustomizeIntent.Permission.NotificationPermissionResult(isGranted))
     }
 
     LaunchedWithLifecycleEffect {
@@ -89,6 +112,20 @@ fun CustomizeScreen(
 
                     is CustomizeEffect.Permission.OpenAppSettings ->
                         context.openAppSettings { permissionManager.isGranted(effect.permission) }
+
+                    is CustomizeEffect.Permission.OpenOverlaySettings ->
+                        context.openOverlaySettings { permissionManager.isGranted(PermissionValue.OVERLAY) }
+
+                    is CustomizeEffect.Permission.OpenMiuiPermissionSettings ->
+                        context.openMiuiPermissionSettings { permissionManager.isGranted(effect.permission) }
+
+                    is CustomizeEffect.Permission.OpenNotificationSettings ->
+                        context.openNotificationSettings { permissionManager.isGranted(PermissionValue.NOTIFICATIONS) }
+
+                    is CustomizeEffect.Permission.RequestNotificationPermission ->
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                        }
                 }
             },
             catch = { e -> Timber.tag(tag).e(e.stackTraceToString()) },
@@ -124,7 +161,10 @@ fun CustomizeScreen(
     LaunchedWithLifecycleEffect {
         viewModel.effect.filterIsInstance<CustomizeEffect.ShowMessage>().collectCatching(
             block = { effect ->
-                context.showToast(resources.getString(effect.messageRes))
+                scope.launch {
+                    toastState.currentSnackbarData?.dismiss()
+                    toastState.showSnackbar(ToastUiModel(resources.getString(effect.messageRes), effect.isError))
+                }
             },
             catch = { e -> Timber.tag(tag).e(e.stackTraceToString()) },
         )
@@ -144,5 +184,15 @@ fun CustomizeScreen(
         }
     }
 
-    CustomizeContent(state = state, onIntent = viewModel::onIntent)
+    Box(modifier = Modifier.fillMaxSize()) {
+        CustomizeContent(state = state, onIntent = viewModel::onIntent)
+
+        AppToastHost(
+            hostState = toastState,
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .statusBarsPadding()
+                .padding(top = 64.dp),
+        )
+    }
 }

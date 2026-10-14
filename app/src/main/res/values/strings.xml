@@ -4,7 +4,7 @@
     <string name="loading">Loading …</string>
     <string name="may_contain_ads">This action may contain ads</string>
     <string name="open_settings">Open Settings</string>
-    <string name="no_internet_connection">No internet connection. Please check your connection and try again.</string>
+    <string name="no_internet_connection">Check Wi‑Fi or mobile data. This closes by itself once you are back online.</string>
 
     <!-- Onboarding: Splash, Language, Permission -->
     <string name="splash_tagline">The clock stays on while the screen is off</string>
@@ -14,7 +14,6 @@
     <string name="action_continue">Continue</string>
     <string name="permission_title">Allow the clock to appear</string>
     <string name="permission_subtitle">Custom AOD needs these permissions to show the clock when the screen turns off.</string>
-    <string name="permission_missing_hint">Allow every permission above to continue.</string>
     <string name="permission_unknown_hint">Your phone does not let the app check this one. Open Settings to make sure it is on.</string>
     <string name="action_allow">Allow</string>
     <string name="action_get_started">Get started</string>
@@ -55,9 +54,9 @@
     <string name="theme_edit">Edit</string>
     <string name="theme_saved">Theme saved</string>
     <string name="theme_applied">Theme applied</string>
-    <string name="theme_discard_title">Discard changes?</string>
-    <string name="theme_discard_desc">Your unsaved changes to this theme will be lost.</string>
-    <string name="theme_discard_confirm">Discard</string>
+    <string name="theme_discard_title">Save before leaving?</string>
+    <string name="theme_discard_desc">This theme has changes that are not saved yet.</string>
+    <string name="theme_discard_confirm">Discard changes</string>
     <string name="theme_tab_clock">Clock</string>
     <string name="theme_tab_hour">Hour</string>
     <string name="theme_tab_minute">Minute</string>
@@ -145,6 +144,8 @@
 
     <string name="permission_sheet_title">The clock cannot appear yet</string>
     <string name="permission_sheet_desc">Allow these permissions so the clock shows when the screen turns off.</string>
+    <string name="permission_apply_title">Allow permissions to apply</string>
+    <string name="permission_apply_desc">The clock needs these to show when the screen turns off. Your changes are applied as soon as all of them are allowed.</string>
     <string name="action_later">Later</string>
 
     <string name="opt_custom_brightness">Use a custom brightness for the clock</string>
@@ -281,7 +282,6 @@
 
     <string name="action_preview">Preview</string>
     <string name="action_done">Done</string>
-    <string name="action_ok">OK</string>
     <string name="action_cancel">Cancel</string>
     <string name="action_back">Back</string>
     <string name="action_save">Save</string>
@@ -354,6 +354,10 @@
     <string name="customize_cluster_effect">Effects</string>
     <string name="customize_guide_preview_title">This is your clock</string>
     <string name="customize_guide_preview_desc">Everything you change shows up here right away, just like when the screen is off.</string>
+    <string name="customize_guide_peek_title">Hold to see it full screen</string>
+    <string name="customize_guide_peek_desc">Touch and hold the preview to hide the bars and see the clock on the whole screen. Let go to bring them back.</string>
+    <string name="customize_guide_rotate_title">Landscape preview</string>
+    <string name="customize_guide_rotate_desc">Tap this button to see the clock as it looks when your phone lies sideways, then turn your phone to view it. Tap again to go back.</string>
     <string name="customize_guide_appearance_title">Clock, date and battery</string>
     <string name="customize_guide_appearance_desc">Pick a clock face, font, color and size, and choose whether the date and battery level show. More themes are in AOD › Themes.</string>
     <string name="customize_guide_decor_title">Background, drawing and memo</string>
@@ -368,6 +372,8 @@
     <string name="customize_guide_next">Next</string>
     <string name="customize_guide_done">Got it</string>
     <string name="customize_show_guide">Show tips</string>
+    <string name="preview_show_landscape">Preview in landscape (turn your phone to view)</string>
+    <string name="preview_show_portrait">Preview in portrait</string>
     <string name="customize_title">Customize</string>
     <string name="customize_apply">Apply</string>
     <string name="customize_skip">Skip</string>
@@ -389,4 +395,28 @@
     <string name="customize_sample_media_artist">Lo-fi Radio</string>
     <string name="customize_sample_memo">Buy milk on the way home</string>
     <string name="customize_guide_progress" translatable="false">%1$d/%2$d</string>
+    <string name="action_close">Close</string>
+    <string name="time_am">AM</string>
+    <string name="time_pm">PM</string>
+    <string name="time_set">Set %1$s</string>
+    <string name="permission_progress">Allowed: %1$d/%2$d</string>
+    <string name="permission_allow_next">Allow next permission</string>
+    <string name="no_internet_title">No internet connection</string>
+    <string name="theme_save_and_exit">Save and exit</string>
+    <string name="theme_keep_editing">Keep editing</string>
+    <string name="option_tap_to_save">Tap an option to save it</string>
+    <string name="opt_schedule_start_desc">When the clock starts showing</string>
+    <string name="opt_schedule_end_desc">When the clock stops showing</string>
+    <string name="opt_charging_rule_desc">When the clock may show</string>
+    <string name="memo_desc">Shows under the clock</string>
+    <string name="memo_suggestion_water">Drink water</string>
+    <string name="memo_suggestion_call">Call mom</string>
+    <string name="memo_suggestion_meeting">Meeting at 9</string>
+    <string name="drawing_desc">Draw with your finger, shown in the clock color</string>
+    <string name="drawing_undo">Undo stroke</string>
+    <string name="drawing_save">Save drawing</string>
+    <plurals name="permission_remaining">
+        <item quantity="one">%d permission left, then you are in</item>
+        <item quantity="other">%d permissions left, then you are in</item>
+    </plurals>
 </resources>

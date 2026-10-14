@@ -1,5 +1,6 @@
 package com.decoutkhanqindev.custom_aod.presentation.components.onboarding
 
+import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -9,7 +10,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -22,6 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.custom_aod.R
+import com.decoutkhanqindev.custom_aod.presentation.components.AppPrimaryButton
 import com.decoutkhanqindev.custom_aod.presentation.components.AppTopBar
 import com.decoutkhanqindev.custom_aod.presentation.model.onboarding.OnboardingStepValue
 import com.decoutkhanqindev.custom_aod.presentation.theme.BodyLarge
@@ -97,13 +98,15 @@ fun AppOnboardingHeader(
     }
 }
 
+// Chân màn onboarding: một dòng gợi ý (nếu có) trên nút chính.
 @Composable
 fun AppOnboardingFooter(
     actionLabel: String,
-    isActionEnabled: Boolean,
     onAction: () -> Unit,
     modifier: Modifier = Modifier,
-    disabledHint: String? = null,
+    isActionEnabled: Boolean = true,
+    hint: String? = null,
+    @DrawableRes actionIconRes: Int? = null,
 ) {
     Column(
         modifier = modifier
@@ -112,9 +115,9 @@ fun AppOnboardingFooter(
             .padding(20.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        AnimatedVisibility(visible = disabledHint != null && !isActionEnabled) {
+        AnimatedVisibility(visible = hint != null) {
             Text(
-                text = disabledHint.orEmpty(),
+                text = hint.orEmpty(),
                 modifier = Modifier.padding(bottom = 8.dp),
                 color = Grey9A,
                 textAlign = TextAlign.Center,
@@ -122,15 +125,15 @@ fun AppOnboardingFooter(
             )
         }
 
-        Button(
+        AppPrimaryButton(
+            text = actionLabel,
             onClick = onAction,
             modifier = Modifier
                 .fillMaxWidth()
                 .heightIn(min = 56.dp),
-            enabled = isActionEnabled,
-        ) {
-            Text(text = actionLabel)
-        }
+            iconRes = actionIconRes,
+            isEnabled = isActionEnabled,
+        )
     }
 }
 
@@ -161,10 +164,9 @@ private fun AppOnboardingHeaderPreview() {
 private fun AppOnboardingFooterDisabledPreview() {
     Theme {
         AppOnboardingFooter(
-            actionLabel = "Get started",
-            isActionEnabled = false,
+            actionLabel = "Allow next permission",
             onAction = {},
-            disabledHint = "Allow every permission above to continue.",
+            hint = "2 permissions left, then you are in",
         )
     }
 }

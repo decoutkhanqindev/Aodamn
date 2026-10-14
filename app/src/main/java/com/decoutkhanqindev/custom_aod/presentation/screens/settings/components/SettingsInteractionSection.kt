@@ -1,14 +1,15 @@
 package com.decoutkhanqindev.custom_aod.presentation.screens.settings.components
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.custom_aod.R
-import com.decoutkhanqindev.custom_aod.presentation.components.settings.AppRadioRow
+import com.decoutkhanqindev.custom_aod.presentation.components.AppOptionIcon
+import com.decoutkhanqindev.custom_aod.presentation.components.AppOptionRow
+import com.decoutkhanqindev.custom_aod.presentation.components.sheet.AppSheet
+import com.decoutkhanqindev.custom_aod.presentation.components.sheet.AppSheetToolHeader
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.interaction.AodActionValue
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.interaction.AodGestureValue
 import com.decoutkhanqindev.custom_aod.presentation.screens.settings.state.SettingsIntent
@@ -60,52 +61,30 @@ fun SettingsInteractionSection(
         )
     }
 
-    interaction.editingGesture?.let { gesture ->
-        GestureActionDialog(
-            gesture = gesture,
-            selected = interaction.settings.actionOf(gesture),
-            isFlashlightAvailable = interaction.isFlashlightAvailable,
-            onSelect = { action ->
-                onIntent(
-                    SettingsIntent.Interaction.ChangeGestureAction(
-                        gesture,
-                        action
-                    )
-                )
-            },
-            onDismiss = { onIntent(SettingsIntent.Interaction.DismissGestureActionPicker) },
-        )
-    }
-}
+    AppSheet(
+        value = interaction.editingGesture,
+        onDismissRequest = { onIntent(SettingsIntent.Interaction.DismissGestureActionPicker) },
+    ) { gesture ->
+        val selected = interaction.settings.actionOf(gesture)
 
-@Composable
-private fun GestureActionDialog(
-    gesture: AodGestureValue,
-    selected: AodActionValue,
-    isFlashlightAvailable: Boolean,
-    onSelect: (AodActionValue) -> Unit,
-    onDismiss: () -> Unit,
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        confirmButton = {
-            TextButton(onClick = onDismiss) {
-                Text(text = stringResource(R.string.action_cancel))
+        AppSheetToolHeader(
+            iconRes = gesture.iconRes,
+            title = stringResource(gesture.labelRes),
+            onClose = { onIntent(SettingsIntent.Interaction.DismissGestureActionPicker) },
+            description = stringResource(R.string.option_tap_to_save),
+        )
+
+        AodActionValue.entries
+            .filter { action -> action != AodActionValue.FLASHLIGHT || interaction.isFlashlightAvailable }
+            .forEach { action ->
+                AppOptionRow(
+                    label = stringResource(action.labelRes),
+                    isSelected = action == selected,
+                    onClick = { onIntent(SettingsIntent.Interaction.ChangeGestureAction(gesture, action)) },
+                    modifier = Modifier.padding(top = 6.dp),
+                ) {
+                    AppOptionIcon(iconRes = action.iconRes, isSelected = action == selected)
+                }
             }
-        },
-        title = { Text(text = stringResource(gesture.labelRes)) },
-        text = {
-            Column {
-                AodActionValue.entries
-                    .filter { action -> action != AodActionValue.FLASHLIGHT || isFlashlightAvailable }
-                    .forEach { action ->
-                        AppRadioRow(
-                            label = stringResource(action.labelRes),
-                            isSelected = action == selected,
-                            onClick = { onSelect(action) },
-                        )
-                    }
-            }
-        },
-    )
+    }
 }

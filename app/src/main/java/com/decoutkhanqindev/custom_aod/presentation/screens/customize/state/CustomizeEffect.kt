@@ -13,6 +13,10 @@ sealed interface CustomizeEffect {
         data object RequestLocationPermission : Permission
         data object OpenNotificationAccessSettings : Permission
         data class OpenAppSettings(val permission: PermissionValue) : Permission
+        data object OpenOverlaySettings : Permission
+        data class OpenMiuiPermissionSettings(val permission: PermissionValue) : Permission
+        data object RequestNotificationPermission : Permission
+        data object OpenNotificationSettings : Permission
     }
 
     sealed interface Navigation : CustomizeEffect {
@@ -22,5 +26,8 @@ sealed interface CustomizeEffect {
         data object NavigateBack : Navigation
     }
 
-    data class ShowMessage(@param:StringRes val messageRes: Int) : CustomizeEffect
+    data class ShowMessage(
+        @param:StringRes val messageRes: Int,
+        val isError: Boolean = false,
+    ) : CustomizeEffect
 }

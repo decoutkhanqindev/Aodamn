@@ -95,8 +95,8 @@ class AodTabViewModel(
         updateState { copy(permission = permission.copy(isSheetDismissed = false)) }
     }
 
-    // Bật AOD là lúc cần quyền: còn thiếu quyền bắt buộc thì sheet nhắc quyền hiện lại dù trước đó đã bị đóng.
-    // Theme / style mới cho AOD thì lúc áp dụng cũng gọi showPermissionSheet().
+    // Bật AOD là lúc cần quyền: còn thiếu quyền bắt buộc thì sheet nhắc quyền hiện lại dù trước đó đã bị đóng. Áp dụng giao diện ở
+    // Tùy chỉnh / màn chủ đề thì chính màn đó đòi đủ quyền bắt buộc trước khi ghi.
     private fun toggleAod(isEnabled: Boolean) {
         if (isEnabled) showPermissionSheet()
         dataStoreManager.saveIsAodEnabled(isEnabled)

@@ -25,13 +25,22 @@ val Grey3A = Color(0xFF3A3A3A)
 val Neutral12 = Color(0xFF211F26)
 val NeutralVariant30 = Color(0xFF49454F)
 val NeutralVariant60 = Color(0xFF938F99)
+// Nền phụ trong sheet / hộp thoại (ô icon, nút đóng, nút công cụ, chip) nổi nhẹ trên Neutral12.
+val Neutral17 = Color(0xFF2B2930)
+// Chữ của nút nguy hiểm trên nền RedAlpha12: đỏ nhạt hơn Red cho đủ tương phản trên nền tối.
+val RedLight = Color(0xFFF2777B)
+// Viền sáng của sheet, hộp thoại, toast: cùng dải màu viền điện thoại của icon app (tools/brand/brand_geometry.py).
+val EdgeGlowGradient = Brush.horizontalGradient(listOf(Mint, Blue, Purple))
+val EdgeGlowOfflineGradient = Brush.horizontalGradient(listOf(Grey6E, Grey3A))
 
 // Alpha 12: nền phủ nhạt một màu (thẻ đang chọn, ô icon, dòng cảnh báo), chữ trên đó vẫn đủ tương phản.
 val MintAlpha12 = Mint.copy(alpha = 0.12f)
+val MintAlpha40 = Mint.copy(alpha = 0.4f)
 val RedAlpha12 = Red.copy(alpha = 0.12f)
 val WhiteAlpha30 = White.copy(alpha = 0.3f)
 val BlackAlpha50 = Black.copy(alpha = 0.5f)
 val BlackAlpha70 = Black.copy(alpha = 0.7f)
+val BlackAlpha80 = Black.copy(alpha = 0.8f)
 
 // Nền chéo của các màn app (AOD và khung xem trước AOD vẫn đen): mint → đen → tím như viền sáng của icon app. Hai màu đầu cuối là
 // mint / tím pha 20% trên nền đen để chữ và thẻ Neutral12 vẫn nổi.

@@ -63,6 +63,9 @@ check "Slider của Material gọi thẳng" \
 check "Icons.* / ImageVector của Material" \
   "drawable ic_*.xml trong res/drawable (tools/icons/icons.txt) + painterResource" \
   'grep -rnE "Icons\.|ImageVector|imageVector =|material\.icons" $SRC --include="*.kt"'
+check "Hộp thoại / sheet / nút / toast của Material gọi thẳng" \
+  "AppSheet / AppConfirmSheet (components/sheet), AppPrimaryButton / AppDangerButton / AppTextButton, AppToastHost" \
+  'grep -rnE "(^|[^A-Za-z.])(AlertDialog|BasicAlertDialog|ModalBottomSheet|Button|TextButton|OutlinedButton|FilledTonalButton|ElevatedButton|RadioButton|TimePicker)\(|showToast\(" $SRC --include="*.kt" | grep -v "/components/sheet/AppSheet.kt\|/ads/\|/utils/ContextExt.kt"'
 check "TopAppBar / CenterAlignedTopAppBar gọi thẳng" \
   "AppTopBar (màn); thanh trên của tab là MainTopBar trong MainNavDisplay" \
   'grep -rn "TopAppBar(" $SRC --include="*.kt" | grep -v "/components/AppTopBar.kt\|/navigation/MainNavDisplay.kt"'

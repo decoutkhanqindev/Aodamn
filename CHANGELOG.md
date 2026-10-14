@@ -7,17 +7,43 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
-## [Chưa phát hành] – 2026-10-13 – Chủ đề Số áo, Sỏi bỏ chọn font, nhấn giữ để xem toàn màn hình, chia thư mục, AOD đứng yên giữa màn hình
+## [Chưa phát hành] – 2026-10-14 – Overlay riêng của app thay cho Material, onboarding dẫn từng bước cấp quyền
+
+Build được (`assembleDebug`), lint không thêm cảnh báo, unit test pass, `tools/check-rules.sh` ra 0 vi phạm (38 rule). Chưa test trên máy.
+
+### Thêm
+
+- Bộ overlay riêng (`components/sheet/`, `components/`): `AppSheet` (bottom sheet nền Neutral12, mép trên và thanh kéo là viền sáng mint → xanh → tím như icon app, giữ nội dung trong lúc trượt xuống, tắt kéo cho sheet có thao tác kéo), `AppSheetHeroHeader` / `AppSheetToolHeader`, `AppConfirmSheet`, nút `AppPrimaryButton` / `AppDangerButton` / `AppTextButton` (việc chính mint trên cùng, mất dữ liệu đỏ nhạt, Hủy bằng chữ), `AppOptionRow` + `AppOptionIcon`, `AppTimeWheel` (bánh xe giờ : phút, SA / CH, cuộn vòng, tự dừng đúng số), `AppToastHost` + `ToastUiModel` (toast trong app, lỗi viền đỏ), `AppIllustration`.
+- Hình minh hoạ riêng của app: `tools/brand/generate_illustrations.py` sinh `img_spot_phone` / `img_spot_phone_offline` (điện thoại viền sáng của icon app, khung 120 x 96), huy hiệu theo ngữ cảnh vẽ chồng trong Compose.
+- Màn chủ đề, Back khi còn thay đổi: thêm "Lưu rồi thoát" (cùng Bỏ thay đổi, Tiếp tục sửa). Ghi nhớ có 3 gợi ý nhanh. Bảng vẽ có "Hoàn tác nét".
+- Icon Phosphor mới cho lựa chọn thao tác (`AodActionValue.iconRes`), nguồn điện (`ChargingRuleValue.iconRes`), bảng vẽ, huy hiệu; `ScheduleTimeValue.descriptionRes`.
+- Check mới trong `tools/check-rules.sh`: không gọi thẳng AlertDialog / ModalBottomSheet / Button / TextButton / RadioButton / TimePicker / showToast.
+
+### Thay đổi
+
+- Mọi hộp thoại / sheet đổi sang bộ mới: đặt lại chủ đề (tab AOD), đặt lại Tùy chỉnh, đặt lại / bỏ thay đổi ở màn chủ đề, chọn thao tác và nguồn điện, chọn giờ (bánh xe thay đồng hồ Material), ghi nhớ và hình vẽ (`AodExtrasSheets`), sheet quyền (`AppPermissionSheet` dùng `AppPermissionSteps`: tiến độ "đã cấp" xếp dọc trên thanh chia đoạn, hàng có số thứ tự, quyền kế tiếp viền mint, nút "Cấp quyền tiếp theo"), hộp mất mạng (hình điện thoại xám), lớp phủ đang áp dụng (animation viền sáng thay vòng xoay).
+- Toast hệ thống ở Tùy chỉnh và màn chủ đề thay bằng toast trong app (`ShowMessage(isError)`), nằm dưới thanh trên để không che panel.
+- Onboarding: màn quyền có hình minh hoạ và các bước như sheet quyền; nút dưới không còn mờ khi thiếu quyền mà thành "Cấp quyền tiếp theo" (mở đúng quyền còn thiếu, kèm "Còn N quyền…"), đủ thì "Bắt đầu". Màn ngôn ngữ dùng `AppOptionRow` thay RadioButton; `AppOnboardingFooter` dùng nút mới (`hint` thay `disabledHint`). Nút Áp dụng / Sửa / Bỏ qua / Mở / Cho phép ở các thanh đổi sang nút mới.
+- Bỏ `AppPermissionCard`, `AppRadioRow`, `AodExtrasDialogs`, `ic_arrow_right`, chuỗi `permission_missing_hint`, `action_ok` (không còn dùng).
+
+## [Chưa phát hành] – 2026-10-13 – Chủ đề Số áo, bố cục ngang theo khối đang hiện, Sỏi bỏ chọn font, nhấn giữ để xem toàn màn hình, chia thư mục, AOD đứng yên giữa màn hình
 
 Build được (`assembleDebug`), lint không thêm cảnh báo, `tools/check-rules.sh` ra 0 vi phạm (37 rule). Chưa test trên máy.
 
 ### Thêm
 
 - Chủ đề Số áo (Jersey, clone từ ảnh app mẫu): giờ và phút hai hàng chữ số rất cao chỉ có nét viền, ngày "tháng / ngày" xếp dọc sát mép phải với thứ in hoa xoay dọc trong viên thuốc viền, dòng "pin • icon thông báo" dưới đồng hồ. Tuỳ chọn: cỡ 50–100% (100% to như app mẫu), màu giờ, màu phút (cả dòng pin), màu ngày; chia tab Đồng hồ / Ngày. Chữ số là Big Shoulders Display Black (thêm file tĩnh `big_shoulders_display_black.ttf` sinh từ font variable có sẵn), lấy đường viền chữ bằng `Paint.getTextPath` rồi kéo cao path trước khi vẽ nét nên nét dày đều; kích thước theo chỗ trống, màn ngang ngày đứng cạnh số. Màu mới `Lavender`.
-- Chủ đề khai báo khối dùng chung nó có (`AodThemeSpec.components`, mặc định tất cả): Số áo chỉ có ngày, pin, thông báo, nên Tùy chỉnh ẩn tab Vẽ, Ghi chú, Sự kiện, Thời tiết, Nhạc, AOD không vẽ và AOD thật không đọc lịch, tải thời tiết, theo dõi nhạc (`shownIn`); cài đặt của các khối đó vẫn giữ cho chủ đề khác. Khối tự vẽ mới `AodBlockValue.STATUS` (dòng pin + icon thông báo, `AodThemeStatus`): tab Pin / Thông báo dẫn sang màn chủ đề, tab Thông báo ẩn công tắc nội dung.
+- Chủ đề khai báo khối dùng chung nó có (`AodThemeSpec.components`, mặc định tất cả): khối bố cục của chủ đề không có chỗ thì Tùy chỉnh ẩn tab, AOD không vẽ và AOD thật không đọc lịch, tải thời tiết, theo dõi nhạc (`shownIn`); cài đặt của các khối đó vẫn giữ cho chủ đề khác. Khối tự vẽ mới `AodBlockValue.STATUS` (dòng pin + icon thông báo trong bố cục của chủ đề): tab Pin / Thông báo dẫn sang màn chủ đề, tab Thông báo ẩn công tắc nội dung.
+- Hướng dẫn ở Tùy chỉnh thêm hai bước sau bước đầu: nhấn giữ khung xem trước để xem toàn màn hình, và nút xoay ngang (vòng sáng quanh nút).
+- Nút xoay ngang ở thanh trên Tùy chỉnh và màn chủ đề (`AppPreviewOrientationButton`, icon `device-rotate`; `isLandscapePreview` trong state hai màn): khung xem trước đổi AOD sang bố cục ngang ở cỡ đầy đủ (rộng = chiều cao màn hình) rồi xoay 90° cho vừa khít màn hình dọc, màn hình app và các thanh vẫn dọc; user tự xoay máy sang ngang để xem đúng chiều (`AodPreviewFrame`). Bản đầu thu nhỏ AOD vào một khung ngang giữa màn dọc nên chi tiết quá nhỏ và không giống lúc khóa máy.
 - Nhấn giữ khung xem trước ở Tùy chỉnh và màn chủ đề: rung nhẹ, ẩn thanh trên, thanh công cụ, panel và thanh tab để xem AOD toàn màn hình, thả tay thì hiện lại. Extension mới `Modifier.onLongClick` (nhấn giữ, thả tay, chạm nhanh) ở `AppModifiers`.
 - README › Thêm chủ đề mới: các bước clone chủ đề từ ảnh mẫu và những chỗ dễ vướng.
-- Màn ngang riêng cho từng chủ đề (`theme/AodLandscape.kt` chọn theo chủ đề, thay cho bố cục chung đồng hồ trái / khối phải): Cổ điển hai cột (đồng hồ + ngày, vạch mảnh, các khối còn lại; không có khối nào thì chỉ còn đồng hồ), Sỏi khối giờ và khối phút kẹp hai bên ngày + các khối + trình phát (khối to theo chiều cao màn hình), Số áo bốn chữ số một hàng, ngày nằm ngang ở giữa màn hình, giờ bám trái / phút bám phải ngày, pin + icon thông báo góc dưới trái. `AodDetails(isDateShown)` và `AodState.hasDetails()` cho bố cục ngang dùng lại.
+- Bố cục ngang theo các khối đang hiện, dùng chung cho mọi chủ đề: `AodLandscapePlan` (thuần Kotlin, chọn từ `AodState.shownPanelBlocks()`) + `AodLandscapeLayout` (`components/aod/AodLandscapeLayout.kt`). Không có khối nào: đồng hồ giữa màn hình (thời tiết riêng lẻ đứng cạnh ngày); chỉ có nhạc: đồng hồ | trình phát; thời tiết + sự kiện, ghi nhớ, thông báo mới nhất: đồng hồ | cột thông tin (thời tiết lên đầu cột); nét vẽ: đứng cạnh cột thông tin; nhạc cùng nhóm khác: ba cột (thông tin hoặc nét vẽ | đồng hồ đúng giữa màn hình | nét vẽ + nhạc, `AodThreeColumns`). Đồng hồ + ngày + icon thông báo và pin một dòng là `AodHeroDetails`. Bật / tắt khối hay nhạc phát / dừng thì đổi bố cục bằng mờ chéo (`Crossfade` theo plan). Mỗi khối vẽ qua `AodPanelBlock` (cũng dùng cho `AodDetails` màn dọc) nên giữ kiểu / font / cỡ / màu chọn ở Tùy chỉnh.
+- Cổ điển dùng nguyên bố cục chung; Sỏi giữ kiểu kẹp giữa khi chỉ có nhạc (khối giờ trái, khối phút phải, giữa là ngày, trình phát Sỏi, pin), không có khối nào thì hai khối to giữa màn hình, có khối khác thì hai cột với nhạc xếp dưới (không ba cột vì hai khối hình đã rộng). `AodPebbleClock` nhận cỡ khối (`tileSize`), `PebbleTimeTile` / `PebbleDate` tách ra dùng lại; chữ số trong khối theo tỉ lệ khối (dp) thay vì sp cố định nên cỡ chữ hệ thống lớn không làm tràn khối.
+- Số áo màn ngang viết lại: một cột giữa màn hình, ngày nằm ngang như màn dọc nhưng chữ đứng thẳng ("13 / 10" + viên thuốc thứ, cỡ như màn dọc) → bốn chữ số một hàng, giờ và phút cách 0,3 R → pin + icon thông báo → các khối thêm xếp cạnh nhau (`FlowRow`). Tắt ngày thì số to ra.
+- Số áo có đủ khối dùng chung (thời tiết, sự kiện, ghi nhớ, nét vẽ, nhạc), kiểu / font / cỡ / màu chỉnh ở Tùy chỉnh như Cổ điển: màn dọc xếp dưới dòng trạng thái, màn ngang xếp cạnh nhau dưới dòng trạng thái; hàng số nhỏ lại cho cả cột vừa màn hình (đo khối thêm trước bằng `SubcomposeLayout`), ngày và dòng pin giữ cỡ. Thông báo mới nhất vẫn không có (dòng trạng thái chỉ có icon).
+- `tools/mockups/aod_landscape_mockups.py`: mock bố cục ngang (khung 873 × 393 dp, font thật) để chốt với user trước khi code; README › Thêm chủ đề mới › Bố cục ngang ghi cách chọn bố cục và cách nối chủ đề mới.
+- Unit test đầu tiên của project: `AodLandscapePlanTest` (chọn bố cục ngang theo khối).
 
 ### Thay đổi
 
@@ -28,6 +54,14 @@ Build được (`assembleDebug`), lint không thêm cảnh báo, `tools/check-ru
 - AOD thật không còn dịch cả cụm sang vị trí ngẫu nhiên mỗi phút (bỏ `shiftXDp` / `shiftYDp`): cụm đứng yên giữa màn hình đúng như khung xem trước của chủ đề. Đổi lại đồng hồ đứng yên nên để lâu trên OLED dễ lưu ảnh hơn (README › Giới hạn đã biết).
 
 ### Sửa
+
+- Áp dụng ở Tùy chỉnh (mở từ tab AOD) và màn chủ đề khi còn thiếu quyền bắt buộc vẫn ghi luôn, AOD không hiện được mà không ai nhắc (sheet quyền ở tab AOD đã đóng một lần thì không tự hiện lại; comment "lúc áp dụng cũng gọi showPermissionSheet()" chưa từng được nối). Giờ Áp dụng kiểm `requiredAodPermissions()` trước: thiếu thì chưa ghi gì, hiện sheet "Cấp quyền để áp dụng" ngay tại màn (`AppPermissionSheet`, mở trang cấp từng quyền như tab AOD); quay lại màn mà đã đủ thì sheet đóng và tự áp dụng; Để sau thì không áp dụng. Onboarding giữ như cũ (thiếu quyền thì sang màn quyền).
+
+- Số áo: chữ phần trăm pin (và "+N") ở dòng trạng thái bị cắt đáy: hàng cao cố định bằng icon pin (0,046 R, khoảng 13dp) còn chữ có chiều cao dòng tự nhiên 1,26 lần cỡ chữ (khoảng 15dp), bị ép vào khung thấp hơn mình. Hàng giờ cao tối thiểu bằng icon pin (`heightIn`) và chữ chốt chiều cao dòng bằng cỡ chữ (`StatusText`). Chỉ ảnh hưởng Số áo, cả khung xem trước lẫn AOD thật vì dùng chung một composable; Cổ điển và Sỏi dùng `AodStatus` ở `block/` không có hàng cao cố định chứa chữ.
+
+- Số áo lệch tỉ lệ so với app mẫu (đo trên ảnh mẫu 858 × 1908 bằng PIL, so với ảnh chụp trên máy): chữ ngày lớn hơn mẫu 37%, viên thuốc thứ lớn hơn 18%, dòng pin + icon lớn hơn 15–40%, số 1 hẹp hơn 15% (font có cờ vát, mẫu cờ vuông), khoảng cách hai hàng rộng hơn 40%. Viết lại theo số đo của mẫu: mọi kích thước theo R (chiều cao hàng số) trong `JerseyMetrics`, số 1 tự vẽ cờ vuông (`JerseyGlyphs`), cỡ chữ ngày 4,81% R, dòng trạng thái theo R (`AodJerseyStatus(unit)`).
+- Số áo bị đẩy trái khi hiện ngày (bản căn giữa cả cụm "số + ngày") và hàng số co giãn theo nét chữ (bản ô theo nét): quay lại đúng bố cục ảnh mẫu, mỗi số một ô rộng cố định (0,4006 R) và hai hàng nằm giữa màn hình; ngày treo bên phải trong `Layout` nhưng không tính vào vị trí số, bật / tắt ngày số đứng yên.
+- Bố cục dọc theo chủ đề (`AodPortrait`) thay cho `AodClockFace`: Số áo tự vẽ cả cụm (số, ngày, dòng trạng thái) trong một `Layout` nên không còn phụ thuộc kích thước do `Column` chia lại; `AodThemeStatus` và `AodDetails` bỏ nhánh trạng thái của chủ đề.
 
 - Số áo: chữ số nằm giữa ô rộng cố định nên số 1 hẹp làm hàng "12" lệch phải, "21" lệch trái. Giờ mỗi số một ô rộng đúng nét (co giãn dần khi số đổi), khoảng cách giữa hai số cố định, hai hàng cùng nằm giữa một trục; trục đặt sao cho hàng giờ + ngày là một cụm nằm giữa màn hình (`Layout` riêng), nên phút đổi chỉ làm số phút trượt lại cho cân. Bỏ cách dịch cả cụm theo phần trống của số chục (`sideSpace`).
 - Số áo trên máy thật trông lệch phải (lề trái rộng hơn lề phải nhiều): ngày bị ghim sát mép phải còn số căn giữa riêng, và số 1 hẹp nằm giữa ô rộng cố định để trống bên trái. Giờ số và ngày là một cụm căn giữa (ngày ngay bên phải hàng giờ), cụm dịch sang trái nửa phần trống bên trái của số hàng chục (`JerseyGlyphs.sideSpace`) để phần nhìn thấy nằm giữa; chỉ đổi khi số hàng chục đổi, trượt 500 ms cùng lúc số mờ chéo.

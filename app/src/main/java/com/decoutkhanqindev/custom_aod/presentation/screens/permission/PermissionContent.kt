@@ -8,19 +8,23 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.custom_aod.R
+import com.decoutkhanqindev.custom_aod.presentation.components.AppIllustration
 import com.decoutkhanqindev.custom_aod.presentation.components.onboarding.AppOnboardingFooter
 import com.decoutkhanqindev.custom_aod.presentation.components.onboarding.AppOnboardingHeader
 import com.decoutkhanqindev.custom_aod.presentation.components.onboarding.AppOnboardingTopBar
-import com.decoutkhanqindev.custom_aod.presentation.components.permission.AppPermissionCard
+import com.decoutkhanqindev.custom_aod.presentation.components.permission.AppPermissionSteps
 import com.decoutkhanqindev.custom_aod.presentation.model.onboarding.OnboardingStepValue
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionValue
+import com.decoutkhanqindev.custom_aod.presentation.model.permission.nextPermission
 import com.decoutkhanqindev.custom_aod.presentation.screens.permission.state.PermissionIntent
 import com.decoutkhanqindev.custom_aod.presentation.screens.permission.state.PermissionState
 import com.decoutkhanqindev.custom_aod.presentation.theme.GreyED
@@ -43,11 +47,20 @@ fun PermissionContent(
         containerColor = Color.Transparent,
         contentColor = GreyED,
         bottomBar = {
+            // Thiếu quyền thì nút không mờ đi mà mở đúng quyền còn thiếu kế tiếp; đủ thì thành Bắt đầu.
+            val next = state.permissions.nextPermission()
+            val remaining = state.permissions.count { permission -> permission.isGranted == false }
             AppOnboardingFooter(
-                actionLabel = stringResource(R.string.action_get_started),
-                isActionEnabled = state.isConfirmEnabled,
-                onAction = { onIntent(PermissionIntent.ConfirmPermissions) },
-                disabledHint = stringResource(R.string.permission_missing_hint),
+                actionLabel = stringResource(if (state.isConfirmEnabled) R.string.action_get_started else R.string.permission_allow_next),
+                onAction = {
+                    if (state.isConfirmEnabled || next == null) {
+                        onIntent(PermissionIntent.ConfirmPermissions)
+                    } else {
+                        onIntent(PermissionIntent.OpenPermissionSettings(next))
+                    }
+                },
+                hint = if (state.isConfirmEnabled) null else pluralStringResource(R.plurals.permission_remaining, remaining, remaining),
+                actionIconRes = if (state.isConfirmEnabled) null else R.drawable.ic_caret_right,
             )
         },
     ) { innerPadding ->
@@ -59,21 +72,22 @@ fun PermissionContent(
                 .padding(horizontal = 20.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
+            AppIllustration(
+                badgeIconRes = R.drawable.ic_shield_check_fill,
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                width = 112.dp,
+            )
+
             AppOnboardingHeader(
                 title = stringResource(R.string.permission_title),
                 subtitle = stringResource(R.string.permission_subtitle),
-                modifier = Modifier.padding(
-                    top = 8.dp,
-                    bottom = 12.dp,
-                ),
+                modifier = Modifier.padding(bottom = 8.dp),
             )
 
-            state.permissions.forEach { permission ->
-                AppPermissionCard(
-                    permission = permission,
-                    onAllowClick = { onIntent(PermissionIntent.OpenPermissionSettings(permission.permission)) },
-                )
-            }
+            AppPermissionSteps(
+                permissions = state.permissions,
+                onAllowClick = { permission -> onIntent(PermissionIntent.OpenPermissionSettings(permission)) },
+            )
         }
     }
 }

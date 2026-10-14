@@ -1,17 +1,12 @@
 package com.decoutkhanqindev.custom_aod.presentation.screens.customize.components
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,11 +15,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.custom_aod.R
+import com.decoutkhanqindev.custom_aod.presentation.components.AppPrimaryButton
 import com.decoutkhanqindev.custom_aod.presentation.screens.customize.state.CustomizeHistoryState
 import com.decoutkhanqindev.custom_aod.presentation.screens.customize.state.CustomizeIntent
-import com.decoutkhanqindev.custom_aod.presentation.theme.Black
 import com.decoutkhanqindev.custom_aod.presentation.theme.GreyED
-import com.decoutkhanqindev.custom_aod.presentation.theme.Mint
 import com.decoutkhanqindev.custom_aod.presentation.theme.Neutral12
 import com.decoutkhanqindev.custom_aod.presentation.theme.NeutralVariant30
 
@@ -82,20 +76,12 @@ fun CustomizeToolbar(
                 color = NeutralVariant30,
             )
 
-            Button(
+            AppPrimaryButton(
+                text = stringResource(R.string.customize_apply),
                 onClick = { onIntent(CustomizeIntent.ConfirmCustomization) },
-                modifier = Modifier
-                    .padding(start = 4.dp)
-                    .heightIn(min = 40.dp),
-                enabled = history.hasChanges && !isApplying,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Mint,
-                    contentColor = Black,
-                ),
-                contentPadding = PaddingValues(horizontal = 16.dp),
-            ) {
-                Text(text = stringResource(R.string.customize_apply))
-            }
+                modifier = Modifier.padding(start = 4.dp),
+                isEnabled = history.hasChanges && !isApplying,
+            )
         }
     }
 }

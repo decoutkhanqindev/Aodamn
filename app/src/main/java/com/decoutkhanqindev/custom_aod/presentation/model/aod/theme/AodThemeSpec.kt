@@ -29,7 +29,7 @@ private val AllComponents = AodComponentValue.entries.toImmutableSet()
 @Immutable
 interface AodThemeSpec : AodOptionSpec {
     // Khối chủ đề tự vẽ thay bản mặc định: ngày thì khối chung không vẽ lại, nhạc thì chủ đề có trình phát riêng (AodMediaControls), dòng
-    // trạng thái thì pin và icon thông báo chung một dòng (AodThemeStatus).
+    // trạng thái thì pin và icon thông báo chung một dòng trong bố cục của chủ đề.
     val ownBlocks: ImmutableSet<AodBlockValue>
 
     // Khối dùng chung chủ đề có (mặc định tất cả). Khối không có ở đây thì tab của nó ẩn ở Tùy chỉnh và AOD không vẽ dù đang bật; cài

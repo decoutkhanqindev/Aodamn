@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -17,6 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.custom_aod.R
 import com.decoutkhanqindev.custom_aod.presentation.components.AppIconTile
+import com.decoutkhanqindev.custom_aod.presentation.components.AppTextButton
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.info.WakeResultValue
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionStatusValue
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionUiModel
@@ -86,9 +86,11 @@ private fun PermissionItem(
                     tint = Mint,
                 )
             } else {
-                OutlinedButton(onClick = onOpen) {
-                    Text(text = stringResource(R.string.action_open))
-                }
+                AppTextButton(
+                    text = stringResource(R.string.action_open),
+                    onClick = onOpen,
+                    contentColor = Mint,
+                )
             }
         },
         colors = ListItemDefaults.colors(containerColor = Color.Transparent),

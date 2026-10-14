@@ -19,10 +19,8 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -34,6 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.custom_aod.R
+import com.decoutkhanqindev.custom_aod.presentation.components.sheet.AppConfirmSheet
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeValue
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionValue
@@ -111,30 +110,15 @@ fun AodTabContent(
         onIntent = onIntent,
     )
 
-    if (state.isThemeResetConfirmVisible) {
-        AlertDialog(
-            onDismissRequest = { onIntent(AodTabIntent.DismissThemeResetConfirm) },
-            confirmButton = {
-                TextButton(onClick = { onIntent(AodTabIntent.ResetTheme) }) {
-                    Text(text = stringResource(R.string.customize_reset))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { onIntent(AodTabIntent.DismissThemeResetConfirm) }) {
-                    Text(text = stringResource(R.string.action_cancel))
-                }
-            },
-            title = { Text(text = stringResource(R.string.aod_tab_theme_reset_title)) },
-            text = {
-                Text(
-                    text = stringResource(
-                        R.string.aod_tab_theme_reset_desc,
-                        stringResource(AodThemeValue.DEFAULT.nameRes),
-                    ),
-                )
-            },
-        )
-    }
+    AppConfirmSheet(
+        isVisible = state.isThemeResetConfirmVisible,
+        iconRes = R.drawable.ic_arrow_counter_clockwise,
+        title = stringResource(R.string.aod_tab_theme_reset_title),
+        description = stringResource(R.string.aod_tab_theme_reset_desc, stringResource(AodThemeValue.DEFAULT.nameRes)),
+        confirmLabel = stringResource(R.string.customize_reset),
+        onConfirm = { onIntent(AodTabIntent.ResetTheme) },
+        onDismiss = { onIntent(AodTabIntent.DismissThemeResetConfirm) },
+    )
 }
 
 @Composable

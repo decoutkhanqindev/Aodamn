@@ -7,13 +7,18 @@ tĩnh và splash không nhảy khi chuyển từ splash hệ thống (Android 12
 |---------------------------------|---------------------------------------------------------------------------------------|
 | `generate_launcher_icon.py`     | `app/src/main/res/drawable/ic_launcher_foreground.xml` · `ic_launcher_monochrome.xml` |
 | `generate_edge_light_lottie.py` | `app/src/main/res/raw/lottie_device_edge_light.json`                                  |
+| `generate_illustrations.py`     | `app/src/main/res/drawable/img_spot_phone.xml` · `img_spot_phone_offline.xml` (hình minh hoạ của sheet / hộp thoại) |
 
 Chạy từ gốc repo (Python 3, chỉ thư viện chuẩn):
 
 ```bash
 python tools/brand/generate_launcher_icon.py
 python tools/brand/generate_edge_light_lottie.py
+python tools/brand/generate_illustrations.py
 ```
+
+Hình minh hoạ là điện thoại của icon dời vào khung 120 x 96 kèm quầng sáng; huy hiệu theo ngữ cảnh (đặt lại, quyền, mất mạng...)
+vẽ chồng trong Compose (`AppIllustration`), nên đổi hình học ở `brand_geometry.py` thì chạy lại cả script này.
 
 ## Sửa gì ở đâu
 

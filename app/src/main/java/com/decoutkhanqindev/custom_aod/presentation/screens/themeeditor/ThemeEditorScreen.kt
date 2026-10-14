@@ -1,21 +1,45 @@
 package com.decoutkhanqindev.custom_aod.presentation.screens.themeeditor
 
+import android.Manifest
+import android.os.Build
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
+import com.decoutkhanqindev.custom_aod.data.device.permission.PermissionManager
+import com.decoutkhanqindev.custom_aod.presentation.components.AppToastHost
 import com.decoutkhanqindev.custom_aod.presentation.components.LocalTag
 import com.decoutkhanqindev.custom_aod.presentation.effects.LaunchedWithLifecycleEffect
+import com.decoutkhanqindev.custom_aod.presentation.model.ToastUiModel
+import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionValue
+import com.decoutkhanqindev.custom_aod.presentation.model.permission.isGranted
 import com.decoutkhanqindev.custom_aod.presentation.navigation.CustomizeDestination
 import com.decoutkhanqindev.custom_aod.presentation.screens.themeeditor.state.ThemeEditorEffect
 import com.decoutkhanqindev.custom_aod.presentation.screens.themeeditor.state.ThemeEditorIntent
 import com.decoutkhanqindev.custom_aod.utils.collectCatching
 import com.decoutkhanqindev.custom_aod.utils.navigateBack
-import com.decoutkhanqindev.custom_aod.utils.showToast
+import com.decoutkhanqindev.custom_aod.utils.openMiuiPermissionSettings
+import com.decoutkhanqindev.custom_aod.utils.openNotificationSettings
+import com.decoutkhanqindev.custom_aod.utils.openOverlaySettings
+import kotlinx.coroutines.launch
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import timber.log.Timber
@@ -29,13 +53,24 @@ fun ThemeEditorScreen(
     val resources = LocalResources.current
     val tag = LocalTag.current
     val viewModel: ThemeEditorViewModel = koinViewModel { parametersOf(themeId) }
+    val permissionManager: PermissionManager = koinInject()
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val scope = rememberCoroutineScope()
+    val toastState = remember { SnackbarHostState() }
+    val notificationPermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission(),
+    ) { isGranted ->
+        viewModel.onIntent(ThemeEditorIntent.Permission.NotificationPermissionResult(isGranted))
+    }
 
     LaunchedWithLifecycleEffect {
         viewModel.effect.collectCatching(
             block = { effect ->
                 when (effect) {
-                    is ThemeEditorEffect.ShowMessage -> context.showToast(resources.getString(effect.messageRes))
+                    is ThemeEditorEffect.ShowMessage -> scope.launch {
+                        toastState.currentSnackbarData?.dismiss()
+                        toastState.showSnackbar(ToastUiModel(resources.getString(effect.messageRes), effect.isError))
+                    }
                     // Tùy chỉnh đã nằm ngay dưới thì quay lại nó thay vì mở chồng thêm một màn.
                     is ThemeEditorEffect.NavigateToCustomize ->
                         if (backStack.any { key -> key is CustomizeDestination }) {
@@ -44,10 +79,28 @@ fun ThemeEditorScreen(
                             backStack.add(CustomizeDestination(isFirstOpen = false))
                         }
                     is ThemeEditorEffect.NavigateBack -> backStack.navigateBack()
+                    is ThemeEditorEffect.OpenOverlaySettings ->
+                        context.openOverlaySettings { permissionManager.isGranted(PermissionValue.OVERLAY) }
+
+                    is ThemeEditorEffect.OpenMiuiPermissionSettings ->
+                        context.openMiuiPermissionSettings { permissionManager.isGranted(effect.permission) }
+
+                    is ThemeEditorEffect.OpenNotificationSettings ->
+                        context.openNotificationSettings { permissionManager.isGranted(PermissionValue.NOTIFICATIONS) }
+
+                    is ThemeEditorEffect.RequestNotificationPermission ->
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                        }
                 }
             },
             catch = { e -> Timber.tag(tag).e(e.stackTraceToString()) },
         )
+    }
+
+    LifecycleResumeEffect(Unit) {
+        viewModel.onIntent(ThemeEditorIntent.Permission.RefreshPermissions)
+        onPauseOrDispose { }
     }
 
     // Đang sửa thì Back thoát chế độ sửa (hỏi trước nếu còn thay đổi chưa lưu), không rời màn.
@@ -55,5 +108,15 @@ fun ThemeEditorScreen(
         viewModel.onIntent(ThemeEditorIntent.NavigateBack)
     }
 
-    ThemeEditorContent(state = state, onIntent = viewModel::onIntent)
+    Box(modifier = Modifier.fillMaxSize()) {
+        ThemeEditorContent(state = state, onIntent = viewModel::onIntent)
+
+        AppToastHost(
+            hostState = toastState,
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .statusBarsPadding()
+                .padding(top = 64.dp),
+        )
+    }
 }

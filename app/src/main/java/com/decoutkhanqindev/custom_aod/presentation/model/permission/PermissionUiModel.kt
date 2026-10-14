@@ -55,3 +55,7 @@ fun PermissionManager.requiredAodPermissions(): ImmutableList<PermissionUiModel>
 // Quyền không đọc được trạng thái (op của Xiaomi bị đánh số lại theo bản HyperOS) thì không chặn, để user không kẹt mãi ở màn quyền.
 val List<PermissionUiModel>.hasRequiredPermissions: Boolean
     get() = none { it.permission.isRequired && it.isGranted == false }
+
+// Quyền đầu tiên chắc chắn còn thiếu, để nút "Cấp quyền tiếp theo" mở đúng nó (quyền không đọc được trạng thái không chặn, như trên).
+fun List<PermissionUiModel>.nextPermission(): PermissionValue? =
+    firstOrNull { permission -> permission.isGranted == false }?.permission

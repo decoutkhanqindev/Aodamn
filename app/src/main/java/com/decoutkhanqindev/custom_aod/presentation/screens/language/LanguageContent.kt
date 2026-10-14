@@ -1,33 +1,25 @@
 package com.decoutkhanqindev.custom_aod.presentation.screens.language
 
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.custom_aod.R
+import com.decoutkhanqindev.custom_aod.presentation.components.AppOptionRow
 import com.decoutkhanqindev.custom_aod.presentation.components.AppTopBar
 import com.decoutkhanqindev.custom_aod.presentation.components.onboarding.AppOnboardingFooter
 import com.decoutkhanqindev.custom_aod.presentation.components.onboarding.AppOnboardingHeader
@@ -39,13 +31,8 @@ import com.decoutkhanqindev.custom_aod.presentation.screens.language.state.Langu
 import com.decoutkhanqindev.custom_aod.presentation.screens.language.state.LanguageState
 import com.decoutkhanqindev.custom_aod.presentation.theme.GreyED
 import com.decoutkhanqindev.custom_aod.presentation.theme.HeadlineSmall
-import com.decoutkhanqindev.custom_aod.presentation.theme.Mint
-import com.decoutkhanqindev.custom_aod.presentation.theme.MintAlpha12
 import com.decoutkhanqindev.custom_aod.presentation.theme.Neutral12
-import com.decoutkhanqindev.custom_aod.presentation.theme.NeutralVariant30
-import com.decoutkhanqindev.custom_aod.presentation.theme.RoundedCornerShape16dp
 import com.decoutkhanqindev.custom_aod.presentation.theme.Theme
-import com.decoutkhanqindev.custom_aod.presentation.theme.TitleMedium
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
@@ -116,49 +103,22 @@ private fun LanguageOption(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val containerColor by animateColorAsState(
-        targetValue = if (isSelected) {
-            MintAlpha12
-        } else {
-            Neutral12
-        },
-        label = "LanguageOptionContainer",
-    )
-    val borderColor by animateColorAsState(
-        targetValue = if (isSelected) Mint else NeutralVariant30,
-        label = "LanguageOptionBorder",
-    )
-    val borderWidth by animateDpAsState(
-        targetValue = if (isSelected) 2.dp else 1.dp,
-        label = "LanguageOptionBorderWidth",
-    )
-
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .heightIn(min = 64.dp)
-            .clip(RoundedCornerShape16dp)
-            .background(containerColor)
-            .border(width = borderWidth, color = borderColor, shape = RoundedCornerShape16dp)
-            .selectable(selected = isSelected, role = Role.RadioButton, onClick = onClick)
-            .padding(horizontal = 16.dp),
-        verticalAlignment = Alignment.CenterVertically,
+    AppOptionRow(
+        label = language.displayName,
+        isSelected = isSelected,
+        onClick = onClick,
+        modifier = modifier,
+        unselectedColor = Neutral12,
     ) {
-        Text(
-            text = language.language.flag,
-            style = HeadlineSmall,
-        )
-
-        Text(
-            text = language.displayName,
-            modifier = Modifier
-                .weight(1f)
-                .padding(horizontal = 16.dp),
-            color = GreyED,
-            style = TitleMedium,
-        )
-
-        RadioButton(selected = isSelected, onClick = null)
+        Box(
+            modifier = Modifier.size(40.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                text = language.language.flag,
+                style = HeadlineSmall,
+            )
+        }
     }
 }
 

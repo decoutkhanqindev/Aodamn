@@ -54,7 +54,7 @@ import com.decoutkhanqindev.custom_aod.presentation.theme.Grey5A
 import com.decoutkhanqindev.custom_aod.presentation.theme.GreyB4
 import kotlinx.coroutines.delay
 
-// Chủ đề có trình phát riêng thì rẽ nhánh ở đây (như AodClockFace), còn lại dùng trình phát chung.
+// Chủ đề có trình phát riêng thì rẽ nhánh ở đây (như AodPortrait / AodLandscape), còn lại dùng trình phát chung.
 @Composable
 fun AodMediaControls(
     media: MediaUiModel?,
@@ -70,7 +70,6 @@ fun AodMediaControls(
     ) { target ->
         if (target != null) {
             when (theme.value) {
-                // Số áo không có nhạc (AodDetails không vẽ khối này), nhánh chỉ để đủ chủ đề.
                 AodThemeValue.CLASSIC, AodThemeValue.JERSEY ->
                     AodClassicMedia(media = target, style = style, layout = layout, onIntent = onIntent)
 

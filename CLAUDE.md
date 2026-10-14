@@ -59,8 +59,9 @@ bắt buộc (compiler không chặn hộ):
 - Chủ đề AOD (`model/aod/theme/`): một chủ đề = mục `AodThemeValue` (id lưu, không đổi) + `AodThemeSpec`
   (tab và thuộc tính `AodThemeOption`: lựa chọn / màu / khoảng số / bật tắt, giá trị Int trong
   `AodThemeConfig`; khối tự vẽ `ownBlocks`; khối dùng chung có hiện `components`) ở `model/aod/theme/<chủ đề>/` +
-  phần vẽ ở `components/aod/theme/<chủ đề>/` nối vào `AodClockFace`, `AodLandscape` (bố cục ngang riêng),
-  `AodMediaControls`, `AodThemeStatus`. Các bước
+  phần vẽ ở `components/aod/theme/<chủ đề>/` nối vào `AodPortrait` / `AodLandscape` (bố cục dọc, ngang
+  riêng từng chủ đề, `theme/AodThemeLayout.kt`; ngang dựng trên bố cục chung theo khối đang hiện `AodLandscapePlan` +
+  `AodLandscapeLayout`, mock bằng `tools/mockups/` và chốt với user trước khi code) và `AodMediaControls`. Các bước
   thêm chủ đề và những chỗ dễ vướng: README › Thêm chủ đề mới. Control dựng theo loại thuộc tính (`AodThemeOptionList`), không viết màn
   riêng cho chủ đề; thêm thuộc tính không đổi cách lưu. Khối dùng chung (ngày, pin, thời tiết, sự
   kiện, ghi nhớ, thông báo, nhạc, nét vẽ) có kiểu hiển thị (`Aod*LayoutValue`), font / cỡ / màu riêng
@@ -154,6 +155,11 @@ bắt buộc (compiler không chặn hộ):
   pha layout / vẽ), không đọc state trong composition; `onProgressChange = null` là chỉ hiển thị (không
   qua Slider của Material, `progress` gọi ở pha vẽ); thanh vẽ riêng (thanh nhạc gợn sóng) truyền qua
   `track`.
+- Overlay không dùng bản Material: sheet / hộp xác nhận là `AppSheet` / `AppConfirmSheet` (`components/sheet/`, đầu sheet
+  `AppSheetHeroHeader` có hình minh hoạ hoặc `AppSheetToolHeader`), nút là `AppPrimaryButton` (việc app muốn user làm, trên
+  cùng) / `AppDangerButton` (mất dữ liệu) / `AppTextButton` (Hủy, Để sau), chọn một là `AppOptionRow`, giờ là `AppTimeWheel`,
+  thông báo ngắn là `AppToastHost` (Screen giữ `SnackbarHostState`, effect `ShowMessage(isError)`); hình minh hoạ sinh bằng
+  `tools/brand/generate_illustrations.py`. `tools/check-rules.sh` chặn AlertDialog / ModalBottomSheet / Button… gọi thẳng.
 - Màn AOD (`screens/aod/`) **không bọc `Theme`**, cả `@Preview`: bọc thì `Text` nhận
   `LocalTextStyle` làm đồng hồ đè lên dòng ngày. Cỡ chữ ở đó là `TextUnit` (`14.sp * scale`), chữ
   xám (`Grey8A` / `Grey6E` / `Grey5A`) để ít sáng, ít burn-in.
@@ -233,7 +239,8 @@ bắt buộc (compiler không chặn hộ):
   vào thẳng Main (thiếu quyền thì tab AOD hiện `AodTabPermissionSheet`). **Bỏ qua ở Customize vào
   thẳng Main**, không qua Permission (ép cấp quyền sau khi user đã bỏ qua thì dễ bỏ app); Áp dụng thì
   đủ quyền bắt buộc vào Main, thiếu thì sang Permission. Customize mở từ tab AOD
-  (`CustomizeDestination(isFirstOpen = false)`): không bước / Bỏ qua, Áp dụng xong quay về Main.
+  (`CustomizeDestination(isFirstOpen = false)`): không bước / Bỏ qua, Áp dụng xong quay về Main. Áp dụng ở đây và ở
+  màn chủ đề mà còn thiếu quyền bắt buộc thì chưa ghi gì, hiện sheet quyền ngay tại màn; cấp đủ (quay lại màn) thì tự áp dụng.
 - Trang cấp quyền ở app Cài đặt mở bằng `context.openXxxSettings(isGranted)`
   (`utils/ContextExt.kt`): `returnAppWhen` kéo app về khi quyền được cấp (poll 200 ms, tối đa 60
   giây; quyền đã có lúc mở hoặc user tự quay lại thì không kéo). Trang mở bằng `startActivityForResult`

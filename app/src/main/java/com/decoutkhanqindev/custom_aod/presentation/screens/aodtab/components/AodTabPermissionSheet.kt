@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,11 +17,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.custom_aod.R
+import com.decoutkhanqindev.custom_aod.presentation.components.AppTextButton
 import com.decoutkhanqindev.custom_aod.presentation.components.permission.AppPermissionSheet
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionUiModel
 import com.decoutkhanqindev.custom_aod.presentation.screens.aodtab.state.AodTabIntent
 import com.decoutkhanqindev.custom_aod.presentation.theme.BodyLarge
 import com.decoutkhanqindev.custom_aod.presentation.theme.GreyED
+import com.decoutkhanqindev.custom_aod.presentation.theme.Mint
 import com.decoutkhanqindev.custom_aod.presentation.theme.Red
 import com.decoutkhanqindev.custom_aod.presentation.theme.RedAlpha12
 import com.decoutkhanqindev.custom_aod.presentation.theme.RoundedCornerShape16dp
@@ -77,9 +78,11 @@ fun AodTabPermissionWarning(
                 style = BodyLarge,
             )
 
-            TextButton(onClick = { onIntent(AodTabIntent.ShowPermissionSheet) }) {
-                Text(text = stringResource(R.string.action_allow))
-            }
+            AppTextButton(
+                text = stringResource(R.string.action_allow),
+                onClick = { onIntent(AodTabIntent.ShowPermissionSheet) },
+                contentColor = Mint,
+            )
         }
     }
 }

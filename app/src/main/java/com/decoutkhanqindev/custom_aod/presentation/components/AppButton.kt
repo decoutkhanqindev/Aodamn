@@ -1,0 +1,162 @@
+package com.decoutkhanqindev.custom_aod.presentation.components
+
+import androidx.annotation.DrawableRes
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.disabled
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.decoutkhanqindev.custom_aod.R
+import com.decoutkhanqindev.custom_aod.presentation.theme.Black
+import com.decoutkhanqindev.custom_aod.presentation.theme.Grey3A
+import com.decoutkhanqindev.custom_aod.presentation.theme.Grey6E
+import com.decoutkhanqindev.custom_aod.presentation.theme.GreyED
+import com.decoutkhanqindev.custom_aod.presentation.theme.Mint
+import com.decoutkhanqindev.custom_aod.presentation.theme.Neutral12
+import com.decoutkhanqindev.custom_aod.presentation.theme.Red
+import com.decoutkhanqindev.custom_aod.presentation.theme.RedAlpha12
+import com.decoutkhanqindev.custom_aod.presentation.theme.RedLight
+import com.decoutkhanqindev.custom_aod.presentation.theme.RoundedCornerShape24dp
+import com.decoutkhanqindev.custom_aod.presentation.theme.TitleMedium
+
+// Việc chính của màn / sheet (việc app muốn user làm): nền mint đặc, chữ đen, to, nằm trên cùng. Tắt thì xám.
+@Composable
+fun AppPrimaryButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    @DrawableRes iconRes: Int? = null,
+    isEnabled: Boolean = true,
+) {
+    val container by animateColorAsState(if (isEnabled) Mint else Grey3A, label = "AppPrimaryButtonContainer")
+    val content by animateColorAsState(if (isEnabled) Black else Grey6E, label = "AppPrimaryButtonContent")
+
+    AppButtonBox(
+        text = text,
+        onClick = onClick,
+        containerColor = container,
+        contentColor = content,
+        modifier = modifier,
+        iconRes = iconRes,
+        isEnabled = isEnabled,
+    )
+}
+
+// Việc làm mất dữ liệu (bỏ thay đổi...): nền đỏ nhạt, không nổi bằng nút chính để user không bấm nhầm.
+@Composable
+fun AppDangerButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    @DrawableRes iconRes: Int? = null,
+) {
+    AppButtonBox(
+        text = text,
+        onClick = onClick,
+        containerColor = RedAlpha12,
+        contentColor = RedLight,
+        modifier = modifier,
+        iconRes = iconRes,
+    )
+}
+
+// Lựa chọn phụ (Hủy, Để sau, Tiếp tục sửa): chỉ có chữ.
+@Composable
+fun AppTextButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    @DrawableRes iconRes: Int? = null,
+    contentColor: Color = GreyED,
+    isEnabled: Boolean = true,
+) {
+    AppButtonBox(
+        text = text,
+        onClick = onClick,
+        containerColor = Color.Transparent,
+        contentColor = if (isEnabled) contentColor else Grey6E,
+        modifier = modifier,
+        iconRes = iconRes,
+        isEnabled = isEnabled,
+    )
+}
+
+@Composable
+private fun AppButtonBox(
+    text: String,
+    onClick: () -> Unit,
+    containerColor: Color,
+    contentColor: Color,
+    modifier: Modifier = Modifier,
+    @DrawableRes iconRes: Int? = null,
+    isEnabled: Boolean = true,
+) {
+    Row(
+        modifier = modifier
+            .heightIn(min = 48.dp)
+            .clip(RoundedCornerShape24dp)
+            .background(containerColor)
+            .then(if (isEnabled) Modifier.onClick(shape = RoundedCornerShape24dp, action = onClick) else Modifier)
+            .semantics {
+                role = Role.Button
+                if (!isEnabled) disabled()
+            }
+            .padding(horizontal = 20.dp, vertical = 12.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        if (iconRes != null) {
+            Icon(
+                painter = painterResource(iconRes),
+                contentDescription = null,
+                modifier = Modifier.size(18.dp),
+                tint = contentColor,
+            )
+        }
+
+        Text(
+            text = text,
+            color = contentColor,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+            style = TitleMedium,
+        )
+    }
+}
+
+@Preview(widthDp = 360)
+@Composable
+private fun AppButtonPreview() {
+    Column(
+        modifier = Modifier
+            .background(Neutral12)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        AppPrimaryButton(text = "Áp dụng", onClick = {}, modifier = Modifier.fillMaxWidth(), iconRes = R.drawable.ic_check)
+        AppPrimaryButton(text = "Tiếp tục", onClick = {}, modifier = Modifier.fillMaxWidth(), isEnabled = false)
+        AppDangerButton(text = "Bỏ thay đổi", onClick = {}, modifier = Modifier.fillMaxWidth())
+        AppTextButton(text = "Hủy", onClick = {}, modifier = Modifier.fillMaxWidth(), contentColor = Red)
+    }
+}

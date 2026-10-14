@@ -2,6 +2,7 @@ package com.decoutkhanqindev.custom_aod.presentation.screens.themeeditor
 
 import androidx.lifecycle.viewModelScope
 import com.decoutkhanqindev.custom_aod.R
+import com.decoutkhanqindev.custom_aod.data.device.permission.PermissionManager
 import com.decoutkhanqindev.custom_aod.data.local.datastore.DataStoreManager
 import com.decoutkhanqindev.custom_aod.presentation.base.BaseViewModel
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeConfig
@@ -9,19 +10,23 @@ import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeValu
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.isDefault
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.observeAodThemeConfigs
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.saveAodThemeConfig
+import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionValue
+import com.decoutkhanqindev.custom_aod.presentation.model.permission.hasRequiredPermissions
+import com.decoutkhanqindev.custom_aod.presentation.model.permission.requiredAodPermissions
 import com.decoutkhanqindev.custom_aod.presentation.screens.themeeditor.state.ThemeEditorEffect
 import com.decoutkhanqindev.custom_aod.presentation.screens.themeeditor.state.ThemeEditorHistoryState
 import com.decoutkhanqindev.custom_aod.presentation.screens.themeeditor.state.ThemeEditorIntent
 import com.decoutkhanqindev.custom_aod.presentation.screens.themeeditor.state.ThemeEditorState
-import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class ThemeEditorViewModel(
     themeId: String,
     private val dataStoreManager: DataStoreManager,
+    private val permissionManager: PermissionManager,
 ) : BaseViewModel<ThemeEditorState, ThemeEditorIntent, ThemeEditorEffect>(
     initialState = ThemeEditorState(theme = AodThemeValue.fromId(themeId)),
 ) {
@@ -42,6 +47,10 @@ class ThemeEditorViewModel(
             is ThemeEditorIntent.Edit -> onEditIntent(intent)
             is ThemeEditorIntent.Option -> onOptionIntent(intent)
             is ThemeEditorIntent.History -> onHistoryIntent(intent)
+            is ThemeEditorIntent.Permission -> onPermissionIntent(intent)
+            is ThemeEditorIntent.ToggleLandscapePreview ->
+                updateState { copy(isLandscapePreview = !isLandscapePreview) }
+
             is ThemeEditorIntent.SaveTheme -> saveTheme()
             is ThemeEditorIntent.ApplyTheme -> applyTheme()
             is ThemeEditorIntent.NavigateToCustomize ->
@@ -121,6 +130,15 @@ class ThemeEditorViewModel(
         }
     }
 
+    private fun onPermissionIntent(intent: ThemeEditorIntent.Permission) {
+        when (intent) {
+            is ThemeEditorIntent.Permission.OpenPermissionSettings -> openPermissionSettings(intent.permission)
+            is ThemeEditorIntent.Permission.DismissPermissionSheet -> updateState { copy(isPermissionSheetVisible = false) }
+            is ThemeEditorIntent.Permission.NotificationPermissionResult -> onNotificationPermissionResult(intent.isGranted)
+            is ThemeEditorIntent.Permission.RefreshPermissions -> refreshPermissions()
+        }
+    }
+
     private fun load() {
         viewModelScope.launch {
             val config = dataStoreManager.observeAodThemeConfigs().first().getValue(state.value.theme)
@@ -155,7 +173,7 @@ class ThemeEditorViewModel(
         if (state.value.isApplying) return
         val config = state.value.config
         viewModelScope.launch {
-            updateState { copy(isApplying = true, selectedTab = null) }
+            updateState { copy(isApplying = true, selectedTab = null, history = history.copy(isDiscardConfirmVisible = false)) }
             dataStoreManager.saveAodThemeConfig(state.value.theme, config).join()
             clearHistory()
             updateState { copy(isApplying = false, savedConfig = config, isEditing = false) }
@@ -164,9 +182,15 @@ class ThemeEditorViewModel(
         }
     }
 
+    // Còn thiếu quyền bắt buộc thì chưa ghi gì, hiện sheet quyền; cấp đủ thì tự áp dụng (refreshPermissions).
     private fun applyTheme() {
         val current = state.value
         if (current.isApplying) return
+        val required = permissionManager.requiredAodPermissions()
+        if (!required.hasRequiredPermissions) {
+            updateState { copy(requiredPermissions = required, isPermissionSheetVisible = true) }
+            return
+        }
         viewModelScope.launch {
             updateState { copy(isApplying = true) }
             listOfNotNull(
@@ -175,6 +199,48 @@ class ThemeEditorViewModel(
             ).joinAll()
             updateState { copy(isApplying = false, isActive = true, savedConfig = current.config) }
             sendEffect(ThemeEditorEffect.ShowMessage(R.string.theme_applied))
+        }
+    }
+
+    private fun openPermissionSettings(permission: PermissionValue) {
+        val effect = when (permission) {
+            PermissionValue.OVERLAY -> ThemeEditorEffect.OpenOverlaySettings
+            PermissionValue.MIUI_LOCK_SCREEN,
+            PermissionValue.MIUI_BACKGROUND_POPUP -> ThemeEditorEffect.OpenMiuiPermissionSettings(permission)
+
+            PermissionValue.NOTIFICATIONS ->
+                if (permissionManager.needsNotificationPermission()) {
+                    ThemeEditorEffect.RequestNotificationPermission
+                } else {
+                    ThemeEditorEffect.OpenNotificationSettings
+                }
+
+            // Không phải quyền bắt buộc, sheet của màn này không có.
+            PermissionValue.NOTIFICATION_ACCESS,
+            PermissionValue.CALENDAR,
+            PermissionValue.LOCATION -> return
+        }
+        viewModelScope.launch { sendEffect(effect) }
+    }
+
+    // Quyền cấp ở app Cài đặt hay hộp thoại hệ thống: quay lại màn này thì kiểm lại, đủ thì đóng sheet và áp dụng luôn.
+    private fun refreshPermissions() {
+        if (!state.value.isPermissionSheetVisible) return
+        val required = permissionManager.requiredAodPermissions()
+        if (required.hasRequiredPermissions) {
+            updateState { copy(requiredPermissions = required, isPermissionSheetVisible = false) }
+            applyTheme()
+        } else {
+            updateState { copy(requiredPermissions = required) }
+        }
+    }
+
+    // Bị từ chối thì mở trang cài đặt thông báo (sau 2 lần từ chối hệ thống không hiện hộp thoại nữa).
+    private fun onNotificationPermissionResult(isGranted: Boolean) {
+        if (isGranted) {
+            refreshPermissions()
+        } else {
+            viewModelScope.launch { sendEffect(ThemeEditorEffect.OpenNotificationSettings) }
         }
     }
 

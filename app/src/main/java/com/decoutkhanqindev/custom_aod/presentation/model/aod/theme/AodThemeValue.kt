@@ -9,7 +9,7 @@ import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.jersey.Jerse
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.pebble.PebbleThemeSpec
 
 // Các chủ đề AOD. id lưu trong DataStore nên không đổi; thêm chủ đề = một mục ở đây + đặc tả AodThemeSpec + phần vẽ ở
-// components/aod/theme/ (AodClockFace chọn theo mục này).
+// components/aod/theme/ (AodPortrait / AodLandscape chọn theo mục này).
 @Immutable
 enum class AodThemeValue(
     val id: String,

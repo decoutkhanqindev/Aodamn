@@ -2,7 +2,7 @@
     <string name="loading">Đang tải …</string>
     <string name="may_contain_ads">Thao tác này có thể có quảng cáo</string>
     <string name="open_settings">Mở Cài đặt</string>
-    <string name="no_internet_connection">Không có kết nối Internet. Vui lòng kiểm tra kết nối rồi thử lại.</string>
+    <string name="no_internet_connection">Kiểm tra Wi‑Fi hoặc dữ liệu di động. Hộp này tự đóng khi có mạng lại.</string>
 
     <!-- Onboarding: Splash, Language, Permission -->
     <string name="splash_tagline">Màn hình tắt, đồng hồ vẫn sáng</string>
@@ -12,7 +12,6 @@
     <string name="action_continue">Tiếp tục</string>
     <string name="permission_title">Cho phép hiện đồng hồ</string>
     <string name="permission_subtitle">Custom AOD cần các quyền dưới đây để hiện đồng hồ khi màn hình tắt.</string>
-    <string name="permission_missing_hint">Cho phép đủ các quyền trên để tiếp tục.</string>
     <string name="permission_unknown_hint">Máy không cho app kiểm tra quyền này. Hãy mở Cài đặt để chắc chắn quyền đã bật.</string>
     <string name="action_allow">Cho phép</string>
     <string name="action_get_started">Bắt đầu</string>
@@ -52,9 +51,9 @@
     <string name="theme_edit">Sửa</string>
     <string name="theme_saved">Đã lưu chủ đề</string>
     <string name="theme_applied">Đã áp dụng chủ đề</string>
-    <string name="theme_discard_title">Bỏ thay đổi?</string>
-    <string name="theme_discard_desc">Các thay đổi chưa lưu của chủ đề này sẽ mất.</string>
-    <string name="theme_discard_confirm">Bỏ</string>
+    <string name="theme_discard_title">Lưu trước khi thoát?</string>
+    <string name="theme_discard_desc">Chủ đề này còn thay đổi chưa lưu.</string>
+    <string name="theme_discard_confirm">Bỏ thay đổi</string>
     <string name="theme_tab_clock">Đồng hồ</string>
     <string name="theme_tab_hour">Giờ</string>
     <string name="theme_tab_minute">Phút</string>
@@ -141,6 +140,8 @@
 
     <string name="permission_sheet_title">Đồng hồ chưa thể hiện</string>
     <string name="permission_sheet_desc">Hãy cho phép các quyền sau để đồng hồ hiện khi màn hình tắt.</string>
+    <string name="permission_apply_title">Cấp quyền để áp dụng</string>
+    <string name="permission_apply_desc">Đồng hồ cần các quyền này để hiện khi màn hình tắt. Cấp đủ thì thay đổi của bạn được áp dụng ngay.</string>
     <string name="action_later">Để sau</string>
 
     <string name="opt_custom_brightness">Dùng độ sáng riêng cho đồng hồ</string>
@@ -274,7 +275,6 @@
 
     <string name="action_preview">Xem thử</string>
     <string name="action_done">Xong</string>
-    <string name="action_ok">OK</string>
     <string name="action_cancel">Hủy</string>
     <string name="action_back">Quay lại</string>
     <string name="action_save">Lưu</string>
@@ -326,6 +326,10 @@
     <string name="customize_cluster_effect">Hiệu ứng</string>
     <string name="customize_guide_preview_title">Đây là AOD của bạn</string>
     <string name="customize_guide_preview_desc">Mọi thay đổi hiện ngay tại đây, đúng như khi màn hình tắt.</string>
+    <string name="customize_guide_peek_title">Nhấn giữ để xem toàn màn hình</string>
+    <string name="customize_guide_peek_desc">Nhấn giữ khung xem trước để ẩn các thanh và xem đồng hồ trên cả màn hình. Thả tay thì các thanh hiện lại.</string>
+    <string name="customize_guide_rotate_title">Xem màn ngang</string>
+    <string name="customize_guide_rotate_desc">Bấm nút này để xem đồng hồ khi đặt máy nằm ngang, rồi xoay máy sang ngang để xem đúng chiều. Bấm lần nữa để về màn dọc.</string>
     <string name="customize_guide_appearance_title">Đồng hồ, ngày và pin</string>
     <string name="customize_guide_appearance_desc">Chọn mặt đồng hồ, font, màu, cỡ và bật hay tắt ngày, phần trăm pin. Các chủ đề khác ở tab AOD › Chủ đề.</string>
     <string name="customize_guide_decor_title">Nền, hình vẽ và ghi chú</string>
@@ -340,6 +344,8 @@
     <string name="customize_guide_next">Tiếp</string>
     <string name="customize_guide_done">Đã hiểu</string>
     <string name="customize_show_guide">Xem hướng dẫn</string>
+    <string name="preview_show_landscape">Xem trước ngang (xoay máy để xem)</string>
+    <string name="preview_show_portrait">Xem trước dọc</string>
     <string name="customize_title">Tùy chỉnh</string>
     <string name="customize_apply">Áp dụng</string>
     <string name="customize_skip">Bỏ qua</string>
@@ -360,4 +366,27 @@
     <string name="customize_sample_media_title">Chuyến xe đêm</string>
     <string name="customize_sample_media_artist">Lo-fi Radio</string>
     <string name="customize_sample_memo">Mua sữa trên đường về</string>
+    <string name="action_close">Đóng</string>
+    <string name="time_am">SA</string>
+    <string name="time_pm">CH</string>
+    <string name="time_set">Đặt %1$s</string>
+    <string name="permission_progress">%1$d/%2$d đã cấp</string>
+    <string name="permission_allow_next">Cấp quyền tiếp theo</string>
+    <string name="no_internet_title">Mất kết nối Internet</string>
+    <string name="theme_save_and_exit">Lưu rồi thoát</string>
+    <string name="theme_keep_editing">Tiếp tục sửa</string>
+    <string name="option_tap_to_save">Chạm chọn là lưu luôn</string>
+    <string name="opt_schedule_start_desc">Giờ AOD bắt đầu hiện</string>
+    <string name="opt_schedule_end_desc">Giờ AOD thôi hiện</string>
+    <string name="opt_charging_rule_desc">Khi nào đồng hồ được hiện</string>
+    <string name="memo_desc">Hiện dưới đồng hồ trên AOD</string>
+    <string name="memo_suggestion_water">Uống nước</string>
+    <string name="memo_suggestion_call">Gọi mẹ</string>
+    <string name="memo_suggestion_meeting">Mai họp 9h</string>
+    <string name="drawing_desc">Vẽ bằng ngón tay, hiện theo màu đồng hồ</string>
+    <string name="drawing_undo">Hoàn tác nét</string>
+    <string name="drawing_save">Lưu hình</string>
+    <plurals name="permission_remaining">
+        <item quantity="other">Còn %d quyền, cấp xong là vào được app</item>
+    </plurals>
 </resources>

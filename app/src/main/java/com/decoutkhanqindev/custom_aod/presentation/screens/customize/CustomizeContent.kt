@@ -10,9 +10,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
@@ -28,13 +25,14 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.decoutkhanqindev.custom_aod.R
-import com.decoutkhanqindev.custom_aod.presentation.components.aod.AodContent
-import com.decoutkhanqindev.custom_aod.presentation.components.aod.editor.DrawingPadDialog
-import com.decoutkhanqindev.custom_aod.presentation.components.aod.editor.MemoEditorDialog
+import com.decoutkhanqindev.custom_aod.presentation.components.aod.AodPreviewFrame
+import com.decoutkhanqindev.custom_aod.presentation.components.aod.editor.DrawingPadSheet
+import com.decoutkhanqindev.custom_aod.presentation.components.aod.editor.MemoEditorSheet
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.rememberAodPreview
 import com.decoutkhanqindev.custom_aod.presentation.components.editor.AppApplyingOverlay
 import com.decoutkhanqindev.custom_aod.presentation.components.onLongClick
 import com.decoutkhanqindev.custom_aod.presentation.components.permission.AppPermissionSheet
+import com.decoutkhanqindev.custom_aod.presentation.components.sheet.AppConfirmSheet
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeGuideStepValue
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeTabValue
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionUiModel
@@ -80,7 +78,7 @@ fun CustomizeContent(
             .fillMaxSize()
             .background(Black),
     ) {
-        AodContent(state = preview, onIntent = {}, isInteractive = false)
+        AodPreviewFrame(state = preview, isLandscape = state.isLandscapePreview)
 
         // Chạm vào khung xem trước (ngoài panel, thanh tab, thanh trên) khi panel đang mở thì đóng panel; nhấn giữ thì xem toàn màn hình.
         Box(
@@ -107,7 +105,9 @@ fun CustomizeContent(
                 CustomizeTopBar(
                     isFirstOpen = state.isFirstOpen,
                     isApplying = state.isApplying,
+                    isLandscapePreview = state.isLandscapePreview,
                     onIntent = onIntent,
+                    onGuideTargetPositioned = onTargetPositioned,
                 )
 
                 CustomizeToolbar(
@@ -172,38 +172,37 @@ fun CustomizeContent(
 
     CustomizePermissionSheet(permission = state.permissionRequest, onIntent = onIntent)
 
-    if (state.history.isResetConfirmVisible) {
-        AlertDialog(
-            onDismissRequest = { onIntent(CustomizeIntent.History.DismissResetConfirm) },
-            confirmButton = {
-                TextButton(onClick = { onIntent(CustomizeIntent.History.ResetCustomization) }) {
-                    Text(text = stringResource(R.string.customize_reset))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { onIntent(CustomizeIntent.History.DismissResetConfirm) }) {
-                    Text(text = stringResource(R.string.action_cancel))
-                }
-            },
-            title = { Text(text = stringResource(R.string.customize_reset_title)) },
-            text = { Text(text = stringResource(R.string.customize_reset_desc)) },
-        )
-    }
+    AppPermissionSheet(
+        isVisible = state.isApplyPermissionSheetVisible,
+        permissions = state.requiredPermissions,
+        title = stringResource(R.string.permission_apply_title),
+        subtitle = stringResource(R.string.permission_apply_desc),
+        onAllowClick = { permission -> onIntent(CustomizeIntent.Permission.OpenPermissionSettings(permission)) },
+        onDismiss = { onIntent(CustomizeIntent.Permission.DismissApplyPermissionSheet) },
+    )
 
-    if (state.decor.isDrawingPadVisible) {
-        DrawingPadDialog(
-            onConfirm = { drawing -> onIntent(CustomizeIntent.Decor.ChangeDrawing(drawing)) },
-            onDismiss = { onIntent(CustomizeIntent.Decor.DismissDrawingPad) },
-        )
-    }
+    AppConfirmSheet(
+        isVisible = state.history.isResetConfirmVisible,
+        iconRes = R.drawable.ic_arrow_counter_clockwise,
+        title = stringResource(R.string.customize_reset_title),
+        description = stringResource(R.string.customize_reset_desc),
+        confirmLabel = stringResource(R.string.customize_reset),
+        onConfirm = { onIntent(CustomizeIntent.History.ResetCustomization) },
+        onDismiss = { onIntent(CustomizeIntent.History.DismissResetConfirm) },
+    )
 
-    if (state.decor.isMemoEditorVisible) {
-        MemoEditorDialog(
-            memo = state.draft.decor.memo,
-            onConfirm = { memo -> onIntent(CustomizeIntent.Decor.ChangeMemo(memo)) },
-            onDismiss = { onIntent(CustomizeIntent.Decor.DismissMemoEditor) },
-        )
-    }
+    DrawingPadSheet(
+        isVisible = state.decor.isDrawingPadVisible,
+        onConfirm = { drawing -> onIntent(CustomizeIntent.Decor.ChangeDrawing(drawing)) },
+        onDismiss = { onIntent(CustomizeIntent.Decor.DismissDrawingPad) },
+    )
+
+    MemoEditorSheet(
+        isVisible = state.decor.isMemoEditorVisible,
+        memo = state.draft.decor.memo,
+        onConfirm = { memo -> onIntent(CustomizeIntent.Decor.ChangeMemo(memo)) },
+        onDismiss = { onIntent(CustomizeIntent.Decor.DismissMemoEditor) },
+    )
 }
 
 @Composable

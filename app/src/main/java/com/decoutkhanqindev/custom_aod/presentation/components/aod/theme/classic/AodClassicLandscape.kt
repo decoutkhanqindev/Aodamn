@@ -1,59 +1,30 @@
 package com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.classic
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import com.decoutkhanqindev.custom_aod.presentation.components.aod.AodDetails
-import com.decoutkhanqindev.custom_aod.presentation.components.aod.block.AodDate
-import com.decoutkhanqindev.custom_aod.presentation.components.aod.hasDetails
+import com.decoutkhanqindev.custom_aod.presentation.components.aod.AodHeroDetails
+import com.decoutkhanqindev.custom_aod.presentation.components.aod.AodLandscapeLayout
+import com.decoutkhanqindev.custom_aod.presentation.components.aod.landscapePlan
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.info.BatteryUiModel
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.component.AodComponentValue
 import com.decoutkhanqindev.custom_aod.presentation.screens.aod.state.AodIntent
 import com.decoutkhanqindev.custom_aod.presentation.screens.aod.state.AodState
-import com.decoutkhanqindev.custom_aod.presentation.theme.Grey3A
 
-// Màn ngang của Cổ điển: hai cột ngăn bằng vạch mảnh, trái là đồng hồ và dòng ngày, phải là các khối thông tin còn lại. Không có khối nào
-// đang hiện thì chỉ còn cột đồng hồ giữa màn hình.
+// Màn ngang của Cổ điển: bố cục chung theo các khối đang hiện (AodLandscapeLayout), hero là đồng hồ + ngày + icon thông báo và pin. Khối
+// bật / tắt hay nhạc phát / dừng thì đổi bố cục bằng mờ chéo.
 @Composable
 fun AodClassicLandscape(
     state: AodState,
     onIntent: (AodIntent) -> Unit,
 ) {
-    val components = state.appearance.components
+    Crossfade(targetState = state.landscapePlan(), label = "AodClassicLandscape") { plan ->
+        AodLandscapeLayout(plan = plan, state = state, onIntent = onIntent) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                AodClassicClock(nowMillis = state.nowMillis, config = state.appearance.theme.config)
 
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            AodClassicClock(nowMillis = state.nowMillis, config = state.appearance.theme.config)
-
-            AnimatedVisibility(visible = state.extras.isDateEnabled) {
-                AodDate(
-                    nowMillis = state.nowMillis,
-                    style = components.styleOf(AodComponentValue.DATE),
-                    layout = components.dateLayout,
-                    modifier = Modifier.padding(top = 8.dp),
-                )
-            }
-        }
-
-        AnimatedVisibility(visible = state.hasDetails(isDateShown = false)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(
-                    modifier = Modifier
-                        .padding(horizontal = 36.dp)
-                        .size(width = 1.dp, height = 140.dp)
-                        .background(Grey3A),
-                )
-
-                AodDetails(state = state, onIntent = onIntent, isDateShown = false)
+                AodHeroDetails(state = state, isWeatherShown = plan.isWeatherBesideDate)
             }
         }
     }

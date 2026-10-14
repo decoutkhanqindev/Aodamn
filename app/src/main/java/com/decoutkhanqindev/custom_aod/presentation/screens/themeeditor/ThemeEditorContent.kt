@@ -11,9 +11,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -26,14 +23,22 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.custom_aod.R
 import com.decoutkhanqindev.custom_aod.presentation.components.AppBadge
+import com.decoutkhanqindev.custom_aod.presentation.components.AppDangerButton
+import com.decoutkhanqindev.custom_aod.presentation.components.AppPrimaryButton
+import com.decoutkhanqindev.custom_aod.presentation.components.AppTextButton
 import com.decoutkhanqindev.custom_aod.presentation.components.AppTopBar
-import com.decoutkhanqindev.custom_aod.presentation.components.aod.AodContent
+import com.decoutkhanqindev.custom_aod.presentation.components.aod.AodPreviewFrame
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.editor.AodThemeOptionList
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.rememberAodPreview
 import com.decoutkhanqindev.custom_aod.presentation.components.editor.AppApplyingOverlay
 import com.decoutkhanqindev.custom_aod.presentation.components.editor.AppEditorPanel
 import com.decoutkhanqindev.custom_aod.presentation.components.editor.AppEditorResetButton
+import com.decoutkhanqindev.custom_aod.presentation.components.editor.AppPreviewOrientationButton
 import com.decoutkhanqindev.custom_aod.presentation.components.onLongClick
+import com.decoutkhanqindev.custom_aod.presentation.components.permission.AppPermissionSheet
+import com.decoutkhanqindev.custom_aod.presentation.components.sheet.AppConfirmSheet
+import com.decoutkhanqindev.custom_aod.presentation.components.sheet.AppSheet
+import com.decoutkhanqindev.custom_aod.presentation.components.sheet.AppSheetHeroHeader
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeValue
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.isDefault
 import com.decoutkhanqindev.custom_aod.presentation.screens.themeeditor.components.ThemeEditorTabBar
@@ -58,7 +63,7 @@ fun ThemeEditorContent(
             .fillMaxSize()
             .background(Black),
     ) {
-        AodContent(state = preview, onIntent = {}, isInteractive = false)
+        AodPreviewFrame(state = preview, isLandscape = state.isLandscapePreview)
 
         // Chạm vào khung xem trước: đang xem thì vào sửa, đang sửa mà panel mở thì đóng panel; nhấn giữ thì xem toàn màn hình.
         Box(
@@ -92,6 +97,12 @@ fun ThemeEditorContent(
                     title = stringResource(state.theme.nameRes),
                     onNavigateBack = { onIntent(ThemeEditorIntent.NavigateBack) },
                     actions = {
+                        AppPreviewOrientationButton(
+                            isLandscape = state.isLandscapePreview,
+                            onClick = { onIntent(ThemeEditorIntent.ToggleLandscapePreview) },
+                        )
+
+
                         AnimatedVisibility(
                             visible = state.isActive,
                             modifier = Modifier.padding(end = 16.dp),
@@ -162,39 +173,59 @@ fun ThemeEditorContent(
         }
     }
 
-    if (state.history.isResetConfirmVisible) {
-        AlertDialog(
-            onDismissRequest = { onIntent(ThemeEditorIntent.History.DismissResetConfirm) },
-            confirmButton = {
-                TextButton(onClick = { onIntent(ThemeEditorIntent.History.ResetTheme) }) {
-                    Text(text = stringResource(R.string.customize_reset))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { onIntent(ThemeEditorIntent.History.DismissResetConfirm) }) {
-                    Text(text = stringResource(R.string.action_cancel))
-                }
-            },
-            title = { Text(text = stringResource(R.string.customize_reset_title)) },
-            text = { Text(text = stringResource(R.string.customize_reset_desc)) },
-        )
-    }
+    AppPermissionSheet(
+        isVisible = state.isPermissionSheetVisible,
+        permissions = state.requiredPermissions,
+        title = stringResource(R.string.permission_apply_title),
+        subtitle = stringResource(R.string.permission_apply_desc),
+        onAllowClick = { permission -> onIntent(ThemeEditorIntent.Permission.OpenPermissionSettings(permission)) },
+        onDismiss = { onIntent(ThemeEditorIntent.Permission.DismissPermissionSheet) },
+    )
 
-    if (state.history.isDiscardConfirmVisible) {
-        AlertDialog(
-            onDismissRequest = { onIntent(ThemeEditorIntent.Edit.DismissDiscard) },
-            confirmButton = {
-                TextButton(onClick = { onIntent(ThemeEditorIntent.Edit.ConfirmDiscard) }) {
-                    Text(text = stringResource(R.string.theme_discard_confirm))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { onIntent(ThemeEditorIntent.Edit.DismissDiscard) }) {
-                    Text(text = stringResource(R.string.action_cancel))
-                }
-            },
-            title = { Text(text = stringResource(R.string.theme_discard_title)) },
-            text = { Text(text = stringResource(R.string.theme_discard_desc)) },
+    AppConfirmSheet(
+        isVisible = state.history.isResetConfirmVisible,
+        iconRes = R.drawable.ic_arrow_counter_clockwise,
+        title = stringResource(R.string.customize_reset_title),
+        description = stringResource(R.string.customize_reset_desc),
+        confirmLabel = stringResource(R.string.customize_reset),
+        onConfirm = { onIntent(ThemeEditorIntent.History.ResetTheme) },
+        onDismiss = { onIntent(ThemeEditorIntent.History.DismissResetConfirm) },
+    )
+
+    // Thoát sửa khi còn thay đổi: việc nên làm là lưu (nút chính), bỏ thay đổi là nút đỏ nhạt, ở lại sửa bằng chữ.
+    AppSheet(
+        isVisible = state.history.isDiscardConfirmVisible,
+        onDismissRequest = { onIntent(ThemeEditorIntent.Edit.DismissDiscard) },
+    ) {
+        AppSheetHeroHeader(
+            title = stringResource(R.string.theme_discard_title),
+            description = stringResource(R.string.theme_discard_desc),
+            badgeIconRes = R.drawable.ic_pencil_simple,
+        )
+
+        AppPrimaryButton(
+            text = stringResource(R.string.theme_save_and_exit),
+            onClick = { onIntent(ThemeEditorIntent.SaveTheme) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 20.dp),
+            iconRes = R.drawable.ic_check,
+        )
+
+        AppDangerButton(
+            text = stringResource(R.string.theme_discard_confirm),
+            onClick = { onIntent(ThemeEditorIntent.Edit.ConfirmDiscard) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp),
+        )
+
+        AppTextButton(
+            text = stringResource(R.string.theme_keep_editing),
+            onClick = { onIntent(ThemeEditorIntent.Edit.DismissDiscard) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 4.dp),
         )
     }
 }
