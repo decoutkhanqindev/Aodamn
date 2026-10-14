@@ -30,6 +30,9 @@ class PermissionViewModel(
             )
 
             is PermissionIntent.ConfirmPermissions -> confirmPermissions()
+            is PermissionIntent.SkipPermissions ->
+                viewModelScope.launch { sendEffect(PermissionEffect.NavigateToMain(isPermissionSkipped = true)) }
+
             is PermissionIntent.NavigateBack -> viewModelScope.launch { sendEffect(PermissionEffect.NavigateBack) }
         }
     }
@@ -77,6 +80,6 @@ class PermissionViewModel(
         val permissions = permissionManager.requiredAodPermissions()
         updateState { copy(permissions = permissions) }
         if (!permissions.hasRequiredPermissions) return
-        viewModelScope.launch { sendEffect(PermissionEffect.NavigateToMain) }
+        viewModelScope.launch { sendEffect(PermissionEffect.NavigateToMain(isPermissionSkipped = false)) }
     }
 }

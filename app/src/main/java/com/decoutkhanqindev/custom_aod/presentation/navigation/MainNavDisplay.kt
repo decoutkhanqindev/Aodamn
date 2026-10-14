@@ -54,7 +54,10 @@ import com.decoutkhanqindev.custom_aod.utils.playStoreUrl
 import com.decoutkhanqindev.custom_aod.utils.shareText
 
 @Composable
-fun MainNavDisplay(backStack: NavBackStack<NavKey>) {
+fun MainNavDisplay(
+    backStack: NavBackStack<NavKey>,
+    isPermissionSkipped: Boolean,
+) {
     val context = LocalContext.current
     val resources = LocalResources.current
     val tabBackStack = rememberNavBackStack(MainTabValue.AOD.destination)
@@ -93,7 +96,7 @@ fun MainNavDisplay(backStack: NavBackStack<NavKey>) {
                     rememberViewModelStoreNavEntryDecorator(),
                 ),
                 entryProvider = entryProvider {
-                    screen<AodTabDestination> { AodTabScreen(backStack) }
+                    screen<AodTabDestination> { AodTabScreen(backStack, isPermissionSkipped = isPermissionSkipped) }
                     screen<EdgeLightDestination> { EdgeLightScreen() }
                     screen<SettingsDestination> { SettingsScreen(backStack) }
                 },

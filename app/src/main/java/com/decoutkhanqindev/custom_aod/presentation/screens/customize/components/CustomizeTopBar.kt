@@ -48,7 +48,7 @@ fun CustomizeTopBar(
                 GuideButton(onIntent = onIntent)
 
                 AppTextButton(
-                    text = stringResource(R.string.customize_skip),
+                    text = stringResource(R.string.action_skip),
                     onClick = { onIntent(CustomizeIntent.SkipCustomization) },
                     isEnabled = !isApplying,
                 )

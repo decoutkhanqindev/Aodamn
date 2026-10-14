@@ -7,5 +7,6 @@ sealed interface PermissionIntent {
     data class OpenPermissionSettings(val permission: PermissionValue) : PermissionIntent
     data class NotificationPermissionResult(val isGranted: Boolean) : PermissionIntent
     data object ConfirmPermissions : PermissionIntent
+    data object SkipPermissions : PermissionIntent
     data object NavigateBack : PermissionIntent
 }

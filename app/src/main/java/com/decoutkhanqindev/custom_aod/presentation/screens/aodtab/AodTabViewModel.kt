@@ -11,6 +11,7 @@ import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionV
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.requiredAodPermissions
 import com.decoutkhanqindev.custom_aod.presentation.screens.aodtab.state.AodTabEffect
 import com.decoutkhanqindev.custom_aod.presentation.screens.aodtab.state.AodTabIntent
+import com.decoutkhanqindev.custom_aod.presentation.screens.aodtab.state.AodTabPermissionState
 import com.decoutkhanqindev.custom_aod.presentation.screens.aodtab.state.AodTabState
 import com.decoutkhanqindev.custom_aod.utils.collectCatching
 import kotlinx.coroutines.Job
@@ -18,12 +19,15 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
+// isPermissionSkipped: user bấm Bỏ qua ở màn quyền onboarding thì sheet quyền bắt đầu ở trạng thái đã đóng, chỉ hiện lại khi bật AOD
+// hay chạm dòng cảnh báo; Áp dụng ở Tùy chỉnh / màn chủ đề vẫn đòi quyền như thường.
 class AodTabViewModel(
+    isPermissionSkipped: Boolean,
     private val dataStoreManager: DataStoreManager,
     private val permissionManager: PermissionManager,
     private val aodImageManager: AodImageManager,
 ) : BaseViewModel<AodTabState, AodTabIntent, AodTabEffect>(
-    initialState = AodTabState(),
+    initialState = AodTabState(permission = AodTabPermissionState(isSheetDismissed = isPermissionSkipped)),
 ) {
 
     private var designJob: Job? = null

@@ -632,6 +632,11 @@ chọn theo các khối đang có dữ liệu, dùng chung cho mọi chủ đề
    tin ứng dụng; cấp ở đó xong app tự về, ở Tùy chỉnh mục vừa bật được bật luôn. Mỗi quyền: bật công tắc xong khoảng 1 giây thì trang
    cài đặt tự đóng, về đúng màn vừa ở, dòng quyền thành "Đã cấp"; Back ở app không quay lại trang cài đặt. Mở trang
    rồi tự bấm Back về app trước khi bật: sau đó bật quyền ở chỗ khác thì app không tự nhảy lên.
+2b. Bỏ qua ở màn quyền (góc trên phải, chỉ có khi còn thiếu quyền; cấp đủ thì nút này ẩn): vào tab AOD mà không hiện sheet
+   quyền, chỉ có dòng cảnh báo dưới công tắc (chạm mở sheet). Chuyển tab qua lại, ra nền rồi vào lại: sheet vẫn không tự
+   hiện. Tùy chỉnh / màn chủ đề › Áp dụng: hiện sheet quyền như thường; tắt rồi bật AOD: sheet hiện. Đóng hẳn app rồi mở
+   lại (Splash → Main): sheet hiện lại như thường. Bỏ qua ở bước Tùy chỉnh (không qua màn quyền): vào tab AOD thì sheet
+   vẫn hiện.
 1a. Onboarding, màn Tùy chỉnh: có tab Đồng hồ đầu tiên, chỉ chủ đề Cổ điển như bản trước khi có chủ đề: 4 mặt, font, màu
    (kéo màu xem trước theo tay, thả tay mới thành một bước hoàn tác), cỡ; không có chọn chủ đề. Áp dụng: tab AOD có Cổ điển
    "Đang dùng" với đúng kiểu đã chỉnh. Muốn dùng Sỏi thì chọn ở tab AOD › Chủ đề.

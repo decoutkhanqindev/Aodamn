@@ -141,7 +141,7 @@ fun CustomizeScreen(
                     )
 
                     is CustomizeEffect.Navigation.NavigateToMain ->
-                        backStack.navigateTo(MainDestination, preserveState = false)
+                        backStack.navigateTo(MainDestination(isPermissionSkipped = false), preserveState = false)
 
                     is CustomizeEffect.Navigation.NavigateBack -> backStack.navigateBack()
 

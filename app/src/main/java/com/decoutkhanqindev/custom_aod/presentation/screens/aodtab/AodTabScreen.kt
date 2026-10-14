@@ -29,13 +29,17 @@ import com.decoutkhanqindev.custom_aod.utils.openNotificationSettings
 import com.decoutkhanqindev.custom_aod.utils.openOverlaySettings
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 import timber.log.Timber
 
 @Composable
-fun AodTabScreen(backStack: NavBackStack<NavKey>) {
+fun AodTabScreen(
+    backStack: NavBackStack<NavKey>,
+    isPermissionSkipped: Boolean,
+) {
     val context = LocalContext.current
     val tag = LocalTag.current
-    val viewModel: AodTabViewModel = koinViewModel()
+    val viewModel: AodTabViewModel = koinViewModel { parametersOf(isPermissionSkipped) }
     val permissionManager: PermissionManager = koinInject()
     val state by viewModel.state.collectAsStateWithLifecycle()
     val notificationPermissionLauncher = rememberLauncherForActivityResult(

@@ -90,7 +90,7 @@ val useCaseModule = module {
 }
 
 val viewModelModule = module {
-    viewModel { AodTabViewModel(get(), get(), get()) }
+    viewModel { (isPermissionSkipped: Boolean) -> AodTabViewModel(isPermissionSkipped, get(), get(), get()) }
     viewModel { SettingsViewModel(get(), get(), get(), get(), get(), get()) }
     viewModel { (isFirstOpen: Boolean) -> LanguageViewModel(isFirstOpen, get(), get()) }
     viewModel { (isFirstOpen: Boolean) ->

@@ -35,7 +35,7 @@ fun SplashScreen(backStack: NavBackStack<NavKey>) {
         if (dataStoreManager.isFirstOpen.value == true) {
             backStack.navigateTo(LanguageDestination(isFirstOpen = true), preserveState = false)
         } else {
-            backStack.navigateTo(MainDestination, preserveState = false)
+            backStack.navigateTo(MainDestination(isPermissionSkipped = false), preserveState = false)
         }
     }
 

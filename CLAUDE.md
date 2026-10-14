@@ -238,7 +238,9 @@ bắt buộc (compiler không chặn hộ):
   `saveIsFirstOpen(false)` gọi ngay ở nút Tiếp tục của Language, nên thoát giữa chừng thì lần sau
   vào thẳng Main (thiếu quyền thì tab AOD hiện `AodTabPermissionSheet`). **Bỏ qua ở Customize vào
   thẳng Main**, không qua Permission (ép cấp quyền sau khi user đã bỏ qua thì dễ bỏ app); Áp dụng thì
-  đủ quyền bắt buộc vào Main, thiếu thì sang Permission. Customize mở từ tab AOD
+  đủ quyền bắt buộc vào Main, thiếu thì sang Permission. **Bỏ qua ở Permission** (chỉ hiện khi còn thiếu quyền) vào
+  `MainDestination(isPermissionSkipped = true)`: sheet quyền của tab AOD bắt đầu ở trạng thái đã đóng nên không tự hiện
+  trong phiên đó (còn dòng cảnh báo, bật AOD thì vẫn hiện), quyền chỉ bị đòi lúc Áp dụng. Customize mở từ tab AOD
   (`CustomizeDestination(isFirstOpen = false)`): không bước / Bỏ qua, Áp dụng xong quay về Main. Áp dụng ở đây và ở
   màn chủ đề mà còn thiếu quyền bắt buộc thì chưa ghi gì, hiện sheet quyền ngay tại màn; cấp đủ (quay lại màn) thì tự áp dụng.
 - Trang cấp quyền ở app Cài đặt mở bằng `context.openXxxSettings(isGranted)`

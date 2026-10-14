@@ -7,6 +7,18 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-10-14 – Bỏ qua ở màn quyền onboarding
+
+Build được, lint không thêm cảnh báo, unit test pass, `tools/check-rules.sh` ra 0 vi phạm (38 rule). Chưa test trên máy.
+
+### Thêm
+
+- Màn quyền onboarding có nút Bỏ qua ở thanh trên (như bước Tùy chỉnh, chỉ hiện khi còn thiếu quyền). Bỏ qua thì vào Main với `MainDestination(isPermissionSkipped = true)`: tab AOD không tự hiện sheet quyền trong phiên đó (sheet bắt đầu ở trạng thái đã đóng, còn dòng cảnh báo dưới công tắc), quyền chỉ bị đòi lúc Áp dụng ở Tùy chỉnh / màn chủ đề hay lúc bật AOD. Vào Main theo đường khác (mở app, Bỏ qua ở Tùy chỉnh) thì sheet hiện như cũ.
+
+### Thay đổi
+
+- `MainDestination` thành data class (`isPermissionSkipped`), `AodTabViewModel` nhận cờ này qua Koin. Chuỗi `customize_skip` đổi thành `action_skip` (dùng chung cho Tùy chỉnh và màn quyền).
+
 ## [Chưa phát hành] – 2026-10-14 – Overlay riêng của app thay cho Material, onboarding dẫn từng bước cấp quyền
 
 Build được (`assembleDebug`), lint không thêm cảnh báo, unit test pass, `tools/check-rules.sh` ra 0 vi phạm (38 rule). Chưa test trên máy.

@@ -15,6 +15,7 @@
     <string name="permission_unknown_hint">Máy không cho app kiểm tra quyền này. Hãy mở Cài đặt để chắc chắn quyền đã bật.</string>
     <string name="action_allow">Cho phép</string>
     <string name="action_get_started">Bắt đầu</string>
+    <string name="action_skip">Bỏ qua</string>
 
     <!-- Ads -->
     <string name="ad_loading">Đang tải quảng cáo…</string>
@@ -348,7 +349,6 @@
     <string name="preview_show_portrait">Xem trước dọc</string>
     <string name="customize_title">Tùy chỉnh</string>
     <string name="customize_apply">Áp dụng</string>
-    <string name="customize_skip">Bỏ qua</string>
     <string name="customize_undo">Hoàn tác</string>
     <string name="customize_redo">Làm lại</string>
     <string name="customize_reset">Đặt lại</string>

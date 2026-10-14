@@ -17,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.custom_aod.R
 import com.decoutkhanqindev.custom_aod.presentation.components.AppIllustration
+import com.decoutkhanqindev.custom_aod.presentation.components.AppTextButton
 import com.decoutkhanqindev.custom_aod.presentation.components.onboarding.AppOnboardingFooter
 import com.decoutkhanqindev.custom_aod.presentation.components.onboarding.AppOnboardingHeader
 import com.decoutkhanqindev.custom_aod.presentation.components.onboarding.AppOnboardingTopBar
@@ -39,9 +40,18 @@ fun PermissionContent(
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
+            // Bỏ qua vào Main mà không nhắc quyền ngay (chỉ đòi lúc Áp dụng); đủ quyền thì nút dưới đã là Bắt đầu nên ẩn đi.
             AppOnboardingTopBar(
                 step = OnboardingStepValue.PERMISSION,
                 onNavigateBack = { onIntent(PermissionIntent.NavigateBack) },
+                actions = {
+                    if (!state.isConfirmEnabled) {
+                        AppTextButton(
+                            text = stringResource(R.string.action_skip),
+                            onClick = { onIntent(PermissionIntent.SkipPermissions) },
+                        )
+                    }
+                },
             )
         },
         containerColor = Color.Transparent,

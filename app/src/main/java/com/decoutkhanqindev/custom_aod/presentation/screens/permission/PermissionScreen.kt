@@ -65,8 +65,8 @@ fun PermissionScreen(backStack: NavBackStack<NavKey>) {
 
                     is PermissionEffect.StartAodService -> AodService.start(context)
                     is PermissionEffect.NavigateToMain -> backStack.navigateTo(
-                        MainDestination,
-                        preserveState = false
+                        MainDestination(isPermissionSkipped = effect.isPermissionSkipped),
+                        preserveState = false,
                     )
 
                     is PermissionEffect.NavigateBack -> backStack.navigateBack()

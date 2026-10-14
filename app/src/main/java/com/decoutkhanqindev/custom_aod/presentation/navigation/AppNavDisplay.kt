@@ -58,7 +58,7 @@ fun AppNavDisplay() {
                     )
                 }
                 screen<PermissionDestination> { PermissionScreen(backStack) }
-                screen<MainDestination> { MainNavDisplay(backStack) }
+                screen<MainDestination> { dest -> MainNavDisplay(backStack, isPermissionSkipped = dest.isPermissionSkipped) }
                 screen<IapDestination> { IapScreen(backStack) }
                 screen<ThemeEditorDestination> { dest -> ThemeEditorScreen(backStack, themeId = dest.themeId) }
                 // TODO: Đăng ký screen<XxxDestination> { dest -> XxxScreen(...) } cho màn mới

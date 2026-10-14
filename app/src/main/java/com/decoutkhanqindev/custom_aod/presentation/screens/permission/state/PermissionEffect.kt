@@ -8,6 +8,6 @@ sealed interface PermissionEffect {
     data object OpenNotificationSettings : PermissionEffect
     data object RequestNotificationPermission : PermissionEffect
     data object StartAodService : PermissionEffect
-    data object NavigateToMain : PermissionEffect
+    data class NavigateToMain(val isPermissionSkipped: Boolean) : PermissionEffect
     data object NavigateBack : PermissionEffect
 }
