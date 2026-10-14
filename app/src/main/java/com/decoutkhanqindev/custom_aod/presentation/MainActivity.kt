@@ -7,6 +7,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.LocalOverscrollFactory
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.ComposeUiFlags
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.lifecycle.lifecycleScope
@@ -40,8 +42,8 @@ class MainActivity : ComponentActivity() {
         startAodServiceIfEnabled()
         setContent {
             AppLanguageProvider {
-                Theme {
-                    AppNavDisplay()
+                CompositionLocalProvider(LocalOverscrollFactory provides null) {
+                    Theme { AppNavDisplay() }
                 }
             }
         }
