@@ -46,6 +46,7 @@
     <string name="theme_classic">Cổ điển</string>
     <string name="theme_pebble">Sỏi</string>
     <string name="theme_jersey">Số áo</string>
+    <string name="theme_capsule">Viên nang</string>
     <string name="aod_jersey_date_first_pattern">dd</string>
     <string name="aod_jersey_date_second_pattern">MM</string>
     <string name="theme_in_use">Đang dùng</string>
@@ -62,6 +63,7 @@
     <string name="theme_tab_date">Ngày</string>
     <string name="theme_tab_effects">Hiệu ứng</string>
     <string name="theme_tab_media">Nhạc</string>
+    <string name="theme_tab_status">Pin &amp; thông báo</string>
     <string name="theme_opt_shape">Hình</string>
     <string name="theme_opt_tile_style">Kiểu</string>
     <string name="tile_style_filled">Đặc</string>
@@ -73,6 +75,9 @@
     <string name="theme_color_minute_digits">Số phút</string>
     <string name="theme_color_date">Ngày</string>
     <string name="theme_color_media">Nhạc</string>
+    <string name="theme_color_digits">Chữ số</string>
+    <string name="theme_color_capsule">Viên</string>
+    <string name="theme_color_status">Pin &amp; thông báo</string>
     <string name="theme_color_hour">Giờ</string>
     <string name="theme_color_minute">Phút</string>
     <string name="theme_opt_date_style">Kiểu ngày</string>
@@ -366,7 +371,6 @@
     <string name="customize_sample_media_title">Chuyến xe đêm</string>
     <string name="customize_sample_media_artist">Lo-fi Radio</string>
     <string name="customize_sample_memo">Mua sữa trên đường về</string>
-    <string name="action_close">Đóng</string>
     <string name="time_am">SA</string>
     <string name="time_pm">CH</string>
     <string name="time_set">Đặt %1$s</string>

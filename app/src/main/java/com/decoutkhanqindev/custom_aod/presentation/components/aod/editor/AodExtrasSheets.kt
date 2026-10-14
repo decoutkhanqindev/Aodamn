@@ -104,7 +104,6 @@ fun MemoEditorSheet(
         AppSheetToolHeader(
             iconRes = R.drawable.ic_note_pencil,
             title = stringResource(R.string.opt_memo),
-            onClose = onDismiss,
             description = stringResource(R.string.memo_desc),
         )
 
@@ -184,7 +183,7 @@ fun MemoEditorSheet(
     }
 }
 
-// Vẽ nhanh: khung vuông nền đen, Hoàn tác nét / Xóa hết, Lưu hình. Sheet không kéo được để nét vẽ dọc không kéo sheet xuống.
+// Vẽ nhanh: khung vuông nền đen, Hoàn tác nét / Xóa hết, Lưu hình / Hủy. Sheet không kéo được để nét vẽ dọc không kéo sheet xuống.
 @Composable
 fun DrawingPadSheet(
     isVisible: Boolean,
@@ -200,7 +199,6 @@ fun DrawingPadSheet(
         AppSheetToolHeader(
             iconRes = R.drawable.ic_paint_brush,
             title = stringResource(R.string.opt_drawing),
-            onClose = onDismiss,
             description = stringResource(R.string.drawing_desc),
         )
 
@@ -274,6 +272,14 @@ fun DrawingPadSheet(
                 .padding(top = 16.dp),
             iconRes = R.drawable.ic_check,
             isEnabled = strokes.isNotEmpty(),
+        )
+
+        AppTextButton(
+            text = stringResource(R.string.action_cancel),
+            onClick = onDismiss,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 4.dp),
         )
     }
 }

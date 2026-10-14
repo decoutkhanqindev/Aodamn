@@ -94,7 +94,6 @@ fun SettingsRulesSection(
         AppSheetToolHeader(
             iconRes = R.drawable.ic_plugs_connected,
             title = stringResource(R.string.opt_charging_rule),
-            onClose = { onIntent(SettingsIntent.Rules.DismissChargingRulePicker) },
             description = stringResource(R.string.opt_charging_rule_desc),
         )
 
@@ -109,6 +108,14 @@ fun SettingsRulesSection(
                 AppOptionIcon(iconRes = rule.iconRes, isSelected = isSelected)
             }
         }
+
+        AppTextButton(
+            text = stringResource(R.string.action_cancel),
+            onClick = { onIntent(SettingsIntent.Rules.DismissChargingRulePicker) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 12.dp),
+        )
     }
 
     // Bánh xe cuộn dọc nên sheet không kéo được (kéo bánh xe không kéo theo sheet).
@@ -123,7 +130,6 @@ fun SettingsRulesSection(
         AppSheetToolHeader(
             iconRes = R.drawable.ic_clock,
             title = stringResource(time.labelRes),
-            onClose = { onIntent(SettingsIntent.Rules.DismissScheduleTimePicker) },
             description = stringResource(time.descriptionRes),
         )
 

@@ -1,4 +1,4 @@
-"""Mock bố cục AOD màn ngang (873 x 393 dp, máy 2400 x 1080) dạng đoạn HTML + SVG, để chốt bố cục với user trước khi code.
+"""Mock bố cục AOD màn ngang (873 x 393 dp, máy 2400 x 1080; Viên nang có thêm khung dọc 393 x 873) dạng đoạn HTML + SVG, để chốt bố cục với user trước khi code.
 
 Mỗi chủ đề một file w_<chủ đề>.html: đoạn HTML gọn (dùng lại hình bằng <use>, font Plus Jakarta Sans từ Google Fonts, chữ số Số áo lấy
 đường viền thật từ font bằng fontTools) để vẽ thẳng trong khung chat; user muốn xem ngay trong chat, không mở file HTML.
@@ -16,6 +16,7 @@ from fontTools.pens.boundsPen import BoundsPen
 from fontTools.pens.svgPathPen import SVGPathPen
 from fontTools.pens.transformPen import TransformPen
 from fontTools.ttLib import TTFont
+from fontTools.varLib import instancer
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = Path(sys.argv[1]) if len(sys.argv) > 1 else Path.cwd()
@@ -29,7 +30,7 @@ DM = "#7A7A7A"
 LAV = "#BAB8F8"
 PU = "#C3A6FF"
 MINT = "#7FD1AE"
-FONT_LINK = ('<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700'
+FONT_LINK = ('<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800'
              '&display=swap">')
 
 
@@ -395,10 +396,186 @@ pebble = [
           + use("pply", 500, 222)),
 ]
 
+# ================================================================== VIÊN NANG (ảnh mẫu reference/theme_3, R = chiều cao chữ số = 47,6 dp)
+PJS800 = instancer.instantiateVariableFont(TTFont(ROOT / "tools/fonts/variable/plus_jakarta_sans_variable.ttf"), {"wght": 800}, inplace=False)
+PJS_GLYPHS = PJS800.getGlyphSet()
+PJS_CMAP = PJS800.getBestCmap()
+PW, PH = 393, 873
+CR = 47.6
+FROST = "#C8D8D8"
+CAPSULE_GREY = "#D0D0D0"
+DATE_GREY = "#E0E0E0"
+LIME = "#DDEB6E"
+ARTIST_GREY = "#B0B0B0"
+
+
+def pjs_bounds(ch):
+    pen = BoundsPen(PJS_GLYPHS)
+    PJS_GLYPHS[PJS_CMAP[ord(ch)]].draw(pen)
+    return pen.bounds
+
+
+PJS_DIGIT = pjs_bounds("0")[3] - pjs_bounds("0")[1]
+
+
+def capsule_glyph(ch):
+    """Chữ số Plus Jakarta Sans ExtraBold cao RU, căn giữa ô rộng 0,856 R (bước chữ số của ảnh mẫu)."""
+    cell = 0.856 * RU
+    x0, _, x1, _ = pjs_bounds(ch)
+    y0 = pjs_bounds("0")[1]
+    k = RU / PJS_DIGIT
+    pen = SVGPathPen(PJS_GLYPHS, ntos=f)
+    PJS_GLYPHS[PJS_CMAP[ord(ch)]].draw(TransformPen(pen, (k, 0, 0, -k, cell / 2 - (x0 + x1) / 2 * k, RU + y0 * k)))
+    return f'<path id="v{ch}" d="{pen.getCommands()}"/>'
+
+
+def capsule_clock(cx, cy, style="filled", digit=FROST, capsule=CAPSULE_GREY, text="10:08"):
+    """Viên nang 4,76 R x 1,81 R; đặc = màu viên 12% trên nền đen, viền = nét 0,043 R. Chữ số theo ô, hai chấm là hai chấm tròn."""
+    w, h = 4.76 * CR, 1.81 * CR
+    if style == "filled":
+        s = f'<rect x="{f(cx - w / 2)}" y="{f(cy - h / 2)}" width="{f(w)}" height="{f(h)}" rx="{f(h / 2)}" fill="{capsule}" fill-opacity=".12"/>'
+    else:
+        sw = 0.043 * CR
+        s = (f'<rect x="{f(cx - w / 2 + sw / 2)}" y="{f(cy - h / 2 + sw / 2)}" width="{f(w - sw)}" height="{f(h - sw)}" rx="{f((h - sw) / 2)}" '
+             f'fill="none" stroke="{capsule}" stroke-width="{f(sw)}"/>')
+    cell, colon = 0.856 * CR, 0.434 * CR
+    x = cx - (4 * cell + colon) / 2
+    k = CR / RU
+    hh, mm = text.split(":")
+    for ch in hh:
+        s += use(f"v{ch}", 0, 0, f'transform="translate({f(x)} {f(cy - CR / 2)}) scale({k:.4f})" fill="{digit}"')
+        x += cell
+    dot = 0.26 * CR
+    s += f'<circle cx="{f(x + colon / 2)}" cy="{f(cy - 0.22 * CR)}" r="{f(dot / 2)}" fill="{digit}"/>'
+    s += f'<circle cx="{f(x + colon / 2)}" cy="{f(cy + 0.22 * CR)}" r="{f(dot / 2)}" fill="{digit}"/>'
+    x += colon
+    for ch in mm:
+        s += use(f"v{ch}", 0, 0, f'transform="translate({f(x)} {f(cy - CR / 2)}) scale({k:.4f})" fill="{digit}"')
+        x += cell
+    return s
+
+
+def capsule_date(cx, cap_top, color=DATE_GREY, weather=False):
+    size = 0.323 * CR
+    base = cap_top + 0.745 * size
+    if not weather:
+        return txt(cx, base, "THỨ TƯ • 14 THG 10", size, color, 700, "middle")
+    return (txt(cx - 30, base, "THỨ TƯ • 14 THG 10", size, color, 700, "middle")
+            + cloud(cx + 70, base + 1, 0.55, color, 1.4) + txt(cx + 94, base, "24°", size, color, 700))
+
+
+def capsule_battery(x, top, color):
+    w, h = 0.164 * CR, 0.327 * CR
+    cap = h * 0.1
+    return (f'<rect x="{f(x + w * .28)}" y="{f(top)}" width="{f(w * .44)}" height="{f(cap + 1)}" rx=".8" fill="{color}"/>'
+            f'<rect x="{f(x)}" y="{f(top + cap)}" width="{f(w)}" height="{f(h - cap)}" rx="{f(w * .25)}" fill="{color}"/>'
+            f'<path d="M{f(x + w * .62)},{f(top + cap + (h - cap) * .12)} L{f(x + w * .22)},{f(top + cap + (h - cap) * .56)} '
+            f'L{f(x + w * .48)},{f(top + cap + (h - cap) * .56)} L{f(x + w * .38)},{f(top + cap + (h - cap) * .9)} '
+            f'L{f(x + w * .8)},{f(top + cap + (h - cap) * .42)} L{f(x + w * .54)},{f(top + cap + (h - cap) * .42)} Z" fill="#000"/>')
+
+
+def capsule_status(cx, cy, color=DATE_GREY, n=4):
+    gh, font, icon = 0.327 * CR, 0.29 * CR, 0.31 * CR
+    w = 0.164 * CR + 0.2 * CR + 1.9 * font + (0.28 * CR + 0.08 * CR + 0.29 * CR + n * icon + (n - 1) * 0.24 * CR if n else 0)
+    x = cx - w / 2
+    s = capsule_battery(x, cy - gh / 2, color)
+    x += 0.164 * CR + 0.2 * CR
+    s += txt(x, cy + 0.769 * font / 2, "42%", font, color, 500)
+    x += 1.9 * font
+    if n:
+        x += 0.28 * CR
+        s += f'<circle cx="{f(x + 0.04 * CR)}" cy="{f(cy)}" r="{f(0.04 * CR)}" fill="{color}"/>'
+        x += 0.08 * CR + 0.29 * CR
+        shapes = icon_shapes(color)
+        for i in range(n):
+            s += shapes[i % 3](x, cy - icon / 2, icon)
+            x += icon + 0.24 * CR
+    return s
+
+
+def capsule_player(w=315, accent=FROST):
+    """Trình phát của ảnh mẫu: tên bài / nghệ sĩ bên trái, lùi · nút phát tròn đặc · tới bên phải, thanh tiến trình dày tách đôi."""
+    s = txt(0, 15, "That Cool Song", 17, accent, 500) + txt(0, 33, "It's Artist", 13.5, ARTIST_GREY)
+    r = w
+    s += (f'<rect x="{f(r - 118.6)}" y="10" width="2.7" height="15" rx="1" fill="{ARTIST_GREY}"/>'
+          f'<path d="M{f(r - 101)},10 L{f(r - 101)},25 L{f(r - 113)},17.5 Z" fill="{ARTIST_GREY}" stroke="{ARTIST_GREY}" stroke-width="1.5" stroke-linejoin="round"/>')
+    s += (f'<circle cx="{f(r - 61.4)}" cy="17.5" r="17.6" fill="{accent}"/>'
+          f'<path d="M{f(r - 66)},10.5 L{f(r - 53.5)},17.5 L{f(r - 66)},24.5 Z" fill="#000" stroke="#000" stroke-width="1.5" stroke-linejoin="round"/>')
+    s += (f'<path d="M{f(r - 21.5)},10 L{f(r - 21.5)},25 L{f(r - 9.5)},17.5 Z" fill="{ARTIST_GREY}" stroke="{ARTIST_GREY}" stroke-width="1.5" stroke-linejoin="round"/>'
+          f'<rect x="{f(r - 6.6)}" y="10" width="2.7" height="15" rx="1" fill="{ARTIST_GREY}"/>')
+    split = w * 0.7
+    s += f'<line x1="3" y1="55" x2="{f(split - 3)}" y2="55" stroke="{accent}" stroke-width="6" stroke-linecap="round"/>'
+    s += f'<line x1="{f(split + 6)}" y1="55" x2="{f(w - 3)}" y2="55" stroke="{DV}" stroke-width="6" stroke-linecap="round"/>'
+    return s
+
+
+def capsule_column(style="filled", digit=FROST, capsule=CAPSULE_GREY, accent=FROST, extras=None, extras_h=0, media=True):
+    """Màn dọc: viên nang → ngày → khối thêm → nhạc → dòng pin, cả cột căn giữa màn hình."""
+    total = 1.81 * CR + 0.41 * CR + 0.323 * CR * 0.745 + 36 + extras_h + (59 + 40 if media else 40) + 0.327 * CR
+    top = (PH - total) / 2
+    cx = PW / 2
+    s = capsule_clock(cx, top + 1.81 * CR / 2, style, digit, capsule)
+    y = top + 1.81 * CR + 0.41 * CR
+    s += capsule_date(cx, y)
+    y += 0.323 * CR * 0.745 + 36
+    if extras:
+        s += extras(y)
+        y += extras_h
+    if media:
+        s += f'<g transform="translate({f((PW - 315) / 2)} {f(y)})">{capsule_player(accent=accent)}</g>'
+        y += 59 + 40
+    else:
+        y += 40 - 36 + 12
+    return s + capsule_status(cx, y + 0.327 * CR / 2)
+
+
+def capsule_hero(cx, cy, style="filled", weather=False, n=4):
+    """Màn ngang: viên nang + ngày + dòng pin, tâm cụm ở (cx, cy)."""
+    total = 1.81 * CR + 0.41 * CR + 0.323 * CR * 0.745 + 0.6 * CR + 0.327 * CR
+    top = cy - total / 2
+    s = capsule_clock(cx, top + 1.81 * CR / 2, style)
+    y = top + 1.81 * CR + 0.41 * CR
+    s += capsule_date(cx, y, weather=weather)
+    y += 0.323 * CR * 0.745 + 0.6 * CR
+    return s + capsule_status(cx, y + 0.327 * CR / 2, n=n)
+
+
+def frame_portrait(label, body):
+    return (f'<div style="display:inline-block;width:calc(50% - 8px);vertical-align:top;margin:0 4px">'
+            f'<p style="font-size:13px;color:var(--text-secondary);margin:1.25rem 0 6px">{label}</p>'
+            f'<svg viewBox="0 0 {PW} {PH}" width="100%" role="img" aria-label="{label}" '
+            f'style="display:block;font-family:\'Plus Jakarta Sans\',sans-serif" fill="{G}">'
+            f'<rect width="{PW}" height="{PH}" rx="34" fill="#000"/>{body}</svg></div>')
+
+
+def capsule_extras(y):
+    return (f'<g transform="translate(64 {f(y + 14)})">{weather_header()}</g>'
+            f'<g transform="translate(64 {f(y + 62)})">{events_list(3)}</g>'
+            f'<g transform="translate(64 {f(y + 150)})">{memo_icon()}</g>')
+
+
+capsule_defs = "".join(capsule_glyph(ch) for ch in "0189") + f'<g id="vply">{capsule_player()}</g><g id="vply2">{capsule_player(250)}</g>'
+capsule = [
+    '<div style="font-size:0">',
+    frame_portrait("V1 · Dọc, kiểu đặc (mặc định)", capsule_column("filled")),
+    frame_portrait("V2 · Dọc, kiểu viền", capsule_column("outline")),
+    frame_portrait("V3 · Dọc, thêm khối (thời tiết, sự kiện, ghi nhớ)", capsule_column("filled", extras=capsule_extras, extras_h=176, media=False)),
+    frame_portrait("V4 · Dọc, đổi màu (số, viên, nhạc)", capsule_column("outline", LIME, LIME, LIME)),
+    '</div>',
+    frame("N1 · Ngang, tối giản (thời tiết cạnh ngày)", capsule_hero(W / 2, CY, weather=True)),
+    frame("N2 · Ngang, nhạc", capsule_hero(240, CY) + vline(436) + use("vply", 498, CY - 32)),
+    frame("N3 · Ngang, lịch trình", capsule_hero(240, CY) + vline(436, 96, 296) + f'<g fill="{G}" transform="translate(498 128)">{weather_header()}</g>'
+          + f'<g transform="translate(498 178)">{events_list(3)}</g>' + f'<g transform="translate(498 270)">{memo_icon()}</g>'),
+    frame("N4 · Ngang, nhạc + nhóm khác (ba cột)", f'<g fill="{G}" transform="translate(36 140)">{weather_header()}</g>'
+          + f'<g transform="translate(36 186)">{events_list(3)}</g>' + vline(316, 96, 296) + capsule_hero(W / 2, CY, "outline")
+          + vline(557, 96, 296) + use("vply2", 590, CY - 32)),
+]
+
 for name, summary, defs, frames in [
     ("w_classic", "Bảy bố cục ngang của chủ đề Cổ điển theo các khối đang bật", classic_defs, classic),
     ("w_jersey", "Bố cục ngang của chủ đề Số áo: ngày, bốn chữ số một hàng, dòng pin", jersey_defs, jersey),
     ("w_pebble", "Bốn bố cục ngang của chủ đề Sỏi", pebble_defs, pebble),
+    ("w_capsule", "Chủ đề Viên nang: bốn khung dọc và bốn bố cục ngang", capsule_defs, capsule),
 ]:
     code = widget(summary, defs, frames)
     OUT.mkdir(parents=True, exist_ok=True)

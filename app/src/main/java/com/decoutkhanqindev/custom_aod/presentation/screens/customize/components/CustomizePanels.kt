@@ -80,7 +80,7 @@ private fun ComponentStyle(
         AppValueRow(
             label = stringResource(R.string.customize_style_by_theme),
             value = stringResource(theme.nameRes),
-            onClick = { onIntent(CustomizeIntent.Appearance.OpenThemeEditor) },
+            onClick = { onIntent(CustomizeIntent.Appearance.OpenThemeEditor(block = ownBlock)) },
         )
     } else {
         AodThemeOptionList(
@@ -135,7 +135,7 @@ private fun ClockPanel(
         AppValueRow(
             label = stringResource(R.string.customize_clock_theme),
             value = stringResource(theme.value.nameRes),
-            onClick = { onIntent(CustomizeIntent.Appearance.OpenThemeEditor) },
+            onClick = { onIntent(CustomizeIntent.Appearance.OpenThemeEditor(block = null)) },
             description = stringResource(R.string.customize_clock_theme_desc),
         )
     }

@@ -11,6 +11,8 @@ import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
+import com.decoutkhanqindev.custom_aod.ads.AdsManager
+import com.decoutkhanqindev.custom_aod.ads.composables.BannerAdView
 import com.decoutkhanqindev.custom_aod.data.device.permission.PermissionManager
 import com.decoutkhanqindev.custom_aod.presentation.aod.AodService
 import com.decoutkhanqindev.custom_aod.presentation.components.LocalTag
@@ -35,6 +37,7 @@ fun PermissionScreen(backStack: NavBackStack<NavKey>) {
     val context = LocalContext.current
     val tag = LocalTag.current
     val viewModel: PermissionViewModel = koinViewModel()
+    val adsManager: AdsManager = koinInject()
     val permissionManager: PermissionManager = koinInject()
     val state by viewModel.state.collectAsStateWithLifecycle()
     val notificationPermissionLauncher = rememberLauncherForActivityResult(
@@ -81,5 +84,9 @@ fun PermissionScreen(backStack: NavBackStack<NavKey>) {
         onPauseOrDispose { }
     }
 
-    PermissionContent(state = state, onIntent = viewModel::onIntent)
+    PermissionContent(
+        state = state,
+        onIntent = viewModel::onIntent,
+        bannerAd = { BannerAdView(adUnit = { adsManager.bannerPermission }) },
+    )
 }

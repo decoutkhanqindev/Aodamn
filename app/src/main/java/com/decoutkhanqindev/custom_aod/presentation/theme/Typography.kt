@@ -10,7 +10,7 @@ import com.decoutkhanqindev.custom_aod.R
 // Font (Google Fonts, OFL, có tiếng Việt) là file TTF tĩnh từng độ đậm trong res/font, sinh từ font variable bằng
 // tools/fonts/make_static_fonts.py (đổi danh sách độ đậm ở đó thì đổi ở đây). Không để Compose áp trục độ đậm cho font variable: nó áp trục
 // wght qua Paint, máy Xiaomi (MIUI / HyperOS) thay font của app bằng font hệ thống. Một font vừa là font app vừa là font đồng hồ nên đủ dải
-// mảnh → đậm: đồng hồ Cổ điển dùng Thin / Light, chữ số chủ đề Sỏi dùng Bold, chữ phụ dùng Normal. Độ đậm font không có thì Compose lấy
+// mảnh → đậm: đồng hồ Cổ điển dùng Thin / Light, chữ số chủ đề Sỏi dùng Bold, Viên nang ExtraBold, chữ phụ dùng Normal. Độ đậm font không có thì Compose lấy
 // độ đậm gần nhất (Plus Jakarta Sans nhỏ nhất 200, Comfortaa 300, Dancing Script 400).
 val FontFamilyPlusJakartaSans = FontFamily(
     Font(R.font.plus_jakarta_sans_extralight, FontWeight.ExtraLight),
@@ -19,6 +19,7 @@ val FontFamilyPlusJakartaSans = FontFamily(
     Font(R.font.plus_jakarta_sans_medium, FontWeight.Medium),
     Font(R.font.plus_jakarta_sans_semibold, FontWeight.SemiBold),
     Font(R.font.plus_jakarta_sans_bold, FontWeight.Bold),
+    Font(R.font.plus_jakarta_sans_extrabold, FontWeight.ExtraBold),
 )
 
 val FontFamilyFraunces = FontFamily(

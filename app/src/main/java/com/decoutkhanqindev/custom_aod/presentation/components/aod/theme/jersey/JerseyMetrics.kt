@@ -31,17 +31,9 @@ object JerseyMetrics {
     const val PILL_PAD_ALONG = 0.033f
     const val WEEKDAY_TRACKING = 0.056f
 
-    // Dòng trạng thái: cách hàng phút STATUS_TOP, cao bằng icon pin, cỡ theo R màn dọc.
+    // Dòng trạng thái (AodStatusLine): cách hàng phút STATUS_TOP, cao bằng icon pin, cỡ theo R màn dọc; phần còn lại của dòng theo chiều cao icon pin.
     const val STATUS_TOP = 0.161f
-    const val STATUS_GLYPH_WIDTH = 0.024f
     const val STATUS_GLYPH_HEIGHT = 0.046f
-    const val STATUS_FONT = 0.0421f
-    const val STATUS_ICON = 0.045f
-    const val STATUS_DOT = 0.0105f
-    const val STATUS_GAP_GLYPH_TEXT = 0.033f
-    const val STATUS_GAP_TEXT_DOT = 0.052f
-    const val STATUS_GAP_DOT_ICON = 0.049f
-    const val STATUS_GAP_ICON = 0.052f
 
     // Có khối thêm (thời tiết, sự kiện, nhạc…) dưới dòng trạng thái: hàng số nhỏ lại cho cả cụm vừa PORTRAIT_HEIGHT_FILL chiều cao màn hình,
     // không nhỏ hơn MIN_ROW_RATIO cỡ gốc (ngày treo bên phải vẫn vừa); ngày và dòng trạng thái giữ cỡ gốc.

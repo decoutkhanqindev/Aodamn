@@ -23,12 +23,12 @@ SOURCE = ROOT / "tools/fonts/variable"
 OUT = ROOT / "app/src/main/res/font"
 
 NAMES = {
-    100: "thin", 200: "extralight", 300: "light", 400: "regular", 500: "medium", 600: "semibold", 700: "bold", 900: "black",
+    100: "thin", 200: "extralight", 300: "light", 400: "regular", 500: "medium", 600: "semibold", 700: "bold", 800: "extrabold", 900: "black",
 }
 
 # họ font -> (độ đậm cần dùng, trục đặt cố định ngoài wght)
 FONTS = {
-    "plus_jakarta_sans": ([200, 300, 400, 500, 600, 700], {}),
+    "plus_jakarta_sans": ([200, 300, 400, 500, 600, 700, 800], {}),
     "fraunces": ([100, 300, 400, 600, 700], {"SOFT": 100}),
     "jetbrains_mono": ([100, 300, 400, 600, 700], {}),
     "dancing_script": ([400, 600, 700], {}),

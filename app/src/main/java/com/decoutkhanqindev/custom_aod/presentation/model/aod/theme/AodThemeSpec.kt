@@ -8,12 +8,14 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.collections.immutable.toImmutableSet
 
-// Một tab của màn sửa chủ đề: các thuộc tính hiện cùng nhau.
+// Một tab của màn sửa chủ đề: các thuộc tính hiện cùng nhau. block: khối chủ đề tự vẽ (ownBlocks) mà tab này chỉnh; Tùy chỉnh › tab của khối đó
+// mở thẳng màn chủ đề ở tab này. Mỗi khối trong ownBlocks có đúng một tab (AodThemeSpecTest).
 @Immutable
 data class AodThemeTab(
     @param:DrawableRes val iconRes: Int,
     @param:StringRes val labelRes: Int,
     val options: ImmutableList<AodThemeOption<*>>,
+    val block: AodBlockValue? = null,
 )
 
 // Danh sách thuộc tính sửa được chia theo tab, dùng cho chủ đề (AodThemeSpec) và kiểu từng khối dùng chung (AodComponentSpec).
@@ -40,6 +42,9 @@ interface AodThemeSpec : AodOptionSpec {
 
 val AodOptionSpec.options: List<AodThemeOption<*>>
     get() = tabs.flatMap { tab -> tab.options }
+
+fun AodOptionSpec.tabOf(block: AodBlockValue?): AodThemeTab? =
+    block?.let { tabs.find { tab -> tab.block == block } }
 
 // So theo giá trị đọc ra chứ không theo map đã lưu: khoá thiếu và khoá ghi giá trị mặc định là như nhau.
 fun AodOptionSpec.isDefault(config: AodThemeConfig): Boolean =

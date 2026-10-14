@@ -25,14 +25,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -42,7 +36,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.custom_aod.R
 import com.decoutkhanqindev.custom_aod.presentation.components.AppIllustration
-import com.decoutkhanqindev.custom_aod.presentation.components.onClick
 import com.decoutkhanqindev.custom_aod.presentation.theme.BlackAlpha70
 import com.decoutkhanqindev.custom_aod.presentation.theme.BodyMedium
 import com.decoutkhanqindev.custom_aod.presentation.theme.BodySmall
@@ -52,15 +45,15 @@ import com.decoutkhanqindev.custom_aod.presentation.theme.GreyED
 import com.decoutkhanqindev.custom_aod.presentation.theme.Mint
 import com.decoutkhanqindev.custom_aod.presentation.theme.MintAlpha12
 import com.decoutkhanqindev.custom_aod.presentation.theme.Neutral12
-import com.decoutkhanqindev.custom_aod.presentation.theme.Neutral17
 import com.decoutkhanqindev.custom_aod.presentation.theme.RoundedCornerShape12dp
 import com.decoutkhanqindev.custom_aod.presentation.theme.RoundedCornerTopShape24dp
 import com.decoutkhanqindev.custom_aod.presentation.theme.TitleLarge
 import com.decoutkhanqindev.custom_aod.presentation.theme.TitleMedium
 
-// Bottom sheet của app thay cho sheet / hộp thoại Material: nền Neutral12, mép trên là viền sáng mint → xanh → tím như icon app, thanh kéo
-// cùng dải màu. Hiện khi value khác null và giữ value cũ trong lúc trượt xuống (nội dung không biến mất giữa animation). Kéo / chạm nền /
-// Back gọi onDismissRequest; isDragEnabled = false cho sheet có thao tác kéo bên trong (bảng vẽ, bánh xe chọn giờ).
+// Bottom sheet của app thay cho sheet / hộp thoại Material: nền Neutral12, thanh kéo là dải màu mint → xanh → tím như icon app. Không vẽ
+// gì qua modifier của ModalBottomSheet: modifier nằm ngoài offset của sheet nên hình vẽ rơi lên mép trên màn hình. Hiện khi value khác
+// null và giữ value cũ trong lúc trượt xuống (nội dung không biến mất giữa animation). Kéo / chạm nền / Back gọi onDismissRequest;
+// isDragEnabled = false cho sheet có thao tác kéo bên trong (bảng vẽ, bánh xe chọn giờ).
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun <T : Any> AppSheet(
@@ -85,7 +78,7 @@ fun <T : Any> AppSheet(
     shown?.let { current ->
         ModalBottomSheet(
             onDismissRequest = onDismissRequest,
-            modifier = modifier.glowTopEdge(brush = EdgeGlowGradient, radius = 24.dp),
+            modifier = modifier,
             sheetState = sheetState,
             sheetGesturesEnabled = isDragEnabled,
             shape = RoundedCornerTopShape24dp,
@@ -169,12 +162,12 @@ fun AppSheetHeroHeader(
     }
 }
 
-// Đầu sheet nhập / chọn: ô icon, tiêu đề + một dòng giải thích, nút đóng.
+// Đầu sheet nhập / chọn: ô icon, tiêu đề + một dòng giải thích. Không có nút X: sheet đóng bằng nút chữ Hủy ở cuối (AppTextButton) như các sheet
+// quyết định, hoặc vuốt xuống / chạm nền / Back.
 @Composable
 fun AppSheetToolHeader(
     @DrawableRes iconRes: Int,
     title: String,
-    onClose: () -> Unit,
     modifier: Modifier = Modifier,
     description: String? = null,
 ) {
@@ -201,7 +194,7 @@ fun AppSheetToolHeader(
         Column(
             modifier = Modifier
                 .weight(1f)
-                .padding(horizontal = 12.dp),
+                .padding(start = 12.dp),
         ) {
             Text(
                 text = title,
@@ -220,27 +213,6 @@ fun AppSheetToolHeader(
                 )
             }
         }
-
-        Box(
-            modifier = Modifier
-                .size(48.dp)
-                .onClick(shape = CircleShape, action = onClose),
-            contentAlignment = Alignment.Center,
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(36.dp)
-                    .background(color = Neutral17, shape = CircleShape),
-                contentAlignment = Alignment.Center,
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_x),
-                    contentDescription = stringResource(R.string.action_close),
-                    modifier = Modifier.size(18.dp),
-                    tint = Grey9A,
-                )
-            }
-        }
     }
 }
 
@@ -254,36 +226,6 @@ private fun AppSheetHandle() {
     )
 }
 
-// Viền sáng chạy theo mép trên bo tròn của sheet (hai góc và cạnh trên), không vẽ hai cạnh bên.
-private fun Modifier.glowTopEdge(
-    brush: Brush,
-    radius: Dp,
-): Modifier = drawWithCache {
-    val strokeWidth = 1.6.dp.toPx()
-    val half = strokeWidth / 2
-    val corner = radius.toPx()
-    val path = Path().apply {
-        arcTo(
-            rect = Rect(left = half, top = half, right = corner * 2 - half, bottom = corner * 2 - half),
-            startAngleDegrees = 180f,
-            sweepAngleDegrees = 90f,
-            forceMoveTo = true,
-        )
-        lineTo(size.width - corner, half)
-        arcTo(
-            rect = Rect(left = size.width - corner * 2 + half, top = half, right = size.width - half, bottom = corner * 2 - half),
-            startAngleDegrees = 270f,
-            sweepAngleDegrees = 90f,
-            forceMoveTo = false,
-        )
-    }
-
-    onDrawWithContent {
-        drawContent()
-        drawPath(path = path, brush = brush, style = Stroke(width = strokeWidth))
-    }
-}
-
 @Preview(widthDp = 360)
 @Composable
 private fun AppSheetHeaderPreview() {
@@ -292,7 +234,7 @@ private fun AppSheetHeaderPreview() {
             .background(Neutral12)
             .padding(20.dp),
     ) {
-        AppSheetToolHeader(iconRes = R.drawable.ic_note_pencil, title = "Ghi nhớ", onClose = {}, description = "Hiện dưới đồng hồ")
+        AppSheetToolHeader(iconRes = R.drawable.ic_note_pencil, title = "Ghi nhớ", description = "Hiện dưới đồng hồ")
 
         AppSheetHeroHeader(
             title = "Đặt lại chủ đề mặc định?",

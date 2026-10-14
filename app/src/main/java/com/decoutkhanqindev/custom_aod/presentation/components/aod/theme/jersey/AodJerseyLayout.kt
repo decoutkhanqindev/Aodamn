@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.custom_aod.R
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.AodPanelBlock
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.AodPanelColumn
+import com.decoutkhanqindev.custom_aod.presentation.components.aod.block.AodStatusLine
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.panelBlocks
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.shownPanelBlocks
 import com.decoutkhanqindev.custom_aod.presentation.components.is24HourFormat
@@ -267,12 +268,13 @@ private fun JerseyStatus(
     state: AodState,
     unit: Dp,
 ) {
-    AodJerseyStatus(
+    AodStatusLine(
         battery = state.battery?.takeIf { state.extras.isBatteryEnabled },
         isFlashlightOn = state.isFlashlightOn,
         notifications = state.notifications,
-        color = state.appearance.theme.config[JerseyThemeSpec.MinuteColor],
-        unit = unit,
+        color = state.appearance.theme.config[JerseyThemeSpec.StatusColor],
+        glyphHeight = unit * JerseyMetrics.STATUS_GLYPH_HEIGHT,
+        fontFamily = JerseyThemeSpec.Font,
     )
 }
 

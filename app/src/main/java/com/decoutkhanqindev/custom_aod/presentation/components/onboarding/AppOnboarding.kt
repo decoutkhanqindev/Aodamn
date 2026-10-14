@@ -98,7 +98,7 @@ fun AppOnboardingHeader(
     }
 }
 
-// Chân màn onboarding: một dòng gợi ý (nếu có) trên nút chính.
+// Chân màn onboarding: một dòng gợi ý (nếu có) trên nút chính, banner (nếu có) dưới cùng sát thanh điều hướng.
 @Composable
 fun AppOnboardingFooter(
     actionLabel: String,
@@ -107,33 +107,41 @@ fun AppOnboardingFooter(
     isActionEnabled: Boolean = true,
     hint: String? = null,
     @DrawableRes actionIconRes: Int? = null,
+    ad: @Composable () -> Unit = {},
 ) {
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .navigationBarsPadding()
-            .padding(20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
+            .navigationBarsPadding(),
     ) {
-        AnimatedVisibility(visible = hint != null) {
-            Text(
-                text = hint.orEmpty(),
-                modifier = Modifier.padding(bottom = 8.dp),
-                color = Grey9A,
-                textAlign = TextAlign.Center,
-                style = BodySmall,
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            AnimatedVisibility(visible = hint != null) {
+                Text(
+                    text = hint.orEmpty(),
+                    modifier = Modifier.padding(bottom = 8.dp),
+                    color = Grey9A,
+                    textAlign = TextAlign.Center,
+                    style = BodySmall,
+                )
+            }
+
+            AppPrimaryButton(
+                text = actionLabel,
+                onClick = onAction,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 56.dp),
+                iconRes = actionIconRes,
+                isEnabled = isActionEnabled,
             )
         }
 
-        AppPrimaryButton(
-            text = actionLabel,
-            onClick = onAction,
-            modifier = Modifier
-                .fillMaxWidth()
-                .heightIn(min = 56.dp),
-            iconRes = actionIconRes,
-            isEnabled = isActionEnabled,
-        )
+        ad()
     }
 }
 

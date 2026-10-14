@@ -60,7 +60,9 @@ fun AppNavDisplay() {
                 screen<PermissionDestination> { PermissionScreen(backStack) }
                 screen<MainDestination> { dest -> MainNavDisplay(backStack, isPermissionSkipped = dest.isPermissionSkipped) }
                 screen<IapDestination> { IapScreen(backStack) }
-                screen<ThemeEditorDestination> { dest -> ThemeEditorScreen(backStack, themeId = dest.themeId) }
+                screen<ThemeEditorDestination> { dest ->
+                    ThemeEditorScreen(backStack, themeId = dest.themeId, focusBlock = dest.focusBlock)
+                }
                 // TODO: Đăng ký screen<XxxDestination> { dest -> XxxScreen(...) } cho màn mới
             },
         ),

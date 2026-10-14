@@ -12,8 +12,8 @@ import com.decoutkhanqindev.custom_aod.presentation.screens.aod.state.AodState
 
 // Khung xem trước AOD ở màn sửa (Tùy chỉnh, màn chủ đề), nằm sau các thanh. Dọc: AodContent vẽ trọn màn hình. Ngang: màn hình app vẫn dọc (máy
 // khoá dọc, các thanh không xoay), chỉ AOD đổi sang bố cục ngang: vẽ ở cỡ đầy đủ của màn hình xoay ngang (rộng = chiều cao màn hình dọc, AodContent
-// tự chọn bố cục ngang theo kích thước) rồi xoay 90° cho vừa khít màn hình dọc. User tự xoay máy sang ngang để xem đúng chiều (nhấn giữ khung xem
-// trước để ẩn các thanh).
+// tự chọn bố cục ngang theo kích thước) rồi xoay 90° cho vừa khít màn hình dọc; ảnh nền xoay ngược lại nên vẫn đứng như màn dọc (AodBackdrop). User
+// tự xoay máy sang ngang để xem đúng chiều (nhấn giữ khung xem trước để ẩn các thanh).
 @Composable
 fun AodPreviewFrame(
     state: AodState,
@@ -21,7 +21,7 @@ fun AodPreviewFrame(
     modifier: Modifier = Modifier,
 ) {
     if (!isLandscape) {
-        AodContent(state = state, onIntent = {}, modifier = modifier, isInteractive = false)
+        AodContent(state = state, onIntent = {}, modifier = modifier, isInteractive = false, backdropRotationZ = 0f)
         return
     }
 
@@ -39,6 +39,7 @@ fun AodPreviewFrame(
                 onIntent = {},
                 modifier = Modifier.fillMaxSize(),
                 isInteractive = false,
+                backdropRotationZ = -90f,
             )
         }
     }

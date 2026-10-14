@@ -122,7 +122,8 @@ class CustomizeViewModel(
             }
 
             is CustomizeIntent.Appearance.OpenThemeEditor -> viewModelScope.launch {
-                sendEffect(CustomizeEffect.Navigation.NavigateToThemeEditor(state.value.draft.appearance.clock.theme.value.id))
+                val themeId = state.value.draft.appearance.clock.theme.value.id
+                sendEffect(CustomizeEffect.Navigation.NavigateToThemeEditor(themeId, focusBlock = intent.block))
             }
 
             is CustomizeIntent.Appearance.RefreshTheme -> refreshTheme()

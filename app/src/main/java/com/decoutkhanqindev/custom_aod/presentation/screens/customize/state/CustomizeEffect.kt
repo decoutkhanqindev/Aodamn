@@ -1,6 +1,7 @@
 package com.decoutkhanqindev.custom_aod.presentation.screens.customize.state
 
 import androidx.annotation.StringRes
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodBlockValue
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionValue
 
 sealed interface CustomizeEffect {
@@ -22,7 +23,7 @@ sealed interface CustomizeEffect {
     sealed interface Navigation : CustomizeEffect {
         data object NavigateToPermission : Navigation
         data object NavigateToMain : Navigation
-        data class NavigateToThemeEditor(val themeId: String) : Navigation
+        data class NavigateToThemeEditor(val themeId: String, val focusBlock: AodBlockValue?) : Navigation
         data object NavigateBack : Navigation
     }
 

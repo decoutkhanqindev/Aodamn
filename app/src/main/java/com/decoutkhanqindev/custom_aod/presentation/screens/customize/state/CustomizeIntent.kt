@@ -2,6 +2,7 @@ package com.decoutkhanqindev.custom_aod.presentation.screens.customize.state
 
 import android.graphics.Bitmap
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.WallpaperValue
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodBlockValue
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.component.AodComponentValue
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeTabValue
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionValue
@@ -25,7 +26,8 @@ sealed interface CustomizeIntent {
         data class ChangeComponentOption(val key: String, val raw: Int) : Appearance
         data class ResetComponentStyle(val component: AodComponentValue) : Appearance
         data object ResetClockStyle : Appearance
-        data object OpenThemeEditor : Appearance
+        // block: khối chủ đề tự vẽ của tab đang đứng (mở thẳng tab đó ở màn chủ đề); null từ tab Đồng hồ.
+        data class OpenThemeEditor(val block: AodBlockValue?) : Appearance
 
         // Chủ đề có thể đổi ở màn chủ đề trong lúc Tùy chỉnh đang mở (quay về từ màn đó).
         data object RefreshTheme : Appearance

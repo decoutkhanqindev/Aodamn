@@ -1,11 +1,13 @@
 package com.decoutkhanqindev.custom_aod.presentation.screens.themeeditor.state
 
 import androidx.compose.runtime.Immutable
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodBlockValue
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeConfig
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeTab
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeValue
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.isSame
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.tabOf
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeDraftUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.toThemePreviewDraft
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionUiModel
@@ -35,6 +37,12 @@ data class ThemeEditorState(
 
     val hasChanges: Boolean
         get() = !theme.spec.isSame(config, savedConfig)
+
+    // Chủ đề không có tab cho khối đó (vd Cổ điển không tự vẽ khối nào) thì giữ chế độ xem.
+    fun focusedOn(block: AodBlockValue?): ThemeEditorState {
+        val tab = theme.spec.tabOf(block) ?: return this
+        return copy(isEditing = true, selectedTab = tab)
+    }
 }
 
 @Immutable

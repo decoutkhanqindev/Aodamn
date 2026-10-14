@@ -25,6 +25,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.decoutkhanqindev.custom_aod.R
+import com.decoutkhanqindev.custom_aod.presentation.components.AppBottomAdSlot
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.AodPreviewFrame
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.editor.DrawingPadSheet
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.editor.MemoEditorSheet
@@ -52,6 +53,7 @@ import kotlinx.collections.immutable.persistentListOf
 fun CustomizeContent(
     state: CustomizeState,
     onIntent: (CustomizeIntent) -> Unit,
+    bannerAd: @Composable () -> Unit,
 ) {
     val preview = rememberAodPreview(
         draft = state.draft,
@@ -66,7 +68,7 @@ fun CustomizeContent(
     }
     var lastGuideStep by remember { mutableStateOf(CustomizeGuideStepValue.PREVIEW) }
 
-    // Nhấn giữ khung xem trước: ẩn thanh trên, thanh công cụ, panel và thanh tab để xem AOD toàn màn hình, thả tay thì hiện lại.
+    // Nhấn giữ khung xem trước: ẩn thanh trên, thanh công cụ, panel, thanh tab và banner để xem AOD toàn màn hình, thả tay thì hiện lại.
     var isPeeking by remember { mutableStateOf(false) }
 
     SideEffect(state.guideStep) {
@@ -124,29 +126,36 @@ fun CustomizeContent(
             }
         }
 
-        AnimatedVisibility(
-            visible = !isPeeking,
-            modifier = Modifier.align(Alignment.BottomCenter),
-            enter = fadeIn() + slideInVertically { height -> height },
-            exit = fadeOut() + slideOutVertically { height -> height },
+        Column(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth(),
         ) {
-            Column(modifier = Modifier.fillMaxWidth()) {
-                CustomizePanelHost(
-                    selectedTab = state.selectedTab,
-                    isFirstOpen = state.isFirstOpen,
-                    draft = state.draft,
-                    decor = state.decor,
-                    onIntent = onIntent,
-                )
+            AnimatedVisibility(
+                visible = !isPeeking,
+                enter = fadeIn() + slideInVertically { height -> height },
+                exit = fadeOut() + slideOutVertically { height -> height },
+            ) {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    CustomizePanelHost(
+                        selectedTab = state.selectedTab,
+                        isFirstOpen = state.isFirstOpen,
+                        draft = state.draft,
+                        decor = state.decor,
+                        onIntent = onIntent,
+                    )
 
-                CustomizeTabBar(
-                    selectedTab = state.selectedTab,
-                    spec = state.draft.appearance.clock.theme.value.spec,
-                    guideStep = state.guideStep,
-                    onIntent = onIntent,
-                    onClusterPositioned = onTargetPositioned,
-                )
+                    CustomizeTabBar(
+                        selectedTab = state.selectedTab,
+                        spec = state.draft.appearance.clock.theme.value.spec,
+                        guideStep = state.guideStep,
+                        onIntent = onIntent,
+                        onClusterPositioned = onTargetPositioned,
+                    )
+                }
             }
+
+            AppBottomAdSlot(isHidden = isPeeking, content = bannerAd)
         }
 
         AnimatedVisibility(
@@ -235,6 +244,7 @@ private fun CustomizeContentPreview() {
                 selectedTab = CustomizeTabValue.DATE,
             ),
             onIntent = {},
+            bannerAd = {},
         )
     }
 }
@@ -250,6 +260,7 @@ private fun CustomizeContentOnboardingClockPreview() {
                 selectedTab = CustomizeTabValue.CLOCK,
             ),
             onIntent = {},
+            bannerAd = {},
         )
     }
 }
@@ -264,6 +275,7 @@ private fun CustomizeContentGuidePreview() {
                 guideStep = CustomizeGuideStepValue.INFO,
             ),
             onIntent = {},
+            bannerAd = {},
         )
     }
 }

@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.AodDetails
+import com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.capsule.AodCapsuleLandscape
+import com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.capsule.AodCapsulePortrait
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.classic.AodClassicClock
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.classic.AodClassicLandscape
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.jersey.AodJerseyLandscape
@@ -14,8 +16,8 @@ import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeValu
 import com.decoutkhanqindev.custom_aod.presentation.screens.aod.state.AodIntent
 import com.decoutkhanqindev.custom_aod.presentation.screens.aod.state.AodState
 
-// Bố cục AOD màn dọc theo chủ đề: Cổ điển và Sỏi là đồng hồ rồi các khối thông tin bên dưới; Số áo tự vẽ cả cụm (số, ngày, dòng trạng thái)
-// rồi các khối thông tin.
+// Bố cục AOD màn dọc theo chủ đề: Cổ điển và Sỏi là đồng hồ rồi các khối thông tin bên dưới; Số áo và Viên nang tự vẽ cả cụm (số, ngày, dòng
+// trạng thái) cùng các khối thông tin.
 // Thêm chủ đề = thêm một nhánh ở đây và ở AodLandscape.
 @Composable
 fun AodPortrait(
@@ -38,6 +40,7 @@ fun AodPortrait(
         }
 
         AodThemeValue.JERSEY -> AodJerseyPortrait(state = state, onIntent = onIntent)
+        AodThemeValue.CAPSULE -> AodCapsulePortrait(state = state, onIntent = onIntent)
     }
 }
 
@@ -51,6 +54,7 @@ fun AodLandscape(
         AodThemeValue.CLASSIC -> AodClassicLandscape(state = state, onIntent = onIntent)
         AodThemeValue.PEBBLE -> AodPebbleLandscape(state = state, onIntent = onIntent)
         AodThemeValue.JERSEY -> AodJerseyLandscape(state = state, onIntent = onIntent)
+        AodThemeValue.CAPSULE -> AodCapsuleLandscape(state = state, onIntent = onIntent)
     }
 }
 

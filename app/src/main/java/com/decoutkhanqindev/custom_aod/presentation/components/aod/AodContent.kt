@@ -66,6 +66,7 @@ fun AodContent(
     onIntent: (AodIntent) -> Unit,
     modifier: Modifier = Modifier,
     isInteractive: Boolean = true,
+    backdropRotationZ: Float? = null,
 ) {
     val currentOnIntent by rememberUpdatedState(onIntent)
     val focusRequester = remember { FocusRequester() }
@@ -132,9 +133,11 @@ fun AodContent(
     ) {
         val isLandscape = maxWidth > maxHeight
 
-        AodWallpaper(wallpaper = state.wallpaper.takeIf { !state.isDark })
+        AodBackdrop(rotationZ = backdropRotationZ) {
+            AodWallpaper(wallpaper = state.wallpaper.takeIf { !state.isDark })
 
-        AodBackground(background = state.background.takeIf { !state.isDark })
+            AodBackground(background = state.background.takeIf { !state.isDark })
+        }
 
         AodEdgeGlow(
             isGlowing = state.isGlowing,

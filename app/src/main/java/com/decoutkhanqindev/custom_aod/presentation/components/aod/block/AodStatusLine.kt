@@ -1,4 +1,4 @@
-package com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.jersey
+package com.decoutkhanqindev.custom_aod.presentation.components.aod.block
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -35,6 +35,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -44,27 +45,29 @@ import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.custom_aod.R
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.info.AodNotificationsUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.info.BatteryUiModel
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.jersey.JerseyThemeSpec
 import com.decoutkhanqindev.custom_aod.presentation.theme.Black
+import com.decoutkhanqindev.custom_aod.presentation.theme.FontFamilyPlusJakartaSans
 import com.decoutkhanqindev.custom_aod.presentation.theme.GreyED
 import com.decoutkhanqindev.custom_aod.presentation.theme.Mint
 import com.decoutkhanqindev.custom_aod.presentation.theme.Red
 
-// Dòng trạng thái của Số áo dưới đồng hồ: pin (icon pin dọc, đang sạc thì có tia sét) · icon các app đang có thông báo, chung một dòng. Đèn
-// pin đang bật thì icon Mint cạnh pin. Mọi kích thước theo unit (chiều cao một hàng số của màn dọc, JerseyMetrics) như ảnh mẫu. Không có gì để
-// hiện thì không chiếm chỗ.
+// Dòng trạng thái của chủ đề tự vẽ pin + thông báo (AodBlockValue.STATUS: Số áo, Viên nang): pin (icon pin dọc, đang sạc thì có tia sét) ·
+// icon các app đang có thông báo, chung một dòng. Đèn pin đang bật thì icon Mint cạnh pin. Mọi kích thước theo glyphHeight (chiều cao icon pin,
+// tỉ lệ đo trên ảnh mẫu Số áo); gapScale thu khoảng cách cho chủ đề có dòng chặt hơn (Viên nang). Không có gì để hiện thì không chiếm chỗ.
 @Composable
-fun AodJerseyStatus(
+fun AodStatusLine(
     battery: BatteryUiModel?,
     isFlashlightOn: Boolean,
     notifications: AodNotificationsUiModel,
     color: Color,
-    unit: Dp,
+    glyphHeight: Dp,
+    fontFamily: FontFamily,
     modifier: Modifier = Modifier,
+    gapScale: Float = 1f,
 ) {
     val hasPower = battery != null || isFlashlightOn
     val hasIcons = notifications.icons.isNotEmpty()
-    val fontSize = with(LocalDensity.current) { (unit * JerseyMetrics.STATUS_FONT).toSp() }
+    val fontSize = with(LocalDensity.current) { (glyphHeight * 0.915f).toSp() }
 
     AnimatedVisibility(
         visible = hasPower || hasIcons,
@@ -73,7 +76,7 @@ fun AodJerseyStatus(
         exit = fadeOut(),
     ) {
         Row(
-            modifier = Modifier.heightIn(min = unit * JerseyMetrics.STATUS_GLYPH_HEIGHT),
+            modifier = Modifier.heightIn(min = glyphHeight),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             if (battery != null) {
@@ -86,12 +89,12 @@ fun AodJerseyStatus(
                     modifier = Modifier.clearAndSetSemantics { contentDescription = description },
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    JerseyBatteryGlyph(
+                    AodBatteryGlyph(
                         battery = battery,
                         color = color,
                         modifier = Modifier.size(
-                            width = unit * JerseyMetrics.STATUS_GLYPH_WIDTH,
-                            height = unit * JerseyMetrics.STATUS_GLYPH_HEIGHT,
+                            width = glyphHeight * 0.522f,
+                            height = glyphHeight,
                         ),
                     )
 
@@ -100,7 +103,8 @@ fun AodJerseyStatus(
                         color = color,
                         fontSize = fontSize,
                         fontWeight = FontWeight.Medium,
-                        modifier = Modifier.padding(start = unit * JerseyMetrics.STATUS_GAP_GLYPH_TEXT),
+                        fontFamily = fontFamily,
+                        modifier = Modifier.padding(start = glyphHeight * 0.717f * gapScale),
                     )
                 }
             }
@@ -110,22 +114,22 @@ fun AodJerseyStatus(
                     painter = painterResource(R.drawable.ic_flashlight_light),
                     contentDescription = stringResource(R.string.aod_flashlight_on),
                     modifier = Modifier
-                        .padding(start = if (battery != null) unit * JerseyMetrics.STATUS_GAP_ICON else 0.dp)
-                        .size(unit * JerseyMetrics.STATUS_ICON),
+                        .padding(start = if (battery != null) glyphHeight * 1.13f * gapScale else 0.dp)
+                        .size(glyphHeight * 0.978f),
                     tint = Mint,
                 )
             }
 
             if (hasPower && hasIcons) {
-                Spacer(modifier = Modifier.width(unit * JerseyMetrics.STATUS_GAP_TEXT_DOT))
+                Spacer(modifier = Modifier.width(glyphHeight * 1.13f * gapScale))
 
                 Box(
                     modifier = Modifier
-                        .size(unit * JerseyMetrics.STATUS_DOT)
+                        .size(glyphHeight * 0.228f)
                         .background(color = color, shape = CircleShape),
                 )
 
-                Spacer(modifier = Modifier.width(unit * JerseyMetrics.STATUS_GAP_DOT_ICON))
+                Spacer(modifier = Modifier.width(glyphHeight * 1.065f * gapScale))
             }
 
             if (hasIcons) {
@@ -135,8 +139,8 @@ fun AodJerseyStatus(
                             bitmap = remember(icon.icon) { icon.icon.asImageBitmap() },
                             contentDescription = null,
                             modifier = Modifier
-                                .padding(start = if (index > 0) unit * JerseyMetrics.STATUS_GAP_ICON else 0.dp)
-                                .size(unit * JerseyMetrics.STATUS_ICON),
+                                .padding(start = if (index > 0) glyphHeight * 1.13f * gapScale else 0.dp)
+                                .size(glyphHeight * 0.978f),
                             colorFilter = ColorFilter.tint(color),
                         )
                     }
@@ -148,7 +152,8 @@ fun AodJerseyStatus(
                         color = color,
                         fontSize = fontSize,
                         fontWeight = FontWeight.Normal,
-                        modifier = Modifier.padding(start = unit * JerseyMetrics.STATUS_GAP_ICON),
+                        fontFamily = fontFamily,
+                        modifier = Modifier.padding(start = glyphHeight * 1.13f * gapScale),
                     )
                 }
             }
@@ -164,6 +169,7 @@ private fun StatusText(
     color: Color,
     fontSize: TextUnit,
     fontWeight: FontWeight,
+    fontFamily: FontFamily,
     modifier: Modifier = Modifier,
 ) {
     Text(
@@ -172,7 +178,7 @@ private fun StatusText(
         color = color,
         fontSize = fontSize,
         fontWeight = fontWeight,
-        fontFamily = JerseyThemeSpec.Font,
+        fontFamily = fontFamily,
         maxLines = 1,
         softWrap = false,
         style = TextStyle(
@@ -188,7 +194,7 @@ private fun StatusText(
 // Pin dọc: viền và mức pin tô từ dưới lên (pin yếu tô đỏ); đang sạc thì tô đầy với tia sét khoét đen như ảnh mẫu. Kích thước do nơi gọi đặt,
 // nét và bo góc theo bề rộng.
 @Composable
-private fun JerseyBatteryGlyph(
+private fun AodBatteryGlyph(
     battery: BatteryUiModel,
     color: Color,
     modifier: Modifier = Modifier,
@@ -264,12 +270,13 @@ private val BoltPoints = listOf(
 
 @Preview
 @Composable
-private fun AodJerseyStatusPreview() {
-    AodJerseyStatus(
+private fun AodStatusLinePreview() {
+    AodStatusLine(
         battery = BatteryUiModel(percent = 32, isCharging = true),
         isFlashlightOn = false,
         notifications = AodNotificationsUiModel(),
         color = GreyED,
-        unit = 280.dp,
+        glyphHeight = 13.dp,
+        fontFamily = FontFamilyPlusJakartaSans,
     )
 }

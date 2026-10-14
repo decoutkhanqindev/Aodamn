@@ -25,6 +25,7 @@ import com.decoutkhanqindev.custom_aod.domain.usecase.GetUpcomingEventsUseCase
 import com.decoutkhanqindev.custom_aod.domain.usecase.ObserveWeatherUseCase
 import com.decoutkhanqindev.custom_aod.domain.usecase.RefreshWeatherUseCase
 import com.decoutkhanqindev.custom_aod.presentation.aod.AodSession
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodBlockValue
 import com.decoutkhanqindev.custom_aod.presentation.screens.aod.AodViewModel
 import com.decoutkhanqindev.custom_aod.presentation.screens.aodtab.AodTabViewModel
 import com.decoutkhanqindev.custom_aod.presentation.screens.customize.CustomizeViewModel
@@ -103,7 +104,7 @@ val viewModelModule = module {
         )
     }
     viewModel { PermissionViewModel(get(), get()) }
-    viewModel { (themeId: String) -> ThemeEditorViewModel(themeId, get(), get()) }
+    viewModel { (themeId: String, focusBlock: AodBlockValue?) -> ThemeEditorViewModel(themeId, focusBlock, get(), get()) }
     viewModel {
         AodViewModel(
             get(),

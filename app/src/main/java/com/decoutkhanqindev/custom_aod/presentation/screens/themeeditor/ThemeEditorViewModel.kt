@@ -5,6 +5,7 @@ import com.decoutkhanqindev.custom_aod.R
 import com.decoutkhanqindev.custom_aod.data.device.permission.PermissionManager
 import com.decoutkhanqindev.custom_aod.data.local.datastore.DataStoreManager
 import com.decoutkhanqindev.custom_aod.presentation.base.BaseViewModel
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodBlockValue
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeConfig
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeValue
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.isDefault
@@ -23,12 +24,14 @@ import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
+// focusBlock: mở từ Tùy chỉnh ở tab của một khối chủ đề tự vẽ (Ngày, Pin, Thông báo, Nhạc) thì vào thẳng chế độ sửa ở tab chỉnh khối đó.
 class ThemeEditorViewModel(
     themeId: String,
+    focusBlock: AodBlockValue?,
     private val dataStoreManager: DataStoreManager,
     private val permissionManager: PermissionManager,
 ) : BaseViewModel<ThemeEditorState, ThemeEditorIntent, ThemeEditorEffect>(
-    initialState = ThemeEditorState(theme = AodThemeValue.fromId(themeId)),
+    initialState = ThemeEditorState(theme = AodThemeValue.fromId(themeId)).focusedOn(focusBlock),
 ) {
 
     private val undoStack = ArrayDeque<AodThemeConfig>()

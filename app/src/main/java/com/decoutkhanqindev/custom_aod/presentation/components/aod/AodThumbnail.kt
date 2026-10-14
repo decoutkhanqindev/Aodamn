@@ -65,6 +65,7 @@ fun AodThumbnail(
                     scaleY = scale
                 },
             isInteractive = false,
+            backdropRotationZ = 0f,
         )
 
         Box(

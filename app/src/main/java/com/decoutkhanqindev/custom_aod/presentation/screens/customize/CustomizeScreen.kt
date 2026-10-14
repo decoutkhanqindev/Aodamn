@@ -24,6 +24,8 @@ import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
+import com.decoutkhanqindev.custom_aod.ads.AdsManager
+import com.decoutkhanqindev.custom_aod.ads.composables.BannerAdView
 import com.decoutkhanqindev.custom_aod.data.device.permission.PermissionManager
 import com.decoutkhanqindev.custom_aod.presentation.aod.AodNotificationListener
 import com.decoutkhanqindev.custom_aod.presentation.components.AppToastHost
@@ -60,6 +62,7 @@ fun CustomizeScreen(
     val resources = LocalResources.current
     val tag = LocalTag.current
     val viewModel: CustomizeViewModel = koinViewModel { parametersOf(isFirstOpen) }
+    val adsManager: AdsManager = koinInject()
     val permissionManager: PermissionManager = koinInject()
     val state by viewModel.state.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
@@ -145,13 +148,19 @@ fun CustomizeScreen(
 
                     is CustomizeEffect.Navigation.NavigateBack -> backStack.navigateBack()
 
-                    // Màn chủ đề đã nằm ngay dưới thì quay lại nó thay vì mở chồng thêm một màn.
-                    is CustomizeEffect.Navigation.NavigateToThemeEditor ->
+                    // Màn chủ đề đã nằm ngay dưới thì quay lại nó thay vì mở chồng thêm một màn; cần mở một tab thì thay nó bằng màn mới
+                    // mở sẵn tab đó (màn cũ đang ở chế độ xem vì chỉ chế độ xem mới có nút Tùy chỉnh, không mất gì).
+                    is CustomizeEffect.Navigation.NavigateToThemeEditor -> {
+                        val destination = ThemeEditorDestination(effect.themeId, focusBlock = effect.focusBlock)
                         if (backStack.any { key -> key is ThemeEditorDestination }) {
                             backStack.navigateBack()
+                            if (effect.focusBlock != null && backStack.last() is ThemeEditorDestination) {
+                                backStack[backStack.lastIndex] = destination
+                            }
                         } else {
-                            backStack.add(ThemeEditorDestination(effect.themeId))
+                            backStack.add(destination)
                         }
+                    }
                 }
             },
             catch = { e -> Timber.tag(tag).e(e.stackTraceToString()) },
@@ -185,7 +194,13 @@ fun CustomizeScreen(
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        CustomizeContent(state = state, onIntent = viewModel::onIntent)
+        CustomizeContent(
+            state = state,
+            onIntent = viewModel::onIntent,
+            bannerAd = {
+                BannerAdView(adUnit = { if (isFirstOpen) adsManager.bannerOnboardingCustomize else adsManager.bannerCustomize })
+            },
+        )
 
         AppToastHost(
             hostState = toastState,

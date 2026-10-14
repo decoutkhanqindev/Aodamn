@@ -58,7 +58,7 @@ fun AodTabScreen(
                         CustomizeDestination(isFirstOpen = false)
                     )
 
-                    is AodTabEffect.NavigateToThemeEditor -> backStack.add(ThemeEditorDestination(effect.themeId))
+                    is AodTabEffect.NavigateToThemeEditor -> backStack.add(ThemeEditorDestination(effect.themeId, focusBlock = null))
 
                     is AodTabEffect.OpenOverlaySettings ->
                         context.openOverlaySettings { permissionManager.isGranted(PermissionValue.OVERLAY) }

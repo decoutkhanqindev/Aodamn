@@ -1,5 +1,6 @@
 package com.decoutkhanqindev.custom_aod.presentation.screens.settings.components
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -8,6 +9,7 @@ import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.custom_aod.R
 import com.decoutkhanqindev.custom_aod.presentation.components.AppOptionIcon
 import com.decoutkhanqindev.custom_aod.presentation.components.AppOptionRow
+import com.decoutkhanqindev.custom_aod.presentation.components.AppTextButton
 import com.decoutkhanqindev.custom_aod.presentation.components.sheet.AppSheet
 import com.decoutkhanqindev.custom_aod.presentation.components.sheet.AppSheetToolHeader
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.interaction.AodActionValue
@@ -70,7 +72,6 @@ fun SettingsInteractionSection(
         AppSheetToolHeader(
             iconRes = gesture.iconRes,
             title = stringResource(gesture.labelRes),
-            onClose = { onIntent(SettingsIntent.Interaction.DismissGestureActionPicker) },
             description = stringResource(R.string.option_tap_to_save),
         )
 
@@ -86,5 +87,13 @@ fun SettingsInteractionSection(
                     AppOptionIcon(iconRes = action.iconRes, isSelected = action == selected)
                 }
             }
+
+        AppTextButton(
+            text = stringResource(R.string.action_cancel),
+            onClick = { onIntent(SettingsIntent.Interaction.DismissGestureActionPicker) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 12.dp),
+        )
     }
 }

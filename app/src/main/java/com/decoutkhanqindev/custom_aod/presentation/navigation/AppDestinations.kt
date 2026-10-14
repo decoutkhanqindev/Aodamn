@@ -1,6 +1,7 @@
 package com.decoutkhanqindev.custom_aod.presentation.navigation
 
 import androidx.navigation3.runtime.NavKey
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodBlockValue
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -22,7 +23,8 @@ data object PermissionDestination : NavKey
 @Serializable
 data object IapDestination : NavKey
 
+// focusBlock: mở thẳng chế độ sửa ở tab chỉnh khối chủ đề tự vẽ đó (từ Tùy chỉnh); null thì mở chế độ xem.
 @Serializable
-data class ThemeEditorDestination(val themeId: String) : NavKey
+data class ThemeEditorDestination(val themeId: String, val focusBlock: AodBlockValue?) : NavKey
 
 // TODO: Thêm destination của project — data object khi không có args, data class (field primitive/@Serializable) khi có args

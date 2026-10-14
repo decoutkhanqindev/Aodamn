@@ -23,11 +23,14 @@ import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
+import com.decoutkhanqindev.custom_aod.ads.AdsManager
+import com.decoutkhanqindev.custom_aod.ads.composables.BannerAdView
 import com.decoutkhanqindev.custom_aod.data.device.permission.PermissionManager
 import com.decoutkhanqindev.custom_aod.presentation.components.AppToastHost
 import com.decoutkhanqindev.custom_aod.presentation.components.LocalTag
 import com.decoutkhanqindev.custom_aod.presentation.effects.LaunchedWithLifecycleEffect
 import com.decoutkhanqindev.custom_aod.presentation.model.ToastUiModel
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodBlockValue
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionValue
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.isGranted
 import com.decoutkhanqindev.custom_aod.presentation.navigation.CustomizeDestination
@@ -48,11 +51,13 @@ import timber.log.Timber
 fun ThemeEditorScreen(
     backStack: NavBackStack<NavKey>,
     themeId: String,
+    focusBlock: AodBlockValue?,
 ) {
     val context = LocalContext.current
     val resources = LocalResources.current
     val tag = LocalTag.current
-    val viewModel: ThemeEditorViewModel = koinViewModel { parametersOf(themeId) }
+    val viewModel: ThemeEditorViewModel = koinViewModel { parametersOf(themeId, focusBlock) }
+    val adsManager: AdsManager = koinInject()
     val permissionManager: PermissionManager = koinInject()
     val state by viewModel.state.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
@@ -109,7 +114,11 @@ fun ThemeEditorScreen(
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        ThemeEditorContent(state = state, onIntent = viewModel::onIntent)
+        ThemeEditorContent(
+            state = state,
+            onIntent = viewModel::onIntent,
+            bannerAd = { BannerAdView(adUnit = { adsManager.bannerThemeEditor }) },
+        )
 
         AppToastHost(
             hostState = toastState,

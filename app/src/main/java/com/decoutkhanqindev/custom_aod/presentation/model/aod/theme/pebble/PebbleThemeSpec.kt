@@ -85,11 +85,13 @@ object PebbleThemeSpec : AodThemeSpec {
             iconRes = R.drawable.ic_calendar_blank,
             labelRes = R.string.theme_tab_date,
             options = persistentListOf(DateStyle, DateColor),
+            block = AodBlockValue.DATE,
         ),
         AodThemeTab(
             iconRes = R.drawable.ic_music_notes,
             labelRes = R.string.theme_tab_media,
             options = persistentListOf(PlayShape, ProgressStyle, MediaColor),
+            block = AodBlockValue.MEDIA,
         ),
         AodThemeTab(
             iconRes = R.drawable.ic_magic_wand,

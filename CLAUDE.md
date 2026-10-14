@@ -254,7 +254,11 @@ bắt buộc (compiler không chặn hộ):
 
 ## Ads
 
-Chỉ có placement `interSplash`; chưa làm tiếp khi user chưa yêu cầu.
+Placement: `interSplash` (Splash) và banner đáy màn `bannerLanguage` (chỉ onboarding), `bannerOnboardingCustomize`,
+`bannerPermission`, `bannerMain` (3 tab chung), `bannerThemeEditor` (xem + sửa), `bannerCustomize`; id đang là test id Google.
+Banner: Screen truyền slot `bannerAd` xuống Content; chân onboarding đặt qua `AppOnboardingFooter(ad = …)`, màn có thanh dưới
+qua `AppBottomAdSlot` đặt dưới thanh (slot tự chừa thanh điều hướng nên thanh bên trên không chừa nữa; ẩn tạm thì
+`isHidden`, không bỏ khỏi composition kẻo banner tải lại).
 
 - `AdsManager` (Koin `single`) giữ consent UMP, init MobileAds, `isAdShowing` và các placement
   `by lazy` (không tạo `AdUnit` trong composable). Id mỗi placement là `buildConfigField` ở cả

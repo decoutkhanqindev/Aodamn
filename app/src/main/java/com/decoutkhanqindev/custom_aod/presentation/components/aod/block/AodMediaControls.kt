@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.decoutkhanqindev.custom_aod.R
 import com.decoutkhanqindev.custom_aod.presentation.components.AppSlider
+import com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.capsule.AodCapsuleMedia
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.pebble.AodPebbleMedia
 import com.decoutkhanqindev.custom_aod.presentation.components.onClick
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.ClockFontValue
@@ -74,6 +75,7 @@ fun AodMediaControls(
                     AodClassicMedia(media = target, style = style, layout = layout, onIntent = onIntent)
 
                 AodThemeValue.PEBBLE -> AodPebbleMedia(media = target, config = theme.config, onIntent = onIntent)
+                AodThemeValue.CAPSULE -> AodCapsuleMedia(media = target, config = theme.config, onIntent = onIntent)
             }
         }
     }

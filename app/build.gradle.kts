@@ -78,6 +78,36 @@ android {
                 "INTER_SPLASH_ALL_ID",
                 "\"ca-app-pub-3940256099942544/1033173712\""
             )
+            buildConfigField(
+                "String",
+                "BANNER_LANGUAGE_ALL_ID",
+                "\"ca-app-pub-3940256099942544/9214589741\""
+            )
+            buildConfigField(
+                "String",
+                "BANNER_ONBOARDING_CUSTOMIZE_ALL_ID",
+                "\"ca-app-pub-3940256099942544/9214589741\""
+            )
+            buildConfigField(
+                "String",
+                "BANNER_PERMISSION_ALL_ID",
+                "\"ca-app-pub-3940256099942544/9214589741\""
+            )
+            buildConfigField(
+                "String",
+                "BANNER_MAIN_ALL_ID",
+                "\"ca-app-pub-3940256099942544/9214589741\""
+            )
+            buildConfigField(
+                "String",
+                "BANNER_THEME_EDITOR_ALL_ID",
+                "\"ca-app-pub-3940256099942544/9214589741\""
+            )
+            buildConfigField(
+                "String",
+                "BANNER_CUSTOMIZE_ALL_ID",
+                "\"ca-app-pub-3940256099942544/9214589741\""
+            )
         }
 
         debug {
@@ -85,6 +115,36 @@ android {
                 "String",
                 "INTER_SPLASH_ALL_ID",
                 "\"ca-app-pub-3940256099942544/1033173712\""
+            )
+            buildConfigField(
+                "String",
+                "BANNER_LANGUAGE_ALL_ID",
+                "\"ca-app-pub-3940256099942544/9214589741\""
+            )
+            buildConfigField(
+                "String",
+                "BANNER_ONBOARDING_CUSTOMIZE_ALL_ID",
+                "\"ca-app-pub-3940256099942544/9214589741\""
+            )
+            buildConfigField(
+                "String",
+                "BANNER_PERMISSION_ALL_ID",
+                "\"ca-app-pub-3940256099942544/9214589741\""
+            )
+            buildConfigField(
+                "String",
+                "BANNER_MAIN_ALL_ID",
+                "\"ca-app-pub-3940256099942544/9214589741\""
+            )
+            buildConfigField(
+                "String",
+                "BANNER_THEME_EDITOR_ALL_ID",
+                "\"ca-app-pub-3940256099942544/9214589741\""
+            )
+            buildConfigField(
+                "String",
+                "BANNER_CUSTOMIZE_ALL_ID",
+                "\"ca-app-pub-3940256099942544/9214589741\""
             )
         }
     }

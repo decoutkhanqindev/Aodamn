@@ -7,7 +7,8 @@ import androidx.compose.ui.Alignment
 import com.decoutkhanqindev.custom_aod.R
 
 // Ảnh nền AMOLED có sẵn: vector nền đen vẽ thẳng lên AOD (không lưu file) nên nét ở mọi màn hình và không vỡ gradient như JPEG.
-// alignment = phần giữ lại khi cắt ảnh dọc cho bố cục ngang (đồng hồ đêm): ảnh có chi tiết ở trên hay dưới thì giữ phần đó.
+// alignment = phần giữ lại khi ảnh phải cắt bớt (màn hình dài hay ngắn hơn ảnh): ảnh có chi tiết ở trên hay dưới thì giữ phần đó. Màn ngang
+// không cắt ảnh theo bề ngang: nền đứng yên theo chiều dọc của máy (AodBackdrop).
 // Mã 1–6 vẽ tay; mã 7–18 sinh bằng tools/wallpapers/generate_wallpapers.py (đổi ở script, đừng sửa tay file XML).
 @Immutable
 enum class WallpaperValue(

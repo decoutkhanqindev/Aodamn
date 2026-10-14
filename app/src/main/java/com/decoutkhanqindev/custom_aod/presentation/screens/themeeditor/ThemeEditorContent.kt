@@ -18,11 +18,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.custom_aod.R
 import com.decoutkhanqindev.custom_aod.presentation.components.AppBadge
+import com.decoutkhanqindev.custom_aod.presentation.components.AppBottomAdSlot
 import com.decoutkhanqindev.custom_aod.presentation.components.AppDangerButton
 import com.decoutkhanqindev.custom_aod.presentation.components.AppPrimaryButton
 import com.decoutkhanqindev.custom_aod.presentation.components.AppTextButton
@@ -46,16 +48,18 @@ import com.decoutkhanqindev.custom_aod.presentation.screens.themeeditor.componen
 import com.decoutkhanqindev.custom_aod.presentation.screens.themeeditor.state.ThemeEditorIntent
 import com.decoutkhanqindev.custom_aod.presentation.screens.themeeditor.state.ThemeEditorState
 import com.decoutkhanqindev.custom_aod.presentation.theme.Black
+import com.decoutkhanqindev.custom_aod.presentation.theme.Neutral12
 import com.decoutkhanqindev.custom_aod.presentation.theme.Theme
 
 @Composable
 fun ThemeEditorContent(
     state: ThemeEditorState,
     onIntent: (ThemeEditorIntent) -> Unit,
+    bannerAd: @Composable () -> Unit,
 ) {
     val preview = rememberAodPreview(draft = state.preview)
 
-    // Nhấn giữ khung xem trước: ẩn thanh trên, thanh công cụ, panel và thanh tab để xem AOD toàn màn hình, thả tay thì hiện lại.
+    // Nhấn giữ khung xem trước: ẩn thanh trên, thanh công cụ, panel, thanh tab và banner để xem AOD toàn màn hình, thả tay thì hiện lại.
     var isPeeking by remember { mutableStateOf(false) }
 
     Box(
@@ -130,38 +134,50 @@ fun ThemeEditorContent(
             }
         }
 
-        AnimatedVisibility(
-            visible = state.isEditing && !isPeeking,
-            modifier = Modifier.align(Alignment.BottomCenter),
-            enter = slideInVertically { height -> height } + fadeIn(),
-            exit = slideOutVertically { height -> height } + fadeOut(),
+        Column(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth(),
         ) {
-            Column(modifier = Modifier.fillMaxWidth()) {
-                AppEditorPanel(
-                    selected = state.selectedTab,
-                    title = { tab -> stringResource(tab.labelRes) },
-                    initial = state.theme.spec.tabs.first(),
-                    action = { tab ->
-                        AppEditorResetButton(
-                            isVisible = !tab.isDefault(state.config),
-                            onClick = { onIntent(ThemeEditorIntent.Option.ResetTab(tab)) },
+            AnimatedVisibility(
+                visible = state.isEditing && !isPeeking,
+                enter = slideInVertically { height -> height } + fadeIn(),
+                exit = slideOutVertically { height -> height } + fadeOut(),
+            ) {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    AppEditorPanel(
+                        selected = state.selectedTab,
+                        title = { tab -> stringResource(tab.labelRes) },
+                        initial = state.theme.spec.tabs.first(),
+                        action = { tab ->
+                            AppEditorResetButton(
+                                isVisible = !tab.isDefault(state.config),
+                                onClick = { onIntent(ThemeEditorIntent.Option.ResetTab(tab)) },
+                            )
+                        },
+                    ) { tab ->
+                        AodThemeOptionList(
+                            tab = tab,
+                            config = state.config,
+                            onOptionPreview = { key, raw -> onIntent(ThemeEditorIntent.Option.PreviewOption(key, raw)) },
+                            onOptionChange = { key, raw -> onIntent(ThemeEditorIntent.Option.ChangeOption(key, raw)) },
                         )
-                    },
-                ) { tab ->
-                    AodThemeOptionList(
-                        tab = tab,
-                        config = state.config,
-                        onOptionPreview = { key, raw -> onIntent(ThemeEditorIntent.Option.PreviewOption(key, raw)) },
-                        onOptionChange = { key, raw -> onIntent(ThemeEditorIntent.Option.ChangeOption(key, raw)) },
+                    }
+
+                    ThemeEditorTabBar(
+                        tabs = state.theme.spec.tabs,
+                        selectedTab = state.selectedTab,
+                        onIntent = onIntent,
                     )
                 }
-
-                ThemeEditorTabBar(
-                    tabs = state.theme.spec.tabs,
-                    selectedTab = state.selectedTab,
-                    onIntent = onIntent,
-                )
             }
+
+            // Banner cả lúc xem (chưa Sửa): không có thanh tab bên trên thì nền trong suốt.
+            AppBottomAdSlot(
+                isHidden = isPeeking,
+                background = if (state.isEditing) Neutral12 else Color.Transparent,
+                content = bannerAd,
+            )
         }
 
         AnimatedVisibility(
@@ -240,6 +256,7 @@ private fun ThemeEditorContentPreview() {
                 isLoading = false,
             ),
             onIntent = {},
+            bannerAd = {},
         )
     }
 }
@@ -256,6 +273,7 @@ private fun ThemeEditorContentEditingPreview() {
                 selectedTab = AodThemeValue.PEBBLE.spec.tabs.first(),
             ),
             onIntent = {},
+            bannerAd = {},
         )
     }
 }

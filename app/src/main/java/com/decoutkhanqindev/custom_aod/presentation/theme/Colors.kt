@@ -21,15 +21,20 @@ val Grey6E = Color(0xFF6E6E6E)
 val Grey5A = Color(0xFF5A5A5A)
 val Grey3A = Color(0xFF3A3A3A)
 
+// Màu mặc định của chủ đề Viên nang đo trên ảnh mẫu: chữ số xám ánh xanh lạnh, viên nang, ngày.
+val Frost = Color(0xFFC8D8D8)
+val GreyD0 = Color(0xFFD0D0D0)
+val GreyE0 = Color(0xFFE0E0E0)
+
 // Ba màu trung tính mặc định của Material 3 (bản tối) mà app vẫn dùng, giữ đúng giá trị để giao diện không đổi.
 val Neutral12 = Color(0xFF211F26)
 val NeutralVariant30 = Color(0xFF49454F)
 val NeutralVariant60 = Color(0xFF938F99)
-// Nền phụ trong sheet / hộp thoại (ô icon, nút đóng, nút công cụ, chip) nổi nhẹ trên Neutral12.
+// Nền phụ trong sheet / hộp thoại (ô icon, nút công cụ, chip) nổi nhẹ trên Neutral12.
 val Neutral17 = Color(0xFF2B2930)
 // Chữ của nút nguy hiểm trên nền RedAlpha12: đỏ nhạt hơn Red cho đủ tương phản trên nền tối.
 val RedLight = Color(0xFFF2777B)
-// Viền sáng của sheet, hộp thoại, toast: cùng dải màu viền điện thoại của icon app (tools/brand/brand_geometry.py).
+// Dải sáng của thanh kéo sheet, toast, lớp phủ đang áp dụng: cùng dải màu viền điện thoại của icon app (tools/brand/brand_geometry.py).
 val EdgeGlowGradient = Brush.horizontalGradient(listOf(Mint, Blue, Purple))
 val EdgeGlowOfflineGradient = Brush.horizontalGradient(listOf(Grey6E, Grey3A))
 

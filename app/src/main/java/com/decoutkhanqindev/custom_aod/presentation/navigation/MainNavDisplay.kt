@@ -6,6 +6,8 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -38,6 +40,9 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.decoutkhanqindev.custom_aod.R
+import com.decoutkhanqindev.custom_aod.ads.AdsManager
+import com.decoutkhanqindev.custom_aod.ads.composables.BannerAdView
+import com.decoutkhanqindev.custom_aod.presentation.components.AppBottomAdSlot
 import com.decoutkhanqindev.custom_aod.presentation.model.main.MainTabValue
 import com.decoutkhanqindev.custom_aod.presentation.screens.aodtab.AodTabScreen
 import com.decoutkhanqindev.custom_aod.presentation.screens.edgelight.EdgeLightScreen
@@ -52,6 +57,7 @@ import com.decoutkhanqindev.custom_aod.utils.navigateBack
 import com.decoutkhanqindev.custom_aod.utils.navigateTo
 import com.decoutkhanqindev.custom_aod.utils.playStoreUrl
 import com.decoutkhanqindev.custom_aod.utils.shareText
+import org.koin.compose.koinInject
 
 @Composable
 fun MainNavDisplay(
@@ -61,6 +67,7 @@ fun MainNavDisplay(
     val context = LocalContext.current
     val resources = LocalResources.current
     val tabBackStack = rememberNavBackStack(MainTabValue.AOD.destination)
+    val adsManager: AdsManager = koinInject()
     val selectedTab =
         MainTabValue.entries.find { tab -> tab.destination == tabBackStack.lastOrNull() }
             ?: MainTabValue.AOD
@@ -82,10 +89,16 @@ fun MainNavDisplay(
         containerColor = Color.Transparent,
         contentColor = GreyED,
         bottomBar = {
-            MainNavigationBar(
-                selectedTab = selectedTab,
-                onSelectTab = { tab -> tabBackStack.selectTab(tab) },
-            )
+            Column {
+                MainNavigationBar(
+                    selectedTab = selectedTab,
+                    onSelectTab = { tab -> tabBackStack.selectTab(tab) },
+                )
+
+                AppBottomAdSlot {
+                    BannerAdView(adUnit = { adsManager.bannerMain })
+                }
+            }
         },
     ) { innerPadding ->
         NavDisplay(
@@ -164,7 +177,7 @@ private fun MainNavigationBar(
     selectedTab: MainTabValue,
     onSelectTab: (MainTabValue) -> Unit,
 ) {
-    NavigationBar(containerColor = Neutral12) {
+    NavigationBar(containerColor = Neutral12, windowInsets = WindowInsets(0)) {
         MainTabValue.entries.forEach { tab ->
             val isSelected = tab == selectedTab
 

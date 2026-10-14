@@ -51,6 +51,7 @@
     <string name="theme_classic">Classic</string>
     <string name="theme_pebble">Pebble</string>
     <string name="theme_jersey">Jersey</string>
+    <string name="theme_capsule">Capsule</string>
     <string name="theme_in_use">In use</string>
     <string name="theme_edit">Edit</string>
     <string name="theme_saved">Theme saved</string>
@@ -65,6 +66,7 @@
     <string name="theme_tab_date">Date</string>
     <string name="theme_tab_effects">Effects</string>
     <string name="theme_tab_media">Music</string>
+    <string name="theme_tab_status">Battery &amp; alerts</string>
     <string name="theme_opt_shape">Shape</string>
     <string name="theme_opt_tile_style">Style</string>
     <string name="tile_style_filled">Filled</string>
@@ -76,6 +78,9 @@
     <string name="theme_color_minute_digits">Minute digits</string>
     <string name="theme_color_date">Date</string>
     <string name="theme_color_media">Music</string>
+    <string name="theme_color_digits">Digits</string>
+    <string name="theme_color_capsule">Capsule</string>
+    <string name="theme_color_status">Battery &amp; alerts</string>
     <string name="theme_color_hour">Hour</string>
     <string name="theme_color_minute">Minute</string>
     <string name="theme_opt_date_style">Date style</string>
@@ -395,7 +400,6 @@
     <string name="customize_sample_media_artist">Lo-fi Radio</string>
     <string name="customize_sample_memo">Buy milk on the way home</string>
     <string name="customize_guide_progress" translatable="false">%1$d/%2$d</string>
-    <string name="action_close">Close</string>
     <string name="time_am">AM</string>
     <string name="time_pm">PM</string>
     <string name="time_set">Set %1$s</string>

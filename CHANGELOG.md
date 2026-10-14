@@ -7,6 +7,59 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-10-14 – Banner ở đáy các màn
+
+Build được, lint không thêm cảnh báo, unit test pass, `tools/check-rules.sh` ra 0 vi phạm (38 rule). Chưa test trên máy.
+
+### Thêm
+
+- 6 placement banner trong `AdsManager` (`by lazy`, id `BuildConfig.BANNER_<PLACEMENT>_ALL_ID` khai báo như `INTER_SPLASH_ALL_ID` ở cả release lẫn debug, đều là test id banner của Google): ngôn ngữ (chỉ onboarding), Tùy chỉnh lúc onboarding, quyền, 3 tab chính (một banner chung, dưới thanh tab), màn chủ đề (cả lúc xem lẫn lúc sửa), Tùy chỉnh mở từ tab AOD.
+- `AppBottomAdSlot`: chỗ banner dưới thanh dưới, tự chừa thanh điều hướng của hệ thống, `isHidden` trượt xuống khi nhấn giữ xem toàn màn hình mà không huỷ banner. `AppOnboardingFooter` có slot `ad` dưới nút chính. Content của Ngôn ngữ, Quyền, Tùy chỉnh, màn chủ đề nhận slot `bannerAd` từ Screen.
+
+### Thay đổi
+
+- Thanh tab của Tùy chỉnh, màn chủ đề và thanh tab chính không tự chừa thanh điều hướng nữa (banner bên dưới chừa).
+
+## [Chưa phát hành] – 2026-10-14 – Tab Pin & thông báo ở màn chủ đề Số áo, Viên nang; Tùy chỉnh mở thẳng tab của khối
+
+Build được, lint không thêm cảnh báo, unit test pass, `tools/check-rules.sh` ra 0 vi phạm (38 rule). Chưa test trên máy.
+
+### Sửa
+
+- Số áo và Viên nang tự vẽ dòng pin + icon thông báo, Tùy chỉnh › Pin / Thông báo dẫn sang màn chủ đề, nhưng màn chủ đề không có tab cho phần này (màu đi chung màu phút / màu ngày). Thêm tab "Pin & thông báo" với màu riêng (`status_color`, mặc định giữ đúng màu cũ: `GreyED` cho Số áo, `GreyE0` cho Viên nang). README › Thêm chủ đề mới ghi thêm: mỗi khối trong `ownBlocks` phải có tab ở màn chủ đề.
+- Tùy chỉnh › tab của khối chủ đề tự vẽ (Ngày, Pin, Thông báo, Nhạc) › "Kiểu do chủ đề quyết định" mở thẳng chế độ sửa của màn chủ đề, panel mở sẵn tab chỉnh khối đó, cho cả Sỏi (Ngày, Nhạc), Số áo (Ngày, Pin & thông báo) và Viên nang (cả bốn); Cổ điển không tự vẽ khối nào nên không đổi. `AodThemeTab.block` ghi tab chỉnh khối nào, `ThemeEditorDestination.focusBlock` mang khối cần mở; màn chủ đề đang nằm dưới Tùy chỉnh thì được thay bằng màn mới mở sẵn tab. Test mới `AodThemeSpecTest`: mỗi khối tự vẽ có đúng một tab.
+
+## [Chưa phát hành] – 2026-10-14 – Chủ đề Viên nang
+
+Build được, lint không thêm cảnh báo, unit test pass, `tools/check-rules.sh` ra 0 vi phạm (38 rule). Chưa test trên máy.
+
+### Thêm
+
+- Chủ đề Viên nang (`capsule`, clone từ ảnh mẫu `reference/theme_3`, mock dọc + ngang đã duyệt): giờ:phút Plus Jakarta Sans ExtraBold trong viên nang (đặc: màu viên pha nhạt 12%, viền: nét 0,043 R), mỗi chữ số một ô rộng cố định, hai chấm tròn; ngày in hoa đậm; trình phát riêng (nút phát tròn đặc, thanh tiến trình dày tách đôi); pin + icon thông báo một dòng dưới cùng. Màn dọc: viên nang → ngày → khối thêm → nhạc → dòng pin, cả cột giữa màn hình; màn ngang dùng bố cục chung, hero là viên nang + ngày (thời tiết cạnh ngày) + dòng pin. Tuỳ chọn: kiểu viên, cỡ 60–150%, màu chữ số, màu viên, màu ngày, màu nhạc. Tỉ lệ đo trên ảnh mẫu ở `CapsuleMetrics` (R = chiều cao chữ số).
+- Font `plus_jakarta_sans_extrabold.ttf` (sinh riêng bằng `tools/fonts/make_static_fonts.py`, thêm độ đậm 800). Màu `Frost`, `GreyD0`, `GreyE0`. Chuỗi `theme_capsule`, `theme_color_digits`, `theme_color_capsule`.
+- `tools/mockups/aod_landscape_mockups.py`: nhóm khung Viên nang, có thêm khung dọc 393 × 873 (`frame_portrait`).
+
+### Thay đổi
+
+- Dòng pin + icon thông báo của Số áo tách thành khối dùng chung `block/AodStatusLine` (cỡ theo chiều cao icon pin, font và `gapScale` do chủ đề truyền vào); Số áo không đổi hình.
+
+## [Chưa phát hành] – 2026-10-14 – Ảnh nền không xoay theo màn ngang, sheet không còn nút X
+
+Build được, lint không thêm cảnh báo, unit test pass, `tools/check-rules.sh` ra 0 vi phạm (38 rule). Chưa test trên máy.
+
+### Thay đổi
+
+- Ảnh nền AOD (có sẵn hay ảnh từ máy) đứng yên theo chiều dọc của máy như hình nền điện thoại: AOD nằm ngang (đồng hồ đêm, tự xoay) hay khung xem trước xoay ngang ở Tùy chỉnh / màn chủ đề thì chỉ đồng hồ và các khối đổi bố cục, ảnh không xoay theo. `AodBackdrop` vẽ ảnh trong khung cỡ màn dọc rồi xoay ngược góc màn hình. Góc đọc lại mỗi khi cửa sổ đổi hướng và khi màn hình báo đổi (`DisplayListener`, thêm một lần sau 500 ms cho lật ngang 180°), chỉ lấy góc thật của màn hình khi nó khớp hướng cửa sổ đang vẽ, chưa khớp thì theo cấu hình của cửa sổ: đọc `view.display.rotation` ngay lúc màn hình báo đổi thì cửa sổ chưa nhận hướng mới, góc trễ một nhịp (xoay ngang nền vẫn xoay theo, xoay về dọc nền vẫn ngang). Khung xem trước truyền -90°. Bản thu nhỏ và khung xem trước dọc không nghe xoay màn hình.
+- Đầu sheet nhập / chọn (`AppSheetToolHeader`) bỏ nút X; sheet đóng bằng nút chữ "Hủy" dưới cùng như các sheet quyết định. Thêm "Hủy" cho sheet chọn thao tác, chọn nguồn điện và bảng vẽ (Ghi nhớ, Khung giờ đã có). Bỏ chuỗi `action_close`.
+
+## [Chưa phát hành] – 2026-10-14 – Bỏ viền sáng của bottom sheet
+
+Build được, `tools/check-rules.sh` ra 0 vi phạm (38 rule). Chưa test trên máy.
+
+### Sửa
+
+- `AppSheet` không còn viền sáng: viền gắn vào `modifier` của `ModalBottomSheet`, mà modifier này nằm ngoài offset của sheet, nên viền vẽ ở mép trên màn hình (bo hai góc như viền app) thay vì mép sheet. Bỏ hẳn `glowTopEdge`, sheet chỉ còn thanh kéo dải màu. Các chỗ khác có viền (toast, hộp mất mạng) vẽ trên chính thẻ của chúng nên không bị.
+
 ## [Chưa phát hành] – 2026-10-14 – Bỏ qua ở màn quyền onboarding
 
 Build được, lint không thêm cảnh báo, unit test pass, `tools/check-rules.sh` ra 0 vi phạm (38 rule). Chưa test trên máy.

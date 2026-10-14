@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.Application
 import android.os.Bundle
 import com.decoutkhanqindev.custom_aod.BuildConfig
+import com.decoutkhanqindev.custom_aod.ads.ad_unit.BannerAdUnit
 import com.decoutkhanqindev.custom_aod.ads.ad_unit.InterstitialAdUnit
 import com.decoutkhanqindev.custom_aod.data.network.connectivity.NetworkManager
 import com.decoutkhanqindev.custom_aod.utils.Tag
@@ -58,6 +59,32 @@ class AdsManager : KoinComponent, Application.ActivityLifecycleCallbacks, Tag {
 
     val interSplash: InterstitialAdUnit by lazy {
         InterstitialAdUnit(floors = listOf(BuildConfig.INTER_SPLASH_ALL_ID to "inter_splash_all"))
+    }
+
+    // Banner ở đáy từng màn (BannerAdView), mỗi màn một placement: 3 tab chính chung một, màn chủ đề lúc xem và lúc sửa chung một, Tùy
+    // chỉnh lúc onboarding và mở từ tab AOD tách riêng; Ngôn ngữ chỉ có lúc onboarding.
+    val bannerLanguage: BannerAdUnit by lazy {
+        BannerAdUnit(floors = listOf(BuildConfig.BANNER_LANGUAGE_ALL_ID to "banner_language_all"))
+    }
+
+    val bannerOnboardingCustomize: BannerAdUnit by lazy {
+        BannerAdUnit(floors = listOf(BuildConfig.BANNER_ONBOARDING_CUSTOMIZE_ALL_ID to "banner_onboarding_customize_all"))
+    }
+
+    val bannerPermission: BannerAdUnit by lazy {
+        BannerAdUnit(floors = listOf(BuildConfig.BANNER_PERMISSION_ALL_ID to "banner_permission_all"))
+    }
+
+    val bannerMain: BannerAdUnit by lazy {
+        BannerAdUnit(floors = listOf(BuildConfig.BANNER_MAIN_ALL_ID to "banner_main_all"))
+    }
+
+    val bannerThemeEditor: BannerAdUnit by lazy {
+        BannerAdUnit(floors = listOf(BuildConfig.BANNER_THEME_EDITOR_ALL_ID to "banner_theme_editor_all"))
+    }
+
+    val bannerCustomize: BannerAdUnit by lazy {
+        BannerAdUnit(floors = listOf(BuildConfig.BANNER_CUSTOMIZE_ALL_ID to "banner_customize_all"))
     }
 
     // TODO: Thêm placement của project theo mẫu interSplash — mỗi placement 1 `by lazy`, id riêng `BuildConfig.<PLACEMENT>_ALL_ID`
