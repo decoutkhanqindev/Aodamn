@@ -40,7 +40,12 @@
     <!-- Tab AOD -->
     <string name="opt_enabled">Hiện đồng hồ khi màn hình tắt</string>
     <string name="aod_tab_design_title">Giao diện của bạn</string>
-    <string name="aod_tab_themes_title">Chủ đề</string>
+    <string name="aod_tab_design_theme">Chủ đề %1$s</string>
+    <string name="aod_tab_design_clock_only">Chỉ đồng hồ</string>
+    <string name="aod_tab_design_wallpaper">Ảnh nền %1$s</string>
+    <string name="aod_tab_design_photo">Ảnh của bạn</string>
+    <string name="aod_tab_design_black">Nền đen</string>
+    <string name="aod_tab_themes_title">Chủ đề &amp; kiểu dáng</string>
     <string name="aod_tab_theme_reset">Đặt lại chủ đề mặc định</string>
     <string name="aod_tab_theme_reset_title">Đặt lại chủ đề mặc định?</string>
     <string name="aod_tab_theme_reset_desc">AOD sẽ dùng lại chủ đề %1$s. Những gì bạn đã chỉnh và lưu ở từng chủ đề vẫn được giữ.</string>
@@ -401,5 +406,8 @@
     <string name="drawing_save">Lưu hình</string>
     <plurals name="permission_remaining">
         <item quantity="other">Còn %d quyền, cấp xong là vào được app</item>
+    </plurals>
+    <plurals name="aod_tab_design_blocks">
+        <item quantity="other">%d khối</item>
     </plurals>
 </resources>

@@ -6,21 +6,24 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -43,15 +46,13 @@ import com.decoutkhanqindev.custom_aod.R
 import com.decoutkhanqindev.custom_aod.ads.AdsManager
 import com.decoutkhanqindev.custom_aod.ads.composables.BannerAdView
 import com.decoutkhanqindev.custom_aod.presentation.components.AppBottomAdSlot
+import com.decoutkhanqindev.custom_aod.presentation.components.editor.AppEditorTab
 import com.decoutkhanqindev.custom_aod.presentation.model.main.MainTabValue
 import com.decoutkhanqindev.custom_aod.presentation.screens.aodtab.AodTabScreen
 import com.decoutkhanqindev.custom_aod.presentation.screens.edgelight.EdgeLightScreen
 import com.decoutkhanqindev.custom_aod.presentation.screens.settings.SettingsScreen
-import com.decoutkhanqindev.custom_aod.presentation.theme.Grey9A
 import com.decoutkhanqindev.custom_aod.presentation.theme.GreyED
 import com.decoutkhanqindev.custom_aod.presentation.theme.HeadlineSmall
-import com.decoutkhanqindev.custom_aod.presentation.theme.Mint
-import com.decoutkhanqindev.custom_aod.presentation.theme.MintAlpha12
 import com.decoutkhanqindev.custom_aod.presentation.theme.Neutral12
 import com.decoutkhanqindev.custom_aod.utils.navigateBack
 import com.decoutkhanqindev.custom_aod.utils.navigateTo
@@ -172,33 +173,34 @@ private fun MainTopBar(
     )
 }
 
+// Thanh tab thấp 56dp cùng kiểu thanh tab của Tùy chỉnh (AppEditorTab): chỉ icon, tab đang chọn icon đặc và có tên.
 @Composable
 private fun MainNavigationBar(
     selectedTab: MainTabValue,
     onSelectTab: (MainTabValue) -> Unit,
 ) {
-    NavigationBar(containerColor = Neutral12, windowInsets = WindowInsets(0)) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(56.dp)
+            .background(Neutral12)
+            .selectableGroup(),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
         MainTabValue.entries.forEach { tab ->
             val isSelected = tab == selectedTab
 
-            NavigationBarItem(
-                selected = isSelected,
-                onClick = { onSelectTab(tab) },
-                icon = {
-                    Icon(
-                        painter = painterResource(if (isSelected) tab.selectedIconRes else tab.iconRes),
-                        contentDescription = null,
-                    )
-                },
-                label = { Text(text = stringResource(tab.labelRes)) },
-                colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = Mint,
-                    selectedTextColor = GreyED,
-                    indicatorColor = MintAlpha12,
-                    unselectedIconColor = Grey9A,
-                    unselectedTextColor = Grey9A,
-                ),
-            )
+            Box(
+                modifier = Modifier.weight(1f),
+                contentAlignment = Alignment.Center,
+            ) {
+                AppEditorTab(
+                    iconRes = if (isSelected) tab.selectedIconRes else tab.iconRes,
+                    label = stringResource(tab.labelRes),
+                    isSelected = isSelected,
+                    onClick = { onSelectTab(tab) },
+                )
+            }
         }
     }
 }

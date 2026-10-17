@@ -31,6 +31,7 @@ import com.decoutkhanqindev.custom_aod.R
 import com.decoutkhanqindev.custom_aod.presentation.theme.Black
 import com.decoutkhanqindev.custom_aod.presentation.theme.Grey3A
 import com.decoutkhanqindev.custom_aod.presentation.theme.Grey6E
+import com.decoutkhanqindev.custom_aod.presentation.theme.LabelLarge
 import com.decoutkhanqindev.custom_aod.presentation.theme.GreyED
 import com.decoutkhanqindev.custom_aod.presentation.theme.Mint
 import com.decoutkhanqindev.custom_aod.presentation.theme.Neutral12
@@ -48,6 +49,7 @@ fun AppPrimaryButton(
     modifier: Modifier = Modifier,
     @DrawableRes iconRes: Int? = null,
     isEnabled: Boolean = true,
+    isCompact: Boolean = false,
 ) {
     val container by animateColorAsState(if (isEnabled) Mint else Grey3A, label = "AppPrimaryButtonContainer")
     val content by animateColorAsState(if (isEnabled) Black else Grey6E, label = "AppPrimaryButtonContent")
@@ -60,6 +62,7 @@ fun AppPrimaryButton(
         modifier = modifier,
         iconRes = iconRes,
         isEnabled = isEnabled,
+        isCompact = isCompact,
     )
 }
 
@@ -90,6 +93,7 @@ fun AppTextButton(
     @DrawableRes iconRes: Int? = null,
     contentColor: Color = GreyED,
     isEnabled: Boolean = true,
+    isCompact: Boolean = false,
 ) {
     AppButtonBox(
         text = text,
@@ -99,9 +103,11 @@ fun AppTextButton(
         modifier = modifier,
         iconRes = iconRes,
         isEnabled = isEnabled,
+        isCompact = isCompact,
     )
 }
 
+// isCompact: bản thấp 40dp, chữ nhỏ cho thanh trên của màn sửa (Tùy chỉnh, màn chủ đề) để chừa chỗ cho AOD xem trước.
 @Composable
 private fun AppButtonBox(
     text: String,
@@ -111,10 +117,11 @@ private fun AppButtonBox(
     modifier: Modifier = Modifier,
     @DrawableRes iconRes: Int? = null,
     isEnabled: Boolean = true,
+    isCompact: Boolean = false,
 ) {
     Row(
         modifier = modifier
-            .heightIn(min = 48.dp)
+            .heightIn(min = if (isCompact) 40.dp else 48.dp)
             .clip(RoundedCornerShape24dp)
             .background(containerColor)
             .then(if (isEnabled) Modifier.onClick(shape = RoundedCornerShape24dp, action = onClick) else Modifier)
@@ -122,7 +129,7 @@ private fun AppButtonBox(
                 role = Role.Button
                 if (!isEnabled) disabled()
             }
-            .padding(horizontal = 20.dp, vertical = 12.dp),
+            .padding(horizontal = if (isCompact) 16.dp else 20.dp, vertical = if (isCompact) 8.dp else 12.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -140,7 +147,8 @@ private fun AppButtonBox(
             color = contentColor,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
-            style = TitleMedium,
+            maxLines = if (isCompact) 1 else Int.MAX_VALUE,
+            style = if (isCompact) LabelLarge else TitleMedium,
         )
     }
 }

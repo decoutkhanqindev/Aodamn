@@ -7,9 +7,30 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-10-17 – Thanh trên, thanh tab thấp hơn để thấy AOD xem trước nhiều hơn
+
+Build được, lint không thêm cảnh báo, unit test pass, `tools/check-rules.sh` ra 0 vi phạm (38 rule). Đã test trên máy.
+
+### Thay đổi
+
+- Tùy chỉnh và màn chủ đề bỏ thanh công cụ nổi giữa màn hình (che phần trên AOD xem trước): hoàn tác, làm lại, đặt lại lên thanh trên cạnh nút quay lại (`AppEditorHistoryButtons`), Áp dụng / Lưu / Tùy chỉnh / Sửa thành nút gọn 40dp ở cuối thanh trên (`AppPrimaryButton` / `AppTextButton` có `isCompact`). Tùy chỉnh không còn tiêu đề; lúc onboarding thanh trên có Bỏ qua trước Áp dụng và bỏ ô bước (không đủ chỗ ở máy 360dp). Màn chủ đề lúc xem giữ tên chủ đề, "Đang dùng" thành dòng nhỏ màu mint dưới tên thay cho nhãn. `AppTopBar` có `isTitleCentered = false` cho thanh trên kiểu này. Phần AOD thấy được (màn 873dp, có banner) tăng từ khoảng 560dp lên 650dp.
+- Thanh tab của Tùy chỉnh và màn chủ đề cao 48dp (trước 72dp): `AppEditorTab` chỉ có icon 20dp, tab đang chọn nền mint nhạt và hiện tên (giãn ra có animation), TalkBack luôn đọc tên. Nút xoay khung và nút hướng dẫn của Tùy chỉnh chuyển xuống cuối thanh tab, đứng yên khi cuộn tab; bước hướng dẫn Xoay chỉ vào đó, bước cuối chỉ vào thanh trên.
+- Thanh tab Main thay `NavigationBar` 80dp của Material bằng thanh 56dp cùng kiểu (`AppEditorTab`: chỉ icon, tab đang chọn icon đặc và có tên).
+
+## [Chưa phát hành] – 2026-10-17 – Thẻ "Giao diện của bạn" đủ thông tin hơn, thanh công cụ thoáng hơn, toast giữa màn hình
+
+Build được, lint không thêm cảnh báo, unit test pass, `tools/check-rules.sh` ra 0 vi phạm (38 rule). Đã test trên máy.
+
+### Thay đổi
+
+- Thẻ "Giao diện của bạn" ở tab AOD bớt trống: ảnh AOD thu nhỏ cao 112dp (trước 64dp), tên chủ đề ghi "Chủ đề …", thêm hàng icon các khối đang bật theo thứ tự tab ở Tùy chỉnh (icon của tab, ô 28dp, không đủ chỗ thì ô cuối "+N") và dòng tóm tắt số khối + nền ("7 khối · Ảnh nền Sao", "Chỉ đồng hồ · Nền đen"; tên nền viết hoa chữ đầu như tên ảnh nền có sẵn); nút bút chì vẫn giữa thẻ theo chiều dọc. Khối tính theo cài đặt (khối cần quyền chỉ tính khi có quyền, như bản nháp của Tùy chỉnh), `CustomizeDraftUiModel.enabledBlockTabs()`. TalkBack đọc cả thẻ một lần, bỏ qua hàng icon.
+- Thanh công cụ nổi của Tùy chỉnh và màn chủ đề (hoàn tác, làm lại, đặt lại · Áp dụng / Lưu / Tùy chỉnh / Sửa) có đệm 8dp mọi phía (trước chỉ 4–6dp hai bên, không đệm trên dưới) nên nút không còn sát mép viên.
+- Toast của Tùy chỉnh và màn chủ đề hiện giữa màn hình thay cho dưới thanh trên.
+- Tiêu đề mục chủ đề ở tab AOD: "Chủ đề & kiểu dáng" / "Themes & styles" (trước "Chủ đề" / "Themes").
+
 ## [Chưa phát hành] – 2026-10-17 – Chủ đề Thẻ, lập danh mục chủ đề từ app mẫu
 
-Build được, lint không thêm cảnh báo, unit test pass, `tools/check-rules.sh` ra 0 vi phạm (38 rule). Chưa test trên máy.
+Build được, lint không thêm cảnh báo, unit test pass, `tools/check-rules.sh` ra 0 vi phạm (38 rule). Đã test trên máy.
 
 ### Thêm
 

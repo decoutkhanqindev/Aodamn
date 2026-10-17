@@ -6,6 +6,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -32,35 +33,50 @@ fun AppTopBar(
     )
 }
 
+// isTitleCentered = false: tiêu đề sát nút quay lại và chiếm phần còn lại của thanh (thanh trên của màn sửa đặt nút hoàn tác ở đó).
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppTopBar(
     title: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     onNavigateBack: (() -> Unit)? = null,
+    isTitleCentered: Boolean = true,
     actions: @Composable RowScope.() -> Unit = {},
 ) {
-    CenterAlignedTopAppBar(
-        title = title,
-        modifier = modifier,
-        navigationIcon = {
-            if (onNavigateBack != null) {
-                IconButton(onClick = onNavigateBack) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_arrow_left),
-                        contentDescription = stringResource(R.string.action_back),
-                    )
-                }
+    val navigationIcon = @Composable {
+        if (onNavigateBack != null) {
+            IconButton(onClick = onNavigateBack) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_arrow_left),
+                    contentDescription = stringResource(R.string.action_back),
+                )
             }
-        },
-        actions = actions,
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = Color.Transparent,
-            navigationIconContentColor = GreyED,
-            titleContentColor = GreyED,
-            actionIconContentColor = GreyED,
-        ),
+        }
+    }
+    val colors = TopAppBarDefaults.topAppBarColors(
+        containerColor = Color.Transparent,
+        navigationIconContentColor = GreyED,
+        titleContentColor = GreyED,
+        actionIconContentColor = GreyED,
     )
+
+    if (isTitleCentered) {
+        CenterAlignedTopAppBar(
+            title = title,
+            modifier = modifier,
+            navigationIcon = navigationIcon,
+            actions = actions,
+            colors = colors,
+        )
+    } else {
+        TopAppBar(
+            title = title,
+            modifier = modifier,
+            navigationIcon = navigationIcon,
+            actions = actions,
+            colors = colors,
+        )
+    }
 }
 
 @Preview(widthDp = 360)

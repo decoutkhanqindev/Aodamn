@@ -13,6 +13,8 @@ import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeUiMo
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.AodExtrasUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.observeAodExtras
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.observeAodNotificationOptions
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 
@@ -55,6 +57,27 @@ fun AodThemeUiModel.toThemePreviewDraft(): CustomizeDraftUiModel {
 // Xem trước một chủ đề khác với phần chung (nền, thông báo...) của bản nháp.
 fun CustomizeDraftUiModel.withTheme(theme: AodThemeUiModel): CustomizeDraftUiModel =
     copy(appearance = appearance.copy(clock = appearance.clock.copy(theme = theme)))
+
+// Tab của các khối đang bật (thẻ Giao diện của bạn ở tab AOD), theo thứ tự ở Tùy chỉnh; khối chủ đề không có thì không tính. Tính theo
+// cài đặt chứ không theo dữ liệu lúc chạy (thời tiết, sự kiện có thể chưa có) vì thẻ tóm tắt giao diện user đã chọn.
+fun CustomizeDraftUiModel.enabledBlockTabs(): ImmutableList<CustomizeTabValue> {
+    val spec = appearance.clock.theme.value.spec
+    return CustomizeTabValue.entries
+        .filter { tab ->
+            tab.isShownIn(spec) && when (tab) {
+                CustomizeTabValue.DATE -> appearance.isDateEnabled
+                CustomizeTabValue.BATTERY -> appearance.isBatteryEnabled
+                CustomizeTabValue.DRAWING -> decor.drawing != null
+                CustomizeTabValue.MEMO -> decor.memo.isNotBlank()
+                CustomizeTabValue.NOTIFICATIONS -> info.isNotificationIconsEnabled || info.isNotificationContentEnabled
+                CustomizeTabValue.EVENTS -> info.isCalendarEnabled
+                CustomizeTabValue.WEATHER -> info.isWeatherEnabled
+                CustomizeTabValue.MEDIA -> info.isMediaControlsEnabled
+                CustomizeTabValue.CLOCK, CustomizeTabValue.BACKGROUND, CustomizeTabValue.EFFECTS -> false
+            }
+        }
+        .toImmutableList()
+}
 
 @Immutable
 data class CustomizeAppearanceUiModel(

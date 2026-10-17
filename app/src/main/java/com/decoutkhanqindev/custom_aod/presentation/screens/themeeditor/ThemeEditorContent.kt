@@ -23,19 +23,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.custom_aod.R
-import com.decoutkhanqindev.custom_aod.presentation.components.AppBadge
 import com.decoutkhanqindev.custom_aod.presentation.components.AppBottomAdSlot
 import com.decoutkhanqindev.custom_aod.presentation.components.AppDangerButton
 import com.decoutkhanqindev.custom_aod.presentation.components.AppPrimaryButton
 import com.decoutkhanqindev.custom_aod.presentation.components.AppTextButton
-import com.decoutkhanqindev.custom_aod.presentation.components.AppTopBar
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.AodPreviewFrame
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.editor.AodThemeOptionList
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.rememberAodPreview
 import com.decoutkhanqindev.custom_aod.presentation.components.editor.AppApplyingOverlay
 import com.decoutkhanqindev.custom_aod.presentation.components.editor.AppEditorPanel
 import com.decoutkhanqindev.custom_aod.presentation.components.editor.AppEditorResetButton
-import com.decoutkhanqindev.custom_aod.presentation.components.editor.AppPreviewOrientationButton
 import com.decoutkhanqindev.custom_aod.presentation.components.onLongClick
 import com.decoutkhanqindev.custom_aod.presentation.components.permission.AppPermissionSheet
 import com.decoutkhanqindev.custom_aod.presentation.components.sheet.AppConfirmSheet
@@ -44,7 +41,7 @@ import com.decoutkhanqindev.custom_aod.presentation.components.sheet.AppSheetHer
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeValue
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.isDefault
 import com.decoutkhanqindev.custom_aod.presentation.screens.themeeditor.components.ThemeEditorTabBar
-import com.decoutkhanqindev.custom_aod.presentation.screens.themeeditor.components.ThemeEditorToolbar
+import com.decoutkhanqindev.custom_aod.presentation.screens.themeeditor.components.ThemeEditorTopBar
 import com.decoutkhanqindev.custom_aod.presentation.screens.themeeditor.state.ThemeEditorIntent
 import com.decoutkhanqindev.custom_aod.presentation.screens.themeeditor.state.ThemeEditorState
 import com.decoutkhanqindev.custom_aod.presentation.theme.Black
@@ -59,7 +56,7 @@ fun ThemeEditorContent(
 ) {
     val preview = rememberAodPreview(draft = state.preview)
 
-    // Nhấn giữ khung xem trước: ẩn thanh trên, thanh công cụ, panel, thanh tab và banner để xem AOD toàn màn hình, thả tay thì hiện lại.
+    // Nhấn giữ khung xem trước: ẩn thanh trên, panel, thanh tab và banner để xem AOD toàn màn hình, thả tay thì hiện lại.
     var isPeeking by remember { mutableStateOf(false) }
 
     Box(
@@ -97,40 +94,16 @@ fun ThemeEditorContent(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                AppTopBar(
-                    title = stringResource(state.theme.nameRes),
-                    onNavigateBack = { onIntent(ThemeEditorIntent.NavigateBack) },
-                    actions = {
-                        AppPreviewOrientationButton(
-                            isLandscape = state.isLandscapePreview,
-                            onClick = { onIntent(ThemeEditorIntent.ToggleLandscapePreview) },
-                        )
-
-
-                        AnimatedVisibility(
-                            visible = state.isActive,
-                            modifier = Modifier.padding(end = 16.dp),
-                            enter = fadeIn(),
-                            exit = fadeOut(),
-                        ) {
-                            AppBadge(text = stringResource(R.string.theme_in_use))
-                        }
-                    },
+                ThemeEditorTopBar(
+                    themeNameRes = state.theme.nameRes,
+                    isEditing = state.isEditing,
+                    isActive = state.isActive,
+                    isLoading = state.isLoading,
+                    isLandscapePreview = state.isLandscapePreview,
+                    hasChanges = state.hasChanges,
+                    history = state.history,
+                    onIntent = onIntent,
                 )
-
-                AnimatedVisibility(
-                    visible = !state.isLoading,
-                    enter = fadeIn(),
-                    exit = fadeOut(),
-                ) {
-                    ThemeEditorToolbar(
-                        isEditing = state.isEditing,
-                        isActive = state.isActive,
-                        hasChanges = state.hasChanges,
-                        history = state.history,
-                        onIntent = onIntent,
-                    )
-                }
             }
         }
 

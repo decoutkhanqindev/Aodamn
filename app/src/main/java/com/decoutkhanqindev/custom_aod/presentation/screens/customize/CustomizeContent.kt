@@ -41,7 +41,6 @@ import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionV
 import com.decoutkhanqindev.custom_aod.presentation.screens.customize.components.CustomizeGuideOverlay
 import com.decoutkhanqindev.custom_aod.presentation.screens.customize.components.CustomizePanelHost
 import com.decoutkhanqindev.custom_aod.presentation.screens.customize.components.CustomizeTabBar
-import com.decoutkhanqindev.custom_aod.presentation.screens.customize.components.CustomizeToolbar
 import com.decoutkhanqindev.custom_aod.presentation.screens.customize.components.CustomizeTopBar
 import com.decoutkhanqindev.custom_aod.presentation.screens.customize.state.CustomizeIntent
 import com.decoutkhanqindev.custom_aod.presentation.screens.customize.state.CustomizeState
@@ -68,7 +67,7 @@ fun CustomizeContent(
     }
     var lastGuideStep by remember { mutableStateOf(CustomizeGuideStepValue.PREVIEW) }
 
-    // Nhấn giữ khung xem trước: ẩn thanh trên, thanh công cụ, panel, thanh tab và banner để xem AOD toàn màn hình, thả tay thì hiện lại.
+    // Nhấn giữ khung xem trước: ẩn thanh trên, panel, thanh tab và banner để xem AOD toàn màn hình, thả tay thì hiện lại.
     var isPeeking by remember { mutableStateOf(false) }
 
     SideEffect(state.guideStep) {
@@ -107,20 +106,10 @@ fun CustomizeContent(
                 CustomizeTopBar(
                     isFirstOpen = state.isFirstOpen,
                     isApplying = state.isApplying,
-                    isLandscapePreview = state.isLandscapePreview,
-                    onIntent = onIntent,
-                    onGuideTargetPositioned = onTargetPositioned,
-                )
-
-                CustomizeToolbar(
                     history = state.history,
-                    isApplying = state.isApplying || state.isLoading,
                     onIntent = onIntent,
                     modifier = Modifier.onGloballyPositioned { coordinates ->
-                        onTargetPositioned(
-                            CustomizeGuideStepValue.ACTIONS,
-                            coordinates.boundsInWindow()
-                        )
+                        onTargetPositioned(CustomizeGuideStepValue.ACTIONS, coordinates.boundsInWindow())
                     },
                 )
             }
@@ -148,6 +137,7 @@ fun CustomizeContent(
                     CustomizeTabBar(
                         selectedTab = state.selectedTab,
                         spec = state.draft.appearance.clock.theme.value.spec,
+                        isLandscapePreview = state.isLandscapePreview,
                         guideStep = state.guideStep,
                         onIntent = onIntent,
                         onClusterPositioned = onTargetPositioned,

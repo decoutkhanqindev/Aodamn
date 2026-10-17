@@ -187,7 +187,7 @@ bắt buộc (compiler không chặn hộ):
   `AodActivity` tự cấp `"AodScreen"`). `NavDisplay` phải đủ 2 decorator (saveable state holder +
   ViewModel store).
 - Main = `MainNavDisplay` (theo mẫu `AppNavDisplay`): `Scaffold` chứa thanh trên chung của tab
-  (`MainTopBar`: tiêu đề theo tab, IAP / Share xử lý ngay đó), `NavDisplay` của các tab và thanh tab;
+  (`MainTopBar`: tiêu đề theo tab, IAP / Share xử lý ngay đó), `NavDisplay` của các tab và thanh tab (`AppEditorTab` như thanh tab của màn sửa);
   không ViewModel. Tab là Screen đủ bộ (`AodTabScreen` / `SettingsScreen` có ViewModel và effect
   riêng; `EdgeLightScreen` còn là màn giữ chỗ), không tự vẽ thanh trên hay đệm thanh trạng thái;
   destination ở `navigation/MainDestinations.kt`, thứ tự, icon và tiêu đề ở `MainTabValue`. Tab AOD là gốc back stack tab; `screens/aod/` là màn AOD thật trên màn hình khoá.

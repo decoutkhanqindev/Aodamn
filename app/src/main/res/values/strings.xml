@@ -45,7 +45,14 @@
     <string name="aod_tab_title" translatable="false">Always On Display</string>
     <string name="opt_enabled">Show the clock when the screen turns off</string>
     <string name="aod_tab_design_title">Your design</string>
-    <string name="aod_tab_themes_title">Themes</string>
+    <string name="aod_tab_design_theme">%1$s theme</string>
+    <string name="aod_tab_design_clock_only">Clock only</string>
+    <string name="aod_tab_design_wallpaper">%1$s wallpaper</string>
+    <string name="aod_tab_design_photo">Your photo</string>
+    <string name="aod_tab_design_black">Black background</string>
+    <string name="aod_tab_design_summary" translatable="false">%1$s · %2$s</string>
+    <string name="aod_tab_design_more" translatable="false">+%1$d</string>
+    <string name="aod_tab_themes_title">Themes &amp; styles</string>
     <string name="aod_tab_theme_reset">Reset to the default theme</string>
     <string name="aod_tab_theme_reset_title">Reset to the default theme?</string>
     <string name="aod_tab_theme_reset_desc">The always-on display goes back to the %1$s theme. Changes you saved in each theme are kept.</string>
@@ -434,5 +441,9 @@
     <plurals name="permission_remaining">
         <item quantity="one">%d permission left, then you are in</item>
         <item quantity="other">%d permissions left, then you are in</item>
+    </plurals>
+    <plurals name="aod_tab_design_blocks">
+        <item quantity="one">%d block</item>
+        <item quantity="other">%d blocks</item>
     </plurals>
 </resources>
