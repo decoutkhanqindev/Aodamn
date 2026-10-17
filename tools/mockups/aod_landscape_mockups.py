@@ -752,12 +752,190 @@ expressive = [
           + vline(573, 96, 296) + use("eply2", 600, CY - 40)),
 ]
 
+# ================================================================== THÁP (Long HyperOS của Muviz Edge; số đo lấy từ layout feb24_screen_layout dọc / ngang,
+# code dịch ngược và thông số font trong APK, không từ ảnh chụp). R = chiều cao chữ số = 0,768 cỡ chữ; cỡ chữ = 1,25 × cạnh ngắn × Cỡ / 100
+# (màn ngang lấy 0,3 cạnh dài) → R = 377 dp màn dọc, 251 dp màn ngang ở cỡ 100.
+LR = 0.768 * 1.25 * PW
+LRL = 0.768 * 1.25 * min(0.3 * W, H)
+LX = 0.312  # Big Shoulders Display Black nén ngang: số 0 rộng 0,193 R như font mẫu (nét 0,056 R, font mẫu 0,083 R)
+L_PITCH, L_INK = 0.215, 0.193  # bước chữ số của font mẫu + giãn chữ 0,02 em
+L_STROKE = 0.65  # nét viền = 0,5% cỡ chữ = 0,0065 R (đơn vị RU)
+L_TOP = 52  # thanh trạng thái + 20 dp
+L_STATUS_CY = 775  # dòng pin ở đáy phần 0,8 của khoảng dưới ngày (layout mẫu: trọng số 0,8 / 0,2)
+L_DATE = "THỨ BẢY / 17 THG 10"
+
+
+def lh_digit_glyph(ch):
+    x0, _, x1, _ = bounds(ch)
+    _, z0, _, z1 = bounds("0")
+    k = RU / (z1 - z0)
+    pen = SVGPathPen(GLYPHS, ntos=f)
+    GLYPHS[CMAP[ord(ch)]].draw(TransformPen(pen, (k * LX, 0, 0, -k, L_PITCH * RU / 2 - (x0 + x1) / 2 * k * LX, RU + z0 * k)))
+    return f'<path id="l{ch}" d="{pen.getCommands()}"/>'
+
+
+def lh_gradients(colors):
+    """Kiểu 2 / 3: màu nét nhạt dần (15 / 255 rồi 60 / 255 ở một phần tư, đậm từ giữa) về phía đáy hoặc đỉnh chữ số."""
+    s = ""
+    for c in colors:
+        for gid, (y1, y2) in (("d", (1, 0)), ("u", (0, 1))):
+            s += (f'<linearGradient id="lg{gid}{c[1:]}" x1="0" y1="{y1}" x2="0" y2="{y2}">'
+                  f'<stop offset="0" stop-color="{c}" stop-opacity=".06"/><stop offset=".25" stop-color="{c}" stop-opacity=".24"/>'
+                  f'<stop offset=".5" stop-color="{c}"/></linearGradient>')
+    return s
+
+
+def lh_digits(text, x, top, h, color, paint):
+    k = h / RU
+    attr = {
+        "fill": f'fill="{color}"',
+        "outline": f'fill="none" stroke="{color}" stroke-width="{L_STROKE}"',
+        "fade_down": f'fill="none" stroke="url(#lgd{color[1:]})" stroke-width="{L_STROKE}"',
+        "fade_up": f'fill="none" stroke="url(#lgu{color[1:]})" stroke-width="{L_STROKE}"',
+    }[paint]
+    s = ""
+    for ch in text:
+        s += use(f"l{ch}", 0, 0, f'transform="translate({f(x)} {f(top)}) scale({k:.4f})" {attr}')
+        x += L_PITCH * h
+    return s
+
+
+L_STYLES = {
+    "outline": ("outline", "outline"),
+    "fade_down": ("fade_down", "fade_down"),
+    "fade_up": ("fade_up", "fade_up"),
+    "fill": ("fill", "fill"),
+    "hour_fill": ("fill", "outline"),
+    "minute_fill": ("outline", "fill"),
+}
+
+
+def lh_clock_w(r):
+    return 4 * L_PITCH * r + 10 - (L_PITCH - L_INK) * r
+
+
+def lh_clock(cx, top, r, style="outline", hc=GE, mc=LAV, hh="10", mm="08"):
+    """Giờ và phút một hàng, mỗi cặp hai ô rộng cố định; nét chữ của giờ và phút cách nhau 10 dp như layout mẫu."""
+    hp, mp = L_STYLES[style]
+    x = cx - lh_clock_w(r) / 2
+    s = lh_digits(hh, x, top, r, hc, hp)
+    return s + lh_digits(mm, x + 2 * L_PITCH * r + 10 - (L_PITCH - L_INK) * r, top, r, mc, mp)
+
+
+def lh_date(cx, cap_top, size, color=GE, weather=False):
+    """Thứ / ngày in hoa giãn chữ 0,48 em; thời tiết (nếu có) cùng kiểu chữ đứng sau."""
+    base = cap_top + 0.72 * size
+    track = 0.48 * size
+    dw = len(L_DATE) * (0.66 + 0.48) * size - track
+    if not weather:
+        return txt(cx + track / 2, base, L_DATE, size, color, 400, "middle", f'letter-spacing="{f(track)}"')
+    ww = 3 * (0.62 + 0.48) * size
+    x = cx - (dw + 16 + 26 + 6 + ww) / 2
+    return (txt(x, base, L_DATE, size, color, 400, "start", f'letter-spacing="{f(track)}"')
+            + cloud(x + dw + 16, base + 1, 0.55, color, 1.3) + txt(x + dw + 16 + 32, base, "24°", size, color, 400, "start", f'letter-spacing="{f(track)}"'))
+
+
+def lh_status(cx, cy, color=GE, n=3):
+    """Dòng pin của layout mẫu: pin 15 dp, cách 5, chữ 14 sp giãn 0,1 em; chấm 13 sp cách hai bên 15; icon thông báo 17 dp, cách 15."""
+    tw = 3 * 0.62 * 14 + 2 * 1.4
+    w = 8.4 + 5 + tw + (15 + 4 + 15 + n * 32 - 15 if n else 0)
+    x = cx - w / 2
+    s = ex_battery(x, cy - 7.5, color) + txt(x + 13.4, cy + 5, "72%", 14, color, 400, extra='letter-spacing="1.4"')
+    if n:
+        x += 8.4 + 5 + tw + 15
+        s += f'<circle cx="{f(x + 2)}" cy="{f(cy)}" r="2" fill="{color}"/>'
+        x += 4 + 15
+        shapes = icon_shapes(color)
+        for i in range(n):
+            s += shapes[i % 3](x, cy - 8.5, 17)
+            x += 17 + 15
+    return s
+
+
+def lh_player(w=PW, color=GE, title="That Cool Song"):
+    """Trình phát của layout mẫu: lùi · tên 13 sp / nghệ sĩ 11,5 sp giãn 0,38 em (giữa) · tới, mỗi nút ô 40 dp cách mép 20; thanh tiến trình
+    mảnh cách 30 dp, lùi vào 30 dp hai bên."""
+    s = ""
+    for bx, d in ((40, -1), (w - 40, 1)):
+        s += (f'<path d="M{f(bx - 5 * d)},14 L{f(bx + 4 * d)},20 L{f(bx - 5 * d)},26 Z" fill="{color}" stroke="{color}" stroke-width="1.2" '
+              f'stroke-linejoin="round"/><rect x="{f(bx + 5 * d - (1.8 if d < 0 else 0))}" y="14" width="1.8" height="12" rx=".8" fill="{color}"/>')
+    s += txt(w / 2 + 2.5, 16, title, 13, color, 400, "middle", 'letter-spacing="4.9"')
+    s += txt(w / 2 + 2.2, 37, "It's Artist", 11.5, color, 400, "middle", 'letter-spacing="4.4" fill-opacity=".8"')
+    y = 72
+    s += f'<line x1="30" y1="{y}" x2="{f(w - 30)}" y2="{y}" stroke="{color}" stroke-opacity=".3" stroke-width="3" stroke-linecap="round"/>'
+    return s + f'<line x1="30" y1="{y}" x2="{f(30 + (w - 60) * .42)}" y2="{y}" stroke="{color}" stroke-width="3" stroke-linecap="round"/>'
+
+
+def lh_column(style="outline", hc=GE, mc=LAV, weather=False, extras=None, media=False, n=3):
+    """Màn dọc như layout mẫu: đồng hồ sát trên (thanh trạng thái + 20 dp) → ngày cách 30 dp; nhạc và dòng pin neo dưới; khối thêm ở giữa."""
+    cx = PW / 2
+    s = lh_clock(cx, L_TOP, LR, style, hc, mc)
+    date_top = L_TOP + LR + 30
+    s += lh_date(cx, date_top, 13, weather=weather)
+    if extras:
+        s += extras(date_top + 13 + 34)
+    if media:
+        s += use("lply", 0, L_STATUS_CY - 7.5 - 28 - 74)
+    return s + lh_status(cx, L_STATUS_CY, n=n)
+
+
+def lh_extras(y):
+    return (f'<g transform="translate(64 {f(y + 14)})">{events_list(3)}</g>'
+            f'<g transform="translate(64 {f(y + 100)})">{memo_icon()}</g>')
+
+
+def lh_hero(cx, cy, style="outline", weather=False, n=3):
+    """Màn ngang: đồng hồ R = 251 dp, ngày 12 sp cách 20 dp, dòng pin; tâm cụm ở (cx, cy)."""
+    r = LRL
+    total = r + 20 + 8.6 + 26 + 15
+    top = cy - total / 2
+    s = lh_clock(cx, top, r, style)
+    s += lh_date(cx, top + r + 20, 12, weather=weather)
+    return s + lh_status(cx, top + r + 20 + 8.6 + 26 + 7.5, n=n)
+
+
+def lh_styles_strip():
+    r, gap = 136, 14
+    w = lh_clock_w(r)
+    x0 = (W - 6 * w - 5 * gap) / 2
+    labels = ["1 · Viền", "2 · Nhạt dần xuống", "3 · Nhạt dần lên", "4 · Đặc", "5 · Giờ đặc", "6 · Phút đặc"]
+    s = ""
+    for i, (style, label) in enumerate(zip(L_STYLES, labels)):
+        cx = x0 + i * (w + gap) + w / 2
+        s += lh_clock(cx, 26, r, style) + txt(cx, 26 + r + 30, label, 14, DM, 400, "middle")
+    return (f'<p style="font-size:13px;color:var(--text-secondary);margin:1.25rem 0 6px">Sáu kiểu đồng hồ (mặc định kiểu 1)</p>'
+            f'<svg viewBox="0 0 {W} 210" width="100%" role="img" aria-label="Sáu kiểu đồng hồ" '
+            f'style="display:block;font-family:\'Plus Jakarta Sans\',sans-serif" fill="{G}">'
+            f'<rect width="{W}" height="210" rx="20" fill="#000"/>{s}</svg>')
+
+
+tower_defs = (lh_gradients([GE, LAV]) + "".join(lh_digit_glyph(ch) for ch in "0189")
+              + f'<g id="lply">{lh_player()}</g><g id="lply2">{lh_player(340)}</g><g id="lply3">{lh_player(262, title="That Cool…")}</g>')
+tower = [
+    lh_styles_strip(),
+    '<div style="font-size:0">',
+    frame_portrait("D1 · Dọc, kiểu viền (mặc định)", lh_column()),
+    frame_portrait("D2 · Dọc, nhạt dần xuống, đang phát nhạc", lh_column("fade_down", media=True)),
+    frame_portrait("D3 · Dọc, thêm khối (thời tiết cạnh ngày, sự kiện, ghi nhớ) + nhạc",
+                   lh_column(weather=True, extras=lh_extras, media=True)),
+    frame_portrait("D4 · Dọc, giờ đặc phút viền, đổi màu", lh_column("hour_fill", hc=MINT, mc=GE)),
+    '</div>',
+    frame("N1 · Ngang, tối giản (thời tiết cạnh ngày)", lh_hero(W / 2, CY, weather=True)),
+    frame("N2 · Ngang, nhạc", lh_hero(236, CY) + vline(436) + use("lply2", 480, CY - 37)),
+    frame("N3 · Ngang, lịch trình", lh_hero(236, CY) + vline(436, 96, 296) + f'<g fill="{G}" transform="translate(498 128)">{weather_header()}</g>'
+          + f'<g transform="translate(498 178)">{events_list(3)}</g>' + f'<g transform="translate(498 270)">{memo_icon()}</g>'),
+    frame("N4 · Ngang, nhạc + nhóm khác (ba cột)", f'<g fill="{G}" transform="translate(36 140)">{weather_header()}</g>'
+          + f'<g transform="translate(36 186)">{events_list(3)}</g>' + vline(300, 96, 296) + lh_hero(W / 2, CY, "fade_down")
+          + vline(573, 96, 296) + use("lply3", 590, CY - 37)),
+]
+
 for name, summary, defs, frames in [
     ("w_classic", "Bảy bố cục ngang của chủ đề Cổ điển theo các khối đang bật", classic_defs, classic),
     ("w_jersey", "Bố cục ngang của chủ đề Số áo: ngày, bốn chữ số một hàng, dòng pin", jersey_defs, jersey),
     ("w_pebble", "Bốn bố cục ngang của chủ đề Sỏi", pebble_defs, pebble),
     ("w_capsule", "Chủ đề Viên nang: bốn khung dọc và bốn bố cục ngang", capsule_defs, capsule),
     ("w_expressive", "Chủ đề Thẻ (M3 Expressive): bốn khung dọc và bốn bố cục ngang", expressive_defs, expressive),
+    ("w_tower", "Chủ đề Tháp (Long HyperOS): sáu kiểu đồng hồ, bốn khung dọc và bốn bố cục ngang", tower_defs, tower),
 ]:
     code = widget(summary, defs, frames)
     OUT.mkdir(parents=True, exist_ok=True)

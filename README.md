@@ -231,9 +231,10 @@ app xin, nên không có trong danh sách trên: `AodTileService` (`BIND_QUICK_S
     hiện thông báo mới nhất thành một dòng gọn.
   - Nhạc: Hàng ngang, Căn giữa, Gọn (một dòng, không thanh tiến trình).
   Khối mà chủ đề đang dùng tự vẽ (ngày, nhạc của Sỏi; ngày, pin và thông báo của Số áo; ngày, nhạc, pin và thông báo
-  của Viên nang và Thẻ) thì kiểu do chủ đề
+  của Viên nang, Thẻ và Tháp) thì kiểu do chủ đề
   quyết định và tab đó chỉ dẫn sang màn chủ đề, mở thẳng chế độ sửa ở tab chỉnh khối đó. Khối mà bố cục của chủ đề không có chỗ (`AodThemeSpec.components`)
-  thì tab đó ẩn và AOD không vẽ, cài đặt vẫn giữ cho lúc dùng chủ đề khác; hiện cả năm chủ đề đều có đủ khối.
+  thì tab đó ẩn và AOD không vẽ, cài đặt vẫn giữ cho lúc dùng chủ đề khác; Tháp không có nét vẽ (hàng số cao không còn chỗ
+  cho khối lớn), các chủ đề khác có đủ khối.
 - **Thông báo** (cần quyền "Truy cập thông báo"): dưới ngày là icon của các app đang có thông báo,
   mỗi app một icon, tối đa 5, còn lại hiện "+N". Bật "Hiện nội dung thông báo mới nhất" thì dưới các
   icon có thêm tiêu đề và nội dung của thông báo mới nhất, theo đúng quy tắc của màn hình khóa: nội
@@ -244,7 +245,8 @@ app xin, nên không có trong danh sách trên: `AodTileService` (`BIND_QUICK_S
   khi cảm biến tiệm cận đang bị che. Chủ đề Sỏi có trình phát riêng: nút phát nằm trong khối hình màu
   nhạc và thanh tiến trình gợn sóng lúc đang phát (app nhạc không báo độ dài bài thì không có thanh). Viên nang: nút
   phát tròn đặc màu nhạc, thanh tiến trình dày tách đôi (phần đã nghe, một khe nhỏ, phần còn lại). Thẻ: nút phát tròn
-  đặc 48dp, thanh gợn sóng kiểu Material 3 Expressive lúc đang phát, dừng thì duỗi thẳng.
+  đặc 48dp, thanh gợn sóng kiểu Material 3 Expressive lúc đang phát, dừng thì duỗi thẳng. Tháp: lùi · tên bài giãn chữ · tới,
+  không có nút phát (chạm tên bài để phát / dừng như app mẫu, đang dừng thì tên bài mờ đi), thanh tiến trình mảnh.
 - **Thông tin thêm** (mục "Thông tin thêm trên đồng hồ", mặc định tắt hết): thời tiết hiện tại (icon
   trời và nhiệt độ) cạnh ngày; tối đa 2 sự kiện còn lại trong hôm nay từ lịch của máy (giờ bắt đầu
   hoặc "Cả ngày", rồi tên sự kiện); một ghi nhớ ngắn; một hình vẽ nhanh bằng ngón tay, hiện theo màu
@@ -257,7 +259,8 @@ app xin, nên không có trong danh sách trên: `AodTileService` (`BIND_QUICK_S
   sự kiện, ghi nhớ), nét vẽ (sự kiện đứng cạnh) hay thông báo mới nhất thì đồng hồ | cột các khối; nhạc cùng nhóm khác
   thì ba cột (thông tin | đồng hồ giữa màn hình | nhạc). Sỏi giữ kiểu kẹp giữa khi chỉ có nhạc (khối giờ trái, khối phút
   phải) và xếp nhạc dưới các khối thay vì ba cột; Số áo là một cột giữa màn hình: ngày nằm ngang, bốn chữ số một hàng,
-  pin + icon thông báo, rồi các khối thêm; Viên nang và Thẻ dùng bố cục chung, đồng hồ là viên nang (thẻ) + ngày + dòng pin. Ảnh nền
+  pin + icon thông báo, rồi các khối thêm; Viên nang, Thẻ và Tháp dùng bố cục chung, đồng hồ là viên nang (thẻ, hàng số cao) + ngày +
+  dòng pin. Ảnh nền
   không xoay theo màn ngang: nó đứng yên theo chiều dọc của máy như hình nền điện thoại.
 
 Đồng hồ hiện giờ (theo định dạng 12 hoặc 24 giờ của máy), ngày, và phần trăm pin kèm trạng thái sạc.
@@ -294,9 +297,9 @@ Mục "Giao diện đồng hồ":
 
 | Tùy chọn                      | Key                                                    | Mặc định | Tác dụng                                                                                                                                                                                          |
 |-------------------------------|--------------------------------------------------------|----------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Chủ đề                        | `aod_theme_id`                                         | Cổ điển  | Cổ điển (4 mặt đồng hồ có từ trước), Sỏi, Số áo, Viên nang hoặc Thẻ. Chọn ở tab AOD › Chủ đề, xem trước rồi Áp dụng; Cổ điển (mặc định) không nằm trong lưới, quay về bằng icon đặt lại ở tiêu đề "Chủ đề & kiểu dáng" |
+| Chủ đề                        | `aod_theme_id`                                         | Cổ điển  | Cổ điển (4 mặt đồng hồ có từ trước), Sỏi, Số áo, Viên nang, Thẻ hoặc Tháp. Chọn ở tab AOD › Chủ đề, xem trước rồi Áp dụng; Cổ điển (mặc định) không nằm trong lưới, quay về bằng icon đặt lại ở tiêu đề "Chủ đề & kiểu dáng" |
 | Kiểu từng khối                | `aod_component_styles` (chuỗi `khoá=giá trị,...`)      | Mặc định | Font, cỡ 60–150%, màu của từng khối dùng chung: ngày, pin, thời tiết, sự kiện, ghi nhớ, thông báo, nhạc, nét vẽ (không có font). Sửa ở Tùy chỉnh, không áp dụng cho khối chủ đề đang dùng tự vẽ |
-| Cấu hình chủ đề               | `aod_theme_configs` (chuỗi theo chủ đề)                | Mặc định | Cổ điển: mặt (Số / Số xếp chồng / Kim / Kim tối giản), font, màu giờ và màu phút riêng, cỡ 60–150%; chưa lưu thì lấy `aod_clock_face` / `_font` / `_color` / `_size_percent` của bản cũ. Sỏi: hình và kiểu (đặc / viền) của khối giờ và khối phút (8 hình), cỡ, xếp giờ trên phút, màu riêng của khối giờ, số giờ, khối phút, số phút, ngày và nhạc, kiểu ngày, hình nút phát, thanh tiến trình nhạc (gợn sóng / thẳng / ẩn), animation khi đổi phút (trượt / phóng / nảy hình); font cố định của chủ đề. Số áo: cỡ 50–100%, màu giờ, màu phút, màu ngày, màu dòng pin + thông báo. Viên nang: kiểu viên (đặc / viền), cỡ 60–150%, màu chữ số, màu viên, màu ngày, màu nhạc, màu dòng pin + thông báo. Thẻ: kiểu số (đặc / viền), nền thẻ (nền mờ / viền / không), cỡ 80–120%, màu giờ, màu phút + AM/PM, màu thẻ (tô nền mờ hoặc nét viền theo kiểu nền), màu ngày, màu nhạc, màu dòng pin + thông báo |
+| Cấu hình chủ đề               | `aod_theme_configs` (chuỗi theo chủ đề)                | Mặc định | Cổ điển: mặt (Số / Số xếp chồng / Kim / Kim tối giản), font, màu giờ và màu phút riêng, cỡ 60–150%; chưa lưu thì lấy `aod_clock_face` / `_font` / `_color` / `_size_percent` của bản cũ. Sỏi: hình và kiểu (đặc / viền) của khối giờ và khối phút (8 hình), cỡ, xếp giờ trên phút, màu riêng của khối giờ, số giờ, khối phút, số phút, ngày và nhạc, kiểu ngày, hình nút phát, thanh tiến trình nhạc (gợn sóng / thẳng / ẩn), animation khi đổi phút (trượt / phóng / nảy hình); font cố định của chủ đề. Số áo: cỡ 50–100%, màu giờ, màu phút, màu ngày, màu dòng pin + thông báo. Viên nang: kiểu viên (đặc / viền), cỡ 60–150%, màu chữ số, màu viên, màu ngày, màu nhạc, màu dòng pin + thông báo. Thẻ: kiểu số (đặc / viền), nền thẻ (nền mờ / viền / không), cỡ 80–120%, màu giờ, màu phút + AM/PM, màu thẻ (tô nền mờ hoặc nét viền theo kiểu nền), màu ngày, màu nhạc, màu dòng pin + thông báo. Tháp: kiểu số (viền / nhạt dần xuống / nhạt dần lên / đặc / giờ đặc / phút đặc), cỡ 80–110%, màu giờ, màu phút, màu ngày, màu nhạc, màu dòng pin + thông báo |
 | Luôn xoay ngang (đồng hồ đêm) | `is_aod_landscape`                                     | Tắt      | Đồng hồ luôn nằm ngang theo chiều dựng máy                                                                                                                                                        |
 | Ảnh nền có sẵn                | `aod_wallpaper`                                        | Không có | 18 ảnh AMOLED vẽ bằng vector, nền đen: 6 ảnh vẽ tay (Sao đêm, Cực quang, Nhật thực, Sóng, Tinh vân, Chân trời) và 12 ảnh sinh bằng script (Mưa sao băng, Hành tinh vành đai, Quỹ đạo, Núi trăng, Đom đóm, Hoa anh đào, Sứa phát sáng, Thành phố đêm, Pháo hoa, Đường đồng mức, Sóng âm, Đèn trời). Hiện mờ 50% sau đồng hồ                                                                           |
 | Ảnh từ máy                    | (file `aod_background.jpg` trong bộ nhớ riêng của app) | Không có | Chọn bằng Photo Picker, không cần quyền đọc ảnh. App lưu một bản sao đã thu về cỡ màn hình; ảnh hiện mờ 50% sau đồng hồ. Mỗi lúc chỉ một ảnh nền: chọn ảnh có sẵn thì bỏ ảnh từ máy, và ngược lại |
@@ -385,7 +388,7 @@ thông báo ──▶ AodNotificationListener ──▶ NotificationStateManager
 | `presentation/screens/aodtab/` | Tab AOD (MVI): cả tab là một `LazyVerticalGrid` 3 cột: công tắc AOD, thẻ "Giao diện của bạn" (AOD đang áp dụng, vẽ thu nhỏ bằng `AodThumbnail`, icon khối đang bật theo `CustomizeDraftUiModel.enabledBlockTabs()`, dòng số khối + nền; chạm để mở Customize) chiếm cả hàng, lưới chủ đề mỗi chủ đề một ô (mỗi mục chỉ xem trước kiểu mặc định của chủ đề (không theo cấu hình đã chỉnh): đồng hồ, ngày và khối chủ đề tự vẽ như trình phát nhạc của Sỏi, không có nền, thông báo, pin... của user; chạm để mở màn chủ đề), sheet và dòng cảnh báo khi thiếu quyền bắt buộc |
 | `presentation/model/aod/theme/` (+ `classic/`, `pebble/`, `jersey/`, `capsule/`, `card/` spec từng chủ đề, `component/` kiểu khối dùng chung) | Hệ chủ đề: `AodThemeValue` (danh sách, id lưu), `AodThemeSpec` (tab + thuộc tính) của từng chủ đề (`ClassicThemeSpec`, `PebbleThemeSpec`, `JerseyThemeSpec`, `CapsuleThemeSpec`, `CardThemeSpec`), thuộc tính `AodThemeOption` (lựa chọn / màu / khoảng số / bật tắt, lưu thành Int trong `AodThemeConfig`), hình khối `AodShapeValue` (hàm bán kính quanh tâm), khối chủ đề tự vẽ `AodBlockValue`, kiểu từng khối dùng chung `AodComponentSpec` / `AodComponentsUiModel`, đọc / ghi `aod_theme_configs` và `aod_component_styles` |
 | `presentation/screens/themeeditor/` | Màn chủ đề (MVI) dùng chung cho mọi chủ đề: xem trước riêng chủ đề: đồng hồ, ngày và khối chủ đề tự vẽ (Sửa / Áp dụng; chủ đề đang dùng thì "Tùy chỉnh" mở Customize), sửa theo tab của `AodThemeSpec` (mỗi tab một phần của chủ đề như khối ở Tùy chỉnh, icon đặt lại riêng ở thanh tiêu đề panel) với control dựng theo loại thuộc tính, hoàn tác / làm lại / đặt lại, Lưu |
-| `presentation/components/aod/theme/` (`AodThemeLayout`: `AodPortrait` / `AodLandscape` chọn bố cục theo chủ đề; `AodShapePath`; thanh gợn sóng `AodWaveTrack` của Sỏi và Thẻ; `classic/`, `pebble/`, `jersey/`, `capsule/`, `card/`) · `components/aod/AodThumbnail.kt` | Chọn phần vẽ theo chủ đề và phần vẽ riêng từng chủ đề, gồm cả bố cục màn ngang (đồng hồ Cổ điển; khối hình + trình phát của Sỏi; chữ số viền, ngày dọc của Số áo; viên nang, ngày in hoa, trình phát của Viên nang; thẻ, ô AM/PM, trình phát của Thẻ; dòng pin + thông báo dùng chung của ba chủ đề này ở `block/AodStatusLine`), path của hình khối, AOD thu nhỏ |
+| `presentation/components/aod/theme/` (`AodThemeLayout`: `AodPortrait` / `AodLandscape` chọn bố cục theo chủ đề; `AodShapePath`; thanh gợn sóng `AodWaveTrack` của Sỏi và Thẻ; `classic/`, `pebble/`, `jersey/`, `capsule/`, `card/`, `tower/`) · `components/aod/AodThumbnail.kt` | Chọn phần vẽ theo chủ đề và phần vẽ riêng từng chủ đề, gồm cả bố cục màn ngang (đồng hồ Cổ điển; khối hình + trình phát của Sỏi; chữ số viền, ngày dọc của Số áo; viên nang, ngày in hoa, trình phát của Viên nang; thẻ, ô AM/PM, trình phát của Thẻ; hàng số cao hẹp, sáu kiểu tô, trình phát chạm tên bài của Tháp; dòng pin + thông báo dùng chung của các chủ đề này ở `block/AodStatusLine`), path của hình khối, AOD thu nhỏ |
 | `presentation/components/aod/editor/` | Control chỉnh dùng ở Tùy chỉnh và màn chủ đề: `AodThemeOptionList` (dựng theo `AodThemeSpec`), ảnh xem trước lựa chọn `aodChoicePreview`, bảng màu, chọn ảnh nền, hộp thoại ghi chú / nét vẽ |
 | `presentation/components/editor/` (`AppEditorPanel`, `AppEditorTab`, `AppEditorHistoryButtons`, `AppEditorFab`, `AppApplyingOverlay`) | Tấm chỉnh trượt lên, tab của thanh tab thấp (chỉ icon, tab đang chọn có tên; cả thanh tab Main), hoàn tác / làm lại / đặt lại ở thanh trên, nút tròn nổi xoay khung và lớp phủ "Đang áp dụng…", dùng chung cho Tùy chỉnh và màn chủ đề |
 | `presentation/screens/edgelight/` | Tab Viền sáng: màn giữ chỗ |
@@ -444,7 +447,8 @@ Từ FakeAOD sang Custom AOD:
 
 ## Thêm chủ đề mới
 
-Cách đã làm cho Sỏi, Số áo, Viên nang (clone từ ảnh chụp app mẫu) và Thẻ (số đo lấy từ dịch ngược app mẫu, `CardMetrics`). Màn chủ đề dựng control theo `AodThemeSpec` nên
+Cách đã làm cho Sỏi, Số áo, Viên nang (clone từ ảnh chụp app mẫu), Thẻ và Tháp (số đo lấy từ dịch ngược app mẫu, `CardMetrics`,
+`TowerMetrics`). Màn chủ đề dựng control theo `AodThemeSpec` nên
 chủ đề mới không cần màn riêng; chỉ tách màn khi chủ đề cần control mà `AodThemeOption` không có.
 
 1. Đọc ảnh mẫu và chốt với user trước khi code:
@@ -452,9 +456,13 @@ chủ đề mới không cần màn riêng; chỉ tách màn khi chủ đề c�
      tên / tuỳ chọn / mặc định) và xem `plans/<app>-themes.md` để không làm lại chủ đề đã có (Muviz Edge:
      `plans/muviz-edge-themes.md`).
    - Phần chủ đề tự vẽ (`ownBlocks`): đồng hồ luôn tự vẽ; ngày, nhạc, dòng pin + thông báo nếu khác khối dùng chung.
-   - Khối dùng chung mà bố cục của chủ đề không có chỗ thì bỏ khỏi `components`: tab ẩn ở Tùy chỉnh, AOD không vẽ, AOD
-     thật không tải dữ liệu của khối đó (`AodExtrasUiModel.shownIn`, `AodNotificationOptionsUiModel.shownIn`). Ảnh mẫu
-     không có khối nào thì hỏi user: Số áo lúc đầu bỏ, sau user muốn có đủ (xếp dưới dòng trạng thái, kiểu chỉnh như Cổ điển).
+   - Khối dùng chung (thời tiết, sự kiện, ghi nhớ, nét vẽ...) là điểm khác app mẫu nên chủ đề mới có các khối hợp bố cục
+     dù ảnh mẫu không có, nhưng không mặc định bật hết: chọn khối có chỗ và nêu lý do khối bị bỏ ngay trong mock (Tháp bỏ nét
+     vẽ vì hàng số cao không còn chỗ cho khối lớn). Khối bị bỏ thì bỏ khỏi `components`: tab ẩn ở Tùy chỉnh, AOD không vẽ, AOD
+     thật không tải dữ liệu của khối đó (`AodExtrasUiModel.shownIn`, `AodNotificationOptionsUiModel.shownIn`).
+   - Không đụng chủ đề đang có: không sửa, không refactor code của chúng (cả khi muốn gom phần giống nhau thành dùng chung),
+     chỉ thêm nhánh của chủ đề mới vào các `when` theo chủ đề; phần vẽ giống chủ đề cũ thì làm bản riêng trong gói của chủ đề
+     mới (Tháp: `TowerGlyphs` cùng cách với `CardGlyphs` của Thẻ). Kiểm bằng `git diff` thư mục các chủ đề cũ phải trống.
    - Tuỳ chọn của app mẫu thành `AodThemeOption`, chia tab theo phần (kiểu rồi màu của chính phần đó). App mẫu không
      có thì không thêm (vd Số áo không chọn font, không có màu điều khiển nhạc), trừ khi user cho thêm (Viên nang: user cho
      tự thêm, nên có thêm màu ngày, màu nhạc như Sỏi).
@@ -495,7 +503,7 @@ chủ đề mới không cần màn riêng; chỉ tách màn khi chủ đề c�
    node, thiếu con sẽ crash. Ví dụ đầy đủ: `theme/jersey/` (`JerseyMetrics`, `AodJerseyLayout`).
 6. Font: dùng font có sẵn. Cần độ đậm khác thì thêm vào `tools/fonts/make_static_fonts.py`, sinh riêng file đó (không
    sinh lại file cũ, tránh đổi byte), khai báo ở `Typography.kt` (Viên nang: Plus Jakarta Sans ExtraBold); font mẫu hẹp hơn mọi font
-   có sẵn thì lấy đường viền rồi nén ngang trước khi vẽ (Thẻ: Big Shoulders Display Black nén 0,55, `CardGlyphs`); so font với ảnh mẫu
+   có sẵn thì lấy đường viền rồi nén ngang trước khi vẽ (Thẻ: Big Shoulders Display Black nén 0,55, `CardGlyphs`; Tháp: nén 0,312, `TowerGlyphs`); so font với ảnh mẫu
    bằng cách vẽ cùng chữ số bằng PIL rồi đo bề rộng, độ dày nét. Dòng pin + icon thông báo kiểu Số áo / Viên nang dùng chung
    `AodStatusLine` (cỡ theo chiều cao icon pin, `gapScale` cho dòng chặt hơn). Chữ viền nét dày đều: lấy đường viền chữ bằng
    `Paint.getTextPath`, kéo giãn path rồi mới vẽ nét (`JerseyGlyphs`); chữ số nào hình dạng khác font (số 1 của Số áo có cờ vuông) thì tự vẽ đa giác
@@ -824,6 +832,16 @@ chọn theo các khối đang có dữ liệu, dùng chung cho mọi chủ đề
     nhạc phát: thanh gợn sóng, dừng: thanh thẳng. Xoay ngang: thẻ (cỡ 0,9 màn dọc) + ngày + dòng pin, bố cục theo các khối
     như Cổ điển (chỉ thời tiết: thời tiết cạnh ngày; nhạc: thẻ | trình phát; nhạc + khối khác: ba cột, thẻ không chạm vạch).
     Sỏi: thanh gợn sóng giữ y như trước (dùng chung `AodWaveTrack`).
+25i. Chủ đề Tháp: tab AOD › Chủ đề › Tháp: bốn chữ số rất cao và hẹp một hàng sát đỉnh màn hình, chỉ có nét viền mảnh (giờ
+    trắng, phút tím nhạt), dưới số là ngày in hoa giãn chữ ("THỨ BẢY / 17 THG 10"); trình phát (lùi · tên bài, nghệ sĩ giãn chữ ·
+    tới, thanh mảnh) và dòng "pin 72% • icon" neo ở khoảng 4/5 phần dưới màn hình. Đổi giờ (vd 11:11, 10:08, 21:59): hàng số
+    không đổi bề ngang, phút đổi thì chỉ số đó mờ chéo trong ô. Sửa: tab Đồng hồ (Kiểu số: Viền / Nhạt dần xuống / Nhạt dần
+    lên / Đặc / Giờ đặc / Phút đặc; Cỡ 80–110%; màu Giờ, màu Phút), tab Ngày, tab Nhạc, tab Pin & thông báo. Tùy chỉnh khi
+    đang dùng Tháp: không có tab Nét vẽ. Áp dụng rồi khóa máy: bật thời tiết (không có sự kiện): thời tiết cạnh ngày; bật
+    sự kiện: thời tiết, sự kiện, ghi nhớ nằm trên trình phát; nhiều khối thì hàng số nhỏ lại (có animation), không đè lên
+    ngày. Nhạc: chạm tên bài là phát / dừng (dừng thì tên bài mờ đi, TalkBack đọc "Phát" / "Tạm dừng"), lùi / tới ở hai bên.
+    Xoay ngang: hàng số + ngày + dòng pin, bố cục theo các khối như Cổ điển. Các chủ đề khác (Cổ điển, Sỏi, Số áo, Viên nang,
+    Thẻ) không đổi gì.
 25f. Overlay mới (không còn hộp thoại / nút Material): mọi sheet có thanh kéo dải màu mint → xanh → tím; mép trên màn
     hình không có viền sáng khi sheet hiện. Đặt lại (tab AOD › Chủ đề, Tùy chỉnh, màn chủ đề): sheet có hình điện thoại với huy hiệu mũi tên xoay, nút
     "Đặt lại" mint, Hủy bằng chữ. Màn chủ đề đang sửa, Back khi còn thay đổi: "Lưu trước khi thoát?" với Lưu rồi thoát (lưu,
@@ -852,7 +870,8 @@ chọn theo các khối đang có dữ liệu, dùng chung cho mọi chủ đề
     báo mới nhất + ghi nhớ: cột phải; phát nhạc khi đang có khối khác: ba cột, đồng hồ đúng giữa màn hình, trình phát bên
     phải. Nhạc dừng / phát hay bật / tắt khối: bố cục đổi bằng mờ chéo, không nhảy về góc. Sỏi: chỉ có nhạc: khối giờ
     trái, khối phút phải, giữa là ngày, trình phát Sỏi, pin; không có khối nào: hai khối to giữa màn hình; có khối khác:
-    cụm khối trái | các khối phải, nhạc dưới cùng. Viên nang, Thẻ: như Cổ điển, hero là viên nang (thẻ) + ngày + dòng pin. Số áo: một cột giữa màn hình: ngày "13 / 10" + viên thuốc thứ nằm
+    cụm khối trái | các khối phải, nhạc dưới cùng. Viên nang, Thẻ, Tháp: như Cổ điển, hero là viên nang (thẻ, hàng số cao) + ngày +
+    dòng pin. Số áo: một cột giữa màn hình: ngày "13 / 10" + viên thuốc thứ nằm
     ngang, bốn chữ số một hàng (giờ và phút cách một khoảng), pin + icon thông báo, rồi các khối thêm cạnh nhau; tắt ngày
     thì số to ra; đổi thứ (dài hay ngắn) hay phút đổi: số không dời chỗ. Xem bằng nút xoay ngang ở thanh trên Tùy chỉnh / màn chủ đề
     (không cần bật "Luôn xoay ngang"): màn hình app và các thanh vẫn dọc, chỉ AOD đổi sang bố cục ngang ở cỡ đầy đủ và

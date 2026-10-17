@@ -73,6 +73,9 @@ bắt buộc (compiler không chặn hộ):
   chỉ có Cổ điển (`ClassicThemeSpec.ClockTab`), sau đó là dòng dẫn sang màn chủ đề. Tab của chủ đề chia theo
   phần như khối ở Tùy chỉnh (kiểu rồi màu của chính phần đó, không gom màu vào tab riêng), tab nào cũng có
   icon đặt lại riêng ở thanh tiêu đề panel (`AppEditorPanel(action)` + `AppEditorResetButton`), cả ở Tùy chỉnh.
+  Chủ đề mới: số đo lấy từ dịch ngược app mẫu (không xin user ảnh chụp), mock dọc + ngang để user duyệt rồi mới code; thêm
+  các khối dùng chung hợp bố cục (điểm khác đối thủ), không mặc định bật hết, khối không hợp thì bỏ khỏi `components` và nêu
+  lý do trong mock; không sửa / refactor code của chủ đề đang có (cả phần dùng chung được), chỉ thêm nhánh `when` của chủ đề mới.
 
 ## Presentation: MVI
 

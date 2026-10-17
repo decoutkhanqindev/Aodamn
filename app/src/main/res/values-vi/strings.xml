@@ -54,6 +54,7 @@
     <string name="theme_jersey">Số áo</string>
     <string name="theme_capsule">Viên nang</string>
     <string name="theme_card">Thẻ</string>
+    <string name="theme_tower">Tháp</string>
     <string name="aod_jersey_date_first_pattern">dd</string>
     <string name="aod_jersey_date_second_pattern">MM</string>
     <string name="theme_in_use">Đang dùng</string>
@@ -94,6 +95,10 @@
     <string name="card_background_tinted">Nền mờ</string>
     <string name="card_background_outline">Viền</string>
     <string name="card_background_none">Không</string>
+    <string name="tower_style_fade_down">Nhạt dần xuống</string>
+    <string name="tower_style_fade_up">Nhạt dần lên</string>
+    <string name="tower_style_hour_filled">Giờ đặc</string>
+    <string name="tower_style_minute_filled">Phút đặc</string>
     <string name="theme_opt_date_style">Kiểu ngày</string>
     <string name="date_style_bold">In hoa đậm</string>
     <string name="date_style_plain">Thường</string>

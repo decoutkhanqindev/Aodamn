@@ -39,6 +39,7 @@ code dịch ngược, không lấy asset (font, ảnh, Lottie) từ APK. APK và
 | Số áo (`JERSEY`) | **37 · May24 "Fill HyperOS"** | tab "Clock Size, Hour Color, Minute Color, Date Color" (`reference/theme_2/02.jpg`); mặc định giờ `#BDB7FF` = `Lavender` của mình |
 | Viên nang (`CAPSULE`) | **32 · Dec23 "Flex Round"** | tab "Clock Style, Color 1, Color 2, Clock Size" + "Style 1 / Style 2" (ảnh thứ hai trong `reference/theme_3/`); mặc định xám `#CFD8DC` / `#E4E4E4` |
 | Thẻ (`CARD`) | **38 · Jun24 "M3 Expressive"** | làm từ danh mục này (2026-10-17), số đo lấy từ layout / code / font trong APK |
+| Tháp (`TOWER`) | **34 · Feb24 "Long HyperOS"** | làm từ danh mục này (2026-10-17), số đo lấy từ layout `feb24_screen_layout` / code / font trong APK |
 
 ## Danh mục đủ 44 chủ đề
 
@@ -80,7 +81,7 @@ text view chung) hoặc font dùng trong code; "chữ (font layout)" nghĩa là 
 | 31 | Nov23 | Space Mono | Clock Size, Hour Color, Minute Color, Theme Color | Date, Notification, Controls | chữ (font layout) | – | chưa có |
 | 32 | Dec23 | Flex Round | Clock Style, Color 1, Color 2, Clock Size | – | chữ (font layout) | – | **Viên nang** (`CAPSULE`) |
 | 33 | Jan24 | Dual Timezone | Time Zone, Clock Style, Color 1, Color 2 | – | SimpleAnalogClock | chọn múi giờ | chưa có |
-| 34 | Feb24 | Long HyperOS | Clock Style, Clock Size, Hour Color, Minute Color, Date Color, Controls Color | – | chữ (font layout) | – | chưa có |
+| 34 | Feb24 | Long HyperOS | Clock Style, Clock Size, Hour Color, Minute Color, Date Color, Controls Color | – | chữ (font layout) | – | **Tháp** (`TOWER`) |
 | 35 | Mar24 | Text HyperOS | Clock Size, Theme Color | Hour, Minute, Day, Date, Controls | chữ (font layout) | – | chưa có |
 | 36 | Apr24 | Big Retro | Clock Style, Clock Size, Clock Color, Theme Color | Date, Controls | chữ (font layout) | – | chưa có |
 | 37 | May24 | Fill HyperOS | Clock Size, Hour Color, Minute Color, Date Color, Controls Color | – | chữ (font layout) | – | **Số áo** (`JERSEY`) |
@@ -114,8 +115,7 @@ Ghép theo tên, hình và tuỳ chọn; "chắc" là đã khớp bằng ảnh t
 Ưu tiên chủ đề khác hẳn 4 chủ đề đã có, vừa với 4 kiểu tuỳ chọn hiện có, không cần quyền mới hay font độc quyền:
 
 1. ~~**38 · M3 Expressive**~~: đã làm thành chủ đề Thẻ (2026-10-17).
-2. **34 · Long HyperOS**: hàng chữ số cao hẹp đặt ngang + thứ / ngày. Cùng họ HyperOS với Số áo, font
-   `big_shoulders_display` có sẵn.
+2. ~~**34 · Long HyperOS**~~: đã làm thành chủ đề Tháp (2026-10-17).
 3. **28 · Bullet List**: giờ trong viên thuốc + cột ngày, pin, thông báo có chấm tròn nối dọc. Dựng từ các khối dùng chung.
 4. **40 · iOS Fill Clock** ⭐ (Premium ở app mẫu): mặt kim với số lớn tô màu; vẽ tay, công sức trung bình.
 

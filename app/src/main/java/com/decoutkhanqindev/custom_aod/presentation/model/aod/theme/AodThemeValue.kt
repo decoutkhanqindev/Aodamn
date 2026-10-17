@@ -9,6 +9,7 @@ import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.card.CardThe
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.classic.ClassicThemeSpec
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.jersey.JerseyThemeSpec
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.pebble.PebbleThemeSpec
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.tower.TowerThemeSpec
 
 // Các chủ đề AOD. id lưu trong DataStore nên không đổi; thêm chủ đề = một mục ở đây + đặc tả AodThemeSpec + phần vẽ ở
 // components/aod/theme/ (AodPortrait / AodLandscape chọn theo mục này).
@@ -22,7 +23,8 @@ enum class AodThemeValue(
     PEBBLE(id = "pebble", nameRes = R.string.theme_pebble, spec = PebbleThemeSpec),
     JERSEY(id = "jersey", nameRes = R.string.theme_jersey, spec = JerseyThemeSpec),
     CAPSULE(id = "capsule", nameRes = R.string.theme_capsule, spec = CapsuleThemeSpec),
-    CARD(id = "card", nameRes = R.string.theme_card, spec = CardThemeSpec);
+    CARD(id = "card", nameRes = R.string.theme_card, spec = CardThemeSpec),
+    TOWER(id = "tower", nameRes = R.string.theme_tower, spec = TowerThemeSpec);
 
     companion object {
         val DEFAULT = CLASSIC

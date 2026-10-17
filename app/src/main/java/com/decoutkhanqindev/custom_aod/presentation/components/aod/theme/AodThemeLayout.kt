@@ -14,11 +14,13 @@ import com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.jersey.
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.jersey.AodJerseyPortrait
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.pebble.AodPebbleClock
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.pebble.AodPebbleLandscape
+import com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.tower.AodTowerLandscape
+import com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.tower.AodTowerPortrait
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeValue
 import com.decoutkhanqindev.custom_aod.presentation.screens.aod.state.AodIntent
 import com.decoutkhanqindev.custom_aod.presentation.screens.aod.state.AodState
 
-// Bố cục AOD màn dọc theo chủ đề: Cổ điển và Sỏi là đồng hồ rồi các khối thông tin bên dưới; Số áo, Viên nang và Thẻ tự vẽ cả cụm (số, ngày,
+// Bố cục AOD màn dọc theo chủ đề: Cổ điển và Sỏi là đồng hồ rồi các khối thông tin bên dưới; Số áo, Viên nang, Thẻ và Tháp tự vẽ cả cụm (số, ngày,
 // dòng trạng thái) cùng các khối thông tin.
 // Thêm chủ đề = thêm một nhánh ở đây và ở AodLandscape.
 @Composable
@@ -44,6 +46,7 @@ fun AodPortrait(
         AodThemeValue.JERSEY -> AodJerseyPortrait(state = state, onIntent = onIntent)
         AodThemeValue.CAPSULE -> AodCapsulePortrait(state = state, onIntent = onIntent)
         AodThemeValue.CARD -> AodCardPortrait(state = state, onIntent = onIntent)
+        AodThemeValue.TOWER -> AodTowerPortrait(state = state, onIntent = onIntent)
     }
 }
 
@@ -59,6 +62,7 @@ fun AodLandscape(
         AodThemeValue.JERSEY -> AodJerseyLandscape(state = state, onIntent = onIntent)
         AodThemeValue.CAPSULE -> AodCapsuleLandscape(state = state, onIntent = onIntent)
         AodThemeValue.CARD -> AodCardLandscape(state = state, onIntent = onIntent)
+        AodThemeValue.TOWER -> AodTowerLandscape(state = state, onIntent = onIntent)
     }
 }
 

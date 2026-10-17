@@ -7,6 +7,20 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-10-17 – Chủ đề Tháp
+
+Build được, lint không thêm cảnh báo, unit test pass, `tools/check-rules.sh` ra 0 vi phạm (38 rule). Đã test trên máy.
+
+### Thêm
+
+- Chủ đề Tháp (Long HyperOS của Muviz Edge, số đo lấy từ layout, code dịch ngược và thông số font trong APK; mock duyệt trước khi code): bốn chữ số cao 0,96 cạnh ngắn màn hình, rất hẹp (Big Shoulders Display Black nén ngang 0,312, `TowerGlyphs`), một hàng sát đỉnh màn hình; ngày in hoa giãn chữ 0,48 em dưới số; trình phát riêng không có nút phát (chạm tên bài để phát / dừng như app mẫu, đang dừng thì tên bài mờ đi), thanh tiến trình mảnh; pin + icon thông báo một dòng (`AodStatusLine`) neo đáy phần 0,8 của khoảng dưới ngày như layout mẫu. Sáu kiểu số như app mẫu: viền (mặc định), viền nhạt dần xuống / lên, đặc, giờ đặc phút viền, giờ viền phút đặc; cỡ 80–110%, màu giờ, phút, ngày, nhạc, dòng pin (app mẫu gộp nhạc và pin thành một màu điều khiển).
+- Khối dùng chung hợp với bố cục: thời tiết (cạnh ngày khi không có sự kiện), sự kiện, ghi nhớ nằm trên trình phát, nhiều khối thì hàng số nhỏ lại; không có nét vẽ (khối lớn tranh chỗ với hàng số cao) và thông báo mới nhất (dòng trạng thái chỉ có icon). Màn ngang dựng trên bố cục chung (`AodLandscapeLayout`).
+- `tools/mockups/aod_landscape_mockups.py` có nhóm khung của Tháp (sáu kiểu, bốn khung dọc, bốn khung ngang).
+
+### Thay đổi
+
+- Chỉ thêm nhánh Tháp vào các chỗ chọn theo chủ đề (`AodPortrait`, `AodLandscape`, `AodMediaControls`); code của các chủ đề đang có không đổi.
+
 ## [Chưa phát hành] – 2026-10-17 – Nút xoay khung thành nút nổi, thanh tab màn sửa như Main
 
 Build được, lint không thêm cảnh báo, unit test pass, `tools/check-rules.sh` ra 0 vi phạm (38 rule). Chưa test trên máy.
