@@ -48,6 +48,7 @@
     <string name="theme_pebble">Sỏi</string>
     <string name="theme_jersey">Số áo</string>
     <string name="theme_capsule">Viên nang</string>
+    <string name="theme_card">Thẻ</string>
     <string name="aod_jersey_date_first_pattern">dd</string>
     <string name="aod_jersey_date_second_pattern">MM</string>
     <string name="theme_in_use">Đang dùng</string>
@@ -78,9 +79,16 @@
     <string name="theme_color_media">Nhạc</string>
     <string name="theme_color_digits">Chữ số</string>
     <string name="theme_color_capsule">Viên</string>
+    <string name="theme_color_card">Thẻ</string>
     <string name="theme_color_status">Pin &amp; thông báo</string>
     <string name="theme_color_hour">Giờ</string>
     <string name="theme_color_minute">Phút</string>
+    <string name="theme_color_minute_tag">Phút &amp; AM/PM</string>
+    <string name="theme_opt_digit_style">Kiểu số</string>
+    <string name="theme_opt_card_background">Nền thẻ</string>
+    <string name="card_background_tinted">Nền mờ</string>
+    <string name="card_background_outline">Viền</string>
+    <string name="card_background_none">Không</string>
     <string name="theme_opt_date_style">Kiểu ngày</string>
     <string name="date_style_bold">In hoa đậm</string>
     <string name="date_style_plain">Thường</string>

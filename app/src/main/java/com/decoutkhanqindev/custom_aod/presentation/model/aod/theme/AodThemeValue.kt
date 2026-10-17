@@ -5,6 +5,7 @@ import androidx.compose.runtime.Immutable
 import com.decoutkhanqindev.custom_aod.R
 import com.decoutkhanqindev.custom_aod.data.local.datastore.DataStoreManager
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.capsule.CapsuleThemeSpec
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.card.CardThemeSpec
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.classic.ClassicThemeSpec
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.jersey.JerseyThemeSpec
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.pebble.PebbleThemeSpec
@@ -20,7 +21,8 @@ enum class AodThemeValue(
     CLASSIC(id = DataStoreManager.DEFAULT_AOD_THEME_ID, nameRes = R.string.theme_classic, spec = ClassicThemeSpec),
     PEBBLE(id = "pebble", nameRes = R.string.theme_pebble, spec = PebbleThemeSpec),
     JERSEY(id = "jersey", nameRes = R.string.theme_jersey, spec = JerseyThemeSpec),
-    CAPSULE(id = "capsule", nameRes = R.string.theme_capsule, spec = CapsuleThemeSpec);
+    CAPSULE(id = "capsule", nameRes = R.string.theme_capsule, spec = CapsuleThemeSpec),
+    CARD(id = "card", nameRes = R.string.theme_card, spec = CardThemeSpec);
 
     companion object {
         val DEFAULT = CLASSIC

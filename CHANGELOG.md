@@ -7,6 +7,22 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-10-17 – Chủ đề Thẻ, lập danh mục chủ đề từ app mẫu
+
+Build được, lint không thêm cảnh báo, unit test pass, `tools/check-rules.sh` ra 0 vi phạm (38 rule). Chưa test trên máy.
+
+### Thêm
+
+- Chủ đề Thẻ (`AodThemeValue.CARD`, id `card`; M3 Expressive của Muviz Edge): số giờ rất cao và hẹp bên trái, phút nhỏ bằng nửa trên ô AM/PM (24 giờ: "HRS", luôn tiếng Anh như app mẫu) kéo tới chân số giờ, cả cụm trong thẻ bo góc; ngày in hoa đậm dưới thẻ, trình phát riêng (nút phát tròn đặc 48dp, thanh gợn sóng lúc đang phát), pin + icon thông báo một dòng dưới cùng; đủ các khối dùng chung (giữa ngày và nhạc, nhiều khối thì thẻ nhỏ lại cho vừa màn hình), màn ngang dựng trên `AodLandscapeLayout`. Tuỳ chọn: kiểu số (đặc / viền), nền thẻ (nền mờ / viền / không), cỡ 80–120%, màu giờ, màu phút + AM/PM, màu thẻ riêng với màu giờ (tô nền mờ hoặc nét viền theo kiểu nền; mặc định trùng màu giờ như app mẫu), màu ngày, màu nhạc, màu dòng pin + thông báo.
+- Số đo của Thẻ (`CardMetrics`) lấy từ layout XML, code dịch ngược và thông số chữ số của font trong APK app mẫu, không từ ảnh chụp; chữ số và AM/PM là Big Shoulders Display Black (có sẵn) nén ngang 0,55 cho khớp tỉ lệ font mẫu (`CardGlyphs`), chữ số trong ô rộng cố định, đổi số thì mờ chéo; đồng hồ luôn trái sang phải kể cả ngôn ngữ RTL.
+- `tools/reference/`: kéo APK app mẫu đang cài trên máy bằng REA, dịch ngược (engine JADX của REA), dump resource bằng `aapt2`, lập `index.md` chỉ ra class chủ đề và file tra cứu; bộ trích danh mục `extract_muviz.py` làm mẫu cho app khác. Danh mục 44 chủ đề AOD của Muviz Edge, đối chiếu chủ đề đã clone: `plans/muviz-edge-themes.md`.
+- `tools/mockups/aod_landscape_mockups.py`: nhóm khung Thẻ (4 dọc, 4 ngang).
+
+### Thay đổi
+
+- Thanh tiến trình gợn sóng của Sỏi tách thành `AodWaveTrack` (`components/aod/theme/`) dùng chung với Thẻ; thông số của Sỏi giữ nguyên.
+- README › Thêm chủ đề mới: app mẫu dịch ngược được thì lấy số đo từ layout / code / font trong APK, không xin chụp ảnh nữa.
+
 ## [Chưa phát hành] – 2026-10-17 – Ô Cài đặt nhanh: icon app, xám khi thiếu quyền
 
 Build được, lint không thêm cảnh báo, `tools/check-rules.sh` ra 0 vi phạm (38 rule). Chưa test trên máy.

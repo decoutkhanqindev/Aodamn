@@ -26,6 +26,10 @@ val Frost = Color(0xFFC8D8D8)
 val GreyD0 = Color(0xFFD0D0D0)
 val GreyE0 = Color(0xFFE0E0E0)
 
+// Màu mặc định của chủ đề Thẻ lấy từ app mẫu (dịch ngược): số giờ xanh xám, phút / AM-PM / ngày xám sáng.
+val BlueGreyB0 = Color(0xFFB0BEC5)
+val GreyE4 = Color(0xFFE4E4E4)
+
 // Ba màu trung tính mặc định của Material 3 (bản tối) mà app vẫn dùng, giữ đúng giá trị để giao diện không đổi.
 val Neutral12 = Color(0xFF211F26)
 val NeutralVariant30 = Color(0xFF49454F)

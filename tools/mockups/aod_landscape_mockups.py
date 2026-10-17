@@ -571,11 +571,193 @@ capsule = [
           + vline(557, 96, 296) + use("vply2", 590, CY - 32)),
 ]
 
+# ================================================================== THẺ (M3 Expressive của Muviz Edge; số đo lấy từ layout + code dịch ngược và
+# thông số font trong APK, không từ ảnh chụp: R = chiều cao số giờ, 190 dp ở cỡ 100 vì chữ số font mẫu cao đúng 1 em)
+ER = 190.0
+EX = 0.55  # Big Shoulders Display Black nén ngang: số 0 rộng 0,281 R, nét 0,095 R (font mẫu 0,286 / 0,105)
+E_PITCH, E_INK = 0.358, 0.284
+EC1, EC2 = "#B0BEC5", "#E4E4E4"
+E_TRACK = "#505257"
+
+
+def ex_digit_glyph(ch):
+    """Chữ số cao RU, nén ngang EX, căn giữa ô rộng E_PITCH R (bước chữ số của font mẫu)."""
+    x0, _, x1, _ = bounds(ch)
+    _, z0, _, z1 = bounds("0")
+    k = RU / (z1 - z0)
+    pen = SVGPathPen(GLYPHS, ntos=f)
+    GLYPHS[CMAP[ord(ch)]].draw(TransformPen(pen, (k * EX, 0, 0, -k, E_PITCH * RU / 2 - (x0 + x1) / 2 * k * EX, RU + z0 * k)))
+    return f'<path id="e{ch}" d="{pen.getCommands()}"/>'
+
+
+def ex_word_glyph(word):
+    """Chữ in hoa (AM / PM, HRS lúc 24 giờ; app mẫu luôn ghi tiếng Anh) cao chữ hoa RU, nén ngang EX; trả về (path, bề rộng theo RU)."""
+    _, h0, _, h1 = bounds("H")
+    k = RU / (h1 - h0)
+    pen = SVGPathPen(GLYPHS, ntos=f)
+    x = 0.0
+    for ch in word:
+        name = CMAP[ord(ch)]
+        GLYPHS[name].draw(TransformPen(pen, (k * EX, 0, 0, -k, x, RU + h0 * k)))
+        x += BIG["hmtx"][name][0] * k * EX
+    x0 = bounds(word[0])[0] * k * EX
+    x1 = x - (BIG["hmtx"][CMAP[ord(word[-1])]][0] - bounds(word[-1])[2]) * k * EX
+    return f'<path id="ew{word}" d="{pen.getCommands()}" transform="translate({f(-x0)} 0)"/>', x1 - x0
+
+
+EX_WORDS = {w: ex_word_glyph(w) for w in ("AM", "PM", "HRS")}
+
+
+def ex_digits(text, x_ink, top, h, color, outline):
+    k = h / RU
+    paint = (f'fill="none" stroke="{color}" stroke-width="1"' if outline else f'fill="{color}"')
+    x = x_ink - (E_PITCH - E_INK) / 2 * h
+    s = ""
+    for ch in text:
+        s += use(f"e{ch}", 0, 0, f'transform="translate({f(x)} {f(top)}) scale({k:.4f})" {paint}')
+        x += E_PITCH * h
+    return s
+
+
+def ex_clock(cx, cy, r=ER, style="filled", bg="filled", c1=EC1, c2=EC2, hh="10", mm="08", tag="AM"):
+    """Thẻ bo góc 0,21 R, đệm 0,15 R quanh chữ số; giờ cao R, phút 0,5 R trên ô nhãn (cao 0,42 R, bo 0,079 R) kéo tới đáy số giờ."""
+    hw, gap, colw = (E_PITCH + E_INK) * r, 0.073 * r, 0.33 * r
+    left, top = cx - (hw + gap + colw) / 2, cy - r / 2
+    pad = 0.15 * r
+    cw, chh = hw + gap + colw + 2 * pad, r + 2 * pad
+    s = ""
+    if bg == "filled":
+        s += f'<rect x="{f(left - pad)}" y="{f(top - pad)}" width="{f(cw)}" height="{f(chh)}" rx="{f(0.21 * r)}" fill="{c1}" fill-opacity=".118"/>'
+    elif bg == "stroke":
+        sw = 0.013 * r
+        s += (f'<rect x="{f(left - pad + sw / 2)}" y="{f(top - pad + sw / 2)}" width="{f(cw - sw)}" height="{f(chh - sw)}" rx="{f(0.21 * r)}" '
+              f'fill="none" stroke="{c1}" stroke-opacity=".235" stroke-width="{f(sw)}"/>')
+    outline = style == "outline"
+    s += ex_digits(hh, left, top, r, c1, outline)
+    col = left + hw + gap
+    mh = 0.5 * r
+    s += ex_digits(mm, col + (colw - (E_PITCH + E_INK) * mh) / 2, top, mh, c2, outline)
+    by, bh = top + 0.58 * r, 0.42 * r
+    if outline:
+        sw = 0.0105 * r
+        s += (f'<rect x="{f(col + sw / 2)}" y="{f(by + sw / 2)}" width="{f(colw - sw)}" height="{f(bh - sw)}" rx="{f(0.079 * r)}" '
+              f'fill="none" stroke="{c2}" stroke-opacity=".31" stroke-width="{f(sw)}"/>')
+    else:
+        s += f'<rect x="{f(col)}" y="{f(by)}" width="{f(colw)}" height="{f(bh)}" rx="{f(0.079 * r)}" fill="{c2}" fill-opacity=".196"/>'
+    th = 0.207 * r
+    tw = EX_WORDS[tag][1] * th / RU
+    s += use(f"ew{tag}", 0, 0, f'transform="translate({f(col + (colw - tw) / 2)} {f(by + (bh - th) / 2)}) scale({th / RU:.4f})" fill="{c2}"')
+    return s
+
+
+def ex_date(cx, cap_top, r=ER, color=EC2, weather=False):
+    size = 0.059 * r / 0.745
+    base = cap_top + 0.059 * r
+    if not weather:
+        return txt(cx, base, "THỨ BẢY • 17 THG 10", size, color, 700, "middle")
+    return (txt(cx - 2.2 * size, base, "THỨ BẢY • 17 THG 10", size, color, 700, "middle")
+            + cloud(cx + 3.9 * size, base + 1, 0.55, color, 1.4) + txt(cx + 5.7 * size, base, "24°", size, color, 700))
+
+
+def ex_battery(x, top, color, h=15):
+    w, cap = h * 0.56, h * 0.12
+    return (f'<rect x="{f(x + w * .3)}" y="{f(top)}" width="{f(w * .4)}" height="{f(cap + 1)}" rx=".8" fill="{color}"/>'
+            f'<rect x="{f(x)}" y="{f(top + cap)}" width="{f(w)}" height="{f(h - cap)}" rx="{f(w * .22)}" fill="{color}"/>')
+
+
+def ex_status(cx, cy, color=EC2, n=3):
+    """Dòng pin của layout mẫu: pin 16 dp, chữ 16 sp, chấm cách 12 dp, icon thông báo 18 dp."""
+    w = 8.4 + 5 + 34 + (12 + 4 + 12 + n * 18 + (n - 1) * 8 if n else 0)
+    x = cx - w / 2
+    s = ex_battery(x, cy - 7.5, color) + txt(x + 13.4, cy + 6, "42%", 16, color, 500)
+    if n:
+        x += 8.4 + 5 + 34 + 12
+        s += f'<circle cx="{f(x + 2)}" cy="{f(cy)}" r="2" fill="{color}"/>'
+        x += 4 + 12
+        shapes = icon_shapes(color)
+        for i in range(n):
+            s += shapes[i % 3](x, cy - 9, 18)
+            x += 18 + 8
+    return s
+
+
+def ex_player(w=313, c2=EC2, title="That Cool Song"):
+    """Trình phát của layout mẫu: tên 17 sp / nghệ sĩ 14 sp (80%, một dòng, cắt "…"), lùi · nút phát tròn 48 dp · tới,
+    thanh M3 gợn sóng (biên 3, bước 40, nét 6)."""
+    s = txt(2, 24, title, 17, c2, 500) + txt(2, 43, "It's Artist", 14, c2, 400, extra='fill-opacity=".8"')
+    for cxb, flip in ((w - 122.5, True), (w - 21.5, False)):
+        d = -1 if flip else 1
+        s += (f'<path d="M{f(cxb - 6 * d)},22 L{f(cxb + 4 * d)},29 L{f(cxb - 6 * d)},36 Z" fill="{c2}" fill-opacity=".8" stroke="{c2}" '
+              f'stroke-opacity=".8" stroke-width="1.5" stroke-linejoin="round"/>'
+              f'<rect x="{f(cxb + 6 * d - (2.4 if flip else 0))}" y="22" width="2.4" height="14" rx="1" fill="{c2}" fill-opacity=".8"/>')
+    s += (f'<circle cx="{f(w - 72)}" cy="29" r="24" fill="{c2}"/>'
+          f'<rect x="{f(w - 78)}" y="21.5" width="4" height="15" rx="1.2" fill="#000"/><rect x="{f(w - 70)}" y="21.5" width="4" height="15" rx="1.2" fill="#000"/>')
+    y, split = 73, 0.7 * w
+    wave = "q10,-6 20,0" + " t20,0" * (int((split - 3) / 20) - 1)
+    s += f'<path d="M3,{y} {wave}" fill="none" stroke="{c2}" stroke-width="6" stroke-linecap="round"/>'
+    return s + f'<line x1="{f(split + 11)}" y1="{y}" x2="{f(w - 3)}" y2="{y}" stroke="{E_TRACK}" stroke-width="6" stroke-linecap="round"/>'
+
+
+def ex_column(r=ER, style="filled", bg="filled", c1=EC1, c2=EC2, tag="AM", extras=None, extras_h=0, media=True):
+    """Màn dọc: thẻ → ngày → khối thêm → nhạc → dòng pin, cả cột căn giữa màn hình (như Viên nang)."""
+    card_h = 1.3 * r
+    total = card_h + 0.118 * r + 0.059 * r + 36 + extras_h + (79 + 40 if media else 16) + 9
+    top = (PH - total) / 2
+    cx = PW / 2
+    s = ex_clock(cx, top + card_h / 2, r, style, bg, c1, c2, tag=tag)
+    y = top + card_h + 0.118 * r
+    s += ex_date(cx, y, r, c2)
+    y += 0.059 * r + 36
+    if extras:
+        s += extras(y)
+        y += extras_h
+    if media:
+        s += use("eplyw" if c2 != EC2 else "eplyp", (PW - 313) / 2, y)
+        y += 79 + 40
+    else:
+        y += 16
+    return s + ex_status(cx, y, c2)
+
+
+ERL = 0.9 * ER  # màn ngang: app mẫu thu đồng hồ còn 0,9
+
+
+def ex_hero(cx, cy, style="filled", bg="filled", weather=False, n=3):
+    """Màn ngang: thẻ + ngày (+ thời tiết cạnh ngày) + dòng pin, tâm cụm ở (cx, cy)."""
+    r = ERL
+    total = 1.3 * r + 0.118 * r + 0.059 * r + 26 + 9
+    top = cy - total / 2
+    s = ex_clock(cx, top + 0.65 * r, r, style, bg)
+    y = top + 1.3 * r + 0.118 * r
+    s += ex_date(cx, y, r, weather=weather)
+    return s + ex_status(cx, y + 0.059 * r + 26, n=n)
+
+
+expressive_defs = ("".join(ex_digit_glyph(ch) for ch in "0189") + "".join(p for p, _ in EX_WORDS.values())
+                   + f'<g id="eply">{ex_player(296)}</g><g id="eply2">{ex_player(250, title="That Cool…")}</g>'
+                   + f'<g id="eplyp">{ex_player()}</g><g id="eplyw">{ex_player(c2="#FFFFFF")}</g>')
+expressive = [
+    '<div style="font-size:0">',
+    frame_portrait("T1 · Dọc, số đặc, nền thẻ mờ (mặc định)", ex_column()),
+    frame_portrait("T2 · Dọc, số viền, nền thẻ viền", ex_column(style="outline", bg="stroke")),
+    frame_portrait("T3 · Dọc, thêm khối (thời tiết, sự kiện, ghi nhớ)", ex_column(extras=capsule_extras, extras_h=176, media=False)),
+    frame_portrait("T4 · Dọc, không nền thẻ, đổi màu, buổi chiều (PM)", ex_column(bg="none", c1=LAV, c2="#FFFFFF", tag="PM")),
+    '</div>',
+    frame("N1 · Ngang, tối giản (thời tiết cạnh ngày)", ex_hero(W / 2, CY, weather=True)),
+    frame("N2 · Ngang, nhạc", ex_hero(236, CY) + vline(436) + use("eply", 498, CY - 40)),
+    frame("N3 · Ngang, lịch trình", ex_hero(236, CY) + vline(436, 96, 296) + f'<g fill="{G}" transform="translate(498 128)">{weather_header()}</g>'
+          + f'<g transform="translate(498 178)">{events_list(3)}</g>' + f'<g transform="translate(498 270)">{memo_icon()}</g>'),
+    frame("N4 · Ngang, nhạc + nhóm khác (ba cột)", f'<g fill="{G}" transform="translate(36 140)">{weather_header()}</g>'
+          + f'<g transform="translate(36 186)">{events_list(3)}</g>' + vline(300, 96, 296) + ex_hero(W / 2, CY, "outline", "stroke")
+          + vline(573, 96, 296) + use("eply2", 600, CY - 40)),
+]
+
 for name, summary, defs, frames in [
     ("w_classic", "Bảy bố cục ngang của chủ đề Cổ điển theo các khối đang bật", classic_defs, classic),
     ("w_jersey", "Bố cục ngang của chủ đề Số áo: ngày, bốn chữ số một hàng, dòng pin", jersey_defs, jersey),
     ("w_pebble", "Bốn bố cục ngang của chủ đề Sỏi", pebble_defs, pebble),
     ("w_capsule", "Chủ đề Viên nang: bốn khung dọc và bốn bố cục ngang", capsule_defs, capsule),
+    ("w_expressive", "Chủ đề Thẻ (M3 Expressive): bốn khung dọc và bốn bố cục ngang", expressive_defs, expressive),
 ]:
     code = widget(summary, defs, frames)
     OUT.mkdir(parents=True, exist_ok=True)
