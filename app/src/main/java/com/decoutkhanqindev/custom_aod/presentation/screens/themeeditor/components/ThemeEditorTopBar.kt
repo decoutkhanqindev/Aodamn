@@ -22,7 +22,6 @@ import com.decoutkhanqindev.custom_aod.presentation.components.AppPrimaryButton
 import com.decoutkhanqindev.custom_aod.presentation.components.AppTextButton
 import com.decoutkhanqindev.custom_aod.presentation.components.AppTopBar
 import com.decoutkhanqindev.custom_aod.presentation.components.editor.AppEditorHistoryButtons
-import com.decoutkhanqindev.custom_aod.presentation.components.editor.AppPreviewOrientationButton
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeValue
 import com.decoutkhanqindev.custom_aod.presentation.screens.themeeditor.state.ThemeEditorHistoryState
 import com.decoutkhanqindev.custom_aod.presentation.screens.themeeditor.state.ThemeEditorIntent
@@ -30,15 +29,14 @@ import com.decoutkhanqindev.custom_aod.presentation.theme.LabelMedium
 import com.decoutkhanqindev.custom_aod.presentation.theme.Mint
 import com.decoutkhanqindev.custom_aod.presentation.theme.Theme
 
-// Cùng kiểu thanh trên của Tùy chỉnh (không còn thanh công cụ nổi che AOD). Xem trước: tên chủ đề (+ "Đang dùng") · xoay · Sửa · Áp dụng
-// (chủ đề đang dùng thì Tùy chỉnh, sang phần chung); đang sửa: hoàn tác, làm lại, đặt lại · xoay · Lưu.
+// Cùng kiểu thanh trên của Tùy chỉnh (không còn thanh công cụ nổi che AOD). Xem trước: tên chủ đề (+ "Đang dùng") · Sửa · Áp dụng
+// (chủ đề đang dùng thì Tùy chỉnh, sang phần chung); đang sửa: hoàn tác, làm lại, đặt lại · Lưu. Xoay khung là nút nổi.
 @Composable
 fun ThemeEditorTopBar(
     @StringRes themeNameRes: Int,
     isEditing: Boolean,
     isActive: Boolean,
     isLoading: Boolean,
-    isLandscapePreview: Boolean,
     hasChanges: Boolean,
     history: ThemeEditorHistoryState,
     onIntent: (ThemeEditorIntent) -> Unit,
@@ -87,11 +85,6 @@ fun ThemeEditorTopBar(
         onNavigateBack = { onIntent(ThemeEditorIntent.NavigateBack) },
         isTitleCentered = false,
         actions = {
-            AppPreviewOrientationButton(
-                isLandscape = isLandscapePreview,
-                onClick = { onIntent(ThemeEditorIntent.ToggleLandscapePreview) },
-            )
-
             AnimatedVisibility(
                 visible = !isLoading,
                 enter = fadeIn(),
@@ -151,7 +144,6 @@ private fun ThemeEditorTopBarPreview() {
             isEditing = false,
             isActive = true,
             isLoading = false,
-            isLandscapePreview = false,
             hasChanges = false,
             history = ThemeEditorHistoryState(),
             onIntent = {},
@@ -168,7 +160,6 @@ private fun ThemeEditorTopBarEditingPreview() {
             isEditing = true,
             isActive = true,
             isLoading = false,
-            isLandscapePreview = false,
             hasChanges = true,
             history = ThemeEditorHistoryState(canUndo = true, isDefault = false),
             onIntent = {},

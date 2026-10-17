@@ -1,8 +1,12 @@
 package com.decoutkhanqindev.custom_aod.presentation.screens.customize.components
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -15,8 +19,8 @@ import com.decoutkhanqindev.custom_aod.presentation.screens.customize.state.Cust
 import com.decoutkhanqindev.custom_aod.presentation.screens.customize.state.CustomizeIntent
 import com.decoutkhanqindev.custom_aod.presentation.theme.Theme
 
-// Thanh trên thay cho tiêu đề và thanh công cụ nổi cũ, để AOD xem trước không bị che: quay lại · hoàn tác, làm lại, đặt lại · (Bỏ qua lúc
-// onboarding) · Áp dụng. Không có ô bước onboarding: thanh không đủ chỗ ở máy hẹp; xoay khung và hướng dẫn nằm cuối thanh tab.
+// Thanh trên thay cho tiêu đề và thanh công cụ nổi cũ, để AOD xem trước không bị che: quay lại · hoàn tác, làm lại, đặt lại · hướng dẫn ·
+// (Bỏ qua lúc onboarding) · Áp dụng. Không có ô bước onboarding vì thanh không đủ chỗ; xoay khung là nút nổi.
 @Composable
 fun CustomizeTopBar(
     isFirstOpen: Boolean,
@@ -40,6 +44,16 @@ fun CustomizeTopBar(
         onNavigateBack = { onIntent(CustomizeIntent.NavigateBack) },
         isTitleCentered = false,
         actions = {
+            IconButton(
+                onClick = { onIntent(CustomizeIntent.Guide.ShowGuide) },
+                modifier = Modifier.size(40.dp),
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_question),
+                    contentDescription = stringResource(R.string.customize_show_guide),
+                )
+            }
+
             if (isFirstOpen) {
                 AppTextButton(
                     text = stringResource(R.string.action_skip),

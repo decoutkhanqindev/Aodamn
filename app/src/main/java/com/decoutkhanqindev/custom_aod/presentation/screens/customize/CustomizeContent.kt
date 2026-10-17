@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
@@ -24,6 +25,7 @@ import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.custom_aod.R
 import com.decoutkhanqindev.custom_aod.presentation.components.AppBottomAdSlot
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.AodPreviewFrame
@@ -31,6 +33,7 @@ import com.decoutkhanqindev.custom_aod.presentation.components.aod.editor.Drawin
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.editor.MemoEditorSheet
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.rememberAodPreview
 import com.decoutkhanqindev.custom_aod.presentation.components.editor.AppApplyingOverlay
+import com.decoutkhanqindev.custom_aod.presentation.components.editor.AppPreviewOrientationButton
 import com.decoutkhanqindev.custom_aod.presentation.components.onLongClick
 import com.decoutkhanqindev.custom_aod.presentation.components.permission.AppPermissionSheet
 import com.decoutkhanqindev.custom_aod.presentation.components.sheet.AppConfirmSheet
@@ -126,6 +129,18 @@ fun CustomizeContent(
                 exit = fadeOut() + slideOutVertically { height -> height },
             ) {
                 Column(modifier = Modifier.fillMaxWidth()) {
+                    // Xoay khung là nút nổi cạnh phải, đi lên theo panel, không chiếm chỗ của thanh trên hay thanh tab.
+                    AppPreviewOrientationButton(
+                        isLandscape = state.isLandscapePreview,
+                        onClick = { onIntent(CustomizeIntent.ToggleLandscapePreview) },
+                        modifier = Modifier
+                            .align(Alignment.End)
+                            .padding(end = 16.dp, bottom = 24.dp)
+                            .onGloballyPositioned { coordinates ->
+                                onTargetPositioned(CustomizeGuideStepValue.ROTATE, coordinates.boundsInWindow())
+                            },
+                    )
+
                     CustomizePanelHost(
                         selectedTab = state.selectedTab,
                         isFirstOpen = state.isFirstOpen,
@@ -137,7 +152,6 @@ fun CustomizeContent(
                     CustomizeTabBar(
                         selectedTab = state.selectedTab,
                         spec = state.draft.appearance.clock.theme.value.spec,
-                        isLandscapePreview = state.isLandscapePreview,
                         guideStep = state.guideStep,
                         onIntent = onIntent,
                         onClusterPositioned = onTargetPositioned,

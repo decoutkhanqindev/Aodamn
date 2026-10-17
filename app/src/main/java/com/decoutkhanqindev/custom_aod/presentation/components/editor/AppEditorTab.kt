@@ -43,7 +43,7 @@ import com.decoutkhanqindev.custom_aod.presentation.theme.RoundedCornerShape12dp
 import com.decoutkhanqindev.custom_aod.presentation.theme.Theme
 
 // Một tab của thanh tab thấp (Tùy chỉnh, sửa chủ đề, thanh tab Main): chỉ có icon để thanh không che AOD xem trước, tab đang chọn nền mint
-// nhạt và hiện thêm tên để biết đang ở đâu. TalkBack luôn đọc tên.
+// nhạt, icon đặc (như thanh tab Main) và hiện thêm tên để biết đang ở đâu. TalkBack luôn đọc tên.
 @Composable
 fun AppEditorTab(
     @DrawableRes iconRes: Int,
@@ -51,6 +51,7 @@ fun AppEditorTab(
     isSelected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    @DrawableRes selectedIconRes: Int = filledIconOf(iconRes),
 ) {
     val contentColor by animateColorAsState(
         targetValue = if (isSelected) Mint else Grey9A,
@@ -79,7 +80,7 @@ fun AppEditorTab(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
-            painter = painterResource(iconRes),
+            painter = painterResource(if (isSelected) selectedIconRes else iconRes),
             contentDescription = null,
             modifier = Modifier.size(20.dp),
             tint = contentColor,
@@ -102,6 +103,26 @@ fun AppEditorTab(
             )
         }
     }
+}
+
+// Bản fill của icon tab ở Tùy chỉnh và màn chủ đề (tools/icons/icons.txt); icon chưa có bản fill thì giữ nguyên.
+@DrawableRes
+private fun filledIconOf(@DrawableRes iconRes: Int): Int = when (iconRes) {
+    R.drawable.ic_clock -> R.drawable.ic_clock_fill
+    R.drawable.ic_calendar_blank -> R.drawable.ic_calendar_blank_fill
+    R.drawable.ic_battery_full -> R.drawable.ic_battery_full_fill
+    R.drawable.ic_image -> R.drawable.ic_image_fill
+    R.drawable.ic_paint_brush -> R.drawable.ic_paint_brush_fill
+    R.drawable.ic_note_pencil -> R.drawable.ic_note_pencil_fill
+    R.drawable.ic_bell -> R.drawable.ic_bell_fill
+    R.drawable.ic_calendar_check -> R.drawable.ic_calendar_check_fill
+    R.drawable.ic_cloud_sun -> R.drawable.ic_cloud_sun_fill
+    R.drawable.ic_music_notes -> R.drawable.ic_music_notes_fill
+    R.drawable.ic_sparkle -> R.drawable.ic_sparkle_fill
+    R.drawable.ic_timer -> R.drawable.ic_timer_fill
+    R.drawable.ic_text_aa -> R.drawable.ic_text_aa_fill
+    R.drawable.ic_magic_wand -> R.drawable.ic_magic_wand_fill
+    else -> iconRes
 }
 
 @Preview

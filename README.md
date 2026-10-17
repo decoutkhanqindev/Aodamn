@@ -387,7 +387,7 @@ thông báo ──▶ AodNotificationListener ──▶ NotificationStateManager
 | `presentation/screens/themeeditor/` | Màn chủ đề (MVI) dùng chung cho mọi chủ đề: xem trước riêng chủ đề: đồng hồ, ngày và khối chủ đề tự vẽ (Sửa / Áp dụng; chủ đề đang dùng thì "Tùy chỉnh" mở Customize), sửa theo tab của `AodThemeSpec` (mỗi tab một phần của chủ đề như khối ở Tùy chỉnh, icon đặt lại riêng ở thanh tiêu đề panel) với control dựng theo loại thuộc tính, hoàn tác / làm lại / đặt lại, Lưu |
 | `presentation/components/aod/theme/` (`AodThemeLayout`: `AodPortrait` / `AodLandscape` chọn bố cục theo chủ đề; `AodShapePath`; thanh gợn sóng `AodWaveTrack` của Sỏi và Thẻ; `classic/`, `pebble/`, `jersey/`, `capsule/`, `card/`) · `components/aod/AodThumbnail.kt` | Chọn phần vẽ theo chủ đề và phần vẽ riêng từng chủ đề, gồm cả bố cục màn ngang (đồng hồ Cổ điển; khối hình + trình phát của Sỏi; chữ số viền, ngày dọc của Số áo; viên nang, ngày in hoa, trình phát của Viên nang; thẻ, ô AM/PM, trình phát của Thẻ; dòng pin + thông báo dùng chung của ba chủ đề này ở `block/AodStatusLine`), path của hình khối, AOD thu nhỏ |
 | `presentation/components/aod/editor/` | Control chỉnh dùng ở Tùy chỉnh và màn chủ đề: `AodThemeOptionList` (dựng theo `AodThemeSpec`), ảnh xem trước lựa chọn `aodChoicePreview`, bảng màu, chọn ảnh nền, hộp thoại ghi chú / nét vẽ |
-| `presentation/components/editor/` (`AppEditorPanel`, `AppEditorTab`, `AppEditorHistoryButtons`, `AppApplyingOverlay`) | Tấm chỉnh trượt lên, tab của thanh tab thấp (chỉ icon, tab đang chọn có tên; cả thanh tab Main), hoàn tác / làm lại / đặt lại ở thanh trên và lớp phủ "Đang áp dụng…", dùng chung cho Tùy chỉnh và màn chủ đề |
+| `presentation/components/editor/` (`AppEditorPanel`, `AppEditorTab`, `AppEditorHistoryButtons`, `AppEditorFab`, `AppApplyingOverlay`) | Tấm chỉnh trượt lên, tab của thanh tab thấp (chỉ icon, tab đang chọn có tên; cả thanh tab Main), hoàn tác / làm lại / đặt lại ở thanh trên, nút tròn nổi xoay khung và lớp phủ "Đang áp dụng…", dùng chung cho Tùy chỉnh và màn chủ đề |
 | `presentation/screens/edgelight/` | Tab Viền sáng: màn giữ chỗ |
 | `presentation/screens/settings/` | Tab Cài đặt (MVI): hiển thị, khi nào hiện, thao tác và cảm biến, quyền (kèm kết quả lần hiện gần nhất), ngôn ngữ; quyền Lịch và Vị trí hỏi từ danh sách quyền. Mỗi nhóm một file `SettingsXxxSection.kt` trong `components/` |
 | `presentation/screens/language/`                                                                                                                                                                                                                    | Màn chọn ngôn ngữ (MVI): lần mở đầu tiên và từ màn hình cài đặt                                                                                                                                                                                                                                                                                                                                                                                                                                   |
@@ -667,12 +667,14 @@ chọn theo các khối đang có dữ liệu, dùng chung cho mọi chủ đề
 1a. Onboarding, màn Tùy chỉnh: có tab Đồng hồ đầu tiên, chỉ chủ đề Cổ điển như bản trước khi có chủ đề: 4 mặt, font, màu
    (kéo màu xem trước theo tay, thả tay mới thành một bước hoàn tác), cỡ; không có chọn chủ đề. Áp dụng: tab AOD có Cổ điển
    "Đang dùng" với đúng kiểu đã chỉnh. Muốn dùng Sỏi thì chọn ở tab AOD › Chủ đề.
-3. Chạm thẻ "Giao diện của bạn" ở tab AOD: Tùy chỉnh mở ra, thanh trên là quay lại · hoàn tác, làm lại, đặt lại · Áp dụng
-   (không tiêu đề, không "Bỏ qua", không còn thanh công cụ nổi giữa màn hình); thanh tab cao 48dp chỉ có icon, tab đang chọn
-   hiện thêm tên, cuối thanh là nút xoay khung và nút hướng dẫn (đứng yên khi cuộn tab). Onboarding: thanh trên thêm Bỏ qua
-   trước Áp dụng, không có ô bước; máy hẹp 360dp vẫn không tràn. Hướng dẫn: bước Xoay chỉ vào nút xoay ở thanh tab, bước
+3. Chạm thẻ "Giao diện của bạn" ở tab AOD: Tùy chỉnh mở ra, thanh trên là quay lại · hoàn tác, làm lại, đặt lại · hướng dẫn · Áp dụng
+   (không tiêu đề, không "Bỏ qua", không còn thanh công cụ nổi giữa màn hình); thanh tab cao 56dp như Main, chỉ có icon, tab đang chọn
+   icon đặc và hiện thêm tên. Xoay khung là nút tròn nổi ở cạnh phải, cách panel / thanh tab 24dp (mở panel thì đi lên
+   theo), nhấn giữ khung xem trước thì ẩn cùng các thanh. Onboarding: thanh trên thêm Bỏ qua
+   trước Áp dụng (nút hoàn tác, hướng dẫn 40dp cho vừa), không có ô bước; máy hẹp 360dp vẫn không tràn. Hướng dẫn: bước Xoay chỉ vào nút xoay nổi, bước
    cuối chỉ vào thanh trên. Màn chủ đề: lúc xem thanh trên là tên chủ đề (dòng "Đang dùng" màu mint bên dưới nếu đang dùng)
-   · xoay · Sửa · Áp dụng / Tùy chỉnh; lúc sửa là hoàn tác, làm lại, đặt lại · xoay · Lưu. Ở Tùy chỉnh: tab Đồng hồ chỉ có dòng dẫn sang màn chủ đề (không có chọn mặt, font, màu); Đặt lại không đổi chủ đề đang dùng; Áp dụng xong quay về tab AOD và thẻ đổi theo
+   · Sửa · Áp dụng / Tùy chỉnh; lúc sửa là hoàn tác, làm lại, đặt lại · Lưu; nút xoay là nút tròn nổi cạnh phải, trên banner
+   lúc xem và trên panel lúc sửa. Ở Tùy chỉnh: tab Đồng hồ chỉ có dòng dẫn sang màn chủ đề (không có chọn mặt, font, màu); Đặt lại không đổi chủ đề đang dùng; Áp dụng xong quay về tab AOD và thẻ đổi theo
    giao diện mới: icon khối và dòng "N khối · nền" khớp đúng các khối vừa bật (khối cần quyền mà chưa có quyền thì không
    tính), không bật khối nào thì "Chỉ đồng hồ · Nền đen"; bật nhiều khối thì ô cuối là "+N", máy hẹp vẫn không tràn hàng.
    Nút bút chì nằm giữa thẻ theo chiều dọc. TalkBack đọc cả thẻ một lần (tiêu đề, chủ đề, số khối, nền), không đọc từng icon.

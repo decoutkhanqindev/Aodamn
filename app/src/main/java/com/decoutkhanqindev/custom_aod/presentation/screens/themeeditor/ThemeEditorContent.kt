@@ -33,6 +33,7 @@ import com.decoutkhanqindev.custom_aod.presentation.components.aod.rememberAodPr
 import com.decoutkhanqindev.custom_aod.presentation.components.editor.AppApplyingOverlay
 import com.decoutkhanqindev.custom_aod.presentation.components.editor.AppEditorPanel
 import com.decoutkhanqindev.custom_aod.presentation.components.editor.AppEditorResetButton
+import com.decoutkhanqindev.custom_aod.presentation.components.editor.AppPreviewOrientationButton
 import com.decoutkhanqindev.custom_aod.presentation.components.onLongClick
 import com.decoutkhanqindev.custom_aod.presentation.components.permission.AppPermissionSheet
 import com.decoutkhanqindev.custom_aod.presentation.components.sheet.AppConfirmSheet
@@ -99,7 +100,6 @@ fun ThemeEditorContent(
                     isEditing = state.isEditing,
                     isActive = state.isActive,
                     isLoading = state.isLoading,
-                    isLandscapePreview = state.isLandscapePreview,
                     hasChanges = state.hasChanges,
                     history = state.history,
                     onIntent = onIntent,
@@ -112,6 +112,20 @@ fun ThemeEditorContent(
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth(),
         ) {
+            AnimatedVisibility(
+                visible = !isPeeking,
+                modifier = Modifier
+                    .align(Alignment.End)
+                    .padding(end = 16.dp, bottom = 24.dp),
+                enter = fadeIn(),
+                exit = fadeOut(),
+            ) {
+                AppPreviewOrientationButton(
+                    isLandscape = state.isLandscapePreview,
+                    onClick = { onIntent(ThemeEditorIntent.ToggleLandscapePreview) },
+                )
+            }
+
             AnimatedVisibility(
                 visible = state.isEditing && !isPeeking,
                 enter = slideInVertically { height -> height } + fadeIn(),

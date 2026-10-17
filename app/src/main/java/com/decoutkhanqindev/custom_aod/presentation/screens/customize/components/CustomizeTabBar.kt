@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
@@ -18,17 +16,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
-import com.decoutkhanqindev.custom_aod.R
 import com.decoutkhanqindev.custom_aod.presentation.components.editor.AppEditorTab
-import com.decoutkhanqindev.custom_aod.presentation.components.editor.AppPreviewOrientationButton
 import com.decoutkhanqindev.custom_aod.presentation.components.onClick
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeSpec
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeClusterValue
@@ -44,7 +38,6 @@ import kotlin.math.roundToInt
 fun CustomizeTabBar(
     selectedTab: CustomizeTabValue?,
     spec: AodThemeSpec,
-    isLandscapePreview: Boolean,
     guideStep: CustomizeGuideStepValue?,
     onIntent: (CustomizeIntent) -> Unit,
     onClusterPositioned: (CustomizeGuideStepValue, Rect) -> Unit,
@@ -73,7 +66,7 @@ fun CustomizeTabBar(
         contentColor = Grey9A,
     ) {
         Row(
-            modifier = Modifier.padding(vertical = 4.dp),
+            modifier = Modifier.padding(vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Row(
@@ -114,30 +107,6 @@ fun CustomizeTabBar(
                         }
                     }
                 }
-            }
-
-            VerticalDivider(
-                modifier = Modifier.height(20.dp),
-                color = NeutralVariant30,
-            )
-
-            // Xoay khung xem trước và hướng dẫn đứng yên cuối thanh (thanh trên đã có hoàn tác, Áp dụng, Bỏ qua).
-            AppPreviewOrientationButton(
-                isLandscape = isLandscapePreview,
-                onClick = { onIntent(CustomizeIntent.ToggleLandscapePreview) },
-                modifier = Modifier.onGloballyPositioned { coordinates ->
-                    onClusterPositioned(CustomizeGuideStepValue.ROTATE, coordinates.boundsInWindow())
-                },
-            )
-
-            IconButton(
-                onClick = { onIntent(CustomizeIntent.Guide.ShowGuide) },
-                modifier = Modifier.padding(end = 4.dp),
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_question),
-                    contentDescription = stringResource(R.string.customize_show_guide),
-                )
             }
         }
     }

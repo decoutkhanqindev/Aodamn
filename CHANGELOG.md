@@ -7,6 +7,16 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-10-17 – Nút xoay khung thành nút nổi, thanh tab màn sửa như Main
+
+Build được, lint không thêm cảnh báo, unit test pass, `tools/check-rules.sh` ra 0 vi phạm (38 rule). Chưa test trên máy.
+
+### Thay đổi
+
+- Nút xoay khung của Tùy chỉnh và màn chủ đề không còn chiếm thanh tab / thanh trên: thành nút tròn nổi 48dp ở cạnh phải, cách panel / thanh tab (màn chủ đề lúc xem: banner) 24dp (`AppEditorFab`, nền `Neutral12` viền mảnh, đang xem ngang thì icon mint), mở panel thì đi lên theo. `AppPreviewOrientationButton` vẽ bằng `AppEditorFab`. Bước hướng dẫn Xoay chỉ vào nút nổi.
+- Nút hướng dẫn của Tùy chỉnh lên thanh trên, trước Bỏ qua / Áp dụng. Nút hoàn tác, làm lại, đặt lại và hướng dẫn 40dp (trước 48dp) để thanh trên lúc onboarding vẫn vừa màn 393dp.
+- Thanh tab của Tùy chỉnh và màn chủ đề cao 56dp như thanh tab Main (trước 48dp), tab đang chọn dùng icon đặc như Main: thêm bản fill của 13 icon tab vào `tools/icons/icons.txt`, `AppEditorTab` tự đổi sang bản fill (`selectedIconRes`).
+
 ## [Chưa phát hành] – 2026-10-17 – Thanh trên, thanh tab thấp hơn để thấy AOD xem trước nhiều hơn
 
 Build được, lint không thêm cảnh báo, unit test pass, `tools/check-rules.sh` ra 0 vi phạm (38 rule). Đã test trên máy.

@@ -10,6 +10,7 @@ regular: timer text-aa magic-wand pencil-simple device-rotate
 
 # Tab đang chọn và dấu hoàn thành
 fill: clock device-mobile gear-six check-circle
+fill: calendar-blank battery-full image paint-brush note-pencil bell calendar-check cloud-sun music-notes sparkle timer text-aa magic-wand
 
 # Ô icon ở màn Cài đặt, thẻ quyền, thẻ giao diện
 duotone: sun eye-closed timer device-rotate plugs-connected calendar-dots battery-warning

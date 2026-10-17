@@ -195,10 +195,11 @@ private fun MainNavigationBar(
                 contentAlignment = Alignment.Center,
             ) {
                 AppEditorTab(
-                    iconRes = if (isSelected) tab.selectedIconRes else tab.iconRes,
+                    iconRes = tab.iconRes,
                     label = stringResource(tab.labelRes),
                     isSelected = isSelected,
                     onClick = { onSelectTab(tab) },
+                    selectedIconRes = tab.selectedIconRes,
                 )
             }
         }
