@@ -7,6 +7,21 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-10-17 – Chủ đề Chuỗi
+
+Build được, lint không thêm cảnh báo, unit test pass (thêm test chặn chủ đề cũ đổi khối tự vẽ / nội dung thông báo), `tools/check-rules.sh` ra 0 vi phạm (38 rule), thư mục các chủ đề cũ không đổi dòng nào. Đã test trên máy.
+
+### Thêm
+
+- Chủ đề Chuỗi (Bullet List của Muviz Edge, số đo lấy từ layout `aug23_screen_layout`, `Aug23Clock` dịch ngược và thông số font trong APK; mock duyệt trước khi code): giờ khoét rỗng trong viên thuốc tô màu (thấy nền / ảnh nền qua chữ số; view rộng 100dp × Cỡ, chữ số 0,51 chiều cao view, viên thuốc rộng theo chữ, bo tròn hết), sát lề trái ở 0,13 chiều cao màn hình; dưới là chuỗi dòng có chấm 6dp nối nhau bằng vạch 1dp (dòng cuối không có vạch, dòng ẩn thì chuỗi tự nối lại có animation): ngày dài theo ngôn ngữ / thứ (thời tiết cạnh ngày), "PIN 72%" / trạng thái sạc, thông báo (icon, hay thông báo mới nhất: icon + tiêu đề + nội dung khi bật nội dung thông báo), ghi nhớ, sự kiện. Chữ số và tiêu đề in hoa Anton 18sp như app mẫu; dòng phụ Plus Jakarta Sans 13sp mờ 0,7 (Rubik của app mẫu không có tiếng Việt). Giờ đổi: viên thuốc co giãn có animation, ký tự đổi mờ chéo, ký tự giữ nguyên chỗ không nháy (`ChainGlyphs`). Trình phát riêng neo đáy: lùi · tên bài in hoa / nghệ sĩ · tới, chạm tên bài để phát / dừng, thanh tiến trình 1,5dp. Cỡ 70–130% (= 35–65 của app mẫu), màu đồng hồ, ngày, pin, thông báo, ghi nhớ, sự kiện, nhạc (mặc định #E0E0E0 như app mẫu).
+- Ghi nhớ, sự kiện của Chuỗi do chủ đề tự vẽ (icon đặc sáng như icon thông báo, tiêu đề in hoa đậm như ngày / pin): `AodBlockValue.MEMO` / `EVENTS`, tab riêng ở màn chủ đề, Tùy chỉnh › Ghi chú / Sự kiện dẫn sang đó; xem trước riêng chủ đề có ghi nhớ và sự kiện mẫu. Không có nét vẽ (hình lớn không hợp dạng dòng). Màn ngang giữ dạng chuỗi: cụm đồng hồ + chuỗi ngày, pin, thông báo | chuỗi ghi nhớ, sự kiện | trình phát (`AodChainLandscape`).
+- Font Anton (Google Fonts, OFL, có tiếng Việt; `res/font/anton_regular.ttf`, giấy phép `licenses/Anton-OFL.txt`). Anton chỉ có bản tĩnh nên `tools/fonts/make_static_fonts.py` chép từ `tools/fonts/static/`; script nhận tên họ font để chỉ sinh họ mới, các file font cũ không đổi byte.
+- `tools/mockups/aod_landscape_mockups.py` có nhóm khung của Chuỗi (dải đồng hồ viên thuốc, bốn khung dọc, bốn khung ngang, chữ Anton).
+
+### Thay đổi
+
+- Chỉ thêm, không đổi hành vi chủ đề đang có: `AodBlockValue` thêm `MEMO`, `EVENTS` (chỉ Chuỗi khai báo; `AodComponentValue.EVENTS` / `MEMO` trỏ tới chúng nên chỉ chủ đề tự vẽ mới dẫn sang màn chủ đề); `AodThemeSpec.hasNotificationContent` mặc định `STATUS !in ownBlocks` như điều kiện cũ (dùng ở `AodNotificationOptionsUiModel.shownIn` và công tắc nội dung thông báo ở Tùy chỉnh), Chuỗi đặt `true`; `toThemePreviewDraft` bật sự kiện mẫu / ghi nhớ mẫu chỉ khi chủ đề tự vẽ chúng (`CustomizeDraftUiModel.isThemePreview`). Thêm nhánh Chuỗi vào `AodPortrait`, `AodLandscape`, `AodMediaControls`.
+
 ## [Chưa phát hành] – 2026-10-17 – Chủ đề Tháp
 
 Build được, lint không thêm cảnh báo, unit test pass, `tools/check-rules.sh` ra 0 vi phạm (38 rule). Đã test trên máy.

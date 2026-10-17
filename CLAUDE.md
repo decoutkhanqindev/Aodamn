@@ -68,14 +68,17 @@ bắt buộc (compiler không chặn hộ):
   từng khối (`AodComponentSpec`, `AodAppearanceUiModel.components`, chỉnh ở Tùy chỉnh) và không viền, không
   nền; lựa chọn có ảnh xem trước vẽ bằng chính composable của AOD (`aodChoicePreview`). Khung xem trước
   ngoài AOD thật không chạy theo giờ: giá trị mẫu cố định từ `CustomizePreviewSamples` (giờ 08:30); khối chủ đề tự vẽ
-  khai báo trong `ownBlocks` (`AodBlockValue`: ngày, nhạc, dòng trạng thái), kiểu do chủ đề quyết định, và luôn có trong
+  khai báo trong `ownBlocks` (`AodBlockValue`: ngày, nhạc, dòng trạng thái, ghi nhớ, sự kiện), kiểu do chủ đề quyết định, và luôn có trong
   xem trước chủ đề (`toThemePreviewDraft`). Tùy chỉnh không chỉnh chủ đề: tab Đồng hồ lúc onboarding
   chỉ có Cổ điển (`ClassicThemeSpec.ClockTab`), sau đó là dòng dẫn sang màn chủ đề. Tab của chủ đề chia theo
   phần như khối ở Tùy chỉnh (kiểu rồi màu của chính phần đó, không gom màu vào tab riêng), tab nào cũng có
   icon đặt lại riêng ở thanh tiêu đề panel (`AppEditorPanel(action)` + `AppEditorResetButton`), cả ở Tùy chỉnh.
   Chủ đề mới: số đo lấy từ dịch ngược app mẫu (không xin user ảnh chụp), mock dọc + ngang để user duyệt rồi mới code; thêm
   các khối dùng chung hợp bố cục (điểm khác đối thủ), không mặc định bật hết, khối không hợp thì bỏ khỏi `components` và nêu
-  lý do trong mock; không sửa / refactor code của chủ đề đang có (cả phần dùng chung được), chỉ thêm nhánh `when` của chủ đề mới.
+  lý do trong mock; khối đặt trong bố cục đặc trưng thì trông như dòng của chủ đề (không được thì chủ đề tự vẽ, vd ghi nhớ / sự kiện của
+  Chuỗi), màn ngang giữ dạng đặc trưng như màn dọc, sửa mock xong vẽ lại cả bản; không sửa / refactor code của chủ đề đang có (cả phần dùng
+  chung được), chỉ thêm nhánh `when` của chủ đề mới; code dùng chung chỉ sửa khi chủ đề mới cần, hỏi trước, chỉ thêm (mục enum / thuộc
+  tính mới có mặc định cho đúng hành vi cũ), chủ đề đang chạy không được đổi gì (`git diff` thư mục chủ đề cũ trống, `AodThemeSpecTest`).
 
 ## Presentation: MVI
 
@@ -137,8 +140,10 @@ bắt buộc (compiler không chặn hộ):
   `.copy(alpha = …)` trên màu theme (dùng biến thể `MintAlpha12`). Màu / chữ / bo góc mới → thêm
   `val` vào đúng file. `Theme { }` chỉ là cầu nối cho component Material 3. Không dựng tầng token
   hay object trung gian (đã thử và bỏ). Khoảng cách, `sp`, thời lượng, alpha viết số thẳng.
-- Font trong `res/font` là file TTF tĩnh từng độ đậm, sinh từ font variable bằng
-  `tools/fonts/make_static_fonts.py` và khai báo `Font(R.font.x_bold, FontWeight.Bold)` ở `Typography.kt`;
+- Font trong `res/font` là file TTF tĩnh từng độ đậm, sinh từ font variable (font chỉ có bản tĩnh thì chép từ `tools/fonts/static/`) bằng
+  `tools/fonts/make_static_fonts.py <họ font>` và khai báo `Font(R.font.x_bold, FontWeight.Bold)` ở `Typography.kt`. Thiếu font (vd font
+  của app mẫu) thì tự tải bản Google Fonts (OFL, giấy phép vào `licenses/`), không hỏi; chỉ khi Google Fonts không có hay font thiếu
+  tiếng Việt mới dùng font có sẵn gần nhất;
   không dùng font variable + `FontVariation` (Compose áp trục `wght` qua `Paint`, máy Xiaomi thay bằng font
   hệ thống).
 - Nền màn app là `BackgroundGradient` (`Colors.kt`), vẽ một lần ở `AppNavDisplay`; màn, tab và

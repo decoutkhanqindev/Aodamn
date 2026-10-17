@@ -25,6 +25,8 @@ data class CustomizeDraftUiModel(
     val decor: CustomizeDecorUiModel = CustomizeDecorUiModel(),
     val info: CustomizeInfoUiModel = CustomizeInfoUiModel(),
     val effects: CustomizeEffectsUiModel = CustomizeEffectsUiModel(),
+    // Bản nháp xem trước riêng chủ đề (toThemePreviewDraft): khối chủ đề tự vẽ cần nội dung (ghi nhớ) hiện bằng dữ liệu mẫu.
+    val isThemePreview: Boolean = false,
 ) {
     val extras: AodExtrasUiModel
         get() = AodExtrasUiModel(
@@ -49,8 +51,10 @@ fun AodThemeUiModel.toThemePreviewDraft(): CustomizeDraftUiModel {
         ),
         info = CustomizeInfoUiModel(
             isNotificationIconsEnabled = AodBlockValue.STATUS in ownBlocks,
+            isCalendarEnabled = AodBlockValue.EVENTS in ownBlocks,
             isMediaControlsEnabled = AodBlockValue.MEDIA in ownBlocks,
         ),
+        isThemePreview = true,
     )
 }
 

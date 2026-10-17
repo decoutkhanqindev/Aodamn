@@ -12,4 +12,8 @@ enum class AodBlockValue {
 
     // Dòng trạng thái: pin, đèn pin và icon thông báo chung một dòng (thay khối Pin và Thông báo dùng chung)
     STATUS,
+
+    // Ghi nhớ, sự kiện do chủ đề vẽ theo kiểu chữ của nó (Chuỗi); chủ đề không khai báo thì vẫn là khối dùng chung như cũ.
+    MEMO,
+    EVENTS,
 }

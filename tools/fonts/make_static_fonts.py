@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
-"""Tách file font tĩnh từng độ đậm từ font variable (Google Fonts, OFL) ở tools/fonts/variable vào app/src/main/res/font.
+"""Tách file font tĩnh từng độ đậm từ font variable (Google Fonts, OFL) ở tools/fonts/variable vào app/src/main/res/font; họ font Google Fonts
+chỉ phát hành bản tĩnh (Anton) thì chép file ở tools/fonts/static.
 
-Chạy ở gốc repo:  python -I tools/fonts/make_static_fonts.py   (cần fonttools: pip install fonttools, chỉ dùng cho script này)
+Chạy ở gốc repo:  python -I tools/fonts/make_static_fonts.py [họ font ...]   (cần fonttools: pip install fonttools, chỉ dùng cho script này)
+Thêm font mới thì chỉ sinh họ đó (vd `... make_static_fonts.py anton`): sinh lại họ cũ có thể đổi byte file đã có.
 
 Tại sao không để app dùng thẳng font variable: Compose áp trục wght bằng Paint.setFontVariationSettings rồi lấy lại typeface của Paint,
 ROM Xiaomi (MIUI / HyperOS) can thiệp Paint nên font của app bị thay bằng font hệ thống (máy ảo vẫn đúng). File tĩnh chỉ cần Font(resId,
@@ -20,6 +22,7 @@ except ImportError:
 
 ROOT = Path(__file__).resolve().parents[2]
 SOURCE = ROOT / "tools/fonts/variable"
+STATIC_SOURCE = ROOT / "tools/fonts/static"
 OUT = ROOT / "app/src/main/res/font"
 
 NAMES = {
@@ -37,10 +40,17 @@ FONTS = {
     "josefin_sans": ([100, 300, 400, 600, 700], {}),
 }
 
+# họ font chỉ có bản tĩnh -> độ đậm có sẵn (file <họ font>_<độ đậm>.ttf ở tools/fonts/static)
+STATIC_FONTS = {
+    "anton": [400],
+}
 
-def main():
+
+def main(families):
     OUT.mkdir(parents=True, exist_ok=True)
     for family, (weights, pinned) in FONTS.items():
+        if families and family not in families:
+            continue
         source = SOURCE / f"{family}_variable.ttf"
         for weight in weights:
             font = TTFont(source)
@@ -52,7 +62,14 @@ def main():
             target = OUT / f"{family}_{NAMES[weight]}.ttf"
             static.save(target)
             print(f"{target.name}  {target.stat().st_size // 1024} KB")
+    for family, weights in STATIC_FONTS.items():
+        if families and family not in families:
+            continue
+        for weight in weights:
+            target = OUT / f"{family}_{NAMES[weight]}.ttf"
+            target.write_bytes((STATIC_SOURCE / target.name).read_bytes())
+            print(f"{target.name}  {target.stat().st_size // 1024} KB")
 
 
 if __name__ == "__main__":
-    main()
+    main(set(sys.argv[1:]))

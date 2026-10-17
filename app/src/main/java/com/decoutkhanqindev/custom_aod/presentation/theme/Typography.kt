@@ -7,8 +7,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.decoutkhanqindev.custom_aod.R
 
-// Font (Google Fonts, OFL, có tiếng Việt) là file TTF tĩnh từng độ đậm trong res/font, sinh từ font variable bằng
-// tools/fonts/make_static_fonts.py (đổi danh sách độ đậm ở đó thì đổi ở đây). Không để Compose áp trục độ đậm cho font variable: nó áp trục
+// Font (Google Fonts, OFL, có tiếng Việt) là file TTF tĩnh từng độ đậm trong res/font, sinh từ font variable (font chỉ có bản tĩnh như Anton
+// thì chép nguyên) bằng tools/fonts/make_static_fonts.py (đổi danh sách độ đậm ở đó thì đổi ở đây). Không để Compose áp trục độ đậm cho font variable: nó áp trục
 // wght qua Paint, máy Xiaomi (MIUI / HyperOS) thay font của app bằng font hệ thống. Một font vừa là font app vừa là font đồng hồ nên đủ dải
 // mảnh → đậm: đồng hồ Cổ điển dùng Thin / Light, chữ số chủ đề Sỏi dùng Bold, Viên nang ExtraBold, chữ phụ dùng Normal. Độ đậm font không có thì Compose lấy
 // độ đậm gần nhất (Plus Jakarta Sans nhỏ nhất 200, Comfortaa 300, Dancing Script 400).
@@ -58,6 +58,11 @@ val FontFamilyBigShouldersDisplay = FontFamily(
     Font(R.font.big_shoulders_display_semibold, FontWeight.SemiBold),
     Font(R.font.big_shoulders_display_bold, FontWeight.Bold),
     Font(R.font.big_shoulders_display_black, FontWeight.Black),
+)
+
+// Chữ đậm hẹp của Chuỗi (font của app mẫu Muviz Edge), chỉ có một độ đậm.
+val FontFamilyAnton = FontFamily(
+    Font(R.font.anton_regular, FontWeight.Normal),
 )
 
 val FontFamilyJosefinSans = FontFamily(

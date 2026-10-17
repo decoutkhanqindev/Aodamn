@@ -41,6 +41,7 @@ import com.decoutkhanqindev.custom_aod.R
 import com.decoutkhanqindev.custom_aod.presentation.components.AppSlider
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.capsule.AodCapsuleMedia
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.card.AodCardMedia
+import com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.chain.AodChainMedia
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.tower.AodTowerMedia
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.pebble.AodPebbleMedia
 import com.decoutkhanqindev.custom_aod.presentation.components.onClick
@@ -80,6 +81,7 @@ fun AodMediaControls(
                 AodThemeValue.CAPSULE -> AodCapsuleMedia(media = target, config = theme.config, onIntent = onIntent)
                 AodThemeValue.CARD -> AodCardMedia(media = target, config = theme.config, onIntent = onIntent)
                 AodThemeValue.TOWER -> AodTowerMedia(media = target, config = theme.config, onIntent = onIntent)
+                AodThemeValue.CHAIN -> AodChainMedia(media = target, config = theme.config, onIntent = onIntent)
             }
         }
     }

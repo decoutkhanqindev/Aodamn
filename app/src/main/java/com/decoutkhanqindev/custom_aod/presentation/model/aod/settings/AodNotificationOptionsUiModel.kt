@@ -2,7 +2,6 @@ package com.decoutkhanqindev.custom_aod.presentation.model.aod.settings
 
 import androidx.compose.runtime.Immutable
 import com.decoutkhanqindev.custom_aod.data.local.datastore.DataStoreManager
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodBlockValue
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeSpec
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.component.AodComponentValue
 import kotlinx.coroutines.flow.Flow
@@ -43,8 +42,9 @@ fun DataStoreManager.observeAodNotificationOptions(): Flow<AodNotificationOption
     )
 }
 
-// Chủ đề không có nhạc thì không theo dõi phiên nhạc; chủ đề tự vẽ dòng trạng thái (chỉ có icon) thì không cần nội dung thông báo.
+// Chủ đề không có nhạc thì không theo dõi phiên nhạc; chủ đề không hiện nội dung thông báo (AodThemeSpec.hasNotificationContent: tự vẽ dòng
+// trạng thái chỉ có icon) thì không cần nội dung thông báo.
 fun AodNotificationOptionsUiModel.shownIn(spec: AodThemeSpec): AodNotificationOptionsUiModel = copy(
-    isContentEnabled = isContentEnabled && AodBlockValue.STATUS !in spec.ownBlocks,
+    isContentEnabled = isContentEnabled && spec.hasNotificationContent,
     isMediaControlsEnabled = isMediaControlsEnabled && AodComponentValue.MEDIA in spec.components,
 )

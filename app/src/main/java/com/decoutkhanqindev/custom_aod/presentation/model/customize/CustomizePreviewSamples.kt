@@ -18,6 +18,7 @@ import com.decoutkhanqindev.custom_aod.presentation.model.aod.info.WeatherUiMode
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.interaction.AodActionValue
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.interaction.AodGestureValue
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.settings.interaction.AodInteractionUiModel
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodBlockValue
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.component.AodComponentValue
 import com.decoutkhanqindev.custom_aod.presentation.screens.aod.state.AodState
 import kotlinx.collections.immutable.ImmutableList
@@ -97,6 +98,9 @@ data class CustomizePreviewSamples(
             }
         }.toImmutableList()
 
+        private fun CustomizeDraftUiModel.isThemePreviewMemo(): Boolean =
+            isThemePreview && AodBlockValue.MEMO in appearance.clock.theme.value.spec.ownBlocks
+
         fun CustomizeDraftUiModel.toPreviewAodState(
             isGlowing: Boolean,
             samples: CustomizePreviewSamples,
@@ -106,9 +110,13 @@ data class CustomizePreviewSamples(
             appearance = appearance.clock.copy(isLandscape = false),
             interaction = PreviewInteraction,
             // Tab kiểu khối đang mở (shownComponent): khối đó luôn hiện bằng dữ liệu mẫu dù đang tắt, thiếu quyền hay chưa có nội dung,
-            // để đổi font / cỡ / màu là thấy ngay.
+            // để đổi font / cỡ / màu là thấy ngay. Xem trước riêng chủ đề tự vẽ ghi nhớ (Chuỗi) cũng có ghi nhớ mẫu.
             extras = extras.copy(
-                memo = if (shownComponent == AodComponentValue.MEMO && extras.memo.isBlank()) samples.memo else extras.memo,
+                memo = if (extras.memo.isBlank() && (shownComponent == AodComponentValue.MEMO || isThemePreviewMemo())) {
+                    samples.memo
+                } else {
+                    extras.memo
+                },
                 isDateEnabled = extras.isDateEnabled || shownComponent == AodComponentValue.DATE,
                 isBatteryEnabled = extras.isBatteryEnabled || shownComponent == AodComponentValue.BATTERY,
             ),

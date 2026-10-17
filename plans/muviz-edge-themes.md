@@ -40,6 +40,7 @@ code dịch ngược, không lấy asset (font, ảnh, Lottie) từ APK. APK và
 | Viên nang (`CAPSULE`) | **32 · Dec23 "Flex Round"** | tab "Clock Style, Color 1, Color 2, Clock Size" + "Style 1 / Style 2" (ảnh thứ hai trong `reference/theme_3/`); mặc định xám `#CFD8DC` / `#E4E4E4` |
 | Thẻ (`CARD`) | **38 · Jun24 "M3 Expressive"** | làm từ danh mục này (2026-10-17), số đo lấy từ layout / code / font trong APK |
 | Tháp (`TOWER`) | **34 · Feb24 "Long HyperOS"** | làm từ danh mục này (2026-10-17), số đo lấy từ layout `feb24_screen_layout` / code / font trong APK |
+| Chuỗi (`CHAIN`) | **28 · Aug23 "Bullet List"** | làm từ danh mục này (2026-10-17), số đo lấy từ layout `aug23_screen_layout` / `Aug23Clock` / font trong APK |
 
 ## Danh mục đủ 44 chủ đề
 
@@ -75,7 +76,7 @@ text view chung) hoặc font dùng trong code; "chữ (font layout)" nghĩa là 
 | 25 | May23 | Ambitio Face ⭐ | Clock Style, Clock Size, Color 1, Color 2, Controls Color | – | AmbitioClock | – | chưa có |
 | 26 | Jun23 | iOS Lockscreen | Clock Style, Clock Size, Clock Color, Theme Color | Date, Notification, Controls, Battery Status | chữ: 5 font iOS | font độc quyền | chưa có |
 | 27 | Jul23 | Nothing(2) | Clock Size, Theme Color | Clock, Date, Notification, Controls, Battery Status | chữ: ndot47 | font độc quyền | chưa có |
-| 28 | Aug23 | Bullet List | Clock Size, Theme Color | Clock, Date, Battery Status, Notification, Controls | Aug23Clock | – | chưa có |
+| 28 | Aug23 | Bullet List | Clock Size, Theme Color | Clock, Date, Battery Status, Notification, Controls | Aug23Clock | – | **Chuỗi** (`CHAIN`) |
 | 29 | Sep23 | Gradient Line Clock | Clock Size, Dash Color, Theme Color | Position, Clock, Battery Status, Notification, Controls | Sep23Clock | – | chưa có |
 | 30 | Oct23 | Coum Face Clock ⭐ | Clock Size, Ring Color, Clock Color, Controls Color | – | CoumTick | – | chưa có |
 | 31 | Nov23 | Space Mono | Clock Size, Hour Color, Minute Color, Theme Color | Date, Notification, Controls | chữ (font layout) | – | chưa có |
@@ -93,9 +94,10 @@ text view chung) hoặc font dùng trong code; "chữ (font layout)" nghĩa là 
 | 43 | Nov24 | MIUI Doodle ⭐ | Color 1, Color 2 | Date, Controls, Notification, Clock Size | chữ (font layout) | – | chưa có |
 | 44 | Dec24 | M3 Shapes Clock | Hour Style, Minute Style, Clock Style, Color 1, Color 2, Clock Size | – | chữ (font layout) | – | **Sỏi** (`PEBBLE`) |
 
-Font: "font độc quyền" là font của Apple (iOS), Nothing (NDot) hay Google Sans mà app mẫu nhúng; không lấy file từ APK,
-chọn font mở có sẵn (`big_shoulders_display`, `comfortaa`, `dancing_script`, `fraunces`, `jetbrains_mono`, `josefin_sans`,
-`plus_jakarta_sans`) hoặc hỏi trước khi thêm font mới.
+Font: không lấy file từ APK. Font của app mẫu có trên Google Fonts (Anton, Rubik, Lato, Bebas...) thì tải bản Google Fonts (OFL)
+về dùng (README › Thêm chủ đề mới bước 6), kiểm có đủ tiếng Việt trước. "Font độc quyền" (Apple iOS, Nothing NDot, Google Sans mà
+app mẫu nhúng) không có trên Google Fonts, và font thiếu tiếng Việt (Rubik), thì chọn font mở gần nhất trong app (`anton`,
+`big_shoulders_display`, `comfortaa`, `dancing_script`, `fraunces`, `jetbrains_mono`, `josefin_sans`, `plus_jakarta_sans`).
 
 ## Ô trong ảnh lưới đã có → chủ đề
 
@@ -116,7 +118,7 @@ Ghép theo tên, hình và tuỳ chọn; "chắc" là đã khớp bằng ảnh t
 
 1. ~~**38 · M3 Expressive**~~: đã làm thành chủ đề Thẻ (2026-10-17).
 2. ~~**34 · Long HyperOS**~~: đã làm thành chủ đề Tháp (2026-10-17).
-3. **28 · Bullet List**: giờ trong viên thuốc + cột ngày, pin, thông báo có chấm tròn nối dọc. Dựng từ các khối dùng chung.
+3. ~~**28 · Bullet List**~~: đã làm thành chủ đề Chuỗi (2026-10-17).
 4. **40 · iOS Fill Clock** ⭐ (Premium ở app mẫu): mặt kim với số lớn tô màu; vẽ tay, công sức trung bình.
 
 Để sau: 33 Dual Timezone (cần control chọn múi giờ), 16 / 22 (cần ô nhập chữ), chủ đề giờ bằng chữ (ô "Twelve Twenty

@@ -929,6 +929,275 @@ tower = [
           + vline(573, 96, 296) + use("lply3", 590, CY - 37)),
 ]
 
+# ================================================================== CHUỖI (Bullet List của Muviz Edge; số đo lấy từ layout aug23_screen_layout dọc / ngang,
+# Aug23Clock và thông số font trong APK, không từ ảnh chụp). Đồng hồ là viên thuốc tô màu, chữ số khoét rỗng (thấy nền): view rộng 100 dp × Cỡ,
+# cao một nửa; chữ Anton (font của app mẫu, bản Google Fonts) cỡ 0,58 chiều cao view, giãn 0,04 em; viên thuốc rộng = chữ + 2,8 × 0,11 rộng
+# view, cao = chữ số + 2 × 0,11 rộng view, bo tròn hết. Danh sách: chấm 6 dp, vạch 1 dp nối xuống chấm sau, tiêu đề in hoa Anton 18 sp giãn
+# 0,03 em, dòng phụ 13 sp mờ 0,7; mỗi dòng cao ít nhất 60 dp, cách nhau 2 dp.
+BL_FONT = TTFont(ROOT / "app/src/main/res/font/anton_regular.ttf")
+BL_GLYPHS = BL_FONT.getGlyphSet()
+BL_CMAP = BL_FONT.getBestCmap()
+BL_UPM = BL_FONT["head"].unitsPerEm
+
+
+def bl_bounds(ch):
+    pen = BoundsPen(BL_GLYPHS)
+    BL_GLYPHS[BL_CMAP[ord(ch)]].draw(pen)
+    return pen.bounds
+
+
+BL_DIGIT = (bl_bounds("0")[3] - bl_bounds("0")[1]) / BL_UPM
+BL_TEXT = 0.58 * 0.875 / BL_DIGIT
+BL_CAP = 0.859 * 18
+BL_TITLE, BL_SUB = 18, 13
+BL_COLOR = DATE_GREY
+BL_DATE, BL_DAY = "17 THÁNG 10, 2026", "THỨ BẢY"
+BL_TOP = 0.13 * PH
+BL_PLAYER_TOP = PH - 40 - 25 - 63
+BL_USED = set()
+BL_MASKS = [0]
+
+
+def bl_glyph(ch):
+    k = 100 / BL_UPM
+    pen = SVGPathPen(BL_GLYPHS, ntos=lambda v: str(round(v)))  # đơn vị 0,01 em: làm tròn số nguyên vẫn nét ở cỡ ≤ 40 dp, file gọn một nửa
+    BL_GLYPHS[BL_CMAP[ord(ch)]].draw(TransformPen(pen, (k, 0, 0, -k, 0, 0)))
+    return f'<path id="b{ord(ch)}" d="{pen.getCommands()}"/>'
+
+
+def bl_adv(ch):
+    return BL_FONT["hmtx"][BL_CMAP[ord(ch)]][0] / BL_UPM
+
+
+def bl_width(text, size, track=0.03):
+    return sum(bl_adv(ch) for ch in text) * size + track * size * (len(text) - 1)
+
+
+def bl_text(x, base, text, size, color, track=0.03, anchor="start", opacity=1.0):
+    """Chữ Anton lấy đường viền thật từ font (mỗi ký tự một <path> trong defs, dùng lại bằng <use>)."""
+    if anchor == "middle":
+        x -= bl_width(text, size, track) / 2
+    s, u = "", 0.0
+    for ch in text:
+        if ch != " ":
+            BL_USED.add(ch)
+            s += f'<use href="#b{ord(ch)}" x="{round(u)}"/>'
+        u += (bl_adv(ch) + track) * 100
+    op = "" if opacity == 1 else f' fill-opacity="{opacity}"'
+    return f'<g fill="{color}"{op} transform="translate({f(x)} {f(base)}) scale({size / 100:.4f})">{s}</g>'
+
+
+def bl_ink(text, size, track):
+    x, lo, hi = 0.0, None, None
+    for ch in text:
+        b = bl_bounds(ch)
+        if b:
+            lo = x + b[0] / BL_UPM * size if lo is None else min(lo, x + b[0] / BL_UPM * size)
+            hi = x + b[2] / BL_UPM * size if hi is None else max(hi, x + b[2] / BL_UPM * size)
+        x += (bl_adv(ch) + track) * size
+    return lo, hi
+
+
+def bl_pill_w(s=1.0, text="10:08"):
+    lo, hi = bl_ink(text, BL_TEXT * 50 * s, 0.04)
+    return hi - lo + 2.8 * 11 * s
+
+
+def bl_pill(x, top, s=1.0, text="10:08", color=BL_COLOR):
+    """Viên thuốc như Aug23Clock: đặt sát trái view (rộng 100 dp × Cỡ, cao một nửa), giữa theo chiều cao view; chữ số là lỗ (mask)."""
+    vh, pad = 50 * s, 11 * s
+    size = BL_TEXT * vh
+    lo, hi = bl_ink(text, size, 0.04)
+    pw, ph = hi - lo + 2.8 * pad, BL_DIGIT * size + 2 * pad
+    py = top + vh / 2 - ph / 2
+    BL_MASKS[0] += 1
+    mid = f"blm{BL_MASKS[0]}"
+    digits = bl_text(x + 1.4 * pad - lo, top + vh / 2 + BL_DIGIT * size / 2, text, size, "#000", 0.04)
+    return (f'<mask id="{mid}" maskUnits="userSpaceOnUse" x="{f(x - 2)}" y="{f(py - 2)}" width="{f(pw + 4)}" height="{f(ph + 4)}">'
+            f'<rect x="{f(x - 2)}" y="{f(py - 2)}" width="{f(pw + 4)}" height="{f(ph + 4)}" fill="#fff"/>{digits}</mask>'
+            f'<rect x="{f(x)}" y="{f(py)}" width="{f(pw)}" height="{f(ph)}" rx="{f(ph / 2)}" fill="{color}" mask="url(#{mid})"/>')
+
+
+def bl_rows(x, top, rows):
+    """Chấm 6 dp cách đỉnh dòng 4 dp; vạch 1 dp từ dưới chấm 5 dp kéo tới trên chấm sau 6 dp; dòng cuối không có vạch. Dòng cao = nội dung + 19 dp
+    (dòng tiêu đề + dòng phụ ra đúng 60 dp như layout mẫu, dòng icon thông báo thấp hơn để không hở khi còn dòng sau). Mỗi dòng: (màu, cao nội
+    dung, rộng, hàm vẽ tại (x chữ, đỉnh dòng))."""
+    s, y = "", top
+    for i, (color, h, _, draw) in enumerate(rows):
+        last = i == len(rows) - 1
+        rh = max(15, h) if last else max(41, h + 19)
+        s += f'<circle cx="{f(x + 3)}" cy="{f(y + 7)}" r="3" fill="{color}"/>'
+        if not last:
+            s += f'<rect x="{f(x + 2.5)}" y="{f(y + 15)}" width="1" height="{f(rh + 2 - 2 - 15)}" fill="{color}"/>'
+        s += draw(x + 16, y)
+        y += rh + 2
+    return s, y - 2 - top
+
+
+def bl_sub(x, top, text, color):
+    return txt(x, top + 13.5, text, BL_SUB, color, 400, extra='fill-opacity=".7"')
+
+
+def bl_title_row(title, sub, color=BL_COLOR, weather=False):
+    desc = 2.6 if "," in title else 0
+    tw = bl_width(title, BL_TITLE)
+
+    def draw(tx, top):
+        s = bl_text(tx, top + BL_CAP, title, BL_TITLE, color)
+        if weather:
+            wx, cy = tx + tw + 12, top + BL_CAP / 2
+            s += cloud(wx, cy + 6, 0.6, G, 1.4) + txt(wx + 28, cy + 5, "24°", 14)
+        return s + bl_sub(tx, top + BL_CAP + desc + 8, sub, color)
+    return color, BL_CAP + desc + 8 + 16.4, 16 + max(tw + (66 if weather else 0), len(sub) * 0.6 * BL_SUB), draw
+
+
+def bl_date_row(weather=False, color=BL_COLOR):
+    return bl_title_row(BL_DATE, BL_DAY, color, weather)
+
+
+def bl_battery_row(state="KHÔNG SẠC", color=BL_COLOR):
+    return bl_title_row("PIN 72%", state, color)
+
+
+def bl_icons_row(color=BL_COLOR, n=3):
+    shapes = icon_shapes(color)
+    return color, 22, 16 + n * 28 - 10, lambda tx, top: "".join(shapes[i % 3](tx + i * 28, top, 18) for i in range(n))
+
+
+def bl_latest_row(color=BL_COLOR):
+    """Thông báo mới nhất như notify_lt của app mẫu: icon 18 dp + tiêu đề in hoa, dưới là nội dung tối đa hai dòng, mờ 0,7."""
+    def draw(tx, top):
+        s = (f'<circle cx="{f(tx + 9)}" cy="{f(top + 9)}" r="8.2" fill="none" stroke="{color}" stroke-width="1.5"/>'
+             + txt(tx + 9, top + 13, "L", 11, color, 700, "middle") + bl_text(tx + 26, top + 9 + BL_CAP / 2, "LAN", BL_TITLE, color))
+        return (s + bl_sub(tx, top + 26, "TỐI NAY ĐI ĂN LẨU KHÔNG? MÌNH ĐẶT", color)
+                + bl_sub(tx, top + 26 + 16.4, "BÀN LÚC 7 GIỜ NHÉ", color))
+    return color, 18 + 8 + 2 * 16.4, 270, draw
+
+
+# Icon đặc Phosphor của app (res/drawable/ic_calendar_check_fill.xml, ic_note_pencil_fill.xml), khung 256.
+BL_CAL = ("M208,32H184V24a8,8,0,0,0-16,0v8H88V24a8,8,0,0,0-16,0v8H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,"
+          "0,0,0,208,32ZM169.66,133.66l-48,48a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L116,164.69l42.34-42.35a8,8,0,0,1,11.32,11.32ZM48,"
+          "80V48H72v8a8,8,0,0,0,16,0V48h80v8a8,8,0,0,0,16,0V48h24V80Z")
+BL_MEMO = ("M224,128v80a16,16,0,0,1-16,16H48a16,16,0,0,1-16-16V48A16,16,0,0,1,48,32h80a8,8,0,0,1,0,16H48V208H208V128a8,8,0,0,1,16,0Zm5.66-58.34"
+           "-96,96A8,8,0,0,1,128,168H96a8,8,0,0,1-8-8V128a8,8,0,0,1,2.34-5.66l96-96a8,8,0,0,1,11.32,0l32,32A8,8,0,0,1,229.66,69.66Zm-17-5.66"
+           "L192,43.31,179.31,56,200,76.69Z")
+
+
+def bl_icon_row(ref, title, subs, color=BL_COLOR):
+    """Ghi nhớ, sự kiện do Chuỗi tự vẽ như dòng thông báo mới nhất: icon đặc 20 dp sáng như icon thông báo + tiêu đề in hoa đậm như ngày / pin,
+    dưới là các dòng phụ mờ 0,7."""
+    def draw(tx, top):
+        s = (f'<use href="#{ref}" transform="translate({f(tx - 1)} {f(top + BL_CAP / 2 - 10)}) scale({20 / 256:.4f})" fill="{color}"/>'
+             + bl_text(tx + 26, top + BL_CAP, title, BL_TITLE, color))
+        for i, sub in enumerate(subs):
+            s += bl_sub(tx, top + BL_CAP + 8 + i * 16.4, sub, color)
+        return s
+    w = max(26 + bl_width(title, BL_TITLE), max(len(sub) for sub in subs) * 0.6 * BL_SUB)
+    return color, BL_CAP + 8 + len(subs) * 16.4, 16 + w, draw
+
+
+def bl_memo_row():
+    return bl_icon_row("blmemo", "GHI NHỚ", ["MUA SỮA TRÊN ĐƯỜNG VỀ"])
+
+
+def bl_events_row():
+    """Sự kiện gần nhất làm tiêu đề, các sự kiện sau mỗi cái một dòng phụ."""
+    return bl_icon_row("blcal", "09:00  HỌP NHÓM THIẾT KẾ", ["12:30  ĂN TRƯA VỚI LAN", "19:00  TẬP GYM"])
+
+
+def bl_player(w=313, color=BL_COLOR, title="THAT COOL SONG"):
+    """Trình phát của layout mẫu: lùi 35 dp · tên in hoa 19 sp giãn 0,05 em / nghệ sĩ 13 sp mờ 0,7 (giữa, chạm để phát / dừng) · tới 35 dp; thanh
+    tiến trình 1,5 dp cách 15 dp, nền cùng màu mờ 0,3."""
+    cy = 23.25
+    s = ""
+    for bx, d in ((17.5, -1), (w - 17.5, 1)):
+        s += (f'<path d="M{f(bx - 4.5 * d)},{f(cy - 6)} L{f(bx + 3.5 * d)},{f(cy)} L{f(bx - 4.5 * d)},{f(cy + 6)} Z" fill="{color}" '
+              f'stroke="{color}" stroke-width="1.2" stroke-linejoin="round"/>'
+              f'<rect x="{f(bx + 4.5 * d - (1.8 if d < 0 else 0))}" y="{f(cy - 6)}" width="1.8" height="12" rx=".8" fill="{color}"/>')
+    s += bl_text(w / 2, 20, title, BL_TITLE, color, 0.05, "middle")
+    s += txt(w / 2, 40, "IT'S ARTIST", BL_SUB, color, 400, "middle", 'letter-spacing=".26" fill-opacity=".7"')
+    y = 62.25
+    s += f'<line x1="0" y1="{y}" x2="{f(w)}" y2="{y}" stroke="{color}" stroke-opacity=".3" stroke-width="1.5"/>'
+    return s + f'<line x1="0" y1="{y}" x2="{f(w * .42)}" y2="{y}" stroke="{color}" stroke-width="1.5"/>'
+
+
+def bl_column(rows, s=1.0, text="10:08", clock=BL_COLOR, media=False):
+    """Màn dọc như layout mẫu: khoảng trống 0,13 chiều cao → đồng hồ (lề trái 30 dp) → cách 30 dp → danh sách; nhạc neo đáy (đệm 40 + 25 dp)."""
+    body, _ = bl_rows(30, BL_TOP + 50 * s + 30, rows)
+    return bl_pill(30, BL_TOP, s, text, clock) + body + (use("blply", 40, BL_PLAYER_TOP) if media else "")
+
+
+def bl_hero(cx, cy, rows, s=1.0, text="10:08"):
+    """Màn ngang: đồng hồ + danh sách (khối của chủ đề) làm một cụm căn trái, cả cụm giữa ô (cx, cy)."""
+    _, lh = bl_rows(0, 0, rows)
+    w = max(bl_pill_w(s, text), max(r[2] for r in rows))
+    h = 50 * s + 30 + lh
+    x, top = cx - w / 2, cy - h / 2
+    body, _ = bl_rows(x, top + 50 * s + 30, rows)
+    return bl_pill(x, top, s, text) + body, w
+
+
+def bl_strip():
+    s = ""
+    for x, sz, label in ((40, 0.7, "Cỡ 70%"), (170, 1.0, "100% (mặc định)"), (330, 1.3, "130%")):
+        s += bl_pill(x, 75 - 25 * sz, sz) + txt(x, 132, label, 13, DM)
+    s += ('<defs><linearGradient id="blwp" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2E6B5A"/>'
+          '<stop offset=".55" stop-color="#3B2C66"/><stop offset="1" stop-color="#7A3E5C"/></linearGradient></defs>'
+          f'<rect x="540" y="14" width="300" height="100" rx="16" fill="url(#blwp)"/>')
+    s += bl_pill(640, 39, 1.0, "21:47") + txt(540, 132, "Trên ảnh nền: chữ số khoét rỗng nên thấy ảnh", 13, DM)
+    return (f'<p style="font-size:13px;color:var(--text-secondary);margin:1.25rem 0 6px">Đồng hồ viên thuốc (Cỡ 70–130%, mặc định 100% = cỡ 50 của '
+            f'app mẫu)</p><svg viewBox="0 0 {W} 150" width="100%" role="img" aria-label="Đồng hồ viên thuốc" '
+            f'style="display:block;font-family:\'Plus Jakarta Sans\',sans-serif" fill="{G}">'
+            f'<rect width="{W}" height="150" rx="20" fill="#000"/>{s}</svg>')
+
+
+def bl_info_chain(x, cy):
+    """Cột ghi nhớ, sự kiện của màn ngang cũng là chuỗi như màn dọc (chấm + vạch nối, cùng kiểu dòng), giữa theo chiều cao."""
+    rows = [bl_memo_row(), bl_events_row()]
+    _, h = bl_rows(0, 0, rows)
+    body, _ = bl_rows(x, cy - h / 2, rows)
+    return body, max(r[2] for r in rows)
+
+
+def bl_three(rows):
+    """Ba cột từ trái sang: cụm Chuỗi | chuỗi khối dùng chung | nhạc (lấy phần còn lại); cả hàng cách mép 24 dp, giữa hai cột vạch ngăn."""
+    _, hw = bl_hero(0, CY, rows)
+    _, iw = bl_info_chain(0, CY)
+    a = 24 + hw + 32
+    b = a + 32 + iw + 32
+    hero, _ = bl_hero(24 + hw / 2, CY, rows)
+    info, _ = bl_info_chain(a + 32, CY)
+    return (hero + vline(a, 96, 296) + info + vline(b, 96, 296)
+            + f'<g transform="translate({f(b + 32)} {f(CY - 31.5)})">{bl_player(W - 24 - b - 32, title="THAT COOL…")}</g>')
+
+
+def bl_two(rows, end):
+    hero, w = bl_hero(236, CY, rows)
+    return hero + vline(436, 96, 296) + end
+
+
+chain = [
+    bl_strip(),
+    '<div style="font-size:0">',
+    frame_portrait("D1 · Dọc, mặc định như app mẫu: ngày, pin, icon thông báo", bl_column([bl_date_row(), bl_battery_row(), bl_icons_row()])),
+    frame_portrait("D2 · Dọc, thêm thời tiết cạnh ngày; ghi nhớ, sự kiện dưới thông báo (icon đặc, chữ đậm như ngày / pin) + nhạc",
+                   bl_column([bl_date_row(True), bl_battery_row(), bl_icons_row(), bl_memo_row(), bl_events_row()], media=True)),
+    frame_portrait("D3 · Dọc, bật nội dung thông báo (thông báo mới nhất ở dòng cuối), đang sạc, nhạc",
+                   bl_column([bl_date_row(), bl_battery_row("ĐANG SẠC"), bl_latest_row()], text="21:47", media=True)),
+    frame_portrait("D4 · Dọc, cỡ 130%, đồng hồ màu mint, tắt ngày: chuỗi tự nối lại",
+                   bl_column([bl_battery_row(), bl_icons_row()], s=1.3, text="07:15", clock=MINT)),
+    '</div>',
+    frame("N1 · Ngang, tối giản (thời tiết cạnh ngày)", bl_hero(W / 2, CY, [bl_date_row(True), bl_battery_row(), bl_icons_row()])[0]),
+    frame("N2 · Ngang, nhạc", bl_two([bl_date_row(True), bl_battery_row(), bl_icons_row()], use("blply2", 480, CY - 31.5))),
+    frame("N3 · Ngang, ghi nhớ + lịch trình: cột phải cũng là chuỗi có chấm nối như màn dọc",
+          bl_two([bl_date_row(True), bl_battery_row(), bl_icons_row()], bl_info_chain(480, CY)[0])),
+    frame("N4 · Ngang, ba cột: Chuỗi → ghi nhớ, sự kiện (chuỗi có chấm) → nhạc",
+          bl_three([bl_date_row(True), bl_battery_row(), bl_icons_row()])),
+]
+chain_defs = (f'<path id="blcal" d="{BL_CAL}"/><path id="blmemo" d="{BL_MEMO}"/>'
+              f'<g id="blply">{bl_player()}</g><g id="blply2">{bl_player(340)}</g>'
+              + "".join(bl_glyph(ch) for ch in sorted(BL_USED)))
+
 for name, summary, defs, frames in [
     ("w_classic", "Bảy bố cục ngang của chủ đề Cổ điển theo các khối đang bật", classic_defs, classic),
     ("w_jersey", "Bố cục ngang của chủ đề Số áo: ngày, bốn chữ số một hàng, dòng pin", jersey_defs, jersey),
@@ -936,6 +1205,7 @@ for name, summary, defs, frames in [
     ("w_capsule", "Chủ đề Viên nang: bốn khung dọc và bốn bố cục ngang", capsule_defs, capsule),
     ("w_expressive", "Chủ đề Thẻ (M3 Expressive): bốn khung dọc và bốn bố cục ngang", expressive_defs, expressive),
     ("w_tower", "Chủ đề Tháp (Long HyperOS): sáu kiểu đồng hồ, bốn khung dọc và bốn bố cục ngang", tower_defs, tower),
+    ("w_chain", "Chủ đề Chuỗi (Bullet List): đồng hồ viên thuốc, bốn khung dọc và bốn bố cục ngang", chain_defs, chain),
 ]:
     code = widget(summary, defs, frames)
     OUT.mkdir(parents=True, exist_ok=True)

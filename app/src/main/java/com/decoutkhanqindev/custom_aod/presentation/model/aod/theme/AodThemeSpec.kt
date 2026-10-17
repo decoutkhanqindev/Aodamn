@@ -38,6 +38,11 @@ interface AodThemeSpec : AodOptionSpec {
     // đặt của khối vẫn giữ cho lúc dùng chủ đề khác.
     val components: ImmutableSet<AodComponentValue>
         get() = AllComponents
+
+    // Có hiện nội dung thông báo mới nhất không: chủ đề tự vẽ dòng trạng thái mặc định chỉ có icon (Số áo, Viên nang...), chủ đề tự vẽ cả thông
+    // báo mới nhất (Chuỗi) thì bật lại.
+    val hasNotificationContent: Boolean
+        get() = AodBlockValue.STATUS !in ownBlocks
 }
 
 val AodOptionSpec.options: List<AodThemeOption<*>>

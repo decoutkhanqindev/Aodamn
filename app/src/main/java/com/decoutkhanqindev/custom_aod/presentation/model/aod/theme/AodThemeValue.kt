@@ -6,6 +6,7 @@ import com.decoutkhanqindev.custom_aod.R
 import com.decoutkhanqindev.custom_aod.data.local.datastore.DataStoreManager
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.capsule.CapsuleThemeSpec
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.card.CardThemeSpec
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.chain.ChainThemeSpec
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.classic.ClassicThemeSpec
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.jersey.JerseyThemeSpec
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.pebble.PebbleThemeSpec
@@ -24,7 +25,8 @@ enum class AodThemeValue(
     JERSEY(id = "jersey", nameRes = R.string.theme_jersey, spec = JerseyThemeSpec),
     CAPSULE(id = "capsule", nameRes = R.string.theme_capsule, spec = CapsuleThemeSpec),
     CARD(id = "card", nameRes = R.string.theme_card, spec = CardThemeSpec),
-    TOWER(id = "tower", nameRes = R.string.theme_tower, spec = TowerThemeSpec);
+    TOWER(id = "tower", nameRes = R.string.theme_tower, spec = TowerThemeSpec),
+    CHAIN(id = "chain", nameRes = R.string.theme_chain, spec = ChainThemeSpec);
 
     companion object {
         val DEFAULT = CLASSIC

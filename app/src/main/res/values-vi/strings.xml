@@ -55,6 +55,7 @@
     <string name="theme_capsule">Viên nang</string>
     <string name="theme_card">Thẻ</string>
     <string name="theme_tower">Tháp</string>
+    <string name="theme_chain">Chuỗi</string>
     <string name="aod_jersey_date_first_pattern">dd</string>
     <string name="aod_jersey_date_second_pattern">MM</string>
     <string name="theme_in_use">Đang dùng</string>
@@ -87,6 +88,11 @@
     <string name="theme_color_capsule">Viên</string>
     <string name="theme_color_card">Thẻ</string>
     <string name="theme_color_status">Pin &amp; thông báo</string>
+    <string name="theme_color_clock">Đồng hồ</string>
+    <string name="theme_color_battery">Pin</string>
+    <string name="theme_color_notifications">Thông báo</string>
+    <string name="theme_color_memo">Ghi nhớ</string>
+    <string name="theme_color_events">Sự kiện</string>
     <string name="theme_color_hour">Giờ</string>
     <string name="theme_color_minute">Phút</string>
     <string name="theme_color_minute_tag">Phút &amp; AM/PM</string>
@@ -317,6 +323,10 @@
     <string name="aod_media_pause">Tạm dừng</string>
     <string name="aod_media_next">Bài tiếp theo</string>
     <string name="aod_flashlight_on">Đèn pin đang bật</string>
+    <string name="aod_chain_battery">Pin %1$d%%</string>
+    <string name="aod_chain_battery_idle">Không sạc</string>
+    <string name="aod_chain_battery_charging">Đang sạc</string>
+    <string name="aod_chain_battery_full">Đã sạc đầy</string>
     <string name="aod_notification_content_hidden">Nội dung đã ẩn</string>
     <string name="aod_event_all_day">Cả ngày</string>
     <string name="aod_drawing">Hình vẽ</string>

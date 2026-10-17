@@ -8,6 +8,8 @@ import com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.capsule
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.capsule.AodCapsulePortrait
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.card.AodCardLandscape
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.card.AodCardPortrait
+import com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.chain.AodChainLandscape
+import com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.chain.AodChainPortrait
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.classic.AodClassicClock
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.classic.AodClassicLandscape
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.jersey.AodJerseyLandscape
@@ -20,8 +22,8 @@ import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeValu
 import com.decoutkhanqindev.custom_aod.presentation.screens.aod.state.AodIntent
 import com.decoutkhanqindev.custom_aod.presentation.screens.aod.state.AodState
 
-// Bố cục AOD màn dọc theo chủ đề: Cổ điển và Sỏi là đồng hồ rồi các khối thông tin bên dưới; Số áo, Viên nang, Thẻ và Tháp tự vẽ cả cụm (số, ngày,
-// dòng trạng thái) cùng các khối thông tin.
+// Bố cục AOD màn dọc theo chủ đề: Cổ điển và Sỏi là đồng hồ rồi các khối thông tin bên dưới; Số áo, Viên nang, Thẻ, Tháp và Chuỗi tự vẽ cả cụm (số,
+// ngày, dòng trạng thái) cùng các khối thông tin.
 // Thêm chủ đề = thêm một nhánh ở đây và ở AodLandscape.
 @Composable
 fun AodPortrait(
@@ -47,10 +49,12 @@ fun AodPortrait(
         AodThemeValue.CAPSULE -> AodCapsulePortrait(state = state, onIntent = onIntent)
         AodThemeValue.CARD -> AodCardPortrait(state = state, onIntent = onIntent)
         AodThemeValue.TOWER -> AodTowerPortrait(state = state, onIntent = onIntent)
+        AodThemeValue.CHAIN -> AodChainPortrait(state = state, onIntent = onIntent)
     }
 }
 
-// Bố cục AOD màn ngang theo chủ đề: mỗi chủ đề một bố cục riêng, dựng trên bố cục chung theo các khối đang hiện (AodLandscapeLayout).
+// Bố cục AOD màn ngang theo chủ đề: mỗi chủ đề một bố cục riêng, dựng trên bố cục chung theo các khối đang hiện (AodLandscapeLayout); Chuỗi giữ
+// dạng chuỗi nên tự xếp cột (AodChainLandscape).
 @Composable
 fun AodLandscape(
     state: AodState,
@@ -63,6 +67,7 @@ fun AodLandscape(
         AodThemeValue.CAPSULE -> AodCapsuleLandscape(state = state, onIntent = onIntent)
         AodThemeValue.CARD -> AodCardLandscape(state = state, onIntent = onIntent)
         AodThemeValue.TOWER -> AodTowerLandscape(state = state, onIntent = onIntent)
+        AodThemeValue.CHAIN -> AodChainLandscape(state = state, onIntent = onIntent)
     }
 }
 

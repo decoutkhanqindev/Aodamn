@@ -27,6 +27,22 @@ class AodThemeSpecTest {
         }
     }
 
+    // Chủ đề mới thêm khối tự vẽ / bật lại nội dung thông báo không được đổi hành vi chủ đề cũ: chỉ Chuỗi tự vẽ ghi nhớ, sự kiện và hiện nội dung
+    // thông báo dù tự vẽ dòng trạng thái; các chủ đề khác giữ như trước (nội dung thông báo chỉ khi không tự vẽ dòng trạng thái).
+    @Test
+    fun `only chain owns memo and events and keeps notification content with its status line`() {
+        AodThemeValue.entries.forEach { theme ->
+            val isChain = theme == AodThemeValue.CHAIN
+            assertEquals("${theme.id}: ghi nhớ", isChain, AodBlockValue.MEMO in theme.spec.ownBlocks)
+            assertEquals("${theme.id}: sự kiện", isChain, AodBlockValue.EVENTS in theme.spec.ownBlocks)
+            assertEquals(
+                "${theme.id}: nội dung thông báo",
+                isChain || AodBlockValue.STATUS !in theme.spec.ownBlocks,
+                theme.spec.hasNotificationContent,
+            )
+        }
+    }
+
     @Test
     fun `tabOf finds the tab of an own block and nothing for null`() {
         val spec = AodThemeValue.JERSEY.spec

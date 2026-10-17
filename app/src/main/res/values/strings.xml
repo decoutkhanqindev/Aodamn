@@ -62,6 +62,7 @@
     <string name="theme_capsule">Capsule</string>
     <string name="theme_card">Card</string>
     <string name="theme_tower">Tower</string>
+    <string name="theme_chain">Chain</string>
     <string name="theme_in_use">In use</string>
     <string name="theme_edit">Edit</string>
     <string name="theme_saved">Theme saved</string>
@@ -92,6 +93,11 @@
     <string name="theme_color_capsule">Capsule</string>
     <string name="theme_color_card">Card</string>
     <string name="theme_color_status">Battery &amp; alerts</string>
+    <string name="theme_color_clock">Clock</string>
+    <string name="theme_color_battery">Battery</string>
+    <string name="theme_color_notifications">Alerts</string>
+    <string name="theme_color_memo">Memo</string>
+    <string name="theme_color_events">Events</string>
     <string name="theme_color_hour">Hour</string>
     <string name="theme_color_minute">Minute</string>
     <string name="theme_color_minute_tag">Minute &amp; AM/PM</string>
@@ -350,6 +356,10 @@
     <string name="aod_media_pause">Pause</string>
     <string name="aod_media_next">Next</string>
     <string name="aod_flashlight_on">Flashlight on</string>
+    <string name="aod_chain_battery">Battery %1$d%%</string>
+    <string name="aod_chain_battery_idle">Not charging</string>
+    <string name="aod_chain_battery_charging">Charging</string>
+    <string name="aod_chain_battery_full">Charged</string>
     <string name="aod_notification_content_hidden">Contents hidden</string>
     <string name="aod_weather_temperature" translatable="false">%1$d°</string>
     <string name="aod_event_all_day">All day</string>

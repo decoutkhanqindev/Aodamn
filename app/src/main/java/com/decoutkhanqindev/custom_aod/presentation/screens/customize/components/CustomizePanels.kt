@@ -10,7 +10,6 @@ import com.decoutkhanqindev.custom_aod.presentation.components.aod.editor.Wallpa
 import com.decoutkhanqindev.custom_aod.presentation.components.settings.AppSwitchRow
 import com.decoutkhanqindev.custom_aod.presentation.components.settings.AppValueRow
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.appearance.AodAppearanceUiModel
-import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodBlockValue
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.classic.ClassicThemeSpec
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.component.AodComponentSpec
@@ -52,7 +51,7 @@ fun CustomizePanel(
             CustomizeClusterValue.INFO -> InfoPanel(
                 tab = tab,
                 info = draft.info,
-                isStatusByTheme = AodBlockValue.STATUS in draft.appearance.clock.theme.value.spec.ownBlocks,
+                hasNotificationContent = draft.appearance.clock.theme.value.spec.hasNotificationContent,
                 onIntent = onIntent,
             )
 
@@ -163,12 +162,12 @@ private fun DecorPanel(
     }
 }
 
-// isStatusByTheme: chủ đề tự vẽ dòng trạng thái (Số áo) chỉ có icon thông báo, không có nội dung thông báo.
+// hasNotificationContent = false: chủ đề tự vẽ dòng trạng thái (Số áo) chỉ có icon thông báo, không có nội dung thông báo.
 @Composable
 private fun InfoPanel(
     tab: CustomizeTabValue,
     info: CustomizeInfoUiModel,
-    isStatusByTheme: Boolean,
+    hasNotificationContent: Boolean,
     onIntent: (CustomizeIntent) -> Unit,
 ) {
     when (tab) {
@@ -209,7 +208,7 @@ private fun InfoPanel(
                 onCheckedChange = { onIntent(CustomizeIntent.Info.ToggleNotificationIcons(it)) },
             )
 
-            if (!isStatusByTheme) {
+            if (hasNotificationContent) {
                 AppSwitchRow(
                     label = stringResource(R.string.opt_notification_content),
                     isChecked = info.isNotificationContentEnabled,
