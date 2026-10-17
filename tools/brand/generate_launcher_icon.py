@@ -1,4 +1,5 @@
-"""Sinh icon app (adaptive icon, khung 108): `ic_launcher_foreground.xml` và `ic_launcher_monochrome.xml`.
+"""Sinh icon app (adaptive icon, khung 108): `ic_launcher_foreground.xml` và `ic_launcher_monochrome.xml`, cùng `ic_tile_aod.xml` (icon ô
+Cài đặt nhanh: hình đơn sắc của icon app cắt sát quanh điện thoại cho khung 24dp).
 
 Chạy từ gốc repo: python tools/brand/generate_launcher_icon.py
 Hình và màu lấy từ brand_geometry.py (dùng chung với Lottie của icon). Sửa ở đó rồi chạy lại, đừng sửa tay file XML.
@@ -12,6 +13,8 @@ from brand_geometry import (
 )
 
 MONOCHROME_STROKE_WIDTH = 2.4
+TILE_STROKE_WIDTH = 3.2  # khung 24dp nhỏ: viền dày hơn cho rõ
+TILE_MARGIN = 2.5
 PATH_DATA_LIMIT = 800  # lint VectorPath
 
 
@@ -122,7 +125,35 @@ monochrome = f"""<?xml version="1.0" encoding="utf-8"?>
       android:pathData="{p}" />
 """ for p in [camera_path] + digit_paths + [dots_path]) + "</vector>\n"
 
-for name, body in (("ic_launcher_foreground.xml", foreground), ("ic_launcher_monochrome.xml", monochrome)):
+# Ô Cài đặt nhanh chỉ nhận hình một màu (hệ thống tô màu theo trạng thái bật / tắt): lớp đơn sắc, khung vuông ôm điện thoại.
+tile_side = PHONE_H + 2 * TILE_MARGIN
+tile_left = PHONE_X + PHONE_W / 2 - tile_side / 2
+tile_top = PHONE_Y - TILE_MARGIN
+tile = f"""<?xml version="1.0" encoding="utf-8"?>
+<!-- Sinh bằng tools/brand/generate_launcher_icon.py: sửa script rồi chạy lại, đừng sửa tay.
+     Icon ô Cài đặt nhanh (AodTileService): hình đơn sắc của icon app, khung cắt sát quanh điện thoại. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="{fmt(tile_side)}"
+    android:viewportHeight="{fmt(tile_side)}">
+  <group
+      android:translateX="{fmt(-tile_left)}"
+      android:translateY="{fmt(-tile_top)}">
+    <path
+        android:strokeColor="#FF{MONOCHROME_COLOR}"
+        android:strokeWidth="{fmt(TILE_STROKE_WIDTH)}"
+        android:pathData="{phone_path}" />
+""" + "".join(f"""    <path
+        android:fillColor="#FF{MONOCHROME_COLOR}"
+        android:pathData="{p}" />
+""" for p in [camera_path] + digit_paths + [dots_path]) + "  </group>\n</vector>\n"
+
+for name, body in (
+    ("ic_launcher_foreground.xml", foreground),
+    ("ic_launcher_monochrome.xml", monochrome),
+    ("ic_tile_aod.xml", tile),
+):
     path = RES / "drawable" / name
     io.open(path, "w", encoding="utf-8", newline="\n").write(body)
     print("wrote", path.relative_to(RES.parents[3]), path.stat().st_size, "bytes")

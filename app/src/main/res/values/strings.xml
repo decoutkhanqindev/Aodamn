@@ -18,6 +18,7 @@
     <string name="action_allow">Allow</string>
     <string name="action_get_started">Get started</string>
     <string name="action_skip">Skip</string>
+    <string name="tile_needs_permissions">Needs permissions</string>
 
     <!-- Ads -->
     <string name="ad_loading">Loading ad…</string>

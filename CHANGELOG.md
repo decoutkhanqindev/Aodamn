@@ -7,6 +7,15 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-10-17 – Ô Cài đặt nhanh: icon app, xám khi thiếu quyền
+
+Build được, lint không thêm cảnh báo, `tools/check-rules.sh` ra 0 vi phạm (38 rule). Chưa test trên máy.
+
+### Thay đổi
+
+- Icon ô Cài đặt nhanh (`AodTileService`) đổi sang `ic_tile_aod`: hình đơn sắc của icon app cắt sát quanh điện thoại cho khung 24dp, sinh cùng icon app bằng `tools/brand/generate_launcher_icon.py`.
+- Còn thiếu quyền bắt buộc thì ô ở trạng thái không dùng được (xám, không chạm được) với dòng phụ "Cần cấp quyền" theo ngôn ngữ chọn trong app; quyền đọc lại mỗi lần mở bảng Cài đặt nhanh.
+
 ## [Chưa phát hành] – 2026-10-14 – Banner ở đáy các màn
 
 Build được, lint không thêm cảnh báo, unit test pass, `tools/check-rules.sh` ra 0 vi phạm (38 rule). Chưa test trên máy.

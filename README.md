@@ -187,7 +187,8 @@ app xin, nên không có trong danh sách trên: `AodTileService` (`BIND_QUICK_S
   máy chưa có bản dịch thì chọn English). Bấm "Xong" để vào màn hình chính; những lần mở sau đi
   thẳng vào màn hình chính. Đổi lại ở mục "Ứng dụng › Ngôn ngữ" của màn hình chính.
 - **Ô Cài đặt nhanh "Custom AOD":** thêm vào bằng cách kéo bảng Cài đặt nhanh xuống rồi bấm sửa.
-  Chạm để bật hoặc tắt đồng hồ (giống công tắc trong app). Từ Android 15, và trên Android 12–14 khi
+  Icon là hình đơn sắc của icon app. Chạm để bật hoặc tắt đồng hồ (giống công tắc trong app); còn thiếu quyền bắt buộc thì ô
+  xám, ghi "Cần cấp quyền" và không chạm được. Từ Android 15, và trên Android 12–14 khi
   chưa cấp "Hiển thị trên ứng dụng khác", hệ thống không cho service khởi động từ ô này, nên khi
   bật, app sẽ mở lên để khởi động service (đang khóa máy thì phải mở khóa trước). Tắt thì không cần
   mở app.
@@ -697,6 +698,8 @@ chọn theo các khối đang có dữ liệu, dùng chung cho mọi chủ đề
 17. Ô Cài đặt nhanh: thêm ô "Custom AOD", chạm để tắt rồi bật. Công tắc trong app đổi theo. Trên
     Android 15 trở lên, bật từ ô thì app mở lên (đang khóa máy thì hỏi mở khóa trước), sau đó khóa
     máy thì đồng hồ hiện. Trên Android 12–14 đã cấp quyền overlay thì bật được mà không mở app.
+    Icon ô là điện thoại của icon app. Thu hồi một quyền bắt buộc (vd "Hiển thị trên ứng dụng khác") rồi kéo bảng Cài đặt nhanh
+    xuống: ô xám, dòng phụ "Cần cấp quyền" (theo ngôn ngữ chọn trong app), chạm không có gì; cấp lại rồi kéo xuống: ô dùng lại được.
 18. Đổi ngôn ngữ ở "Ứng dụng › Ngôn ngữ": nút "Xong" chỉ bật khi chọn khác ngôn ngữ đang dùng; đổi
     xong, màn hình chính, đồng hồ và thông báo của service đổi theo.
 19. Cấp "Truy cập thông báo" từ dòng trong mục Quyền: trang hệ thống mở đúng công tắc của app; quay

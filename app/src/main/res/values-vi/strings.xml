@@ -16,6 +16,7 @@
     <string name="action_allow">Cho phép</string>
     <string name="action_get_started">Bắt đầu</string>
     <string name="action_skip">Bỏ qua</string>
+    <string name="tile_needs_permissions">Cần cấp quyền</string>
 
     <!-- Ads -->
     <string name="ad_loading">Đang tải quảng cáo…</string>

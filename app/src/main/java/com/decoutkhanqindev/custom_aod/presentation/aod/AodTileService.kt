@@ -2,11 +2,18 @@ package com.decoutkhanqindev.custom_aod.presentation.aod
 
 import android.app.PendingIntent
 import android.content.Intent
+import android.content.res.Resources
 import android.os.Build
 import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
+import com.decoutkhanqindev.custom_aod.R
+import com.decoutkhanqindev.custom_aod.data.device.permission.PermissionManager
 import com.decoutkhanqindev.custom_aod.data.local.datastore.DataStoreManager
+import com.decoutkhanqindev.custom_aod.data.local.locale.LanguageManager
 import com.decoutkhanqindev.custom_aod.presentation.MainActivity
+import com.decoutkhanqindev.custom_aod.presentation.model.language.LanguageValue
+import com.decoutkhanqindev.custom_aod.presentation.model.permission.hasRequiredPermissions
+import com.decoutkhanqindev.custom_aod.presentation.model.permission.requiredAodPermissions
 import com.decoutkhanqindev.custom_aod.utils.Tag
 import com.decoutkhanqindev.custom_aod.utils.collectCatching
 import kotlinx.coroutines.CoroutineScope
@@ -19,9 +26,12 @@ import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import timber.log.Timber
 
+// Ô bật / tắt AOD trong Cài đặt nhanh; thiếu quyền bắt buộc thì ô xám, không chạm được (đọc lại mỗi lần mở bảng Cài đặt nhanh).
 class AodTileService : TileService(), Tag {
 
     private val dataStoreManager: DataStoreManager by inject()
+    private val permissionManager: PermissionManager by inject()
+    private val languageManager: LanguageManager by inject()
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private var listeningJob: Job? = null
@@ -49,6 +59,7 @@ class AodTileService : TileService(), Tag {
 
     override fun onClick() {
         super.onClick()
+        if (!permissionManager.requiredAodPermissions().hasRequiredPermissions) return
         val isEnabled = !(dataStoreManager.isAodEnabled.value ?: return)
         dataStoreManager.saveIsAodEnabled(isEnabled)
         renderTile(isEnabled)
@@ -61,8 +72,20 @@ class AodTileService : TileService(), Tag {
 
     private fun renderTile(isEnabled: Boolean) {
         val tile = qsTile ?: return
-        tile.state = if (isEnabled) Tile.STATE_ACTIVE else Tile.STATE_INACTIVE
+        val isReady = permissionManager.requiredAodPermissions().hasRequiredPermissions
+        tile.state = when {
+            !isReady -> Tile.STATE_UNAVAILABLE
+            isEnabled -> Tile.STATE_ACTIVE
+            else -> Tile.STATE_INACTIVE
+        }
+        tile.subtitle = if (isReady) null else localizedResources().getString(R.string.tile_needs_permissions)
         tile.updateTile()
+    }
+
+    // Theo ngôn ngữ user chọn trong app chứ không theo ngôn ngữ máy, như thông báo của AodService.
+    private fun localizedResources(): Resources {
+        val languageCode = LanguageValue.fromCode(dataStoreManager.selectedLangCode.value).code
+        return languageManager.resourcesFor(languageManager.configurationFor(languageCode))
     }
 
     private fun openApp() {
