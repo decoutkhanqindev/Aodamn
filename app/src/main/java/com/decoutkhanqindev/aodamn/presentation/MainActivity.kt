@@ -1,0 +1,60 @@
+package com.decoutkhanqindev.aodamn.presentation
+
+import android.content.pm.ActivityInfo
+import android.graphics.Color
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.LocalOverscrollFactory
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.ComposeUiFlags
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.lifecycle.lifecycleScope
+import com.decoutkhanqindev.aodamn.ads.AdsManager
+import com.decoutkhanqindev.aodamn.data.local.datastore.DataStoreManager
+import com.decoutkhanqindev.aodamn.presentation.aod.AodService
+import com.decoutkhanqindev.aodamn.presentation.components.AppLanguageProvider
+import com.decoutkhanqindev.aodamn.presentation.navigation.AppNavDisplay
+import com.decoutkhanqindev.aodamn.presentation.theme.Theme
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
+
+class MainActivity : ComponentActivity() {
+
+    private val dataStoreManager: DataStoreManager by inject()
+    private val adsManager: AdsManager by inject()
+
+    @OptIn(ExperimentalComposeUiApi::class)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        ComposeUiFlags.isBypassUnfocusableComposeViewEnabled = false
+        super.onCreate(savedInstanceState)
+        adsManager.requestConsent(this)
+        runCatching { requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT }
+        // Theme luôn tối: icon thanh hệ thống luôn sáng, không theo theme hệ thống.
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
+            navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
+        )
+        startAodServiceIfEnabled()
+        setContent {
+            AppLanguageProvider {
+                CompositionLocalProvider(LocalOverscrollFactory provides null) {
+                    Theme { AppNavDisplay() }
+                }
+            }
+        }
+    }
+
+    // Mở app là cách chạy lại service nếu hệ thống (vd Xiaomi) đã đóng nó; khi khởi động máy thì BootReceiver lo.
+    private fun startAodServiceIfEnabled() {
+        lifecycleScope.launch {
+            if (dataStoreManager.isAodEnabled.filterNotNull()
+                    .first()
+            ) AodService.start(this@MainActivity)
+        }
+    }
+}

@@ -1,6 +1,6 @@
-# So sánh Always On AMOLED và Custom AOD
+# So sánh Always On AMOLED và Aodamn
 
-So sánh app đối thủ Always On AMOLED (`com.tomer.alwayson`, bản 3.2.0.1) với Custom AOD ở trạng thái
+So sánh app đối thủ Always On AMOLED (`com.tomer.alwayson`, bản 3.2.0.1) với Aodamn ở trạng thái
 hiện tại.
 
 Thông tin về Always On AMOLED lấy từ 3 nguồn. Mỗi dòng ghi rõ nguồn:
@@ -10,14 +10,14 @@ Thông tin về Always On AMOLED lấy từ 3 nguồn. Mỗi dòng ghi rõ ngu�
 - **[Play]** Trang Google Play và danh sách quyền của bản 3.2.0.1 trên APKMirror.
 - **[2017]** Mã nguồn mở bản 0.9.x năm 2017 (GPLv3). Bản hiện tại có thể đã khác.
 
-Số đo phía Custom AOD là của demo FakeAOD trên cùng máy (ghi **[FakeAOD]**). Custom AOD giữ cùng cơ
+Số đo phía Aodamn là của demo FakeAOD trên cùng máy (ghi **[FakeAOD]**). Aodamn giữ cùng cơ
 chế nhưng chưa chạy lại trên máy, xem README › Trạng thái kiểm thử.
 
 "?" nghĩa là chưa kiểm chứng được.
 
 ## 1. Tổng quan
 
-|                        | Always On AMOLED                                                    | Custom AOD                                                                                            |
+|                        | Always On AMOLED                                                    | Aodamn                                                                                            |
 |------------------------|---------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|
 | Nhà phát triển         | Firehawk. Tác giả gốc Tomer Rosenfeld đã bán app vào 01/2024 [Play] | Bạn                                                                                                   |
 | Phiên bản              | 3.2.0.1, cập nhật 16/06/2025 [Play]                                 | `v1.0.0`, chưa phát hành                                                                              |
@@ -33,7 +33,7 @@ chế nhưng chưa chạy lại trên máy, xem README › Trạng thái kiểm 
 
 Phần lõi gần như giống nhau. Khác biệt chính nằm ở nút nguồn, ở cách xử lý cuộc gọi, và ở số quyền.
 
-| Hạng mục                                       | Always On AMOLED                                                                                                                                              | Custom AOD                                                                                                                                                                         |
+| Hạng mục                                       | Always On AMOLED                                                                                                                                              | Aodamn                                                                                                                                                                         |
 |------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Ngôn ngữ, giao diện                            | ? (bản 2017: Java và XML View) [2017]                                                                                                                         | Kotlin, Jetpack Compose (Material 3). Clean Architecture + MVI, Koin, Navigation 3                                                                                                 |
 | Thành phần hiện AOD                            | `AlwaysOnActivity` [máy]                                                                                                                                      | `AodActivity` (cửa sổ) với `AodScreen` / `AodViewModel` (MVI)                                                                                                                      |
@@ -59,34 +59,34 @@ Phần lõi gần như giống nhau. Khác biệt chính nằm ở nút nguồn,
 
 ### 2.2 Quyền
 
-| Quyền                                                                           | Always On AMOLED [Play] | Custom AOD                                                                                                | Ghi chú                                                                                                                                                  |
+| Quyền                                                                           | Always On AMOLED [Play] | Aodamn                                                                                                | Ghi chú                                                                                                                                                  |
 |---------------------------------------------------------------------------------|-------------------------|-----------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `SYSTEM_ALERT_WINDOW`                                                           | ✓                       | ✓                                                                                                         | Mở AOD từ nền                                                                                                                                            |
 | `FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_SPECIAL_USE`                          | ✓                       | ✓                                                                                                         | Giữ app chạy nền                                                                                                                                         |
 | `POST_NOTIFICATIONS`                                                            | ✓                       | ✓ (tùy chọn)                                                                                              | Hiện thông báo thường trực                                                                                                                               |
 | `WAKE_LOCK`                                                                     | ✓                       | ✓                                                                                                         |                                                                                                                                                          |
 | `RECEIVE_BOOT_COMPLETED`                                                        | ✓                       | ✓                                                                                                         |                                                                                                                                                          |
-| `INTERNET`, `ACCESS_NETWORK_STATE`                                              | ✓                       | ✓                                                                                                         | Custom AOD: quảng cáo, consent, thời tiết (Open-Meteo), `NetworkManager`                                                                                 |
+| `INTERNET`, `ACCESS_NETWORK_STATE`                                              | ✓                       | ✓                                                                                                         | Aodamn: quảng cáo, consent, thời tiết (Open-Meteo), `NetworkManager`                                                                                 |
 | `ACCESS_WIFI_STATE`                                                             | ✓                       | –                                                                                                         |                                                                                                                                                          |
-| `AD_ID`, 3 quyền `ACCESS_ADSERVICES_*`                                          | ✓                       | ✓                                                                                                         | Do SDK quảng cáo thêm (Custom AOD: Google Mobile Ads)                                                                                                    |
+| `AD_ID`, 3 quyền `ACCESS_ADSERVICES_*`                                          | ✓                       | ✓                                                                                                         | Do SDK quảng cáo thêm (Aodamn: Google Mobile Ads)                                                                                                    |
 | Quyền của AppLovin                                                              | ✓                       | –                                                                                                         |                                                                                                                                                          |
-| `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS`                                          | ✓                       | –                                                                                                         | Custom AOD chạy được ở chế độ pin mặc định của HyperOS [FakeAOD]                                                                                         |
-| `READ_PHONE_STATE`                                                              | ✓                       | –                                                                                                         | Custom AOD nhận biết cuộc gọi qua `AudioManager`                                                                                                         |
-| `BIND_NOTIFICATION_LISTENER_SERVICE`                                            | ✓                       | ✓                                                                                                         | Thông báo trên AOD. Ở Custom AOD đây là quyền bảo vệ service listener (chỉ hệ thống bind được), không phải quyền app xin, nên `aapt2` không đếm vào tổng |
+| `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS`                                          | ✓                       | –                                                                                                         | Aodamn chạy được ở chế độ pin mặc định của HyperOS [FakeAOD]                                                                                         |
+| `READ_PHONE_STATE`                                                              | ✓                       | –                                                                                                         | Aodamn nhận biết cuộc gọi qua `AudioManager`                                                                                                         |
+| `BIND_NOTIFICATION_LISTENER_SERVICE`                                            | ✓                       | ✓                                                                                                         | Thông báo trên AOD. Ở Aodamn đây là quyền bảo vệ service listener (chỉ hệ thống bind được), không phải quyền app xin, nên `aapt2` không đếm vào tổng |
 | `CAMERA`                                                                        | ✓                       | –                                                                                                         | Đèn pin. `CameraManager.setTorchMode()` không cần quyền này                                                                                              |
 | `READ_CALENDAR`                                                                 | ✓                       | ✓ (hỏi khi bật "Sự kiện hôm nay")                                                                         | Sự kiện trên AOD                                                                                                                                         |
-| `ACCESS_COARSE_LOCATION`                                                        | –                       | ✓ (hỏi khi bật "Thời tiết")                                                                               | Custom AOD: vị trí gần đúng để tải thời tiết. Danh sách quyền của Always On AMOLED không có quyền vị trí                                                 |
-| `PACKAGE_USAGE_STATS`, `ACCESS_NOTIFICATION_POLICY`, `REORDER_TASKS`, `VIBRATE` | ✓                       | –                                                                                                         | Phục vụ các tính năng Custom AOD chưa có                                                                                                                 |
-| `READ_EXTERNAL_STORAGE`, `WRITE_EXTERNAL_STORAGE`                               | ✓                       | –                                                                                                         | Ảnh nền. Custom AOD dùng Photo Picker, không cần quyền                                                                                                   |
+| `ACCESS_COARSE_LOCATION`                                                        | –                       | ✓ (hỏi khi bật "Thời tiết")                                                                               | Aodamn: vị trí gần đúng để tải thời tiết. Danh sách quyền của Always On AMOLED không có quyền vị trí                                                 |
+| `PACKAGE_USAGE_STATS`, `ACCESS_NOTIFICATION_POLICY`, `REORDER_TASKS`, `VIBRATE` | ✓                       | –                                                                                                         | Phục vụ các tính năng Aodamn chưa có                                                                                                                 |
+| `READ_EXTERNAL_STORAGE`, `WRITE_EXTERNAL_STORAGE`                               | ✓                       | –                                                                                                         | Ảnh nền. Aodamn dùng Photo Picker, không cần quyền                                                                                                   |
 | `BILLING`, `CHECK_LICENSE`                                                      | ✓                       | –                                                                                                         | Mua Premium, kiểm tra bản quyền                                                                                                                          |
 | `c2dm.RECEIVE`, `BIND_GET_INSTALL_REFERRER_SERVICE`                             | ✓                       | –                                                                                                         | Firebase Messaging, đo nguồn cài đặt                                                                                                                     |
 | `DEVICE_POWER`                                                                  | ✓                       | –                                                                                                         | Quyền hệ thống, app thường không được cấp. Có lẽ còn sót từ "Force doze"                                                                                 |
 | `DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION`                                      | ✓                       | ✓                                                                                                         | androidx tự sinh                                                                                                                                         |
-| **Tổng số quyền**                                                               | **31**                  | **14 + 1 tự sinh** (8 cho AOD, trong đó lịch và vị trí chỉ hỏi khi bật tùy chọn; 6 cho quảng cáo và mạng) | Custom AOD kiểm bằng `aapt2 dump permissions` trên bản debug                                                                                             |
+| **Tổng số quyền**                                                               | **31**                  | **14 + 1 tự sinh** (8 cho AOD, trong đó lịch và vị trí chỉ hỏi khi bật tùy chọn; 6 cho quảng cáo và mạng) | Aodamn kiểm bằng `aapt2 dump permissions` trên bản debug                                                                                             |
 
 Quyền riêng của Xiaomi:
 
-| Quyền                                  | Always On AMOLED                           | Custom AOD                                           |
+| Quyền                                  | Always On AMOLED                           | Aodamn                                           |
 |----------------------------------------|--------------------------------------------|------------------------------------------------------|
 | Hiển thị trên màn hình khóa (op 10020) | Bắt buộc [Play, máy]                       | Bắt buộc                                             |
 | Mở cửa sổ mới khi chạy nền (op 10021)  | Mô tả Play yêu cầu bật [Play]              | Không cần trên HyperOS 1.0 [FakeAOD]                 |
@@ -94,7 +94,7 @@ Quyền riêng của Xiaomi:
 
 ### 2.3 Thư viện bên thứ ba
 
-|                   | Always On AMOLED [máy, Play]                                      | Custom AOD                                                                                                                                                    |
+|                   | Always On AMOLED [máy, Play]                                      | Aodamn                                                                                                                                                    |
 |-------------------|-------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Quảng cáo         | AppLovin, Google Ad ID, Privacy Sandbox (AdServices)              | Google Mobile Ads (AdMob) + UMP consent; Google Ad ID và Privacy Sandbox do SDK thêm                                                                          |
 | Premium, mua hàng | PremiumHelper (Zipoapps), Google Play Billing                     | Không                                                                                                                                                         |
@@ -106,7 +106,7 @@ Quyền riêng của Xiaomi:
 
 ✓ có, ✗ chưa có, ⚠️ có một phần, ? chưa kiểm chứng.
 
-| Nhóm           | Tính năng                                                       | Always On AMOLED                    | Custom AOD                                                                                         |
+| Nhóm           | Tính năng                                                       | Always On AMOLED                    | Aodamn                                                                                         |
 |----------------|-----------------------------------------------------------------|-------------------------------------|----------------------------------------------------------------------------------------------------|
 | Hiển thị       | Giờ (12/24 giờ theo máy)                                        | ✓                                   | ✓                                                                                                  |
 |                | Ngày                                                            | ✓                                   | ✓                                                                                                  |
@@ -155,9 +155,9 @@ Quyền riêng của Xiaomi:
 - **Lõi kỹ thuật ngang app đối thủ:**
     - Cùng cách che màn hình khóa (Activity với cờ cửa sổ), cùng cách mở từ nền (quyền "Hiển thị
       trên ứng dụng khác"), cùng cách giữ chạy nền (foreground service `specialUse`).
-    - Custom AOD còn xử lý tốt hơn hai trường hợp: bấm nguồn tắt rồi bật lại ngay, và không mở AOD
+    - Aodamn còn xử lý tốt hơn hai trường hợp: bấm nguồn tắt rồi bật lại ngay, và không mở AOD
       khi báo thức đang reo.
-    - Các số đo là của FakeAOD. Custom AOD giữ cùng cơ chế sau khi refactor, nhưng phải chạy lại
+    - Các số đo là của FakeAOD. Aodamn giữ cùng cơ chế sau khi refactor, nhưng phải chạy lại
       trên máy để xác nhận.
 - **Ít quyền hơn:** 14 so với 31. Trong 14 quyền, 8 cho AOD (lịch và vị trí chỉ hỏi khi bật tùy
   chọn) và 6 cho quảng cáo và mạng. Không có analytics, Premium hay quyền điện thoại.

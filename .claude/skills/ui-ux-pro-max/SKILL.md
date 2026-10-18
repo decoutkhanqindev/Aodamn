@@ -283,7 +283,7 @@ Read `references/pro-rules.md` and run through its canonical Pre-Delivery Checkl
 icon/visual-element discipline, interaction feedback, light/dark contrast, safe-area layout, and
 accessibility — scoped to native/mobile app UI (iOS/Android/React Native/Flutter).
 
-## Project notes (Custom-AOD)
+## Project notes (Aodamn)
 
 `CLAUDE.md` at the project root is the source of truth; when this skill (or a search result) and
 `CLAUDE.md` disagree, follow `CLAUDE.md`.

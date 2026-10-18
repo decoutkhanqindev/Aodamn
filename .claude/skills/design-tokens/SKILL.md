@@ -1,6 +1,6 @@
 ---
 name: design-tokens
-description: Create Kotlin Compose design tokens from one of three supported sources — Google Stitch (MCP), Figma (MCP or JSON), or Claude Design (design-spec output, Claude HTML/markdown artifacts). Three-layer architecture (Primitive/Semantic/Component) with code generation; Custom-AOD does not use the layered architecture (flat top-level `val`s in `Colors.kt` / `Typography.kt` / `Shapes.kt` read directly by UI, literal dp/sp). Use when user asks to "generate design tokens", "create theme from Figma/Stitch/Claude design", "build Compose tokens from design spec", or "convert design source to tokens". Refuses any other input source and asks user for correct seed data.
+description: Create Kotlin Compose design tokens from one of three supported sources — Google Stitch (MCP), Figma (MCP or JSON), or Claude Design (design-spec output, Claude HTML/markdown artifacts). Three-layer architecture (Primitive/Semantic/Component) with code generation; Aodamn does not use the layered architecture (flat top-level `val`s in `Colors.kt` / `Typography.kt` / `Shapes.kt` read directly by UI, literal dp/sp). Use when user asks to "generate design tokens", "create theme from Figma/Stitch/Claude design", "build Compose tokens from design spec", or "convert design source to tokens". Refuses any other input source and asks user for correct seed data.
 ---
 
 ## Platform Tooling
@@ -12,7 +12,7 @@ description: Create Kotlin Compose design tokens from one of three supported sou
 
 # Compose Design Tokens
 
-> **Custom-AOD override (đọc trước):** project này **không dùng kiến trúc token 3 tầng** của skill
+> **Aodamn override (đọc trước):** project này **không dùng kiến trúc token 3 tầng** của skill
 > mà theo pattern theme phẳng của project này. Chỉ lấy giá trị từ nguồn thiết kế rồi ghi vào
 `presentation/theme/Colors.kt` (màu, biến thể alpha `<Màu>Alpha<NN>`), `Typography.kt` (
 `TextStyle`), `Shapes.kt` (`RoundedCornerShape<N>dp`) — mỗi file là các `val` cấp file (không bọc
@@ -152,14 +152,14 @@ Skip the loop when: user said `"none"` (zero rows), `"just generate tokens"` / `
 audit `--fix-suggestions` only. The tracking file is still created (with zero or auto rows) for
 resume safety.
 
-## Project notes (Custom-AOD)
+## Project notes (Aodamn)
 
 `CLAUDE.md` at the project root is the source of truth; when this skill and `CLAUDE.md` disagree,
 follow `CLAUDE.md`.
 
 - Single module `:app`: token files go to
-  `app/src/main/java/com/decoutkhanqindev/custom_aod/presentation/theme/` (package
-  `com.decoutkhanqindev.custom_aod.presentation.theme`); there is no `:theme` module.
+  `app/src/main/java/com/decoutkhanqindev/aodamn/presentation/theme/` (package
+  `com.decoutkhanqindev.aodamn.presentation.theme`); there is no `:theme` module.
 - Prefix: none. Theme files are plain `Colors.kt` / `Typography.kt` / `Shapes.kt` / `Theme.kt` (CLAUDE.md › Compose và theme); do not generate prefixed token layers.
 - The app is dark-only: generate one colour set (no light variant, no `isSystemInDarkTheme`). Keep
   the FakeAOD palette (black background, mint accent) unless the design source says otherwise.

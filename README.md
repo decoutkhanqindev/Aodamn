@@ -1,4 +1,4 @@
-# Custom AOD
+# Aodamn
 
 Always On Display giả lập cho những máy Android mà AOD có sẵn tự tắt sau vài giây (ví dụ nhiều máy
 Xiaomi chỉ có chế độ 10 giây).
@@ -8,7 +8,7 @@ có đồng hồ lên trên màn hình khóa, và Activity đó tự bật màn 
 đen không phát sáng nên phần lớn màn hình vẫn tắt. Đây cũng là cách app Always On AMOLED trên Google
 Play đang làm, kể cả việc dùng quyền "Hiển thị trên ứng dụng khác".
 
-- Repo: [decoutkhanqindev/Custom-AOD](https://github.com/decoutkhanqindev/Custom-AOD).
+- Repo: [decoutkhanqindev/Aodamn](https://github.com/decoutkhanqindev/Aodamn).
 - Compose · Clean Architecture · MVI · Navigation 3 · Koin · Coroutines/Flow · AdMob + UMP.
 
 Tài liệu khác:
@@ -19,7 +19,7 @@ Tài liệu khác:
 
 ## Trạng thái kiểm thử
 
-Custom AOD build được (`assembleDebug`), lint 0 lỗi, `tools/check-rules.sh` ra 0 vi phạm, nhưng **chưa chạy
+Aodamn build được (`assembleDebug`), lint 0 lỗi, `tools/check-rules.sh` ra 0 vi phạm, nhưng **chưa chạy
 trên máy**. Lõi đã được viết lại theo MVI và manager, giai đoạn 1 (quy tắc nguồn điện, khung giờ,
 mức độ sáng, ô Cài đặt nhanh, màn chọn ngôn ngữ), giai đoạn 2 (icon thông báo, viền sáng, điều khiển
 nhạc trên đồng hồ), giai đoạn 3 (mặt đồng hồ, font, màu, cỡ, ảnh nền, xoay ngang) và giai đoạn 4 (
@@ -38,7 +38,7 @@ Kết quả trên là của bản FakeAOD `targetSdk` 33. Bản `minSdk` 30 / `t
 
 Chưa kiểm tra:
 
-- Toàn bộ Custom AOD trên máy thật: Splash (consent, quảng cáo test), màn chọn ngôn ngữ, màn cài
+- Toàn bộ Aodamn trên máy thật: Splash (consent, quảng cáo test), màn chọn ngôn ngữ, màn cài
   đặt, AOD, ô Cài đặt nhanh, thông báo và nhạc trên đồng hồ, giao diện đồng hồ, thao tác và cảm
   biến.
 - Khởi động lại máy. Trên Xiaomi, app không xin quyền "Tự khởi chạy", xem mục "Giới hạn đã biết".
@@ -168,7 +168,7 @@ Danh sách sau khi gộp manifest của các thư viện (kiểm bằng `aapt2 d
 | `ACCESS_ADSERVICES_AD_ID`, `ACCESS_ADSERVICES_ATTRIBUTION`, `ACCESS_ADSERVICES_TOPICS` | Tự cấp, do Google Mobile Ads thêm       | Privacy Sandbox trên Android                                                         |
 
 Thư viện androidx tự thêm một quyền nội bộ
-`com.decoutkhanqindev.custom_aod.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION`.
+`com.decoutkhanqindev.aodamn.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION`.
 
 Hai service còn được bảo vệ bằng quyền của hệ thống, để chỉ hệ thống bind được. Đây không phải quyền
 app xin, nên không có trong danh sách trên: `AodTileService` (`BIND_QUICK_SETTINGS_TILE`),
@@ -186,7 +186,7 @@ app xin, nên không có trong danh sách trên: `AodTileService` (`BIND_QUICK_S
 - **Lần đầu mở app:** sau Splash là màn chọn ngôn ngữ, đã chọn sẵn ngôn ngữ của máy (ngôn ngữ của
   máy chưa có bản dịch thì chọn English). Bấm "Xong" để vào màn hình chính; những lần mở sau đi
   thẳng vào màn hình chính. Đổi lại ở mục "Ứng dụng › Ngôn ngữ" của màn hình chính.
-- **Ô Cài đặt nhanh "Custom AOD":** thêm vào bằng cách kéo bảng Cài đặt nhanh xuống rồi bấm sửa.
+- **Ô Cài đặt nhanh "Aodamn":** thêm vào bằng cách kéo bảng Cài đặt nhanh xuống rồi bấm sửa.
   Icon là hình đơn sắc của icon app. Chạm để bật hoặc tắt đồng hồ (giống công tắc trong app); còn thiếu quyền bắt buộc thì ô
   xám, ghi "Cần cấp quyền" và không chạm được. Từ Android 15, và trên Android 12–14 khi
   chưa cấp "Hiển thị trên ứng dụng khác", hệ thống không cho service khởi động từ ô này, nên khi
@@ -283,7 +283,7 @@ tiên. Định dạng 12/24 giờ vẫn theo cài đặt của máy.
 
 ## Tùy chọn trong app
 
-Lưu trong `DataStoreManager` (file `custom_aod_prefs`), mỗi tùy chọn một key:
+Lưu trong `DataStoreManager` (file `aodamn_prefs`), mỗi tùy chọn một key:
 
 | Tùy chọn                                    | Key                        | Mặc định      | Tác dụng                                                                                                                |
 |---------------------------------------------|----------------------------|---------------|-------------------------------------------------------------------------------------------------------------------------|
@@ -381,7 +381,7 @@ thông báo ──▶ AodNotificationListener ──▶ NotificationStateManager
 
 ## Cấu trúc mã nguồn
 
-Đường dẫn tính từ `app/src/main/java/com/decoutkhanqindev/custom_aod/`.
+Đường dẫn tính từ `app/src/main/java/com/decoutkhanqindev/aodamn/`.
 
 | File                                                                                                                                                                                                                                                | Vai trò                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 |-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -437,9 +437,9 @@ thông báo ──▶ AodNotificationListener ──▶ NotificationStateManager
 | `res/drawable/img_wallpaper_*.xml`                                                                                                                                                                                                                  | 18 ảnh nền AMOLED có sẵn (vector, viewport 1080×2400): 6 ảnh vẽ tay, 12 ảnh sinh bằng `tools/wallpapers/generate_wallpapers.py`                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | `res/xml/data_extraction_rules.xml`                                                                                                                                                                                                                 | Không sao lưu và không chuyển dữ liệu app sang máy mới (Android 12+)                                                                                                                                                                                                                                                                                                                                                                                                                              |
 
-Từ FakeAOD sang Custom AOD:
+Từ FakeAOD sang Aodamn:
 
-| FakeAOD                | Custom AOD                                                                                                                            |
+| FakeAOD                | Aodamn                                                                                                                            |
 |------------------------|---------------------------------------------------------------------------------------------------------------------------------------|
 | `AodService.kt`        | `presentation/aod/AodService.kt` + `ScreenStateManager`, `AudioStateManager`, `BatteryStateManager`                                   |
 | `AodActivity.kt`       | `presentation/aod/AodActivity.kt` (cửa sổ) + `presentation/screens/aod/AodViewModel.kt` (logic)                                       |
@@ -766,7 +766,7 @@ chọn theo các khối đang có dữ liệu, dùng chung cho mọi chủ đề
     máy trước 10:07 thì đồng hồ hiện, tới 10:07 thì chuyển sang đen; khóa máy sau 10:07 thì đồng hồ
     không hiện. Thử thêm khung qua nửa đêm (Bắt đầu sau Kết thúc). Tắt "Chỉ hiện trong khung giờ":
     hiện cả ngày.
-17. Ô Cài đặt nhanh: thêm ô "Custom AOD", chạm để tắt rồi bật. Công tắc trong app đổi theo. Trên
+17. Ô Cài đặt nhanh: thêm ô "Aodamn", chạm để tắt rồi bật. Công tắc trong app đổi theo. Trên
     Android 15 trở lên, bật từ ô thì app mở lên (đang khóa máy thì hỏi mở khóa trước), sau đó khóa
     máy thì đồng hồ hiện. Trên Android 12–14 đã cấp quyền overlay thì bật được mà không mở app.
     Icon ô là điện thoại của icon app. Thu hồi một quyền bắt buộc (vd "Hiển thị trên ứng dụng khác") rồi kéo bảng Cài đặt nhanh

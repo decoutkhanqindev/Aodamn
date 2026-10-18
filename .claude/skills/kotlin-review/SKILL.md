@@ -63,8 +63,8 @@ disk; fold its hits into findings.
 
 1. **Gather** input per mode and resolve absolute paths.
 2. **Static sweep** — run the helper script if applicable; record its hits.
-   **Project rules** — read the repo's `CLAUDE.md`. Run the project's rule checks (Custom-AOD: `bash tools/check-rules.sh`); each reported line is a **Major** finding citing that rule. House patterns
-   written in `CLAUDE.md` override generic rules — e.g. Custom-AOD switches to `Dispatchers.IO`
+   **Project rules** — read the repo's `CLAUDE.md`. Run the project's rule checks (Aodamn: `bash tools/check-rules.sh`); each reported line is a **Major** finding citing that rule. House patterns
+   written in `CLAUDE.md` override generic rules — e.g. Aodamn switches to `Dispatchers.IO`
    inside `withContextCatching` in Repositories / Managers by design, so do not report those
    `direct-Dispatchers` hits.
 3. **Read in priority order** — Security → Architecture → Logic & correctness → Concurrency →

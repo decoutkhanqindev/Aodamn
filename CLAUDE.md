@@ -6,11 +6,11 @@ và báo lại.
 
 ## Project
 
-**Custom AOD**: Always On Display giả lập. Mỗi lần màn hình tắt, app mở một Activity nền đen có đồng
+**Aodamn**: Always On Display giả lập. Mỗi lần màn hình tắt, app mở một Activity nền đen có đồng
 hồ che màn hình khoá rồi tự bật màn hình lại. Repo:
-[decoutkhanqindev/Custom-AOD](https://github.com/decoutkhanqindev/Custom-AOD).
+[decoutkhanqindev/Aodamn](https://github.com/decoutkhanqindev/Aodamn).
 
-- `com.decoutkhanqindev.custom_aod` · single module `:app` · minSdk 30 · targetSdk 37 · phiên bản
+- `com.decoutkhanqindev.aodamn` · single module `:app` · minSdk 30 · targetSdk 37 · phiên bản
   thư viện: `gradle/libs.versions.toml`.
 - Compose · Clean Architecture + MVI · Navigation 3 · Koin · Coroutines/Flow. Theme luôn tối (nền
   gradient chéo mint → đen → tím, accent mint; màn AOD và khung xem trước AOD nền đen).

@@ -11,7 +11,7 @@
     <string name="language_subtitle">Bạn có thể đổi lại sau ở màn hình chính.</string>
     <string name="action_continue">Tiếp tục</string>
     <string name="permission_title">Cho phép hiện đồng hồ</string>
-    <string name="permission_subtitle">Custom AOD cần các quyền dưới đây để hiện đồng hồ khi màn hình tắt.</string>
+    <string name="permission_subtitle">Aodamn cần các quyền dưới đây để hiện đồng hồ khi màn hình tắt.</string>
     <string name="permission_unknown_hint">Máy không cho app kiểm tra quyền này. Hãy mở Cài đặt để chắc chắn quyền đã bật.</string>
     <string name="action_allow">Cho phép</string>
     <string name="action_get_started">Bắt đầu</string>
@@ -31,7 +31,7 @@
     <string name="settings">Cài đặt</string>
     <string name="coming_soon">Sắp có</string>
     <string name="share_app">Chia sẻ ứng dụng</string>
-    <string name="share_app_text">Dùng thử Custom AOD, đồng hồ luôn bật trên màn hình khóa: %1$s</string>
+    <string name="share_app_text">Dùng thử Aodamn, đồng hồ luôn bật trên màn hình khóa: %1$s</string>
 
     <!-- IAP -->
     <string name="iap_soon_title">Gói Premium sắp có</string>

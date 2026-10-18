@@ -103,8 +103,8 @@ Use backtick descriptive names:
 ## File Location
 
 ```
-Source: app/src/main/java/com/decoutkhanqindev/custom_aod/{path}/{Class}.kt
-Test:   app/src/test/java/com/decoutkhanqindev/custom_aod/{path}/{Class}Test.kt
+Source: app/src/main/java/com/decoutkhanqindev/aodamn/{path}/{Class}.kt
+Test:   app/src/test/java/com/decoutkhanqindev/aodamn/{path}/{Class}Test.kt
 ```
 
 ## Run Tests

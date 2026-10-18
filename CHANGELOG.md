@@ -1,11 +1,19 @@
 # Changelog
 
-Các thay đổi đáng chú ý của Custom AOD. Định dạng dựa
+Các thay đổi đáng chú ý của Aodamn (trước đây là Custom AOD). Định dạng dựa
 theo [Keep a Changelog](https://keepachangelog.com/vi/1.1.0/).
 
 Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đổi được gom theo
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
+
+## [Chưa phát hành] – 2026-10-18 – Đổi tên thành Aodamn
+
+### Đổi
+
+- Đổi tên app từ Custom AOD thành Aodamn: tên app, package, `namespace` và `applicationId` thành `com.decoutkhanqindev.aodamn`, repo GitHub
+  thành `decoutkhanqindev/Aodamn`, thư mục project thành `aodamn`. Đổi `applicationId` nên máy đang cài bản cũ sẽ có thêm một app mới,
+  dữ liệu không chuyển sang (file DataStore cũng đổi thành `aodamn_prefs`).
 
 ## [Chưa phát hành] – 2026-10-18 – Toast khi áp dụng
 

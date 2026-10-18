@@ -12,10 +12,10 @@ val localProperties = Properties().apply {
 }
 
 android {
-    namespace = "com.decoutkhanqindev.custom_aod"
+    namespace = "com.decoutkhanqindev.aodamn"
     compileSdk = 37
     defaultConfig {
-        applicationId = "com.decoutkhanqindev.custom_aod"
+        applicationId = "com.decoutkhanqindev.aodamn"
         minSdk = 30
         // Các thay đổi hành vi tới Android 17 có ảnh hưởng tới app được liệt kê ở README › targetSdk 37 — rà lại trước khi nâng.
         targetSdk = 37

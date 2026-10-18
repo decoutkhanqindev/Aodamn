@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">Custom AOD</string>
+    <string name="app_name" translatable="false">Aodamn</string>
 
     <string name="loading">Loading …</string>
     <string name="may_contain_ads">This action may contain ads</string>
@@ -13,7 +13,7 @@
     <string name="language_subtitle">You can change it later on the home screen.</string>
     <string name="action_continue">Continue</string>
     <string name="permission_title">Allow the clock to appear</string>
-    <string name="permission_subtitle">Custom AOD needs these permissions to show the clock when the screen turns off.</string>
+    <string name="permission_subtitle">Aodamn needs these permissions to show the clock when the screen turns off.</string>
     <string name="permission_unknown_hint">Your phone does not let the app check this one. Open Settings to make sure it is on.</string>
     <string name="action_allow">Allow</string>
     <string name="action_get_started">Get started</string>
@@ -34,7 +34,7 @@
     <string name="settings">Settings</string>
     <string name="coming_soon">Coming soon</string>
     <string name="share_app">Share app</string>
-    <string name="share_app_text">Try Custom AOD, an always-on clock for your lock screen: %1$s</string>
+    <string name="share_app_text">Try Aodamn, an always-on clock for your lock screen: %1$s</string>
 
     <!-- IAP -->
     <string name="iap_title" translatable="false">Premium</string>

@@ -17,7 +17,7 @@ production-ready Kotlin that matches the target project's discovered conventions
 the BEST possible Compose code — measured by stability, recomposition correctness, accessibility,
 animation polish, token discipline, and adherence to project patterns — never generic Compose.
 
-## Project Profile (Custom-AOD)
+## Project Profile (Aodamn)
 
 `CLAUDE.md` at the project root is the source of truth. When this file and `CLAUDE.md` disagree,
 `CLAUDE.md` wins. Key facts:

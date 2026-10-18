@@ -16,12 +16,12 @@ Create a new Gradle module in any Kotlin Android project. Three flavors are supp
 MUST consciously pick one. This skill enforces an intake conversation and discovers project
 conventions before scaffolding — no hardcoded plugin aliases, namespaces, or DI/nav patterns.
 
-## Project notes (Custom-AOD)
+## Project notes (Aodamn)
 
 `CLAUDE.md` at the project root is the source of truth; when this skill and `CLAUDE.md` disagree,
 follow `CLAUDE.md`.
 
-- Custom-AOD is a single `:app` module by decision (CLAUDE.md › Kiến trúc): layers are kept apart by
+- Aodamn is a single `:app` module by decision (CLAUDE.md › Kiến trúc): layers are kept apart by
   packages. Run this skill only when the user explicitly asks to add a module.
 - If a module is added anyway, mirror the house stack: Koin (no Hilt), Navigation 3 (no
   navigation-compose), MVI `BaseViewModel`, version catalog aliases from

@@ -6,7 +6,7 @@
 cd "$(dirname "$0")/.." || exit 2
 
 SRC=app/src/main/java
-PKG=$SRC/com/decoutkhanqindev/custom_aod
+PKG=$SRC/com/decoutkhanqindev/aodamn
 total=0
 violations=0
 

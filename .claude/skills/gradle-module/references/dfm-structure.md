@@ -74,7 +74,7 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.ui:ui-tooling-preview")
 
-    // Navigation — Custom-AOD uses Navigation 3 (navigation-compose is banned)
+    // Navigation — Aodamn uses Navigation 3 (navigation-compose is banned)
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.navigation3.ui)
 

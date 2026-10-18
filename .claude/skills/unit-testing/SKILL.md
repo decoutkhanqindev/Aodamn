@@ -33,10 +33,10 @@ Project-specific skill for intelligent Kotlin unit testing.
 
 ```bash
 # Analyze single file - extract testable units
-python scripts/analyze_kotlin.py units app/src/main/java/com/decoutkhanqindev/custom_aod/domain/usecase/RefreshWeatherUseCase.kt
+python scripts/analyze_kotlin.py units app/src/main/java/com/decoutkhanqindev/aodamn/domain/usecase/RefreshWeatherUseCase.kt
 
 # Analyze coverage gaps between source and test directories
-python scripts/analyze_kotlin.py coverage app/src/main/java/com/decoutkhanqindev/custom_aod/domain app/src/test/java/com/decoutkhanqindev/custom_aod/domain
+python scripts/analyze_kotlin.py coverage app/src/main/java/com/decoutkhanqindev/aodamn/domain app/src/test/java/com/decoutkhanqindev/aodamn/domain
 ```
 
 ## Output Format
@@ -64,12 +64,12 @@ JSON structured output for parsing:
 This skill is standalone. If a dedicated test agent is added later, put it in `.claude/agents/` and
 delegate with the Agent tool.
 
-## Project notes (Custom-AOD)
+## Project notes (Aodamn)
 
 `CLAUDE.md` at the project root is the source of truth; when this skill and `CLAUDE.md` disagree,
 follow `CLAUDE.md`.
 
-- Tests live in `app/src/test/java/com/decoutkhanqindev/custom_aod/...`, mirroring the source
+- Tests live in `app/src/test/java/com/decoutkhanqindev/aodamn/...`, mirroring the source
   package (CLAUDE.md › Thư viện, log, test).
 - Already in the project: JUnit 4, `kotlinx-coroutines-test`. MockK and Turbine are NOT dependencies
   yet — adding them needs the user's approval (CLAUDE.md hard rules); without them, write fakes by
