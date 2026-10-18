@@ -28,7 +28,6 @@ fun SplashScreen(backStack: NavBackStack<NavKey>) {
     val adsManager: AdsManager = koinInject()
     val isNetworkAvailable by networkManager.isAvailable.collectAsStateWithLifecycle()
     val isConsentGathered by adsManager.isConsentGathered.collectAsStateWithLifecycle()
-    val isMobileAdsInitialized by adsManager.isMobileAdsInitialized.collectAsStateWithLifecycle()
     val interSplash = adsManager.interSplash
     val interSplashState by interSplash.state.collectAsStateWithLifecycle()
     val handleNext = {
@@ -39,11 +38,11 @@ fun SplashScreen(backStack: NavBackStack<NavKey>) {
         }
     }
 
-    SideEffect(isConsentGathered, isMobileAdsInitialized, isNetworkAvailable) {
+    SideEffect(isConsentGathered, isNetworkAvailable) {
         when {
             !isConsentGathered || !isNetworkAvailable -> Unit
             !adsManager.canRequestAds -> handleNext()
-            isMobileAdsInitialized -> interSplash.load(context)
+            else -> interSplash.load(context)
         }
     }
 

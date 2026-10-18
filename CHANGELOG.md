@@ -7,6 +7,12 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-10-18 – Thẻ chủ đề luôn là kiểu mặc định
+
+### Sửa
+
+- Thẻ ở lưới chủ đề (tab AOD) quay lại luôn vẽ kiểu mặc định (kiểu đẹp nhất của chủ đề) thay vì cấu hình đã lưu: sửa chủ đề không làm đổi thẻ. Màn chủ đề (xem trước và sửa) vẫn mở cấu hình đã lưu, chưa sửa thì là mặc định. Bỏ `AodTabState.themeConfigs`.
+
 ## [Chưa phát hành] – 2026-10-18 – Chủ đề Vành
 
 Build được, lint không thêm cảnh báo (0 lỗi, 12 cảnh báo như trước), unit test pass (thêm test chặn Vành có lại khối đã bỏ), `tools/check-rules.sh` ra 0 vi phạm (38 rule), thư mục các chủ đề cũ không đổi dòng nào. Đã test trên máy.
