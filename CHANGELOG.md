@@ -7,6 +7,12 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-10-18 – Khung giờ và ngưỡng pin mặc định tắt
+
+### Thay đổi
+
+- "Chỉ hiện trong khung giờ" mặc định tắt (trước bật 07:00–23:00) và "Bỏ qua đồng hồ khi pin dưới" mặc định 0% (trước 15%): user vừa cài app ngoài khung giờ hay lúc pin yếu vẫn thấy AOD ngay. Ai đã lưu giá trị thì giữ nguyên.
+
 ## [Chưa phát hành] – 2026-10-18 – Kiểu mặc định bắt mắt cho mọi chủ đề, lưới chủ đề theo cấu hình đã lưu
 
 Build được, lint không thêm cảnh báo, unit test pass, `tools/check-rules.sh` ra 0 vi phạm. Chưa test trên máy.

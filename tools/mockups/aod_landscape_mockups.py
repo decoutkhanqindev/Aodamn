@@ -1198,6 +1198,337 @@ chain_defs = (f'<path id="blcal" d="{BL_CAL}"/><path id="blmemo" d="{BL_MEMO}"/>
               f'<g id="blply">{bl_player()}</g><g id="blply2">{bl_player(340)}</g>'
               + "".join(bl_glyph(ch) for ch in sorted(BL_USED)))
 
+# ================================================================== VÀNH (iOS Fill Clock của Muviz Edge; số đo lấy từ layout aug24_screen_layout dọc / ngang
+# và IosFillClock trong APK, không từ ảnh chụp). Mặt số kim phủ cả màn: vạch là tia từ tâm cắt trong dải khung chữ nhật sát mép (khung ngoài lùi
+# 0,06 nửa cạnh ngắn ngang / 0,03 nửa cạnh dài dọc; vạch phút tới khung lùi 0,2 / 0,1; vạch giờ dài tới khung lùi 0,5 / 0,22, bỏ vạch dài chỗ có
+# số), nét 0,018 / 0,012 nửa cạnh ngắn (vạch phút mờ 70 / 255). Số 3 / 6 / 9 / 12 Zalando Sans Expanded SemiBold cỡ 0,14 cạnh ngắn, cách tâm
+# 0,6 nửa cạnh ngắn (cặp số ở cạnh dài) / 0,68 nửa cạnh dài. Kim: đoạn mảnh 0,0148 tới 0,2, đoạn dày 0,0328 từ 0,15 tới 0,53 (giờ) / 0,83
+# (phút), có bóng mờ; chấm tâm 0,0295 + lỗ đen + vòng màu nhấn. Ngày (thứ + số, Google Sans Bold 20 sp) ở 0,25 chiều cao, dòng pin đáy ở 0,75.
+class BzFont:
+    """Chữ lấy đường viền thật từ font (mỗi ký tự một <path> trong defs, đơn vị 1 / unit em, dùng lại bằng <use>)."""
+
+    def __init__(self, font, prefix, unit):
+        self.font, self.prefix, self.unit = font, prefix, unit
+        self.glyphs, self.cmap, self.upm = font.getGlyphSet(), font.getBestCmap(), font["head"].unitsPerEm
+        self.used = set()
+
+    def bounds(self, ch):
+        pen = BoundsPen(self.glyphs)
+        self.glyphs[self.cmap[ord(ch)]].draw(pen)
+        return pen.bounds
+
+    def adv(self, ch):
+        return self.font["hmtx"][self.cmap[ord(ch)]][0] / self.upm
+
+    def width(self, text, size):
+        return sum(self.adv(ch) for ch in text) * size
+
+    def ink(self, text, size):
+        """(trái, trên, phải, dưới) của nét chữ so với gốc chữ (y xuống)."""
+        x, xs, ys = 0.0, [], []
+        for ch in text:
+            b = self.bounds(ch)
+            if b:
+                xs += [x + b[0] / self.upm * size, x + b[2] / self.upm * size]
+                ys += [-b[3] / self.upm * size, -b[1] / self.upm * size]
+            x += self.adv(ch) * size
+        return min(xs), min(ys), max(xs), max(ys)
+
+    def text(self, x, base, text, size, color, anchor="start", opacity=1.0):
+        if anchor != "start":
+            x -= self.width(text, size) / (2 if anchor == "middle" else 1)
+        s, u = "", 0.0
+        for ch in text:
+            if ch != " ":
+                self.used.add(ch)
+                s += f'<use href="#{self.prefix}{ord(ch)}" x="{round(u)}"/>'
+            u += self.adv(ch) * self.unit
+        op = "" if opacity == 1 else f' fill-opacity="{opacity}"'
+        return f'<g fill="{color}"{op} transform="translate({f(x)} {f(base)}) scale({size / self.unit:.5f})">{s}</g>'
+
+    def fit(self, text, size, w):
+        while self.width(text, size) > w and len(text) > 1:
+            text = text[:-2].rstrip() + "…"
+        return text
+
+    def defs(self):
+        k, out = self.unit / self.upm, ""
+        for ch in sorted(self.used):
+            pen = SVGPathPen(self.glyphs, ntos=lambda v: str(round(v)))
+            self.glyphs[self.cmap[ord(ch)]].draw(TransformPen(pen, (k, 0, 0, -k, 0, 0)))
+            out += f'<path id="{self.prefix}{ord(ch)}" d="{pen.getCommands()}"/>'
+        return out
+
+
+BZ_NUM = BzFont(TTFont(ROOT / "tools/fonts/static/zalando_sans_expanded_semibold.ttf"), "z", 1000)
+BZ_TEXT = BzFont(instancer.instantiateVariableFont(TTFont(ROOT / "tools/fonts/variable/google_sans_variable.ttf"),
+                                                   {"wght": 700, "GRAD": 0, "opsz": 18}, inplace=False), "g", 100)
+BZ_ASC = 0.966  # ascent Google Sans: đỉnh dòng chữ → đường gốc
+BZ_MAIN = GE
+BZ_ACCENT = "#80DEEA"  # màu nhấn đề xuất (app mẫu #E8FF82 trùng Lime của Viên nang)
+BZ_LIME = "#EAFC82"
+BZ_DAY, BZ_DATE = "THỨ BẢY", "17"
+BZ_G = 18.0  # dòng trạng thái: icon pin / thông báo cao 18 dp như layout mẫu
+BZ_ZONE = 184  # chữ ở vùng trên / dưới kim của màn dọc rộng tối đa 184 dp (dài hơn thì "…"): không chạm đầu vạch giờ dài
+BZ_DW = 314  # màn ngang có khối phụ: mặt số thu thành khung dọc 0,8 chiều cao bên trái
+BZ_FACES = {}
+
+
+def bz_ray(cx, cy, deg, r0, r1, width, color, opacity=1.0):
+    a = math.radians(deg)
+    dx, dy = math.sin(a), -math.cos(a)
+    op = "" if opacity == 1 else f' stroke-opacity="{opacity:.3f}"'
+    return (f'<line x1="{f(cx + dx * r0)}" y1="{f(cy + dy * r0)}" x2="{f(cx + dx * r1)}" y2="{f(cy + dy * r1)}" stroke="{color}" '
+            f'stroke-width="{width:.2f}"{op}/>')
+
+
+def bz_number_box(w, h, num):
+    """Tâm và cỡ số num trên mặt số w × h."""
+    fmin, fmax, land = min(w, h) / 2, max(w, h) / 2, w > h
+    deg = {"3": 90, "6": 180, "9": 270, "12": 0}[num]
+    d = 0.6 * fmin if (num in ("6", "12")) == land else 0.68 * fmax
+    a = math.radians(deg)
+    return w / 2 + math.sin(a) * d, h / 2 - math.cos(a) * d, 0.14 * min(w, h)
+
+
+def bz_face(w, h, style, main, accent):
+    """Vạch + số của mặt số w × h tại gốc (không kim), mỗi tổ hợp một <g> trong defs để các khung dùng lại."""
+    key = (w, h, style, main, accent)
+    if key in BZ_FACES:
+        return BZ_FACES[key][0]
+    n = f"bzf{len(BZ_FACES)}"
+    x0, y0 = 0, 0
+    fmin, fmax, land = min(w, h) / 2, max(w, h) / 2, w > h
+    cx, cy, reach = w / 2, h / 2, max(w, h)
+
+    def rect(ix, iy):
+        return f"M{f(x0 + ix)},{f(y0 + iy)}H{f(x0 + w - ix)}V{f(y0 + h - iy)}H{f(x0 + ix)}Z"
+
+    outer = rect(0.06 * fmin, 0.03 * fmax)
+    s = (f'<clipPath id="{n}a"><path clip-rule="evenodd" d="{outer}{rect(0.2 * fmin, 0.1 * fmax)}"/></clipPath>'
+         f'<clipPath id="{n}b"><path clip-rule="evenodd" d="{outer}{rect(0.5 * fmin, 0.22 * fmax)}"/></clipPath>')
+    if style == 1:
+        ticks = "".join(bz_ray(cx, cy, i * 6, 0.5 * fmin, reach, (0.018 if i % 5 == 0 else 0.012) * fmin, main,
+                               1.0 if i % 5 == 0 else 70 / 255) for i in range(60))
+    else:
+        ticks = "".join(bz_ray(cx, cy, i * 30, 0.5 * fmin, reach, 0.018 * fmin, main) for i in range(12))
+    skip = (6, 12) if land else (3, 9)
+    longs = "".join(bz_ray(cx, cy, i * 30, 0.5 * fmin, reach, 0.018 * fmin, main) for i in range(1, 13) if i not in skip)
+    s += f'<g clip-path="url(#{n}a)">{ticks}</g><g clip-path="url(#{n}b)">{longs}</g>'
+    for num in ("3", "6", "9", "12"):
+        px, py, size = bz_number_box(w, h, num)
+        lo, top, hi, bottom = BZ_NUM.ink(num, size)
+        s += BZ_NUM.text(px - (lo + hi) / 2, py - (top + bottom) / 2, num, size, accent)
+    BZ_FACES[key] = (n, f'<g id="{n}">{s}</g>')
+    return n
+
+
+def bz_dial(x0, y0, w, h, hh=10, mm=8, style=1, main=BZ_MAIN, accent=BZ_ACCENT):
+    fmin, cx, cy = min(w, h) / 2, x0 + w / 2, y0 + h / 2
+    s = use(bz_face(w, h, style, main, accent), x0, y0)
+    hour, minute = (hh % 12 + mm / 60) * 30, mm * 6
+    thin, thick = 0.0148 * fmin, 0.0328 * fmin
+    hands = (bz_ray(cx, cy, minute, 0, 0.2 * fmin, thin, main) + bz_ray(cx, cy, minute, 0.15 * fmin, 0.83 * fmin, thick, main)
+             + bz_ray(cx, cy, hour, 0, 0.2 * fmin, thin, main) + bz_ray(cx, cy, hour, 0.15 * fmin, 0.53 * fmin, thick, main))
+    s += f'<g filter="url(#bzsh)" stroke-linecap="round">{hands}</g>'
+    return (s + f'<circle cx="{f(cx)}" cy="{f(cy)}" r="{f(0.0295 * fmin)}" fill="{main}"/>'
+            f'<circle cx="{f(cx)}" cy="{f(cy)}" r="{f(0.0131 * fmin)}" fill="#000"/>'
+            f'<circle cx="{f(cx)}" cy="{f(cy)}" r="{f(0.0164 * fmin)}" fill="none" stroke="{accent}" stroke-width="{f(0.0131 * fmin)}"/>')
+
+
+def bz_anchor(x, w, anchor):
+    return x - (w / 2 if anchor == "middle" else w if anchor == "end" else 0)
+
+
+def bz_date(x, top, anchor="middle", weather=False, main=BZ_MAIN, accent=BZ_ACCENT):
+    """Thứ (màu chính) + số ngày (màu nhấn) cách 7 dp như layout mẫu; thời tiết cạnh ngày cùng cỡ, cùng độ đậm. Cao 25 dp."""
+    size, base = 20, top + BZ_ASC * 20
+    wd, wn = BZ_TEXT.width(BZ_DAY, size), BZ_TEXT.width(BZ_DATE, size)
+    ww = 12 + 36 + BZ_TEXT.width("24°", size) if weather else 0
+    x = bz_anchor(x, wd + 7 + wn + ww, anchor)
+    s = BZ_TEXT.text(x, base, BZ_DAY, size, main) + BZ_TEXT.text(x + wd + 7, base, BZ_DATE, size, accent)
+    if weather:
+        wx = x + wd + 7 + wn + 12
+        s += cloud(wx - 2, base, 0.8, main, 2.4) + BZ_TEXT.text(wx + 36, base, "24°", size, main)
+    return s
+
+
+def bz_battery(x, top, g, color, charging=False):
+    w = 0.522 * g
+    sw, cap_h, cap_w = 0.14 * w, 0.1 * g, 0.44 * w
+    bt, bh = top + cap_h, g - cap_h
+    s = f'<rect x="{f(x + (w - cap_w) / 2)}" y="{f(top)}" width="{f(cap_w)}" height="{f(cap_h + sw / 2)}" rx="{f(sw / 2)}" fill="{color}"/>'
+    if charging:
+        bolt = [(.58, .12), (.2, .56), (.46, .56), (.38, .9), (.8, .42), (.54, .42)]
+        return (s + f'<rect x="{f(x)}" y="{f(bt)}" width="{f(w)}" height="{f(bh)}" rx="{f(0.25 * w)}" fill="{color}"/>'
+                + '<path d="M' + " L".join(f"{f(x + w * px)},{f(bt + bh * py)}" for px, py in bolt) + 'Z" fill="#000"/>')
+    pad = sw * 1.6
+    fh = (bh - 2 * pad) * 0.72
+    return (s + f'<rect x="{f(x + sw / 2)}" y="{f(bt + sw / 2)}" width="{f(w - sw)}" height="{f(bh - sw)}" rx="{f(0.25 * w - sw / 2)}" '
+            f'fill="none" stroke="{color}" stroke-width="{f(sw)}"/>'
+            f'<rect x="{f(x + pad)}" y="{f(bt + bh - pad - fh)}" width="{f(w - 2 * pad)}" height="{f(fh)}" rx="{f(sw / 2)}" fill="{color}"/>')
+
+
+def bz_status(x, cy, anchor="middle", color=BZ_MAIN, n=2, charging=False):
+    """Dòng trạng thái dùng chung AodStatusLine (pin dọc · icon thông báo) cao 18 dp, chữ Google Sans Bold như layout mẫu."""
+    g, fs = BZ_G, 0.915 * BZ_G
+    tw = BZ_TEXT.width("72%", fs)
+    w = 0.522 * g + 0.717 * g + tw + (1.13 * g + 0.228 * g + 1.065 * g + n * 0.978 * g + (n - 1) * 1.13 * g if n else 0)
+    x = bz_anchor(x, w, anchor)
+    s = bz_battery(x, cy - g / 2, g, color, charging) + BZ_TEXT.text(x + 1.239 * g, cy + 0.34 * fs, "72%", fs, color)
+    if n:
+        dx = x + 1.239 * g + tw + 1.13 * g
+        s += f'<circle cx="{f(dx + 0.114 * g)}" cy="{f(cy)}" r="{f(0.114 * g)}" fill="{color}"/>'
+        shapes = icon_shapes(color)
+        ix = dx + 0.228 * g + 1.065 * g
+        s += "".join(shapes[i % 3](ix + i * 2.108 * g, cy - 0.489 * g, 0.978 * g) for i in range(n))
+    return s
+
+
+def bz_event(x, top, anchor="middle", t="09:00", title="HỌP NHÓM THIẾT KẾ", color=BZ_MAIN, accent=BZ_ACCENT, max_w=999):
+    """Sự kiện một dòng: giờ màu nhấn (như số ngày) + tên in hoa, Google Sans Bold 14 sp."""
+    size, base = 14, top + BZ_ASC * 14
+    wt = BZ_TEXT.width(t, size)
+    title = BZ_TEXT.fit(title, size, max_w - wt - 6)
+    x = bz_anchor(x, wt + 6 + BZ_TEXT.width(title, size), anchor)
+    return BZ_TEXT.text(x, base, t, size, accent) + BZ_TEXT.text(x + wt + 6, base, title, size, color)
+
+
+def bz_events(cx, top, n=3):
+    """Lịch trình ở màn ngang: tối đa ba dòng, cả khối giữa cột, các dòng thẳng trái."""
+    w = max(BZ_TEXT.width(t, 14) + 6 + BZ_TEXT.width(name.upper(), 14) for t, name in EVENTS[:n])
+    return "".join(bz_event(cx - w / 2, top + i * 22, "start", t, name.upper()) for i, (t, name) in enumerate(EVENTS[:n])), n * 22 - 5
+
+
+def bz_memo(x, top, anchor="middle", color=BZ_MAIN, text="MUA SỮA TRÊN ĐƯỜNG VỀ", max_w=999):
+    size, base = 14, top + BZ_ASC * 14
+    text = BZ_TEXT.fit(text, size, max_w - 21)
+    x = bz_anchor(x, 21 + BZ_TEXT.width(text, size), anchor)
+    return (f'<use href="#bzmemo" transform="translate({f(x)} {f(base - 13)}) scale({15 / 256:.4f})" fill="{color}"/>'
+            + BZ_TEXT.text(x + 21, base, text, size, color))
+
+
+def bz_player(cx, top, w, color=BZ_MAIN, paused=False, title="THAT COOL SONG"):
+    """Trình phát gọn của chủ đề: lùi · tên in hoa 14 sp / nghệ sĩ 12 sp mờ 0,7 (chạm để phát / dừng, dừng thì mờ 0,6) · tới; thanh tiến trình
+    1,5 dp dưới cùng, nền cùng màu mờ 0,3. Cao 41,5 dp."""
+    x, op = cx - w / 2, 0.6 if paused else 1.0
+    s = ""
+    for bx, d in ((x + 8, -1), (x + w - 8, 1)):
+        s += (f'<path d="M{f(bx - 4.5 * d)},{f(top + 9)} L{f(bx + 3.5 * d)},{f(top + 15)} L{f(bx - 4.5 * d)},{f(top + 21)} Z" fill="{color}" '
+              f'stroke="{color}" stroke-width="1.2" stroke-linejoin="round"/>'
+              f'<rect x="{f(bx + 4.5 * d - (1.8 if d < 0 else 0))}" y="{f(top + 9)}" width="1.8" height="12" rx=".8" fill="{color}"/>')
+    s += BZ_TEXT.text(cx, top + 13.5, BZ_TEXT.fit(title, 14, w - 56), 14, color, "middle", op)
+    s += BZ_TEXT.text(cx, top + 30, "IT'S ARTIST", 12, color, "middle", 0.7 * op)
+    y = top + 40.75
+    return (s + f'<line x1="{f(x)}" y1="{f(y)}" x2="{f(x + w)}" y2="{f(y)}" stroke="{color}" stroke-opacity=".3" stroke-width="1.5"/>'
+            f'<line x1="{f(x)}" y1="{f(y)}" x2="{f(x + w * .42)}" y2="{f(y)}" stroke="{color}" stroke-width="1.5"/>')
+
+
+def bz_portrait(hh=10, mm=8, style=1, accent=BZ_ACCENT, date=True, weather=False, event=False, memo=False, media=False, n=2,
+                charging=False, paused=False):
+    """Màn dọc: ngày ở 0,25 chiều cao như layout mẫu, sự kiện ngay dưới; dòng pin đáy ở 0,75. Có ghi nhớ / nhạc thì dòng pin, ghi nhớ, nhạc xếp
+    giữa vùng từ đầu kim phút (0,83 nửa cạnh ngắn) tới số 6, nên kim không bao giờ đè lên chữ."""
+    s = bz_dial(0, 0, PW, PH, hh, mm, style, BZ_MAIN, accent)
+    top = 0.25 * PH
+    if date:
+        s += bz_date(PW / 2, top, weather=weather, accent=accent)
+    if event:
+        s += bz_event(PW / 2, top + 33 if date else top, accent=accent, max_w=BZ_ZONE)
+    rows = [(18, lambda t: bz_status(PW / 2, t + 9, n=n, charging=charging))]
+    if memo:
+        rows.append((18, lambda t: bz_memo(PW / 2, t + 1, max_w=BZ_ZONE)))
+    if media:
+        rows.append((41.5, lambda t: bz_player(PW / 2, t, BZ_ZONE, paused=paused)))
+    if len(rows) == 1:
+        y = 0.75 * PH - 18
+    else:
+        px, py, size = bz_number_box(PW, PH, "6")
+        zone0, zone1 = PH / 2 + 0.83 * PW / 2 + 6, py + BZ_NUM.ink("6", size)[1] - 6
+        y = zone0 + (zone1 - zone0 - sum(h for h, _ in rows) - 10 * (len(rows) - 1)) / 2
+    for h, draw in rows:
+        s += draw(y)
+        y += h + 10
+    return s
+
+
+def bz_land_full(weather=False, hh=10, mm=8):
+    """Màn ngang như layout mẫu: mặt số phủ màn, dòng pin bắt đầu ở 0,25 bề ngang, ngày (+ thời tiết) kết thúc ở 0,75, cả hai giữa chiều cao."""
+    return (bz_dial(0, 0, W, H, hh, mm) + bz_status(0.25 * W, CY, "start")
+            + bz_date(0.75 * W, CY - 12.5, "end", weather))
+
+
+def bz_column(cx, items, gap=16):
+    """Một cột khối giữa chiều cao, mỗi khối giữa cột: (cao, hàm vẽ tại (cx, đỉnh))."""
+    y = CY - (sum(h for h, _ in items) + gap * (len(items) - 1)) / 2
+    s = ""
+    for h, draw in items:
+        s += draw(cx, y)
+        y += h + gap
+    return s
+
+
+BZ_INFO = {
+    "date": (25, lambda cx, t: bz_date(cx, t, weather=True)),
+    "status": (18, lambda cx, t: bz_status(cx, t + 9)),
+    "events": (61, lambda cx, t: bz_events(cx, t)[0]),
+    "memo": (18, lambda cx, t: bz_memo(cx, t + 1)),
+}
+
+
+def bz_land_split(cols, hh=10, mm=8):
+    """Màn ngang có ghi nhớ / sự kiện / nhạc: mặt số thu thành khung dọc (0,8 chiều cao) sát trái, ngày + pin chuyển sang cột bên phải cùng
+    các khối khác (ở mặt số phủ màn, chỗ trống cạnh kim chỉ rộng khoảng 110 dp)."""
+    s = bz_dial(0, 0, BZ_DW, H, hh, mm)
+    x0, x1 = BZ_DW + 32, W - 24
+    if len(cols) == 1:
+        return s + bz_column((x0 + x1) / 2, cols[0])
+    split = x0 + (x1 - x0) * 0.5
+    return s + bz_column((x0 + split - 16) / 2, cols[0]) + vline(split, 96, 296) + bz_column((split + 16 + x1) / 2, cols[1])
+
+
+def bz_strip():
+    s = ('<defs><linearGradient id="bzwp" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2E6B5A"/>'
+         '<stop offset=".55" stop-color="#3B2C66"/><stop offset="1" stop-color="#7A3E5C"/></linearGradient></defs>')
+    k = 0.4
+    for i, (label, kw, wall) in enumerate((("Kiểu 1 · vạch phút (mặc định)", {}, False),
+                                            ("Kiểu 2 · chỉ vạch giờ", {"style": 2, "hh": 1, "mm": 50}, False),
+                                            ("Số lime như app mẫu", {"accent": BZ_LIME, "hh": 4, "mm": 38}, False),
+                                            ("Trên ảnh nền", {"hh": 7, "mm": 21}, True))):
+        x = 36 + i * 212
+        s += f'<g transform="translate({x} 14) scale({k})">'
+        s += (f'<rect width="{PW}" height="{PH}" rx="34" fill="url(#bzwp)"/>' if wall else
+              f'<rect width="{PW}" height="{PH}" rx="34" fill="#000" stroke="#333" stroke-width="2"/>')
+        s += bz_portrait(**kw) + "</g>" + txt(x + PW * k / 2, 14 + PH * k + 22, label, 13, DM, 400, "middle")
+    return (f'<p style="font-size:13px;color:var(--text-secondary);margin:1.25rem 0 6px">Hai kiểu vạch và màu số (cả hai màu chỉnh được)</p>'
+            f'<svg viewBox="0 0 {W} 400" width="100%" role="img" aria-label="Hai kiểu vạch và màu số" '
+            f'style="display:block;font-family:\'Plus Jakarta Sans\',sans-serif" fill="{G}">'
+            f'<rect width="{W}" height="400" rx="20" fill="#111"/>{s}</svg>')
+
+
+bezel = [
+    bz_strip(),
+    '<div style="font-size:0">',
+    frame_portrait("D1 · Dọc, mặc định như app mẫu: thứ + ngày trên kim, pin · icon thông báo dưới kim", bz_portrait()),
+    frame_portrait("D2 · Dọc, thêm thời tiết cạnh ngày, sự kiện gần nhất dưới ngày; ghi nhớ và nhạc dưới dòng pin (ngoài tầm kim)",
+                   bz_portrait(weather=True, event=True, memo=True, media=True)),
+    frame_portrait("D3 · Dọc, kiểu chỉ vạch giờ, đang sạc, nhạc đang dừng (mờ), 21:47",
+                   bz_portrait(hh=21, mm=47, style=2, media=True, charging=True, paused=True, n=1)),
+    frame_portrait("D4 · Dọc, số lime như app mẫu, tắt ngày, 4:38: kim không chạm vùng chữ",
+                   bz_portrait(hh=4, mm=38, accent=BZ_LIME, date=False, n=3)),
+    '</div>',
+    frame("N1 · Ngang, như app mẫu: mặt số phủ màn, pin bên trái, ngày + thời tiết bên phải", bz_land_full(True)),
+    frame("N2 · Ngang, nhạc: mặt số thu thành khung dọc bên trái, ngày, pin, nhạc ở cột phải",
+          bz_land_split([[BZ_INFO["date"], BZ_INFO["status"], (41.5, lambda cx, t: bz_player(cx, t, 300))]])),
+    frame("N3 · Ngang, lịch trình + ghi nhớ", bz_land_split([[BZ_INFO["date"], BZ_INFO["status"], BZ_INFO["events"], BZ_INFO["memo"]]])),
+    frame("N4 · Ngang, mọi khối: mặt số → ngày, pin, lịch trình, ghi nhớ → nhạc",
+          bz_land_split([[BZ_INFO["date"], BZ_INFO["status"], BZ_INFO["events"], BZ_INFO["memo"]],
+                         [(41.5, lambda cx, t: bz_player(cx, t, 210))]], hh=2, mm=50)),
+]
+bezel_defs = (f'<path id="bzmemo" d="{BL_MEMO}"/>'
+              '<filter id="bzsh" filterUnits="userSpaceOnUse" x="-2000" y="-2000" width="5000" height="5000">'
+              '<feDropShadow dx="0" dy="0" stdDeviation="1.8" flood-color="#000" flood-opacity=".3"/></filter>'
+              + "".join(g for _, g in BZ_FACES.values()) + BZ_NUM.defs() + BZ_TEXT.defs())
+
 for name, summary, defs, frames in [
     ("w_classic", "Bảy bố cục ngang của chủ đề Cổ điển theo các khối đang bật", classic_defs, classic),
     ("w_jersey", "Bố cục ngang của chủ đề Số áo: ngày, bốn chữ số một hàng, dòng pin", jersey_defs, jersey),
@@ -1206,6 +1537,7 @@ for name, summary, defs, frames in [
     ("w_expressive", "Chủ đề Thẻ (M3 Expressive): bốn khung dọc và bốn bố cục ngang", expressive_defs, expressive),
     ("w_tower", "Chủ đề Tháp (Long HyperOS): sáu kiểu đồng hồ, bốn khung dọc và bốn bố cục ngang", tower_defs, tower),
     ("w_chain", "Chủ đề Chuỗi (Bullet List): đồng hồ viên thuốc, bốn khung dọc và bốn bố cục ngang", chain_defs, chain),
+    ("w_bezel", "Chủ đề Vành (iOS Fill Clock): hai kiểu vạch, bốn khung dọc và bốn bố cục ngang", bezel_defs, bezel),
 ]:
     code = widget(summary, defs, frames)
     OUT.mkdir(parents=True, exist_ok=True)

@@ -486,9 +486,9 @@ class DataStoreManager(
         const val DEFAULT_AOD_BRIGHTNESS_PERCENT = 1
         const val DEFAULT_IS_AOD_PROXIMITY_ENABLED = true
         const val DEFAULT_AOD_TIMEOUT_MINUTES = 0
-        const val DEFAULT_AOD_MIN_BATTERY = 15
+        const val DEFAULT_AOD_MIN_BATTERY = 0
         private const val DEFAULT_AOD_CHARGING_RULE = 0
-        const val DEFAULT_IS_AOD_SCHEDULE_ENABLED = true
+        const val DEFAULT_IS_AOD_SCHEDULE_ENABLED = false
         const val DEFAULT_AOD_SCHEDULE_START_MINUTE = 7 * 60
         const val DEFAULT_AOD_SCHEDULE_END_MINUTE = 23 * 60
         const val DEFAULT_IS_AOD_NOTIFICATION_ICONS_ENABLED = true
