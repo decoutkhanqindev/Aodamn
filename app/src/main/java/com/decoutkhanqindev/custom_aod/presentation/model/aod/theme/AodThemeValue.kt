@@ -4,6 +4,7 @@ import androidx.annotation.StringRes
 import androidx.compose.runtime.Immutable
 import com.decoutkhanqindev.custom_aod.R
 import com.decoutkhanqindev.custom_aod.data.local.datastore.DataStoreManager
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.bezel.BezelThemeSpec
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.capsule.CapsuleThemeSpec
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.card.CardThemeSpec
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.chain.ChainThemeSpec
@@ -26,7 +27,8 @@ enum class AodThemeValue(
     CAPSULE(id = "capsule", nameRes = R.string.theme_capsule, spec = CapsuleThemeSpec),
     CARD(id = "card", nameRes = R.string.theme_card, spec = CardThemeSpec),
     TOWER(id = "tower", nameRes = R.string.theme_tower, spec = TowerThemeSpec),
-    CHAIN(id = "chain", nameRes = R.string.theme_chain, spec = ChainThemeSpec);
+    CHAIN(id = "chain", nameRes = R.string.theme_chain, spec = ChainThemeSpec),
+    BEZEL(id = "bezel", nameRes = R.string.theme_bezel, spec = BezelThemeSpec);
 
     companion object {
         val DEFAULT = CLASSIC

@@ -22,9 +22,10 @@ val Grey5A = Color(0xFF5A5A5A)
 val Grey3A = Color(0xFF3A3A3A)
 
 // Màu nhấn mặc định của chủ đề (thẻ ở lưới chủ đề): mỗi chủ đề một màu để lưới không trùng nhau. Lime đo trên thẻ chủ đề trong lưới của app
-// mẫu Viên nang; GreyE0 là chữ phụ của Chuỗi.
+// mẫu Viên nang; Cyan của Vành (lime của app mẫu đã là màu Viên nang); GreyE0 là chữ phụ của Chuỗi.
 val Lime = Color(0xFFEAFC82)
 val Coral = Color(0xFFFF8B7B)
+val Cyan = Color(0xFF80DEEA)
 val GreyE0 = Color(0xFFE0E0E0)
 
 // Chữ phụ của chủ đề Thẻ lấy từ app mẫu (dịch ngược): phút / AM-PM / ngày xám sáng.
@@ -47,6 +48,8 @@ val MintAlpha12 = Mint.copy(alpha = 0.12f)
 val MintAlpha40 = Mint.copy(alpha = 0.4f)
 val RedAlpha12 = Red.copy(alpha = 0.12f)
 val WhiteAlpha30 = White.copy(alpha = 0.3f)
+// Bóng mờ của kim chủ đề Vành (#4D000000 của app mẫu).
+val BlackAlpha30 = Black.copy(alpha = 0.3f)
 val BlackAlpha50 = Black.copy(alpha = 0.5f)
 val BlackAlpha70 = Black.copy(alpha = 0.7f)
 val BlackAlpha80 = Black.copy(alpha = 0.8f)

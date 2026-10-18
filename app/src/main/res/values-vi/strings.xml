@@ -56,8 +56,10 @@
     <string name="theme_card">Thẻ</string>
     <string name="theme_tower">Tháp</string>
     <string name="theme_chain">Chuỗi</string>
+    <string name="theme_bezel">Vành</string>
     <string name="aod_jersey_date_first_pattern">dd</string>
     <string name="aod_jersey_date_second_pattern">MM</string>
+    <string name="aod_bezel_weekday_pattern">EEEE</string>
     <string name="theme_in_use">Đang dùng</string>
     <string name="theme_edit">Sửa</string>
     <string name="theme_saved">Đã lưu chủ đề</string>
@@ -85,6 +87,7 @@
     <string name="theme_color_date">Ngày</string>
     <string name="theme_color_media">Nhạc</string>
     <string name="theme_color_digits">Chữ số</string>
+    <string name="theme_color_hands">Kim và vạch</string>
     <string name="theme_color_capsule">Viên</string>
     <string name="theme_color_card">Thẻ</string>
     <string name="theme_color_status">Pin &amp; thông báo</string>
@@ -105,6 +108,9 @@
     <string name="tower_style_fade_up">Nhạt dần lên</string>
     <string name="tower_style_hour_filled">Giờ đặc</string>
     <string name="tower_style_minute_filled">Phút đặc</string>
+    <string name="theme_opt_ticks">Kiểu vạch</string>
+    <string name="bezel_ticks_minutes">Vạch phút</string>
+    <string name="bezel_ticks_hours">Vạch giờ</string>
     <string name="theme_opt_date_style">Kiểu ngày</string>
     <string name="date_style_bold">In hoa đậm</string>
     <string name="date_style_plain">Thường</string>

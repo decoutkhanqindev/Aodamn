@@ -41,6 +41,7 @@ code dịch ngược, không lấy asset (font, ảnh, Lottie) từ APK. APK và
 | Thẻ (`CARD`) | **38 · Jun24 "M3 Expressive"** | làm từ danh mục này (2026-10-17), số đo lấy từ layout / code / font trong APK |
 | Tháp (`TOWER`) | **34 · Feb24 "Long HyperOS"** | làm từ danh mục này (2026-10-17), số đo lấy từ layout `feb24_screen_layout` / code / font trong APK |
 | Chuỗi (`CHAIN`) | **28 · Aug23 "Bullet List"** | làm từ danh mục này (2026-10-17), số đo lấy từ layout `aug23_screen_layout` / `Aug23Clock` / font trong APK |
+| Vành (`BEZEL`) | **40 · Aug24 "iOS Fill Clock"** | làm từ danh mục này (2026-10-18), số đo lấy từ layout `aug24_screen_layout` / `IosFillClock` / font trong APK |
 
 ## Danh mục đủ 44 chủ đề
 
@@ -88,16 +89,18 @@ text view chung) hoặc font dùng trong code; "chữ (font layout)" nghĩa là 
 | 37 | May24 | Fill HyperOS | Clock Size, Hour Color, Minute Color, Date Color, Controls Color | – | chữ (font layout) | – | **Số áo** (`JERSEY`) |
 | 38 | Jun24 | M3 Expressive | Clock Style, Background, Color 1, Color 2, Clock Size | – | chữ (font layout) | – | **Thẻ** (`CARD`) |
 | 39 | Jul24 | Nothing Wide | Clock Style, Color 1, Color 2, Date Color, Controls Color | – | NothingWideClock | – | chưa có |
-| 40 | Aug24 | iOS Fill Clock ⭐ | Clock Style, Color 1, Color 2 | – | IosFillClock | – | chưa có |
+| 40 | Aug24 | iOS Fill Clock ⭐ | Clock Style, Color 1, Color 2 | – | IosFillClock | – | **Vành** (`BEZEL`) |
 | 41 | Sep24 | Pixel Width Clock | Variation, Clock Weight, Clock Size, Hour Color, Minute Color, Theme Color | Date, Notification, Controls, Battery Status | chữ: gsans_flex_width | font độc quyền | chưa có |
 | 42 | Oct24 | Pixel Growth Rotation | Clock Style, Style, Variation, Clock Size, Hour Color, Minute Color, Theme Color | Date, Notification, Controls, Battery Status | chữ: growth, rotation | – | chưa có |
 | 43 | Nov24 | MIUI Doodle ⭐ | Color 1, Color 2 | Date, Controls, Notification, Clock Size | chữ (font layout) | – | chưa có |
 | 44 | Dec24 | M3 Shapes Clock | Hour Style, Minute Style, Clock Style, Color 1, Color 2, Clock Size | – | chữ (font layout) | – | **Sỏi** (`PEBBLE`) |
 
 Font: không lấy file từ APK. Font của app mẫu có trên Google Fonts (Anton, Rubik, Lato, Bebas...) thì tải bản Google Fonts (OFL)
-về dùng (README › Thêm chủ đề mới bước 6), kiểm có đủ tiếng Việt trước. "Font độc quyền" (Apple iOS, Nothing NDot, Google Sans mà
-app mẫu nhúng) không có trên Google Fonts, và font thiếu tiếng Việt (Rubik), thì chọn font mở gần nhất trong app (`anton`,
-`big_shoulders_display`, `comfortaa`, `dancing_script`, `fraunces`, `jetbrains_mono`, `josefin_sans`, `plus_jakarta_sans`).
+về dùng (README › Thêm chủ đề mới bước 6), kiểm có đủ tiếng Việt trước; font có tên dành riêng trong OFL (Zalando) thì lấy bản tĩnh
+gốc của nhà làm font, không tự tách / cắt. Google Sans (và Google Sans Flex, Product Sans cùng thiết kế) nay có trên Google Fonts.
+"Font độc quyền" (Apple iOS, Nothing NDot) không có trên Google Fonts, và font thiếu tiếng Việt (Rubik), thì chọn font mở gần
+nhất trong app (`anton`, `big_shoulders_display`, `comfortaa`, `dancing_script`, `fraunces`, `google_sans`, `jetbrains_mono`,
+`josefin_sans`, `plus_jakarta_sans`, `zalando_sans_expanded`).
 
 ## Ô trong ảnh lưới đã có → chủ đề
 
@@ -119,11 +122,12 @@ Ghép theo tên, hình và tuỳ chọn; "chắc" là đã khớp bằng ảnh t
 1. ~~**38 · M3 Expressive**~~: đã làm thành chủ đề Thẻ (2026-10-17).
 2. ~~**34 · Long HyperOS**~~: đã làm thành chủ đề Tháp (2026-10-17).
 3. ~~**28 · Bullet List**~~: đã làm thành chủ đề Chuỗi (2026-10-17).
-4. **40 · iOS Fill Clock** ⭐ (Premium ở app mẫu): mặt kim với số lớn tô màu; vẽ tay, công sức trung bình.
+4. ~~**40 · iOS Fill Clock**~~ ⭐: đã làm thành chủ đề Vành (2026-10-18).
 
 Để sau: 33 Dual Timezone (cần control chọn múi giờ), 16 / 22 (cần ô nhập chữ), chủ đề giờ bằng chữ (ô "Twelve Twenty
 Seven", phải đổi số thành chữ cả vi + en), 6 Visualizer (cần quyền `RECORD_AUDIO`, phải hỏi trước), 8 / 9 / 11 / 14 / 21 (hiệu ứng, hạt, lật số: công sức
-lớn), 17 / 18 / 26 / 27 / 41 (cần chọn font mở thay font độc quyền).
+lớn), 17 / 26 / 27 (cần chọn font mở thay font độc quyền). 18 / 41 dùng Google Sans: font này nay có trên Google Fonts (OFL, Vành
+dùng bản Bold), Google Sans Flex cũng có, nên không còn vướng font.
 
 Không cần chụp ảnh chủ đề từ app mẫu: số đo lấy từ layout XML, code của chủ đề và thông số font trong APK
 (`tools/reference/README.md` bước 6); ảnh lưới ở trên chỉ để đối chiếu.

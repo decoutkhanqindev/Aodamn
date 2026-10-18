@@ -7,6 +7,23 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-10-18 – Chủ đề Vành
+
+Build được, lint không thêm cảnh báo (0 lỗi, 12 cảnh báo như trước), unit test pass (thêm test chặn Vành có lại khối đã bỏ), `tools/check-rules.sh` ra 0 vi phạm (38 rule), thư mục các chủ đề cũ không đổi dòng nào. Đã test trên máy.
+
+### Thêm
+
+- Chủ đề Vành (iOS Fill Clock của Muviz Edge, số đo lấy từ `IosFillClock` và layout `aug24_screen_layout` dịch ngược; mock duyệt trước khi code): mặt số kim phủ cả màn, vạch là tia từ tâm cắt trong dải khung chữ nhật sát mép (khung ngoài lùi 0,06 nửa cạnh ngắn / 0,03 nửa cạnh dài; vạch phút tới khung lùi 0,2 / 0,1, mờ 70 / 255; vạch giờ dài tới khung lùi 0,5 / 0,22, bỏ chỗ có số), bốn số 12 / 3 / 6 / 9 cỡ 0,14 cạnh ngắn căn giữa theo nét chữ, kim giờ / phút (đoạn mảnh + đoạn dày, bóng mờ đen 30%) quay 400ms theo chiều ngắn nhất khi sang phút mới, chấm tâm có vòng màu nhấn. Không có kim giây vì AOD cập nhật mỗi phút (app mẫu cũng ẩn ở chế độ tiết kiệm pin). Thứ + số ngày Google Sans Bold 20sp (tiếng Việt viết đủ "THỨ BẢY", tiếng Anh "SAT"), thời tiết cạnh ngày, nằm giữa số 12 và đầu kim phút; pin · thông báo (`AodStatusLine`) và trình phát gọn riêng (lùi · tên bài in hoa / nghệ sĩ mờ · tới, chạm tên bài để phát / dừng, rộng 184dp) giữa đầu kim và số 6, nên kim không đè lên chữ. Màn ngang mặt số vẫn phủ màn: không nhạc thì pin trái, ngày phải như app mẫu; có nhạc thì ngày + pin xếp dọc bên trái, trình phát bên phải.
+- Mặc định bắt mắt: đủ 60 vạch, số 12 / 3 / 6 / 9 màu `Cyan` (#80DEEA, màu mới: lime của app mẫu đã là màu Viên nang), kim / vạch / chữ GreyED. Tuỳ chọn gọn theo app mẫu: Đồng hồ (kiểu vạch: vạch phút / vạch giờ, màu chữ số, màu kim và vạch), Ngày (một màu cho cả thứ và số ngày), Pin & thông báo, Nhạc.
+- Vành chỉ có ngày, thời tiết, pin, thông báo, nhạc (`components`): ghi nhớ, sự kiện, nét vẽ, nội dung thông báo bỏ hẳn vì mặt số phủ màn chỉ chừa vùng nhỏ quanh kim.
+- Font Zalando Sans Expanded SemiBold (số, đúng font của app mẫu; bản tĩnh gốc của nhà làm font vì giấy phép có tên dành riêng "Zalando") và Google Sans Bold (chữ; app mẫu dùng Product Sans, không có trên Google Fonts, Google Sans cùng thiết kế, cắt còn Latin + tiếng Việt: 118 KB thay 2,4 MB). Cả hai là file TTF tĩnh không có trục variable, khai báo đúng một độ đậm, nên không dính lỗi máy Xiaomi thay font (2026-10-12); bút vẽ số chỉ đặt `typeface`. Giấy phép `licenses/ZalandoSans-OFL.txt`, `licenses/GoogleSans-OFL.txt`.
+- `tools/mockups/aod_landscape_mockups.py` có nhóm khung của Vành (hai kiểu vạch, bốn khung dọc, ba khung ngang; chữ đo bằng font thật, vẽ bằng font Google Fonts).
+
+### Thay đổi
+
+- Chỉ thêm, không đổi chủ đề đang có: mục `BEZEL` ở `AodThemeValue`, nhánh `when` ở `AodPortrait` / `AodLandscape` / `AodMediaControls`, màu `Cyan` và `BlackAlpha30` (bóng kim), `FontFamilyGoogleSans` / `FontFamilyZalandoSansExpanded`; `make_static_fonts.py` thêm hai họ font (chỉ sinh hai họ đó, file font cũ không đổi byte).
+- CLAUDE.md / README › Thêm chủ đề mới: màn ngang tự đánh giá riêng từng chủ đề cho cân, đầy màn (không rập khuôn thu nhỏ đồng hồ / chia cột), khối không đặt cân được thì bỏ hẳn; không nhồi khối / tuỳ chọn chỉ vì app hỗ trợ; font phải là file tĩnh đúng độ đậm (lỗi Xiaomi).
+
 ## [Chưa phát hành] – 2026-10-18 – Khung giờ và ngưỡng pin mặc định tắt
 
 ### Thay đổi

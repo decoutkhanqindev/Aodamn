@@ -74,9 +74,10 @@ bắt buộc (compiler không chặn hộ):
   phần như khối ở Tùy chỉnh (kiểu rồi màu của chính phần đó, không gom màu vào tab riêng), tab nào cũng có
   icon đặt lại riêng ở thanh tiêu đề panel (`AppEditorPanel(action)` + `AppEditorResetButton`), cả ở Tùy chỉnh.
   Chủ đề mới: số đo lấy từ dịch ngược app mẫu (không xin user ảnh chụp), mock dọc + ngang để user duyệt rồi mới code; thêm
-  các khối dùng chung hợp bố cục (điểm khác đối thủ), không mặc định bật hết, khối không hợp thì bỏ khỏi `components` và nêu
+  các khối dùng chung thật sự hợp bố cục (điểm khác đối thủ), không nhồi khối / tuỳ chọn chỉ vì app hỗ trợ, khối không hợp thì bỏ khỏi `components` và nêu
   lý do trong mock; khối đặt trong bố cục đặc trưng thì trông như dòng của chủ đề (không được thì chủ đề tự vẽ, vd ghi nhớ / sự kiện của
-  Chuỗi), màn ngang giữ dạng đặc trưng như màn dọc, sửa mock xong vẽ lại cả bản; không sửa / refactor code của chủ đề đang có (cả phần dùng
+  Chuỗi), màn ngang giữ dạng đặc trưng như màn dọc và tự đánh giá riêng từng chủ đề cho cân, đầy màn (không rập khuôn thu nhỏ đồng hồ
+  / chia 2–3 cột), khối không đặt cân được ở cả dọc lẫn ngang thì bỏ hẳn khỏi chủ đề, sửa mock xong vẽ lại cả bản; không sửa / refactor code của chủ đề đang có (cả phần dùng
   chung được), chỉ thêm nhánh `when` của chủ đề mới; code dùng chung chỉ sửa khi chủ đề mới cần, hỏi trước, chỉ thêm (mục enum / thuộc
   tính mới có mặc định cho đúng hành vi cũ), chủ đề đang chạy không được đổi gì (`git diff` thư mục chủ đề cũ trống, `AodThemeSpecTest`).
 

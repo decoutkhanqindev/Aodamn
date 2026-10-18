@@ -65,6 +65,16 @@ val FontFamilyAnton = FontFamily(
     Font(R.font.anton_regular, FontWeight.Normal),
 )
 
+// Ngày, pin và trình phát của Vành: Google Sans (bản mở của Product Sans mà app mẫu dùng), chỉ có bản đậm.
+val FontFamilyGoogleSans = FontFamily(
+    Font(R.font.google_sans_bold, FontWeight.Bold),
+)
+
+// Bốn số 12 / 3 / 6 / 9 của Vành (font của app mẫu), chỉ có một độ đậm.
+val FontFamilyZalandoSansExpanded = FontFamily(
+    Font(R.font.zalando_sans_expanded_semibold, FontWeight.SemiBold),
+)
+
 val FontFamilyJosefinSans = FontFamily(
     Font(R.font.josefin_sans_thin, FontWeight.Thin),
     Font(R.font.josefin_sans_light, FontWeight.Light),

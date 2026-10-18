@@ -1,5 +1,6 @@
 package com.decoutkhanqindev.custom_aod.presentation.model.aod.theme
 
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.component.AodComponentValue
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -41,6 +42,24 @@ class AodThemeSpecTest {
                 theme.spec.hasNotificationContent,
             )
         }
+    }
+
+    // Vành chỉ có các khối vừa vùng trống quanh kim (mock đã duyệt): ghi nhớ, sự kiện, nét vẽ, nội dung thông báo bỏ hẳn, không lẻn lại khi thêm
+    // khối dùng chung mới.
+    @Test
+    fun `bezel only has the blocks that fit around its hands`() {
+        val spec = AodThemeValue.BEZEL.spec
+        assertEquals(
+            setOf(
+                AodComponentValue.DATE,
+                AodComponentValue.BATTERY,
+                AodComponentValue.WEATHER,
+                AodComponentValue.NOTIFICATIONS,
+                AodComponentValue.MEDIA,
+            ),
+            spec.components,
+        )
+        assertEquals(false, spec.hasNotificationContent)
     }
 
     @Test
