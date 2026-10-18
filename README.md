@@ -386,7 +386,7 @@ thông báo ──▶ AodNotificationListener ──▶ NotificationStateManager
 | `presentation/components/aod/AodContent.kt` (+ `AodDetails`, `AodLandscapeLayout` (bố cục ngang chung), `AodBackdrop` cùng thư mục; khối dùng chung ở `block/`: `AodDate`, `AodExtras`, `AodNotifications`, `AodMediaControls`, `AodStatus`, `AodBlock`; `AppTimeFormat` ở `presentation/components/`) · `presentation/screens/aod/AodScreen.kt` · `state/` | Giao diện đồng hồ (4 mặt, ngày, thời tiết, sự kiện, ghi nhớ, hình vẽ, icon thông báo, pin, nhạc, gợi ý, viền sáng, ảnh nền, bố cục ngang) và phần nối với ViewModel                                                                                                                                                                                                                                                                                                                  |
 | `presentation/aod/AodNotificationListener.kt`                                                                                                                                                                                                       | Nhận thông báo từ hệ thống (khi đã cấp "Truy cập thông báo") và chuyển cho `NotificationStateManager`                                                                                                                                                                                                                                                                                                                                                                                             |
 | `presentation/navigation/MainNavDisplay.kt` · `MainDestinations.kt` | Main: `Scaffold` có thanh trên chung của tab (`MainTopBar`: tiêu đề theo tab, IAP, Share), `NavDisplay` của 3 tab (AOD, Viền sáng, Cài đặt) và thanh tab dưới 56dp (`AppEditorTab`: chỉ icon, tab đang chọn icon đặc và có tên), không ViewModel. Tab AOD là gốc: Back ở tab khác về tab AOD rồi mới thoát app |
-| `presentation/screens/aodtab/` | Tab AOD (MVI): cả tab là một `LazyVerticalGrid` 3 cột: công tắc AOD, thẻ "Giao diện của bạn" (AOD đang áp dụng, vẽ thu nhỏ bằng `AodThumbnail`, icon khối đang bật theo `CustomizeDraftUiModel.enabledBlockTabs()`, dòng số khối + nền; chạm để mở Customize) chiếm cả hàng, lưới chủ đề mỗi chủ đề một ô (mỗi mục chỉ xem trước kiểu mặc định của chủ đề (không theo cấu hình đã chỉnh): đồng hồ, ngày và khối chủ đề tự vẽ như trình phát nhạc của Sỏi, không có nền, thông báo, pin... của user; chạm để mở màn chủ đề), sheet và dòng cảnh báo khi thiếu quyền bắt buộc |
+| `presentation/screens/aodtab/` | Tab AOD (MVI): cả tab là một `LazyVerticalGrid` 3 cột: công tắc AOD, thẻ "Giao diện của bạn" (AOD đang áp dụng, vẽ thu nhỏ bằng `AodThumbnail`, icon khối đang bật theo `CustomizeDraftUiModel.enabledBlockTabs()`, dòng số khối + nền; chạm để mở Customize) chiếm cả hàng, lưới chủ đề mỗi chủ đề một ô (mỗi mục xem trước chủ đề theo cấu hình đã lưu, chưa chỉnh thì là kiểu mặc định: đồng hồ, ngày và khối chủ đề tự vẽ như trình phát nhạc của Sỏi, không có nền, thông báo, pin... của user; chạm để mở màn chủ đề), sheet và dòng cảnh báo khi thiếu quyền bắt buộc |
 | `presentation/model/aod/theme/` (+ `classic/`, `pebble/`, `jersey/`, `capsule/`, `card/` spec từng chủ đề, `component/` kiểu khối dùng chung) | Hệ chủ đề: `AodThemeValue` (danh sách, id lưu), `AodThemeSpec` (tab + thuộc tính) của từng chủ đề (`ClassicThemeSpec`, `PebbleThemeSpec`, `JerseyThemeSpec`, `CapsuleThemeSpec`, `CardThemeSpec`), thuộc tính `AodThemeOption` (lựa chọn / màu / khoảng số / bật tắt, lưu thành Int trong `AodThemeConfig`), hình khối `AodShapeValue` (hàm bán kính quanh tâm), khối chủ đề tự vẽ `AodBlockValue`, kiểu từng khối dùng chung `AodComponentSpec` / `AodComponentsUiModel`, đọc / ghi `aod_theme_configs` và `aod_component_styles` |
 | `presentation/screens/themeeditor/` | Màn chủ đề (MVI) dùng chung cho mọi chủ đề: xem trước riêng chủ đề: đồng hồ, ngày và khối chủ đề tự vẽ (Sửa / Áp dụng; chủ đề đang dùng thì "Tùy chỉnh" mở Customize), sửa theo tab của `AodThemeSpec` (mỗi tab một phần của chủ đề như khối ở Tùy chỉnh, icon đặt lại riêng ở thanh tiêu đề panel) với control dựng theo loại thuộc tính, hoàn tác / làm lại / đặt lại, Lưu |
 | `presentation/components/aod/theme/` (`AodThemeLayout`: `AodPortrait` / `AodLandscape` chọn bố cục theo chủ đề; `AodShapePath`; thanh gợn sóng `AodWaveTrack` của Sỏi và Thẻ; `classic/`, `pebble/`, `jersey/`, `capsule/`, `card/`, `tower/`, `chain/`) · `components/aod/AodThumbnail.kt` | Chọn phần vẽ theo chủ đề và phần vẽ riêng từng chủ đề, gồm cả bố cục màn ngang (đồng hồ Cổ điển; khối hình + trình phát của Sỏi; chữ số viền, ngày dọc của Số áo; viên nang, ngày in hoa, trình phát của Viên nang; thẻ, ô AM/PM, trình phát của Thẻ; hàng số cao hẹp, sáu kiểu tô, trình phát chạm tên bài của Tháp; viên thuốc khoét số, chuỗi dòng có chấm, trình phát của Chuỗi; dòng pin + thông báo dùng chung của các chủ đề này ở `block/AodStatusLine`), path của hình khối, AOD thu nhỏ |
@@ -760,9 +760,10 @@ chọn theo các khối đang có dữ liệu, dùng chung cho mọi chủ đề
     hồi "Truy cập thông báo": icon và nhạc biến mất, đồng hồ vẫn chạy.
 23a. Kiểu mặc định: bật đủ ngày, thời tiết, sự kiện, ghi nhớ, icon và nội dung thông báo, pin, nhạc (chủ đề Cổ điển) rồi
     khóa máy: các khối như mục "Kiểu mặc định của các khối", không có viền nào; cắm sạc thì pin tô Mint kèm tia sét, pin
-    ≤ 15% thì đỏ; bật đèn pin bằng thao tác thì icon đèn pin nằm cạnh pin. Lưới chủ đề ở tab AOD: chỉ kiểu mặc định của
-    từng chủ đề (đồng hồ, ngày, trình phát nhạc của Sỏi; không theo màu / font đã chỉnh, không có ảnh nền, thông báo,
-    pin... đã bật; thẻ "Giao diện của bạn" mới đủ), không khung thẻ, tên căn giữa, chủ đề đang dùng viền mint và có nhãn
+    ≤ 15% thì đỏ; bật đèn pin bằng thao tác thì icon đèn pin nằm cạnh pin. Lưới chủ đề ở tab AOD: mỗi chủ đề vẽ theo cấu hình đã
+    lưu (chưa chỉnh thì là kiểu mặc định bắt mắt của chủ đề), đúng như khi mở màn chủ đề (đồng hồ, ngày, khối chủ đề tự vẽ;
+    không có ảnh nền, thông báo, pin... đã bật; thẻ "Giao diện của bạn" mới đủ); sửa một chủ đề, Lưu, quay lại tab AOD thì
+    thẻ của nó đổi theo, không khung thẻ, tên căn giữa, chủ đề đang dùng viền mint và có nhãn
     "Đang dùng" trên ảnh.
 23b. Kiểu từng khối: Tùy chỉnh › từng tab Ngày, Pin, Thời tiết, Sự kiện, Ghi nhớ, Thông báo, Nhạc, Nét vẽ: ngoài công tắc
     còn có Font (trừ nét vẽ), Cỡ, Màu; mở tab nào thì khung xem trước luôn có khối đó (dữ liệu mẫu nếu đang tắt hoặc trống); đổi từng cái, khung xem trước đổi theo (kéo màu thì xem trước theo tay, thả tay mới
@@ -800,7 +801,8 @@ chọn theo các khối đang có dữ liệu, dùng chung cho mọi chủ đề
 25e. Căn giữa: khóa máy với từng chủ đề (Cổ điển, Sỏi, Số áo): cả cụm đồng hồ + thông tin nằm giữa màn hình (khoảng trống
     trên và dưới như nhau, như khung xem trước), đứng yên qua các phút; dòng "Chạm 2 lần để thoát" sát đáy màn hình rồi
     mờ đi, không đẩy cụm lên.
-25a. Chủ đề Sỏi: tab AOD › Chủ đề › Sỏi: xem trước đúng hai khối giờ / phút và dòng ngày in hoa; Sửa, đổi hình và kiểu
+25a. Chủ đề Sỏi: tab AOD › Chủ đề › Sỏi: xem trước đúng hai khối giờ / phút (giờ khối bánh quy đặc tím, phút khối hoa viền
+    hồng) và dòng ngày in hoa lavender, nút phát hồng; Sửa, đổi hình và kiểu
     (đặc / viền) của từng khối, kéo màu khối và màu số (xem trước theo tay, thả tay mới thành một bước hoàn tác), hoàn
     tác / làm lại / đặt lại, rồi Lưu. Back khi còn thay đổi chưa lưu thì hỏi bỏ thay đổi. Áp dụng: vẫn ở màn chủ đề,
     thanh trên hiện "Đang dùng", nút đổi thành "Tùy chỉnh"; bấm thì mở Tùy chỉnh (nơi có AOD đầy đủ). Khung xem
@@ -815,7 +817,7 @@ chọn theo các khối đang có dữ liệu, dùng chung cho mọi chủ đề
     dùng trình phát chung); tab Nhạc đổi hình nút phát và kiểu thanh tiến trình. Áp dụng, phát nhạc rồi khóa máy: nút phát nằm trong khối màu khối, xoay khi bấm Phát / Tạm dừng;
     thanh chạy đúng vị trí bài (so với app nhạc), gợn sóng lúc phát, duỗi thẳng lúc dừng; tua trong app nhạc thì thanh
     nhảy theo; chuyển bài thì thanh về đầu. Radio / livestream không có độ dài: không có thanh. Kiểu Ẩn: không có thanh.
-25c. Chủ đề Số áo: tab AOD › Chủ đề › Số áo: hai hàng chữ số rất cao chỉ có nét viền (giờ tím nhạt, phút trắng), nét
+25c. Chủ đề Số áo: tab AOD › Chủ đề › Số áo: hai hàng chữ số rất cao chỉ có nét viền (giờ cam, phút trắng, ngày cam), nét
     dày đều, số 1 có cờ vuông, mỗi số một ô rộng cố định; hai hàng nằm giữa màn hình; ngày "10 / 12" (tiếng Việt "12 / 10") xếp
     dọc treo bên phải hàng giờ và không đẩy số (bật / tắt ngày: số đứng yên), dưới là thứ in hoa xoay dọc trong viên thuốc
     viền; cỡ chữ ngày và viên thuốc nhỏ như app mẫu (số cao khoảng 3,6% chiều cao hàng số). Thử các giờ có số 1 như 12:15,
@@ -829,7 +831,7 @@ chọn theo các khối đang có dữ liệu, dùng chung cho mọi chủ đề
     không có công tắc nội dung. Bật thời tiết, sự kiện, ghi nhớ,
     nét vẽ, nhạc: các khối nằm dưới dòng pin theo kiểu / font / cỡ / màu chọn ở tab của từng khối, hàng số nhỏ lại cho cả
     cột vừa màn hình (ngày và dòng pin giữ cỡ, số vẫn giữa màn hình); tắt hết thì số to lại như cũ, có animation.
-25g. Chủ đề Viên nang: tab AOD › Chủ đề › Viên nang: giờ:phút chữ rất đậm trong viên nang xám tối (kiểu đặc), hai chấm
+25g. Chủ đề Viên nang: tab AOD › Chủ đề › Viên nang: giờ:phút chữ rất đậm xanh chanh trong viên nang viền xanh chanh (kiểu viền; đổi Kiểu sang Đặc thì viên tô nhạt), hai chấm
     tròn, ngày in hoa đậm ngay dưới ("THỨ TƯ • 14 THG 10"), trình phát mẫu (tên bài, nghệ sĩ xám, lùi · nút phát tròn đặc ·
     tới, thanh dày tách đôi), dòng "pin 42% • icon" dưới cùng. Đổi giờ (vd 11:11, 12:00, 09:04): viên không đổi bề ngang,
     số giữa viên. Sửa: tab Đồng hồ (Kiểu Đặc / Viền: viền là nét mảnh màu viên; Cỡ 60–150%; màu Chữ số, màu Viên), tab
@@ -837,7 +839,7 @@ chọn theo các khối đang có dữ liệu, dùng chung cho mọi chủ đề
     bật thời tiết, sự kiện, ghi nhớ, nét vẽ: các khối nằm giữa ngày và nhạc; cắm sạc: pin có tia sét. Xoay ngang (nút ở
     Tùy chỉnh / Luôn xoay ngang): viên nang + ngày + dòng pin cỡ như màn dọc, bố cục theo các khối như Cổ điển (chỉ thời
     tiết: thời tiết cạnh ngày; nhạc: viên nang | trình phát; nhạc + khối khác: ba cột).
-25h. Chủ đề Thẻ: tab AOD › Chủ đề › Thẻ: số giờ rất cao và hẹp màu xanh xám, bên phải là phút nhỏ bằng nửa (ngang đỉnh số
+25h. Chủ đề Thẻ: tab AOD › Chủ đề › Thẻ: số giờ rất cao và hẹp màu xanh dương (thẻ nền xanh dương nhạt), bên phải là phút nhỏ bằng nửa (ngang đỉnh số
     giờ) trên ô AM/PM tô nhạt kéo xuống tới chân số giờ, cả cụm trong thẻ bo góc nền mờ; ngày in hoa đậm dưới thẻ ("THỨ BẢY
     • 17 THG 10"), trình phát (tên bài, nghệ sĩ, lùi · nút phát tròn đặc · tới, thanh gợn sóng), dòng "pin 42% • icon" dưới
     cùng. Ô ghi AM / PM bằng tiếng Anh cả khi app tiếng Việt (như app mẫu); máy dùng 24 giờ thì ô ghi "HRS". Đổi giờ (vd 11:11,
@@ -849,8 +851,8 @@ chọn theo các khối đang có dữ liệu, dùng chung cho mọi chủ đề
     nhạc phát: thanh gợn sóng, dừng: thanh thẳng. Xoay ngang: thẻ (cỡ 0,9 màn dọc) + ngày + dòng pin, bố cục theo các khối
     như Cổ điển (chỉ thời tiết: thời tiết cạnh ngày; nhạc: thẻ | trình phát; nhạc + khối khác: ba cột, thẻ không chạm vạch).
     Sỏi: thanh gợn sóng giữ y như trước (dùng chung `AodWaveTrack`).
-25i. Chủ đề Tháp: tab AOD › Chủ đề › Tháp: bốn chữ số rất cao và hẹp một hàng sát đỉnh màn hình, chỉ có nét viền mảnh (giờ
-    trắng, phút tím nhạt), dưới số là ngày in hoa giãn chữ ("THỨ BẢY / 17 THG 10"); trình phát (lùi · tên bài, nghệ sĩ giãn chữ ·
+25i. Chủ đề Tháp: tab AOD › Chủ đề › Tháp: bốn chữ số rất cao và hẹp một hàng sát đỉnh màn hình, kiểu nhạt dần xuống (giờ
+    trắng, phút tím nhạt; Kiểu › Viền thì chỉ nét viền mảnh), dưới số là ngày in hoa giãn chữ ("THỨ BẢY / 17 THG 10"); trình phát (lùi · tên bài, nghệ sĩ giãn chữ ·
     tới, thanh mảnh) và dòng "pin 72% • icon" neo ở khoảng 4/5 phần dưới màn hình. Đổi giờ (vd 11:11, 10:08, 21:59): hàng số
     không đổi bề ngang, phút đổi thì chỉ số đó mờ chéo trong ô. Sửa: tab Đồng hồ (Kiểu số: Viền / Nhạt dần xuống / Nhạt dần
     lên / Đặc / Giờ đặc / Phút đặc; Cỡ 80–110%; màu Giờ, màu Phút), tab Ngày, tab Nhạc, tab Pin & thông báo. Tùy chỉnh khi
@@ -859,7 +861,7 @@ chọn theo các khối đang có dữ liệu, dùng chung cho mọi chủ đề
     ngày. Nhạc: chạm tên bài là phát / dừng (dừng thì tên bài mờ đi, TalkBack đọc "Phát" / "Tạm dừng"), lùi / tới ở hai bên.
     Xoay ngang: hàng số + ngày + dòng pin, bố cục theo các khối như Cổ điển. Các chủ đề khác (Cổ điển, Sỏi, Số áo, Viên nang,
     Thẻ) không đổi gì.
-25j. Chủ đề Chuỗi: tab AOD › Chủ đề › Chuỗi: giờ trong viên thuốc xám sáng sát lề trái, chữ số khoét rỗng (đặt ảnh nền
+25j. Chủ đề Chuỗi: tab AOD › Chủ đề › Chuỗi: giờ trong viên thuốc san hô sát lề trái (trình phát cũng san hô), chữ số khoét rỗng (đặt ảnh nền
     thì thấy ảnh qua chữ số); dưới là chuỗi dòng có chấm nối nhau bằng vạch mảnh: "17 THÁNG 10, 2026" / "THỨ BẢY", "PIN 72%"
     / "KHÔNG SẠC" (cắm sạc: "ĐANG SẠC", đầy: "ĐÃ SẠC ĐẦY"), icon thông báo; dòng cuối không có vạch. Đổi giờ (vd 10:59 →
     11:00, 11:11): viên thuốc co giãn theo chữ có animation, số đổi thì mờ chéo, số giữ nguyên thì không nháy. Sửa: tab Đồng

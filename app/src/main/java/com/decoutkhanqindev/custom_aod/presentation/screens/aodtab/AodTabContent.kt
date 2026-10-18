@@ -98,6 +98,7 @@ fun AodTabContent(
 
                 aodTabThemesSection(
                     activeTheme = state.activeTheme,
+                    themeConfigs = state.themeConfigs,
                     onIntent = onIntent,
                 )
             }

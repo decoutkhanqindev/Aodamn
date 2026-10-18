@@ -10,9 +10,8 @@ import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeSpec
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeTab
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.pebble.AodTileStyleValue
 import com.decoutkhanqindev.custom_aod.presentation.theme.FontFamilyPlusJakartaSans
-import com.decoutkhanqindev.custom_aod.presentation.theme.Frost
-import com.decoutkhanqindev.custom_aod.presentation.theme.GreyD0
-import com.decoutkhanqindev.custom_aod.presentation.theme.GreyE0
+import com.decoutkhanqindev.custom_aod.presentation.theme.GreyED
+import com.decoutkhanqindev.custom_aod.presentation.theme.Lime
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.collections.immutable.toImmutableList
@@ -25,12 +24,12 @@ object CapsuleThemeSpec : AodThemeSpec {
     // Font cố định của chủ đề: chữ số ExtraBold, ngày Bold, trình phát và dòng trạng thái.
     val Font: FontFamily = FontFamilyPlusJakartaSans
 
-    // Đặc: viên tô màu viên pha nhạt (xám tối như ảnh mẫu); viền: nét màu viên.
+    // Đặc: viên tô màu viên pha nhạt (xám tối như ảnh mẫu); viền: nét màu viên. Mặc định viền xanh chanh như thẻ chủ đề trong lưới của app mẫu.
     val Style = AodChoiceOption(
         key = "capsule_style",
         labelRes = R.string.theme_opt_tile_style,
         entries = AodTileStyleValue.entries.toImmutableList(),
-        default = AodTileStyleValue.FILLED,
+        default = AodTileStyleValue.OUTLINE,
     )
     val Size = AodRangeOption(
         key = "size",
@@ -39,13 +38,13 @@ object CapsuleThemeSpec : AodThemeSpec {
         step = 10,
         default = 100,
     )
-    val DigitColor = AodColorOption(key = "digit_color", labelRes = R.string.theme_color_digits, default = Frost)
-    val CapsuleColor = AodColorOption(key = "capsule_color", labelRes = R.string.theme_color_capsule, default = GreyD0)
-    val DateColor = AodColorOption(key = "date_color", labelRes = R.string.theme_color_date, default = GreyE0)
+    val DigitColor = AodColorOption(key = "digit_color", labelRes = R.string.theme_color_digits, default = Lime)
+    val CapsuleColor = AodColorOption(key = "capsule_color", labelRes = R.string.theme_color_capsule, default = Lime)
+    val DateColor = AodColorOption(key = "date_color", labelRes = R.string.theme_color_date, default = GreyED)
 
     // Tên bài, nút phát và phần đã nghe của thanh tiến trình; nghệ sĩ, nút lùi / tới giữ xám.
-    val MediaColor = AodColorOption(key = "media_color", labelRes = R.string.theme_color_media, default = Frost)
-    val StatusColor = AodColorOption(key = "status_color", labelRes = R.string.theme_color_status, default = GreyE0)
+    val MediaColor = AodColorOption(key = "media_color", labelRes = R.string.theme_color_media, default = Lime)
+    val StatusColor = AodColorOption(key = "status_color", labelRes = R.string.theme_color_status, default = GreyED)
 
     // Mỗi khối chủ đề tự vẽ (ownBlocks) có tab ở đây: Tùy chỉnh › Ngày / Pin / Thông báo / Nhạc dẫn sang màn chủ đề.
     override val tabs = persistentListOf(

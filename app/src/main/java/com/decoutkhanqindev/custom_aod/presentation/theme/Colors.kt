@@ -21,13 +21,13 @@ val Grey6E = Color(0xFF6E6E6E)
 val Grey5A = Color(0xFF5A5A5A)
 val Grey3A = Color(0xFF3A3A3A)
 
-// Màu mặc định của chủ đề Viên nang đo trên ảnh mẫu: chữ số xám ánh xanh lạnh, viên nang, ngày.
-val Frost = Color(0xFFC8D8D8)
-val GreyD0 = Color(0xFFD0D0D0)
+// Màu nhấn mặc định của chủ đề (thẻ ở lưới chủ đề): mỗi chủ đề một màu để lưới không trùng nhau. Lime đo trên thẻ chủ đề trong lưới của app
+// mẫu Viên nang; GreyE0 là chữ phụ của Chuỗi.
+val Lime = Color(0xFFEAFC82)
+val Coral = Color(0xFFFF8B7B)
 val GreyE0 = Color(0xFFE0E0E0)
 
-// Màu mặc định của chủ đề Thẻ lấy từ app mẫu (dịch ngược): số giờ xanh xám, phút / AM-PM / ngày xám sáng.
-val BlueGreyB0 = Color(0xFFB0BEC5)
+// Chữ phụ của chủ đề Thẻ lấy từ app mẫu (dịch ngược): phút / AM-PM / ngày xám sáng.
 val GreyE4 = Color(0xFFE4E4E4)
 
 // Ba màu trung tính mặc định của Material 3 (bản tối) mà app vẫn dùng, giữ đúng giá trị để giao diện không đổi.

@@ -7,6 +7,15 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-10-18 – Kiểu mặc định bắt mắt cho mọi chủ đề, lưới chủ đề theo cấu hình đã lưu
+
+Build được, lint không thêm cảnh báo, unit test pass, `tools/check-rules.sh` ra 0 vi phạm. Chưa test trên máy.
+
+### Thay đổi
+
+- Mặc định của cả 7 chủ đề đổi sang kiểu bắt mắt nhất, mỗi chủ đề một màu nhấn để lưới không trùng: Cổ điển số xếp chồng, giờ mint, phút trắng; Sỏi giờ khối bánh quy đặc tím, phút khối hoa viền hồng, ngày lavender, nhạc hồng, nút phát bánh quy; Số áo giờ và ngày cam; Viên nang kiểu viền, chữ số / viên / nhạc xanh chanh (`Lime`, đo trên thẻ chủ đề trong lưới của app mẫu), ngày và dòng pin trắng; Thẻ giờ và thẻ xanh dương; Tháp kiểu nhạt dần xuống; Chuỗi viên thuốc và trình phát san hô (`Coral`). Chỉ đổi giá trị mặc định, phần vẽ giữ nguyên; thẻ chủ đề, màn chủ đề, Đặt lại và AOD sau khi áp dụng cùng một kiểu. Bỏ `Frost`, `GreyD0`, `BlueGreyB0` (không còn dùng).
+- Lưới chủ đề ở tab AOD vẽ mỗi chủ đề theo cấu hình đã lưu (chưa chỉnh thì là mặc định), đúng như khi mở màn chủ đề; đọc lại mỗi lần tab AOD resume (`AodTabState.themeConfigs`).
+
 ## [Chưa phát hành] – 2026-10-17 – Chủ đề Chuỗi
 
 Build được, lint không thêm cảnh báo, unit test pass (thêm test chặn chủ đề cũ đổi khối tự vẽ / nội dung thông báo), `tools/check-rules.sh` ra 0 vi phạm (38 rule), thư mục các chủ đề cũ không đổi dòng nào. Đã test trên máy.

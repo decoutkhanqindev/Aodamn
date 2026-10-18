@@ -41,6 +41,7 @@ import com.decoutkhanqindev.custom_aod.presentation.components.AppBadge
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.AodThumbnail
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.rememberAodPreview
 import com.decoutkhanqindev.custom_aod.presentation.components.onClick
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeConfig
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeValue
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.toThemePreviewDraft
@@ -53,15 +54,18 @@ import com.decoutkhanqindev.custom_aod.presentation.theme.RoundedCornerShape16dp
 import com.decoutkhanqindev.custom_aod.presentation.theme.Theme
 import com.decoutkhanqindev.custom_aod.presentation.theme.TitleLarge
 import com.decoutkhanqindev.custom_aod.presentation.theme.TitleMedium
+import kotlinx.collections.immutable.ImmutableMap
+import kotlinx.collections.immutable.persistentMapOf
 
 // Chủ đề mặc định không nằm trong lưới: quay về nó bằng icon đặt lại ở tiêu đề.
 private val ListedThemes = AodThemeValue.entries.filter { theme -> theme != AodThemeValue.DEFAULT }
 
-// Lưới chủ đề trong LazyVerticalGrid của tab AOD: tiêu đề chiếm cả hàng, mỗi chủ đề một ô. Mỗi mục chỉ xem trước kiểu mặc định của chủ
-// đề (không theo cấu hình user đã chỉnh; đồng hồ, ngày, khối chủ đề tự vẽ; không nền, thông báo, pin... của user) với tên căn giữa, không
-// khung thẻ; chủ đề đang dùng viền mint và có nhãn "Đang dùng" phủ trên ảnh.
+// Lưới chủ đề trong LazyVerticalGrid của tab AOD: tiêu đề chiếm cả hàng, mỗi chủ đề một ô. Mỗi mục xem trước chủ đề theo cấu hình đã lưu
+// (chưa chỉnh thì là kiểu mặc định bắt mắt của chủ đề), đúng như khi mở màn chủ đề: đồng hồ, ngày, khối chủ đề tự vẽ; không nền, thông báo,
+// pin... của user; tên căn giữa, không khung thẻ; chủ đề đang dùng viền mint và có nhãn "Đang dùng" phủ trên ảnh.
 fun LazyGridScope.aodTabThemesSection(
     activeTheme: AodThemeValue,
+    themeConfigs: ImmutableMap<AodThemeValue, AodThemeConfig>,
     onIntent: (AodTabIntent) -> Unit,
 ) {
     item(
@@ -83,6 +87,7 @@ fun LazyGridScope.aodTabThemesSection(
     ) { theme ->
         ThemeCard(
             theme = theme,
+            config = themeConfigs[theme] ?: AodThemeConfig(),
             isActive = theme == activeTheme,
             onClick = { onIntent(AodTabIntent.OpenTheme(theme)) },
         )
@@ -132,11 +137,12 @@ private fun ThemesHeader(
 @Composable
 private fun ThemeCard(
     theme: AodThemeValue,
+    config: AodThemeConfig,
     isActive: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val preview = rememberAodPreview(draft = remember(theme) { AodThemeUiModel(value = theme).toThemePreviewDraft() })
+    val preview = rememberAodPreview(draft = remember(theme, config) { AodThemeUiModel(value = theme, config = config).toThemePreviewDraft() })
 
     val borderColor = animateColorAsState(
         targetValue = if (isActive) Mint else NeutralVariant30,
@@ -208,6 +214,7 @@ private fun AodTabThemesSectionPreview() {
         ) {
             aodTabThemesSection(
                 activeTheme = AodThemeValue.CLASSIC,
+                themeConfigs = persistentMapOf(),
                 onIntent = {},
             )
         }

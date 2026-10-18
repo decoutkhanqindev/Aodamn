@@ -30,7 +30,8 @@ object TowerThemeSpec : AodThemeSpec {
         key = "digit_style",
         labelRes = R.string.theme_opt_digit_style,
         entries = AodTowerStyleValue.entries.toImmutableList(),
-        default = AodTowerStyleValue.OUTLINE,
+        // Mặc định nhạt dần xuống: hàng số cao trông nổi bật nhất trên thẻ chủ đề.
+        default = AodTowerStyleValue.FADE_DOWN,
     )
 
     // Dải cỡ như app mẫu (80–110%).

@@ -8,6 +8,7 @@ import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodRangeOpti
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeSpec
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeTab
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.component.AodComponentValue
+import com.decoutkhanqindev.custom_aod.presentation.theme.Coral
 import com.decoutkhanqindev.custom_aod.presentation.theme.FontFamilyAnton
 import com.decoutkhanqindev.custom_aod.presentation.theme.FontFamilyPlusJakartaSans
 import com.decoutkhanqindev.custom_aod.presentation.theme.GreyE0
@@ -33,7 +34,8 @@ object ChainThemeSpec : AodThemeSpec {
         step = 10,
         default = 100,
     )
-    val ClockColor = AodColorOption(key = "clock_color", labelRes = R.string.theme_color_clock, default = GreyE0)
+    // Viên thuốc và trình phát mặc định san hô cho thẻ chủ đề bắt mắt, các dòng trong chuỗi giữ xám sáng.
+    val ClockColor = AodColorOption(key = "clock_color", labelRes = R.string.theme_color_clock, default = Coral)
     val DateColor = AodColorOption(key = "date_color", labelRes = R.string.theme_color_date, default = GreyE0)
     val BatteryColor = AodColorOption(key = "battery_color", labelRes = R.string.theme_color_battery, default = GreyE0)
     val NotificationsColor = AodColorOption(key = "notifications_color", labelRes = R.string.theme_color_notifications, default = GreyE0)
@@ -41,7 +43,7 @@ object ChainThemeSpec : AodThemeSpec {
     val EventsColor = AodColorOption(key = "events_color", labelRes = R.string.theme_color_events, default = GreyE0)
 
     // Tên bài, nghệ sĩ, các nút và thanh tiến trình.
-    val MediaColor = AodColorOption(key = "media_color", labelRes = R.string.theme_color_media, default = GreyE0)
+    val MediaColor = AodColorOption(key = "media_color", labelRes = R.string.theme_color_media, default = Coral)
 
     // Mỗi khối chủ đề tự vẽ (ownBlocks) có tab ở đây, theo thứ tự trong chuỗi: Tùy chỉnh › Ngày / Pin / Thông báo / Ghi nhớ / Sự kiện / Nhạc dẫn
     // sang màn chủ đề.

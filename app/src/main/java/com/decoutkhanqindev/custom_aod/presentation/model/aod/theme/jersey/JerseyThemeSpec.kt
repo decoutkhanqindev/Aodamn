@@ -9,7 +9,7 @@ import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeSpec
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeTab
 import com.decoutkhanqindev.custom_aod.presentation.theme.FontFamilyPlusJakartaSans
 import com.decoutkhanqindev.custom_aod.presentation.theme.GreyED
-import com.decoutkhanqindev.custom_aod.presentation.theme.Lavender
+import com.decoutkhanqindev.custom_aod.presentation.theme.Orange
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentSetOf
 
@@ -28,9 +28,10 @@ object JerseyThemeSpec : AodThemeSpec {
         step = 10,
         default = 100,
     )
-    val HourColor = AodColorOption(key = "hour_color", labelRes = R.string.theme_color_hour, default = Lavender)
+    // Mặc định giờ và ngày cam như áo đấu, phút trắng: thẻ chủ đề bắt mắt.
+    val HourColor = AodColorOption(key = "hour_color", labelRes = R.string.theme_color_hour, default = Orange)
     val MinuteColor = AodColorOption(key = "minute_color", labelRes = R.string.theme_color_minute, default = GreyED)
-    val DateColor = AodColorOption(key = "date_color", labelRes = R.string.theme_color_date, default = Lavender)
+    val DateColor = AodColorOption(key = "date_color", labelRes = R.string.theme_color_date, default = Orange)
     val StatusColor = AodColorOption(key = "status_color", labelRes = R.string.theme_color_status, default = GreyED)
 
     // Mỗi khối chủ đề tự vẽ (ownBlocks) có tab ở đây: Tùy chỉnh › Ngày / Pin / Thông báo dẫn sang màn chủ đề.

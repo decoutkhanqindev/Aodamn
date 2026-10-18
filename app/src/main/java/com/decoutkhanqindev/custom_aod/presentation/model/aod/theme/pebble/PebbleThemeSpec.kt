@@ -12,7 +12,8 @@ import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeTab
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodToggleOption
 import com.decoutkhanqindev.custom_aod.presentation.theme.Black
 import com.decoutkhanqindev.custom_aod.presentation.theme.FontFamilyPlusJakartaSans
-import com.decoutkhanqindev.custom_aod.presentation.theme.GreyB4
+import com.decoutkhanqindev.custom_aod.presentation.theme.Lavender
+import com.decoutkhanqindev.custom_aod.presentation.theme.Pink
 import com.decoutkhanqindev.custom_aod.presentation.theme.Purple
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentSetOf
@@ -21,9 +22,9 @@ import kotlinx.collections.immutable.toImmutableList
 // Chủ đề Sỏi: giờ và phút mỗi số một khối hình mềm (8 hình, đặc hoặc viền), dòng ngày ngay dưới, số đổi có animation; trình phát
 // nhạc riêng (nút phát trong khối hình, thanh tiến trình gợn sóng). Khối, chữ số, ngày và nhạc mỗi phần một màu.
 object PebbleThemeSpec : AodThemeSpec {
-    val HourShape = shapeOption(key = "hour_shape", default = AodShapeValue.SQUIRCLE)
+    val HourShape = shapeOption(key = "hour_shape", default = AodShapeValue.COOKIE)
     val HourStyle = styleOption(key = "hour_style", default = AodTileStyleValue.FILLED)
-    val MinuteShape = shapeOption(key = "minute_shape", default = AodShapeValue.CLOVER)
+    val MinuteShape = shapeOption(key = "minute_shape", default = AodShapeValue.FLOWER)
     val MinuteStyle = styleOption(key = "minute_style", default = AodTileStyleValue.OUTLINE)
 
     // Font cố định của chủ đề (không cho chọn): chữ số, ngày và trình phát. Khoá "font" đã lưu ở bản cũ bị bỏ qua.
@@ -37,13 +38,14 @@ object PebbleThemeSpec : AodThemeSpec {
     )
     val Stacked = AodToggleOption(key = "stacked", labelRes = R.string.theme_opt_stacked, default = false)
 
-    // Màu từng phần: số trên khối đặc mặc định đen như khoét lỗ, trên khối viền cùng màu khối.
+    // Màu từng phần: số trên khối đặc mặc định đen như khoét lỗ, trên khối viền cùng màu khối. Mặc định hai tông tím + hồng (giờ tím, phút
+    // và nhạc hồng, ngày lavender) cho thẻ chủ đề bắt mắt.
     val HourTileColor = AodColorOption(key = "hour_tile_color", labelRes = R.string.theme_color_hour_tile, default = Purple)
     val HourDigitColor = AodColorOption(key = "hour_digit_color", labelRes = R.string.theme_color_hour_digits, default = Black)
-    val MinuteTileColor = AodColorOption(key = "minute_tile_color", labelRes = R.string.theme_color_minute_tile, default = Purple)
-    val MinuteDigitColor = AodColorOption(key = "minute_digit_color", labelRes = R.string.theme_color_minute_digits, default = Purple)
-    val DateColor = AodColorOption(key = "date_color", labelRes = R.string.theme_color_date, default = GreyB4)
-    val MediaColor = AodColorOption(key = "media_color", labelRes = R.string.theme_color_media, default = Purple)
+    val MinuteTileColor = AodColorOption(key = "minute_tile_color", labelRes = R.string.theme_color_minute_tile, default = Pink)
+    val MinuteDigitColor = AodColorOption(key = "minute_digit_color", labelRes = R.string.theme_color_minute_digits, default = Pink)
+    val DateColor = AodColorOption(key = "date_color", labelRes = R.string.theme_color_date, default = Lavender)
+    val MediaColor = AodColorOption(key = "media_color", labelRes = R.string.theme_color_media, default = Pink)
     val DateStyle = AodChoiceOption(
         key = "date_style",
         labelRes = R.string.theme_opt_date_style,
@@ -56,7 +58,7 @@ object PebbleThemeSpec : AodThemeSpec {
         entries = AodTransitionValue.entries.toImmutableList(),
         default = AodTransitionValue.SLIDE,
     )
-    val PlayShape = shapeOption(key = "play_shape", labelRes = R.string.theme_opt_play_shape, default = AodShapeValue.PEBBLE)
+    val PlayShape = shapeOption(key = "play_shape", labelRes = R.string.theme_opt_play_shape, default = AodShapeValue.COOKIE)
     val ProgressStyle = AodChoiceOption(
         key = "progress_style",
         labelRes = R.string.theme_opt_progress_style,

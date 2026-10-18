@@ -6,6 +6,7 @@ import com.decoutkhanqindev.custom_aod.data.local.datastore.DataStoreManager
 import com.decoutkhanqindev.custom_aod.data.local.image.AodImageManager
 import com.decoutkhanqindev.custom_aod.presentation.base.BaseViewModel
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeValue
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.observeAodThemeConfigs
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.loadCustomizeDraft
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionValue
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.requiredAodPermissions
@@ -16,6 +17,7 @@ import com.decoutkhanqindev.custom_aod.presentation.screens.aodtab.state.AodTabS
 import com.decoutkhanqindev.custom_aod.utils.collectCatching
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -71,12 +73,13 @@ class AodTabViewModel(
     }
 
     // Giao diện đổi ở màn Customize và màn chủ đề, quyền đổi ở app Cài đặt (mục cần quyền chỉ hiện khi có quyền), nên đọc lại mỗi lần
-    // màn hình resume.
+    // màn hình resume; cùng lúc đọc lại cấu hình từng chủ đề cho lưới chủ đề (vừa sửa ở màn chủ đề thì thẻ đổi theo).
     private fun refreshDesign() {
         designJob?.cancel()
         designJob = viewModelScope.launch {
             val design = dataStoreManager.loadCustomizeDraft(aodImageManager, permissionManager)
-            updateState { copy(design = design) }
+            val themeConfigs = dataStoreManager.observeAodThemeConfigs().first()
+            updateState { copy(design = design, themeConfigs = themeConfigs) }
         }
     }
 

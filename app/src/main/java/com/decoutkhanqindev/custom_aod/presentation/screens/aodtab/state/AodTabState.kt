@@ -1,18 +1,23 @@
 package com.decoutkhanqindev.custom_aod.presentation.screens.aodtab.state
 
 import androidx.compose.runtime.Immutable
+import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeConfig
 import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeValue
 import com.decoutkhanqindev.custom_aod.presentation.model.customize.CustomizeDraftUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.hasRequiredPermissions
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentMapOf
 
 @Immutable
 data class AodTabState(
     val isLoading: Boolean = true,
     val isAodEnabled: Boolean = false,
     val design: CustomizeDraftUiModel = CustomizeDraftUiModel(),
+    // Cấu hình đã lưu của từng chủ đề cho lưới chủ đề (chủ đề chưa chỉnh không có mục: lấy mặc định).
+    val themeConfigs: ImmutableMap<AodThemeValue, AodThemeConfig> = persistentMapOf(),
     val isThemeResetConfirmVisible: Boolean = false,
     val permission: AodTabPermissionState = AodTabPermissionState(),
 ) {
