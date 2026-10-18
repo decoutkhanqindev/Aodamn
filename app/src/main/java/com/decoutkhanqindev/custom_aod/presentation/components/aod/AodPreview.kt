@@ -15,14 +15,16 @@ fun rememberAodPreview(
     draft: CustomizeDraftUiModel,
     isGlowing: Boolean = false,
     shownComponent: AodComponentValue? = null,
+    isStill: Boolean = false,
 ): AodState {
     val samples = rememberAodPreviewSamples()
 
-    return remember(draft, isGlowing, shownComponent, samples) {
+    return remember(draft, isGlowing, shownComponent, isStill, samples) {
         draft.toPreviewAodState(
             isGlowing = isGlowing,
             samples = samples,
             shownComponent = shownComponent,
+            isStill = isStill,
         )
     }
 }

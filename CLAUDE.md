@@ -67,13 +67,18 @@ bắt buộc (compiler không chặn hộ):
   kiện, ghi nhớ, thông báo, nhạc, nét vẽ) có kiểu hiển thị (`Aod*LayoutValue`), font / cỡ / màu riêng
   từng khối (`AodComponentSpec`, `AodAppearanceUiModel.components`, chỉnh ở Tùy chỉnh) và không viền, không
   nền; lựa chọn có ảnh xem trước vẽ bằng chính composable của AOD (`aodChoicePreview`). Khung xem trước
-  ngoài AOD thật không chạy theo giờ: giá trị mẫu cố định từ `CustomizePreviewSamples` (giờ 08:30); khối chủ đề tự vẽ
+  ngoài AOD thật không chạy theo giờ: giá trị mẫu cố định từ `CustomizePreviewSamples` (giờ 08:30), trừ chủ đề có chuyển động theo giờ thật bật
+  `AodThemeSpec.isLiveInPreview` (La bàn: mặt số chạy theo giờ thật ở màn chủ đề, Tùy chỉnh; thẻ ở tab AOD vẫn đứng yên, `isStill`; các khối khác vẫn mẫu); khối chủ đề tự vẽ
   khai báo trong `ownBlocks` (`AodBlockValue`: ngày, nhạc, dòng trạng thái, ghi nhớ, sự kiện), kiểu do chủ đề quyết định, và luôn có trong
   xem trước chủ đề (`toThemePreviewDraft`). Tùy chỉnh không chỉnh chủ đề: tab Đồng hồ lúc onboarding
   chỉ có Cổ điển (`ClassicThemeSpec.ClockTab`), sau đó là dòng dẫn sang màn chủ đề. Tab của chủ đề chia theo
   phần như khối ở Tùy chỉnh (kiểu rồi màu của chính phần đó, không gom màu vào tab riêng), tab nào cũng có
   icon đặt lại riêng ở thanh tiêu đề panel (`AppEditorPanel(action)` + `AppEditorResetButton`), cả ở Tùy chỉnh.
-  Chủ đề mới: số đo lấy từ dịch ngược app mẫu (không xin user ảnh chụp), mock dọc + ngang để user duyệt rồi mới code; thêm
+  Chủ đề mới: số đo lấy từ dịch ngược app mẫu (không xin user ảnh chụp); bám sát app mẫu: đọc code vẽ + layout trước khi mô tả / đề
+  xuất, giữ đủ mọi tuỳ chọn, chi tiết và chuyển động (vd kiểu có / không vòng giây, vòng giây xoay theo giờ thật, không bỏ vì AOD đếm theo
+  phút); không tự bỏ / gộp tuỳ chọn hay tính năng của app mẫu: mock liệt kê từng tuỳ chọn của app mẫu là giữ / đổi / bỏ, đổi hay bỏ phải
+  nêu lý do và hỏi user (ghi ở comment / CHANGELOG không tính); chỗ làm xịn hơn được thì cứ làm và nêu trong mock; mock dọc + ngang để
+  user duyệt rồi mới code; thêm
   các khối dùng chung thật sự hợp bố cục (điểm khác đối thủ), không nhồi khối / tuỳ chọn chỉ vì app hỗ trợ, khối không hợp thì bỏ khỏi `components` và nêu
   lý do trong mock; khối đặt trong bố cục đặc trưng thì trông như dòng của chủ đề (không được thì chủ đề tự vẽ, vd ghi nhớ / sự kiện của
   Chuỗi), màn ngang giữ dạng đặc trưng như màn dọc và tự đánh giá riêng từng chủ đề cho cân, đầy màn (không rập khuôn thu nhỏ đồng hồ

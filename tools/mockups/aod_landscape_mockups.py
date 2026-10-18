@@ -1488,6 +1488,268 @@ bezel_defs = ('<filter id="bzsh" filterUnits="userSpaceOnUse" x="-2000" y="-2000
               '<feDropShadow dx="0" dy="0" stdDeviation="1.8" flood-color="#000" flood-opacity=".3"/></filter>'
               + "".join(g for _, g in BZ_FACES.values()))
 
+# ================================================================== LA BÀN (Ambitio Face của Muviz Edge; số đo lấy từ layout may23_screen_layout dọc / ngang
+# và AmbitioClock trong APK, không từ ảnh chụp). Mặt số vuông cạnh = cạnh ngắn × cỡ (75% của app mẫu = 100%), u = nửa cạnh: các vòng số đồng tâm
+# xoay theo giờ thật (mỗi khung hình như app mẫu) về một đường chỉ cố định nằm ngang từ tâm tới mép phải mặt số (đầu mũi tên 0,05u × ±0,03u ở
+# tâm): vòng giờ 1–12 Krona One 0,165u ở 0,84u xen "hh:30" 0,066u, vòng phút 00–55 0,11u ở 0,55u xen vạch 0,475–0,625u (nét 1,3 dp), vòng giây
+# 00–55 0,09u ở 0,3u, hai vòng tròn mảnh 0,68u / 0,42u (1 dp, alpha 40). Chữ đặt theo bán kính, đọc ra ngoài; số đang chỉ nằm ngang trên đường
+# chỉ. Màu riêng: giờ, giờ rưỡi, phút (vạch giữa số phút cùng màu, mờ 0,6 như màu 2 / màu 1 của app mẫu), giây; đường chỉ theo màu giờ.
+# Khối dưới mặt số cách đáy 60 dp như layout mẫu: ngày "dd MMMM yyyy" in hoa Google Sans Bold 14 sp giãn 0,25 em (+ thời tiết), cách 15 dp dòng
+# pin · thông báo (thông báo mới nhất thêm một dòng icon + chữ in hoa 12,5 sp), trình phát (lùi · tên / nghệ sĩ in hoa giãn 0,25 em · tới, chạm
+# tên để phát / dừng, không thanh tiến trình). Màn ngang: mặt số giữa màn, hai nhóm giữa hai vùng bên.
+CP_KRONA = BzFont(TTFont(ROOT / "tools/fonts/static/krona_one_regular.ttf"), "cpk")
+CP_BOLD = BzFont(BZ_TEXT.font, "cpb")
+CP_REG = BzFont(instancer.instantiateVariableFont(TTFont(ROOT / "tools/fonts/variable/google_sans_variable.ttf"),
+                                                  {"wght": 400, "GRAD": 0, "opsz": 18}, inplace=False), "cpr")
+CP_FONTS = ('<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;700&family=Krona+One'
+            '&display=swap"><style>.cpb{font-family:"Google Sans";font-weight:700}.cpr{font-family:"Google Sans";font-weight:400}'
+            '.cpk{font-family:"Krona One"}</style>')
+CP_ACCENT = "#FFD54F"  # màu nhấn đề xuất: hổ phách, chưa chủ đề nào dùng
+CP_HOUR, CP_HALF, CP_MINUTE, CP_SECOND, CP_SUB = CP_ACCENT, "#9A9A9A", "#E0E0E0", "#9A9A9A", "#9A9A9A"
+CP_COLORS = (CP_HOUR, CP_HALF, CP_MINUTE, CP_SECOND)  # giờ, giờ rưỡi, phút, giây
+CP_REF = ("#CFD8DC", "#90A4AE", "#CFD8DC", "#90A4AE")  # màu 1 / màu 2 của app mẫu
+CP_MIX = ("#FFD54F", "#FF8B7B", "#80DEEA", "#C3A6FF")
+CP_LIVE = []
+CP_DATE = "18 THÁNG 10 2026"
+CP_RINGS = {}
+
+
+def cp_width(font, text, size, ls=0.0):
+    return font.width(text, size) + ls * size * len(text)
+
+
+def cp_text(font, x, base, text, size, color, anchor="start", ls=0.0, opacity=1.0):
+    """Chữ giãn ls em như letterSpacing của Android (mỗi ký tự thêm ls × cỡ, chia đều hai bên)."""
+    sp = ls * size
+    x = bz_anchor(x, cp_width(font, text, size, ls), anchor) + sp / 2
+    op = "" if opacity == 1 else f' fill-opacity="{opacity}"'
+    lsa = f' letter-spacing="{f(sp)}"' if sp else ""
+    return f'<text class="{font.css_class}" x="{f(x)}" y="{f(base)}" font-size="{f(size)}" fill="{color}"{lsa}{op}>{text}</text>'
+
+
+def cp_label(text, size, color, px, py, rot):
+    """Nhãn Krona One căn giữa nét chữ tại (px, py) như getTextBounds của app mẫu, xoay rot° quanh tâm nhãn."""
+    lo, top, hi, bottom = CP_KRONA.ink(text, size)
+    s = CP_KRONA.text(px - (lo + hi) / 2, py - (top + bottom) / 2, text, size, color)
+    return s.replace("<text ", f'<text transform="rotate({f(rot)} {f(px)} {f(py)})" ', 1)
+
+
+def cp_ring(kind, u):
+    """Vòng giờ / phút / giây lúc 0 giờ 0 phút 0 giây, tâm tại gốc, mỗi tổ hợp một <g> trong defs; khung xoay cả vòng (xoay cứng: vị trí và hướng
+    chữ cùng đổi). Màu lấy từ biến CSS --cpc (số) / --cpd (giờ rưỡi) đặt ở <use> nên mỗi cỡ chỉ một <g>. Góc theo app mẫu: x = sin θ · r,
+    y = cos θ · r (θ = 90° là đường chỉ bên phải), chữ xoay 90 − θ."""
+    key = (kind, round(u, 2))
+    if key in CP_RINGS:
+        return CP_RINGS[key][0]
+    n = f"cp{kind}{len(CP_RINGS)}"
+    s, ticks = "", ""
+    for i in range(24):
+        if kind == "h":
+            th = 120 + 15 * i
+            a = math.radians(th)
+            px, py = math.sin(a) * 0.84 * u, math.cos(a) * 0.84 * u
+            k = i // 2 + 1
+            s += (cp_label(str(k), 0.165 * u, "var(--cpc)", px, py, 90 - th) if i % 2 == 0 else
+                  cp_label(f"{k:02d}:30", 0.066 * u, "var(--cpd)", px, py, 90 - th))
+            continue
+        th = 90 + 15 * i
+        a = math.radians(th)
+        if i % 2 == 0:
+            r, size = (0.55, 0.11) if kind == "m" else (0.3, 0.09)
+            s += cp_label(f"{i * 5 // 2:02d}", size * u, "var(--cpc)", math.sin(a) * r * u, math.cos(a) * r * u, 90 - th)
+        elif kind == "m":
+            ticks += (f"M{f(math.sin(a) * 0.475 * u)},{f(math.cos(a) * 0.475 * u)}"
+                      f"L{f(math.sin(a) * 0.625 * u)},{f(math.cos(a) * 0.625 * u)}")
+    if ticks:
+        s = f'<path d="{ticks}" stroke="var(--cpc)" stroke-opacity=".6" stroke-width="1.3" stroke-linecap="round"/>' + s
+    CP_RINGS[key] = (n, f'<g id="{n}">{s}</g>')
+    return n
+
+
+def cp_dial(cx, cy, side, hh=10, mm=8, ss=42, colors=CP_COLORS, live=False, seconds=True):
+    """Đường chỉ (màu giờ) vẽ trước nên chữ đè lên như app mẫu, rồi ba vòng số xoay liên tục theo giờ thật (giây có phần nghìn giây, phút có
+    phần giây, giờ có phần phút), rồi hai vòng tròn mảnh màu phút. live: khung chạy theo đồng hồ của máy xem mock (script cuối trang).
+    seconds=False: Kiểu 2 (Style 2 của app mẫu): không vòng giây, đường chỉ lùi ra 0,28u, mặt số đổi theo từng phút."""
+    hour, half, minute, second = colors
+    u = side / 2
+    mv = mm + ss / 60
+    hv = hh % 12 + mv / 60
+    x0 = cx if seconds else cx + 0.28 * u
+    s = (f'<line x1="{f(x0)}" y1="{f(cy)}" x2="{f(cx + u)}" y2="{f(cy)}" stroke="{hour}" stroke-width="1.3" stroke-linecap="round"/>'
+         f'<path d="M{f(x0 + 0.05 * u)},{f(cy - 0.03 * u)}L{f(x0)},{f(cy)}L{f(x0 + 0.05 * u)},{f(cy + 0.03 * u)}" fill="none" '
+         f'stroke="{hour}" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>')
+    ids = {}
+    if live:
+        lid = f"cplv{len(CP_LIVE)}"
+        CP_LIVE.append((lid, cx, cy))
+        ids = {k: f' id="{lid}{k}"' for k in "smh"}
+    rings = (("s", 6 * ss, second, ""), ("m", 6 * mv, minute, ""), ("h", 30 * hv, hour, f";--cpd:{half}"))
+    for kind, angle, color, sub in rings if seconds else rings[1:]:
+        s += (f'<use{ids.get(kind, "")} href="#{cp_ring(kind, u)}" style="--cpc:{color}{sub}" '
+              f'transform="translate({f(cx)} {f(cy)}) rotate({f(angle)})"/>')
+    for r in (0.68, 0.42):
+        s += (f'<circle cx="{f(cx)}" cy="{f(cy)}" r="{f(r * u)}" fill="none" stroke="{minute}" stroke-opacity="{40 / 255:.3f}" '
+              f'stroke-width="1"/>')
+    return s
+
+
+def cp_live_script():
+    """Khung live xoay ba vòng theo giờ của máy xem mock mỗi khung hình, đúng công thức góc của app mẫu."""
+    frames = ",".join(f'["{lid}",{f(cx)},{f(cy)}]' for lid, cx, cy in CP_LIVE)
+    return ('<script>(function(){var c=[' + frames + '];function t(){var d=new Date(),s=d.getSeconds()+d.getMilliseconds()/1e3,'
+            'm=d.getMinutes()+s/60,h=d.getHours()%12+m/60;c.forEach(function(e){var p="translate("+e[1]+" "+e[2]+") rotate(";'
+            '[["s",6*s],["m",6*m],["h",30*h]].forEach(function(r){var n=document.getElementById(e[0]+r[0]);'
+            'if(n)n.setAttribute("transform",p+r[1].toFixed(2)+")");});});requestAnimationFrame(t);}t();})();</script>')
+
+
+def cp_date(x, top, anchor="middle", weather=False, color=CP_MINUTE):
+    """Ngày in hoa Google Sans Bold 14 sp giãn 0,25 em; thời tiết cách 12 dp cùng cỡ. Cao 17,5 dp."""
+    size, base = 14, top + BZ_ASC * 14
+    wd = cp_width(CP_BOLD, CP_DATE, size, 0.25)
+    ww = 12 + 25 + CP_BOLD.width("24°", size) if weather else 0
+    x = bz_anchor(x, wd + ww, anchor)
+    s = cp_text(CP_BOLD, x, base, CP_DATE, size, color, ls=0.25)
+    if weather:
+        wx = x + wd + 12
+        s += cloud(wx - 1, base, 0.56, color, 1.7) + CP_BOLD.text(wx + 25, base, "24°", size, color)
+    return s
+
+
+def cp_status(x, cy, anchor="middle", color=CP_SUB, n=2, charging=False):
+    """Dòng pin · thông báo dùng chung AodStatusLine, icon pin 14 dp như layout mẫu, chữ Google Sans Regular."""
+    g, fs = 14.0, 0.915 * 14
+    tw = CP_REG.width("72%", fs)
+    w = 0.522 * g + 0.717 * g + tw + (1.13 * g + 0.228 * g + 1.065 * g + n * 0.978 * g + (n - 1) * 1.13 * g if n else 0)
+    x = bz_anchor(x, w, anchor)
+    s = bz_battery(x, cy - g / 2, g, color, charging) + CP_REG.text(x + 1.239 * g, cy + 0.34 * fs, "72%", fs, color)
+    if n:
+        dx = x + 1.239 * g + tw + 1.13 * g
+        s += f'<circle cx="{f(dx + 0.114 * g)}" cy="{f(cy)}" r="{f(0.114 * g)}" fill="{color}"/>'
+        shapes = icon_shapes(color)
+        ix = dx + 0.228 * g + 1.065 * g
+        s += "".join(shapes[i % 3](ix + i * 2.108 * g, cy - 0.489 * g, 0.978 * g) for i in range(n))
+    return s
+
+
+def cp_latest(x, cy, w, anchor="middle", color=CP_SUB, text="MAI: TỐI NAY ĐI ĂN NHÉ"):
+    """Thông báo mới nhất: icon 16 dp, cách 10 dp, chữ in hoa Google Sans Regular 12,5 sp giãn 0,1 em, dài thì "…"."""
+    while cp_width(CP_REG, text, 12.5, 0.1) > w - 26 and len(text) > 1:
+        text = text[:-2].rstrip() + "…"
+    tw = 26 + cp_width(CP_REG, text, 12.5, 0.1)
+    x = bz_anchor(x, tw, anchor)
+    return icon_shapes(color)[0](x, cy - 8, 16) + cp_text(CP_REG, x + 26, cy + 0.34 * 12.5, text, 12.5, color, ls=0.1)
+
+
+def cp_player(x, top, w, anchor="middle", color=CP_MINUTE, paused=False, title="THAT COOL SONG"):
+    """Trình phát như layout mẫu: nút lùi / tới 40 dp (icon 12 dp), tên in hoa Bold 13 sp giãn 0,25 em, cách 8 dp nghệ sĩ Regular 11,5 sp
+    mờ 0,7 (chạm để phát / dừng, dừng thì mờ 0,6). Cao 40 dp."""
+    x, op = bz_anchor(x, w, anchor), 0.6 if paused else 1.0
+    cx = x + w / 2
+    s = ""
+    for bx, d in ((x + 20, -1), (x + w - 20, 1)):
+        s += (f'<path d="M{f(bx - 4 * d)},{f(top + 14)} L{f(bx + 3 * d)},{f(top + 20)} L{f(bx - 4 * d)},{f(top + 26)} Z" fill="{color}" '
+              f'stroke="{color}" stroke-width="1" stroke-linejoin="round"/>'
+              f'<rect x="{f(bx + 4 * d - (1.6 if d < 0 else 0))}" y="{f(top + 14)}" width="1.6" height="12" rx=".8" fill="{color}"/>')
+    tw = w - 100
+    t = title
+    while cp_width(CP_BOLD, t, 13, 0.25) > tw and len(t) > 1:
+        t = t[:-2].rstrip() + "…"
+    s += cp_text(CP_BOLD, cx, top + 0.6 + BZ_ASC * 13, t, 13, color, "middle", 0.25, op)
+    return s + cp_text(CP_REG, cx, top + 0.6 + 16.3 + 8 + BZ_ASC * 11.5, "IT'S ARTIST", 11.5, color, "middle", 0.25, 0.7 * op)
+
+
+def cp_group(date=True, weather=False, status=True, n=2, charging=False, latest=False, w=300):
+    """Khối thông tin (cao, hàm vẽ): ngày, cách 15 dp dòng pin, thông báo mới nhất."""
+    items = []
+    if date:
+        items.append((17.5, 15, lambda x, t, a: cp_date(x, t, a, weather)))
+    if status:
+        items.append((14, 12, lambda x, t, a: cp_status(x, t + 7, a, n=n, charging=charging)))
+    if latest:
+        items.append((16, 12, lambda x, t, a: cp_latest(x, t + 8, w, a)))
+    return items
+
+
+def cp_music(w, paused=False):
+    return [(40, 0, lambda x, t, a: cp_player(x, t, w, a, paused=paused))]
+
+
+def cp_stack_h(items):
+    return sum(h for h, _, _ in items) + sum(g for _, g, _ in items[:-1])
+
+
+def cp_draw(x, top, items, anchor="middle"):
+    s, y = "", top
+    for i, (h, gap, draw) in enumerate(items):
+        s += draw(x, y, anchor)
+        y += h + (gap if i < len(items) - 1 else 0)
+    return s
+
+
+def cp_portrait(hh=10, mm=8, ss=42, size=1.0, colors=CP_COLORS, live=False, seconds=True, media=False, paused=False, **group):
+    """Màn dọc: mặt số giữa màn; khối dưới thẳng đáy cách đáy 60 dp như layout mẫu, có nhạc thì trình phát nằm dưới cùng (khối lớn lên phía trên)."""
+    s = cp_dial(PW / 2, PH / 2, PW * 0.75 * size, hh, mm, ss, colors, live, seconds)
+    items = cp_group(w=PW - 60, **group)
+    if media:
+        if items:
+            h, _, d = items[-1]
+            items[-1] = (h, 24, d)
+        items += cp_music(PW - 80, paused)
+    return s + cp_draw(PW / 2, PH - 60 - cp_stack_h(items), items)
+
+
+def cp_landscape(left, right, hh=10, mm=8, ss=42, size=1.0, live=False):
+    """Màn ngang: mặt số giữa màn (cạnh = cạnh ngắn × cỡ như app mẫu), hai nhóm căn giữa hai vùng bên, giữa chiều cao."""
+    side = H * 0.75 * size
+    zone = (W - side) / 2
+    s = cp_dial(W / 2, CY, side, hh, mm, ss, live=live)
+    for x, items in ((zone / 2, left), (W - zone / 2, right)):
+        if items:
+            s += cp_draw(x, CY - cp_stack_h(items) / 2, items)
+    return s
+
+
+def cp_strip():
+    k = 0.4
+    s = ""
+    for i, (label, kw) in enumerate((("Mặc định: giờ hổ phách", {}),
+                                      ("Kiểu 2: không vòng giây", {"seconds": False, "hh": 1, "mm": 50, "ss": 0}),
+                                      ("Mỗi vòng một màu", {"colors": CP_MIX, "hh": 7, "mm": 21, "ss": 5}),
+                                      ("Cỡ 120%", {"size": 1.2, "hh": 4, "mm": 38, "ss": 50}))):
+        x = 36 + i * 212
+        s += f'<g transform="translate({x} 14) scale({k})">'
+        s += f'<rect width="{PW}" height="{PH}" rx="34" fill="#000" stroke="#333" stroke-width="2"/>'
+        s += cp_portrait(**kw) + "</g>" + txt(x + PW * k / 2, 14 + PH * k + 22, label, 13, DM, 400, "middle")
+    return (f'<p style="font-size:13px;color:var(--text-secondary);margin:1.25rem 0 6px">Kiểu (có / không vòng giây như Style 1 / 2 của app mẫu), '
+            f'màu từng vòng và cỡ mặt số</p>'
+            f'<svg viewBox="0 0 {W} 400" width="100%" role="img" aria-label="Màu từng vòng và cỡ mặt số" '
+            f'style="display:block;font-family:\'Plus Jakarta Sans\',sans-serif" fill="{G}">'
+            f'<rect width="{W}" height="400" rx="20" fill="#111"/>{s}</svg>')
+
+
+CP_ZONE_W = (W - H * 0.75) / 2 - 24
+compass = [
+    CP_FONTS,
+    cp_strip(),
+    '<div style="font-size:0">',
+    frame_portrait("D1 · Dọc, mặc định (cũng là thẻ ở lưới chủ đề), chạy theo giờ thật: vòng giây quay một vòng mỗi phút, vòng phút và giờ "
+                   "trôi liên tục", cp_portrait(live=True)),
+    frame_portrait("D2 · Dọc, 10:08:42, thời tiết cạnh ngày, nhạc dưới dòng pin", cp_portrait(weather=True, media=True)),
+    frame_portrait("D3 · Dọc, 21:47:15, đang sạc, thông báo mới nhất, nhạc đang dừng (mờ)",
+                   cp_portrait(hh=21, mm=47, ss=15, charging=True, latest=True, n=1, media=True, paused=True)),
+    frame_portrait("D4 · Dọc, Kiểu 2 (không vòng giây, đường chỉ lùi ra ngoài), 4:38, cỡ 120%, màu như app mẫu, tắt ngày",
+                   cp_portrait(hh=4, mm=38, ss=0, size=1.2, colors=CP_REF, seconds=False, date=False, n=3)),
+    '</div>',
+    frame("N1 · Ngang, chạy theo giờ thật, không nhạc: ngày + thời tiết bên trái, pin · thông báo bên phải",
+          cp_landscape(cp_group(weather=True, status=False), cp_group(date=False), live=True)),
+    frame("N2 · Ngang, 10:08:42, nhạc: ngày + thời tiết, pin · thông báo xếp dọc bên trái, trình phát bên phải",
+          cp_landscape(cp_group(weather=True), cp_music(CP_ZONE_W))),
+    frame("N3 · Ngang, 9:15:30, thông báo mới nhất, nhạc đang dừng",
+          cp_landscape(cp_group(latest=True, w=CP_ZONE_W), cp_music(CP_ZONE_W, paused=True), hh=9, mm=15, ss=30)),
+    cp_live_script(),
+]
+compass_defs = "".join(g for _, g in CP_RINGS.values())
+
 for name, summary, defs, frames in [
     ("w_classic", "Bảy bố cục ngang của chủ đề Cổ điển theo các khối đang bật", classic_defs, classic),
     ("w_jersey", "Bố cục ngang của chủ đề Số áo: ngày, bốn chữ số một hàng, dòng pin", jersey_defs, jersey),
@@ -1497,6 +1759,7 @@ for name, summary, defs, frames in [
     ("w_tower", "Chủ đề Tháp (Long HyperOS): sáu kiểu đồng hồ, bốn khung dọc và bốn bố cục ngang", tower_defs, tower),
     ("w_chain", "Chủ đề Chuỗi (Bullet List): đồng hồ viên thuốc, bốn khung dọc và bốn bố cục ngang", chain_defs, chain),
     ("w_bezel", "Chủ đề Vành (iOS Fill Clock): hai kiểu vạch, bốn khung dọc và ba bố cục ngang", bezel_defs, bezel),
+    ("w_compass", "Chủ đề La bàn (Ambitio Face): màu và cỡ mặt số, bốn khung dọc và ba bố cục ngang", compass_defs, compass),
 ]:
     code = widget(summary, defs, frames)
     OUT.mkdir(parents=True, exist_ok=True)

@@ -65,6 +65,7 @@
     <string name="theme_tower">Tower</string>
     <string name="theme_chain">Chain</string>
     <string name="theme_bezel">Bezel</string>
+    <string name="theme_compass">Compass</string>
     <string name="theme_in_use">In use</string>
     <string name="theme_edit">Edit</string>
     <string name="theme_saved">Theme saved</string>
@@ -103,6 +104,8 @@
     <string name="theme_color_events">Events</string>
     <string name="theme_color_hour">Hour</string>
     <string name="theme_color_minute">Minute</string>
+    <string name="theme_color_half_hour">Half hours</string>
+    <string name="theme_color_second">Seconds</string>
     <string name="theme_color_minute_tag">Minute &amp; AM/PM</string>
     <string name="theme_opt_digit_style">Digit style</string>
     <string name="theme_opt_card_background">Card background</string>
@@ -116,6 +119,9 @@
     <string name="theme_opt_ticks">Ticks</string>
     <string name="bezel_ticks_minutes">Minute ticks</string>
     <string name="bezel_ticks_hours">Hour ticks</string>
+    <string name="theme_opt_clock_style">Clock style</string>
+    <string name="compass_style_seconds">With seconds</string>
+    <string name="compass_style_minutes">Without seconds</string>
     <string name="theme_opt_date_style">Date style</string>
     <string name="date_style_bold">Bold caps</string>
     <string name="date_style_plain">Plain</string>
@@ -355,6 +361,8 @@
     <string name="aod_jersey_date_second_pattern">dd</string>
     <string name="aod_bezel_weekday_pattern">EEE</string>
     <string name="aod_bezel_day_pattern" translatable="false">dd</string>
+    <string name="aod_compass_date_pattern" translatable="false">dd MMMM yyyy</string>
+    <string name="aod_compass_notification" translatable="false">%1$s: %2$s</string>
     <string name="aod_hint">Double-tap to exit</string>
     <string name="aod_battery" translatable="false">%1$d%%</string>
     <string name="aod_battery_charging">Charging · %1$d%%</string>

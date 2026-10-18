@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.sp
 import com.decoutkhanqindev.custom_aod.R
 import com.decoutkhanqindev.custom_aod.presentation.components.AppSlider
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.bezel.AodBezelMedia
+import com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.compass.AodCompassMedia
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.capsule.AodCapsuleMedia
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.card.AodCardMedia
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.chain.AodChainMedia
@@ -84,6 +85,7 @@ fun AodMediaControls(
                 AodThemeValue.TOWER -> AodTowerMedia(media = target, config = theme.config, onIntent = onIntent)
                 AodThemeValue.CHAIN -> AodChainMedia(media = target, config = theme.config, onIntent = onIntent)
                 AodThemeValue.BEZEL -> AodBezelMedia(media = target, config = theme.config, onIntent = onIntent)
+                AodThemeValue.COMPASS -> AodCompassMedia(media = target, config = theme.config, onIntent = onIntent)
             }
         }
     }

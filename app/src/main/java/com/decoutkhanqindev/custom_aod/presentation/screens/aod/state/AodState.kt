@@ -37,7 +37,16 @@ data class AodState(
     @param:ColorInt val glowColorArgb: Int? = null,
     val isDimmed: Boolean = false,
     val isDark: Boolean = false,
+    // Khung xem trước (Tùy chỉnh, màn chủ đề, thẻ chủ đề) dùng giờ mẫu; AOD thật thì mặt số chạy theo giờ thật được (vòng giây của La bàn).
+    val isPreview: Boolean = false,
+    // Thẻ thu nhỏ ở tab AOD (thẻ thiết kế, lưới chủ đề) luôn đứng yên ở giờ mẫu, kể cả chủ đề bật isLiveInPreview: nhiều thẻ cùng chạy mỗi
+    // khung hình trên màn danh sách là tốn pin vô ích.
+    val isStill: Boolean = false,
 ) {
+    // Mặt số chạy theo giờ thật: AOD thật, hoặc chủ đề bật isLiveInPreview thì cả khung xem trước (màn chủ đề, Tùy chỉnh), trừ thẻ ở tab AOD.
+    val isClockLive: Boolean
+        get() = !isPreview || (appearance.theme.value.spec.isLiveInPreview && !isStill)
+
     // Dòng "Chạm 2 lần để thoát" chỉ đúng khi chạm 2 lần vẫn là về màn hình khoá.
     val isExitHintVisible: Boolean
         get() = isHintVisible && interaction.actionOf(AodGestureValue.DOUBLE_TAP) == AodActionValue.CLOSE

@@ -105,10 +105,13 @@ data class CustomizePreviewSamples(
             isGlowing: Boolean,
             samples: CustomizePreviewSamples,
             shownComponent: AodComponentValue? = null,
+            isStill: Boolean = false,
         ): AodState = AodState(
             nowMillis = samples.nowMillis,
             appearance = appearance.clock.copy(isLandscape = false),
             interaction = PreviewInteraction,
+            isPreview = true,
+            isStill = isStill,
             // Tab kiểu khối đang mở (shownComponent): khối đó luôn hiện bằng dữ liệu mẫu dù đang tắt, thiếu quyền hay chưa có nội dung,
             // để đổi font / cỡ / màu là thấy ngay. Xem trước riêng chủ đề tự vẽ ghi nhớ (Chuỗi) cũng có ghi nhớ mẫu.
             extras = extras.copy(

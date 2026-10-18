@@ -42,6 +42,7 @@ code dịch ngược, không lấy asset (font, ảnh, Lottie) từ APK. APK và
 | Tháp (`TOWER`) | **34 · Feb24 "Long HyperOS"** | làm từ danh mục này (2026-10-17), số đo lấy từ layout `feb24_screen_layout` / code / font trong APK |
 | Chuỗi (`CHAIN`) | **28 · Aug23 "Bullet List"** | làm từ danh mục này (2026-10-17), số đo lấy từ layout `aug23_screen_layout` / `Aug23Clock` / font trong APK |
 | Vành (`BEZEL`) | **40 · Aug24 "iOS Fill Clock"** | làm từ danh mục này (2026-10-18), số đo lấy từ layout `aug24_screen_layout` / `IosFillClock` / font trong APK |
+  | La bàn (`COMPASS`) | **25 · May23 "Ambitio Face"** | làm từ danh mục này (2026-10-18), số đo lấy từ layout `may23_screen_layout` / `AmbitioClock` / font trong APK |
 
 ## Danh mục đủ 44 chủ đề
 
@@ -74,7 +75,7 @@ text view chung) hoặc font dùng trong code; "chữ (font layout)" nghĩa là 
 | 22 | Feb23 | Vertical Text | Text, Spacing, Text Size, Text Style, Text Color, Notification Color, Controls Color | – | chữ: 12 font (abril, bebas, monoton, rye…) | ô nhập chữ | chưa có |
 | 23 | Mar23 | Big Overlap Clock | Clock Style, Clock Size, Color 1, Color 2, Theme Color | Color 3, Color 4, Date, Notification, Controls, Battery Status | BigPixel2Clock | – | chưa có |
 | 24 | Apr23 | Android 14 Analog Clock | Text Style, Clock Style, Clock Size, Color 1, Color 2, Theme Color | Color 3, Date, Notification, Controls, Battery Status | PilotBold2Tick, PixelAnalogClock | – | chưa có |
-| 25 | May23 | Ambitio Face ⭐ | Clock Style, Clock Size, Color 1, Color 2, Controls Color | – | AmbitioClock | – | chưa có |
+| 25 | May23 | Ambitio Face ⭐ | Clock Style, Clock Size, Color 1, Color 2, Controls Color | – | AmbitioClock | – | **La bàn** (`COMPASS`) |
 | 26 | Jun23 | iOS Lockscreen | Clock Style, Clock Size, Clock Color, Theme Color | Date, Notification, Controls, Battery Status | chữ: 5 font iOS | font độc quyền | chưa có |
 | 27 | Jul23 | Nothing(2) | Clock Size, Theme Color | Clock, Date, Notification, Controls, Battery Status | chữ: ndot47 | font độc quyền | chưa có |
 | 28 | Aug23 | Bullet List | Clock Size, Theme Color | Clock, Date, Battery Status, Notification, Controls | Aug23Clock | – | **Chuỗi** (`CHAIN`) |
@@ -100,7 +101,7 @@ về dùng (README › Thêm chủ đề mới bước 6), kiểm có đủ ti�
 gốc của nhà làm font, không tự tách / cắt. Google Sans (và Google Sans Flex, Product Sans cùng thiết kế) nay có trên Google Fonts.
 "Font độc quyền" (Apple iOS, Nothing NDot) không có trên Google Fonts, và font thiếu tiếng Việt (Rubik), thì chọn font mở gần
 nhất trong app (`anton`, `big_shoulders_display`, `comfortaa`, `dancing_script`, `fraunces`, `google_sans`, `jetbrains_mono`,
-`josefin_sans`, `plus_jakarta_sans`, `zalando_sans_expanded`).
+`josefin_sans`, `krona_one`, `plus_jakarta_sans`, `zalando_sans_expanded`).
 
 ## Ô trong ảnh lưới đã có → chủ đề
 
@@ -123,6 +124,25 @@ Ghép theo tên, hình và tuỳ chọn; "chắc" là đã khớp bằng ảnh t
 2. ~~**34 · Long HyperOS**~~: đã làm thành chủ đề Tháp (2026-10-17).
 3. ~~**28 · Bullet List**~~: đã làm thành chủ đề Chuỗi (2026-10-17).
 4. ~~**40 · iOS Fill Clock**~~ ⭐: đã làm thành chủ đề Vành (2026-10-18).
+
+Ứng viên tiếp theo, đã đọc code vẽ + layout (2026-10-18; trước đó mô tả theo ảnh lưới, sai mấy chủ đề). AOD của mình chỉ cập nhật
+mỗi phút (`AodViewModel`), nên phần chạy theo giây của app mẫu phải đổi hoặc bỏ, nêu trong mock:
+
+- ~~**25 · Ambitio Face**~~ ⭐ (`AmbitioClock`, đã làm thành La bàn): ba vòng số đồng tâm cùng xoay về một vạch chỉ cố định chạy từ trái sang mép phải (đầu
+  mũi tên bên trái): vòng ngoài giờ 1–12 lớn xen "hh:30" nhỏ, vòng giữa phút 00–55 xen vạch, vòng trong giây mờ; hai vòng tròn
+  mảnh alpha 40. Font Krona One (Google Fonts, chỉ vẽ số). Đang làm thành chủ đề La bàn (2026-10-18): user muốn giữ vòng giây, cả ba vòng
+  xoay theo giờ thật mỗi khung hình như app mẫu (mặt số tự chạy đồng hồ khung hình, không đổi nhịp phút của AOD).
+- **20 · Half Concentric** ⭐ (`HalfConcentricClock`): hình tròn lớn đẩy ra ngoài mép trái (chỉ thấy nửa phải), vòng ngoài là
+  **giây** 00–55, vòng trong là phút, cùng xoay để giá trị hiện tại chỉ sang phải; giờ "HH" lớn (0,36r), phút "mm" trong viên
+  thuốc viền ở 0,6r; tối dần ở mép phải. Font Product Sans (= Google Sans, đã có). Vòng giây phải đổi nghĩa (vd vòng phút / giờ).
+- **30 · Coum Face** ⭐ (`CoumTick` + `oct23_screen_layout`): giờ số "09:50" 50sp + ngày 16sp ở giữa, vòng 60 vạch phủ màn xoay
+  theo **giây**, số giây trong chấm tròn ở mép phải, tối dần trên / dưới; màu vòng có thể là gradient. Nét đặc trưng là giây.
+- **39 · Nothing Wide** (`NothingWideClock`): khung chữ nhật bo góc sát mép, 60 vạch là tia cắt trong dải (như Vành), kim có
+  bóng, kim giây đỏ: gần như cùng cấu trúc với Vành, không làm tiếp ngay.
+- **23 · Big Overlap** (`BigPixel2Clock`): bốn chữ số lớn lưới 2×2 (giờ trên, phút dưới) chồng mép lên nhau, mỗi số một màu, kiểu
+  viền / đặc và bo tròn; Google Sans Flex trục `ROND` (phải sinh bản tĩnh ghim trục).
+- **43 · MIUI Doodle** ⭐ (`Nov24Screen`): giờ, phút, thứ, tháng, ngày là **ảnh vẽ tay** (24 + 60 + 7 + 12 + 31 hình), không phải
+  font; không được lấy ảnh của app mẫu, phải tự vẽ cả bộ, nên để sau.
 
 Để sau: 33 Dual Timezone (cần control chọn múi giờ), 16 / 22 (cần ô nhập chữ), chủ đề giờ bằng chữ (ô "Twelve Twenty
 Seven", phải đổi số thành chữ cả vi + en), 6 Visualizer (cần quyền `RECORD_AUDIO`, phải hỏi trước), 8 / 9 / 11 / 14 / 21 (hiệu ứng, hạt, lật số: công sức

@@ -70,6 +70,18 @@ val FontFamilyGoogleSans = FontFamily(
     Font(R.font.google_sans_bold, FontWeight.Bold),
 )
 
+// Chữ của La bàn: Google Sans Regular (dòng pin, thông báo, nghệ sĩ) và Bold (ngày, tên bài) như Product Sans của app mẫu. Họ riêng vì
+// FontFamilyGoogleSans của Vành chỉ có Bold (thêm Regular vào đó thì dòng pin của Vành đổi độ đậm).
+val FontFamilyGoogleSansText = FontFamily(
+    Font(R.font.google_sans_regular, FontWeight.Normal),
+    Font(R.font.google_sans_bold, FontWeight.Bold),
+)
+
+// Số trên các vòng của La bàn (font của app mẫu), chỉ có một độ đậm và chỉ vẽ chữ số nên không cần tiếng Việt.
+val FontFamilyKronaOne = FontFamily(
+    Font(R.font.krona_one_regular, FontWeight.Normal),
+)
+
 // Bốn số 12 / 3 / 6 / 9 của Vành (font của app mẫu), chỉ có một độ đậm.
 val FontFamilyZalandoSansExpanded = FontFamily(
     Font(R.font.zalando_sans_expanded_semibold, FontWeight.SemiBold),

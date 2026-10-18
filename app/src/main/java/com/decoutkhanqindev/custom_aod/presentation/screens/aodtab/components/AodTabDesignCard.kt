@@ -66,7 +66,7 @@ fun AodTabDesignCard(
     onIntent: (AodTabIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val preview = rememberAodPreview(draft = design)
+    val preview = rememberAodPreview(draft = design, isStill = true)
     val blockTabs = remember(design) { design.enabledBlockTabs() }
     val summary = designSummary(design = design, blockCount = blockTabs.size)
     val previewAlpha by animateFloatAsState(

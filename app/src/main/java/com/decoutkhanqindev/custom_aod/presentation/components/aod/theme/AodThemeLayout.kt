@@ -14,6 +14,8 @@ import com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.chain.A
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.chain.AodChainPortrait
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.classic.AodClassicClock
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.classic.AodClassicLandscape
+import com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.compass.AodCompassLandscape
+import com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.compass.AodCompassPortrait
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.jersey.AodJerseyLandscape
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.jersey.AodJerseyPortrait
 import com.decoutkhanqindev.custom_aod.presentation.components.aod.theme.pebble.AodPebbleClock
@@ -24,7 +26,7 @@ import com.decoutkhanqindev.custom_aod.presentation.model.aod.theme.AodThemeValu
 import com.decoutkhanqindev.custom_aod.presentation.screens.aod.state.AodIntent
 import com.decoutkhanqindev.custom_aod.presentation.screens.aod.state.AodState
 
-// Bố cục AOD màn dọc theo chủ đề: Cổ điển và Sỏi là đồng hồ rồi các khối thông tin bên dưới; Số áo, Viên nang, Thẻ, Tháp, Chuỗi và Vành tự vẽ cả
+// Bố cục AOD màn dọc theo chủ đề: Cổ điển và Sỏi là đồng hồ rồi các khối thông tin bên dưới; Số áo, Viên nang, Thẻ, Tháp, Chuỗi, Vành và La bàn tự vẽ cả
 // cụm (số, ngày, dòng trạng thái) cùng các khối thông tin.
 // Thêm chủ đề = thêm một nhánh ở đây và ở AodLandscape.
 @Composable
@@ -53,11 +55,12 @@ fun AodPortrait(
         AodThemeValue.TOWER -> AodTowerPortrait(state = state, onIntent = onIntent)
         AodThemeValue.CHAIN -> AodChainPortrait(state = state, onIntent = onIntent)
         AodThemeValue.BEZEL -> AodBezelPortrait(state = state, onIntent = onIntent)
+        AodThemeValue.COMPASS -> AodCompassPortrait(state = state, onIntent = onIntent)
     }
 }
 
 // Bố cục AOD màn ngang theo chủ đề: mỗi chủ đề một bố cục riêng, dựng trên bố cục chung theo các khối đang hiện (AodLandscapeLayout); Chuỗi giữ
-// dạng chuỗi nên tự xếp cột (AodChainLandscape), Vành giữ mặt số phủ màn (AodBezelLandscape).
+// dạng chuỗi nên tự xếp cột (AodChainLandscape), Vành giữ mặt số phủ màn (AodBezelLandscape), La bàn giữ mặt số giữa màn (AodCompassLandscape).
 @Composable
 fun AodLandscape(
     state: AodState,
@@ -72,6 +75,7 @@ fun AodLandscape(
         AodThemeValue.TOWER -> AodTowerLandscape(state = state, onIntent = onIntent)
         AodThemeValue.CHAIN -> AodChainLandscape(state = state, onIntent = onIntent)
         AodThemeValue.BEZEL -> AodBezelLandscape(state = state, onIntent = onIntent)
+        AodThemeValue.COMPASS -> AodCompassLandscape(state = state, onIntent = onIntent)
     }
 }
 

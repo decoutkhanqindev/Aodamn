@@ -137,7 +137,7 @@ private fun ThemeCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val preview = rememberAodPreview(draft = remember(theme) { AodThemeUiModel(value = theme).toThemePreviewDraft() })
+    val preview = rememberAodPreview(draft = remember(theme) { AodThemeUiModel(value = theme).toThemePreviewDraft() }, isStill = true)
 
     val borderColor = animateColorAsState(
         targetValue = if (isActive) Mint else NeutralVariant30,

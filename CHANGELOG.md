@@ -18,6 +18,26 @@ Build được, lint không thêm cảnh báo, unit test pass, `tools/check-rule
   giữ bản gốc cũ để Áp dụng lại được. Onboarding vẫn sang Main / màn quyền như cũ.
 - Tab AOD › Đặt lại về chủ đề mặc định: ghi xong hiện toast "Đã đặt lại chủ đề mặc định".
 
+## [Chưa phát hành] – 2026-10-18 – Chủ đề La bàn
+
+Build được, lint không thêm cảnh báo (0 lỗi, 12 cảnh báo như trước), unit test pass (thêm test chặn La bàn có lại khối đã bỏ, thiếu kiểu của app mẫu, và chủ đề
+khác chạy theo giờ thật ở khung xem trước; test nội dung thông báo cho phép La bàn tự vẽ thông báo mới nhất như Chuỗi), `tools/check-rules.sh` ra 0 vi phạm (38 rule), thư mục các chủ đề cũ không
+đổi dòng nào. Đã test trên máy.
+
+### Thêm
+
+- Chủ đề La bàn (Ambitio Face của Muviz Edge, số đo lấy từ `AmbitioClock` và layout `may23_screen_layout` dịch ngược; mock duyệt trước khi code): mặt số vuông 75% cạnh ngắn × cỡ, các vòng số đồng tâm xoay về một đường chỉ cố định sang phải: vòng giờ 1–12 Krona One xen nhãn giờ rưỡi "02:30", vòng phút 00–55 xen vạch, vòng giây 00–55 trong cùng, hai vòng tròn mảnh ôm vòng phút; chữ đặt theo bán kính, số đang chỉ nằm ngang trên đường chỉ. Hai kiểu như Clock Style của app mẫu: có vòng giây (mặc định; đường chỉ từ tâm, cả ba vòng chạy theo giờ thật mỗi khung hình: vòng giây quay một vòng mỗi phút, vòng phút và giờ trôi liên tục) và không vòng giây (đường chỉ lùi ra 0,28u, cập nhật đầu mỗi phút, vòng phút và giờ xoay mượt 400ms tới chỗ mới thay vì nhảy như app mẫu); đổi kiểu thì vòng giây mờ dần và đường chỉ lùi trong 300ms như app mẫu. Mỗi vòng vẽ một lần vào `GraphicsLayer`, mỗi khung hình chỉ xoay layer nên không recompose, không vẽ lại chữ. Khung xem trước ở màn chủ đề và Tùy chỉnh cũng chạy theo giờ thật như màn sửa của app mẫu (`isLiveInPreview`); thẻ thu nhỏ ở tab AOD (thẻ thiết kế, lưới chủ đề) đứng yên ở giờ mẫu (`AodState.isStill`) để màn danh sách không vẽ lại mỗi khung hình.
+- Dưới mặt số, cách đáy 60dp như layout mẫu: ngày "dd MMMM yyyy" in hoa giãn chữ (Google Sans Bold 14sp, + thời tiết), dòng pin · thông báo (`AodStatusLine`, Google Sans Regular), thông báo mới nhất (icon + "TIÊU ĐỀ: NỘI DUNG" in hoa, chạy chữ một lần khi dài, như `notify_lt` của app mẫu) và trình phát như app mẫu (lùi · tên bài / nghệ sĩ in hoa giãn chữ · tới, không nút phát: chạm tên bài để phát / dừng, dừng thì chữ mờ; không thanh tiến trình; tên dài chạy chữ, đổi bài thì tên trượt lên). Màn ngang: mặt số giữa màn, không nhạc thì ngày trái, pin · thông báo phải; có nhạc thì ngày + pin trái, trình phát phải.
+- Mặc định bắt mắt: số giờ và đường chỉ `Amber` (#FFD54F, màu mới chưa chủ đề nào dùng), phút GreyE0, giờ rưỡi / giây / dòng pin Grey9A như màu 2 của app mẫu. Tuỳ chọn đủ như app mẫu: Đồng hồ (kiểu có / không vòng giây, cỡ 70–120%, màu giờ, giờ rưỡi, phút, giây riêng từng vòng thay cho màu 1 / màu 2; vạch giữa số phút theo màu phút, mờ 0,6), Ngày, Pin & thông báo, Nhạc (thay cho màu điều khiển).
+- La bàn chỉ có ngày, thời tiết, pin, thông báo (kèm thông báo mới nhất, `hasNotificationContent = true`), nhạc: ghi nhớ, sự kiện, nét vẽ không có chỗ đặt cân quanh mặt số tròn ở cả dọc lẫn ngang.
+- Font Krona One (số, đúng font của app mẫu, bản tĩnh Google Fonts; tên dành riêng "Krona" nên không tự sửa file; không có tiếng Việt nhưng chỉ vẽ chữ số) và Google Sans Regular (sinh từ bản Google Sans đã cắt). File TTF tĩnh không trục variable như mọi font khác (lỗi Xiaomi 2026-10-12). Giấy phép `licenses/KronaOne-OFL.txt`.
+- `tools/mockups/aod_landscape_mockups.py` có nhóm khung của La bàn (màu từng vòng và cỡ, bốn khung dọc, ba khung ngang; khung D1 và N1 xoay theo giờ thật của máy xem mock).
+- CLAUDE.md, README: chủ đề mới bám sát app mẫu (đọc code vẽ + layout trước khi mô tả / đề xuất, giữ đủ mọi tuỳ chọn, chi tiết và chuyển động như kiểu có / không vòng giây, vòng giây xoay theo giờ thật); không tự bỏ / gộp tuỳ chọn của app mẫu: mock liệt kê từng tuỳ chọn là giữ / đổi / bỏ, đổi hay bỏ phải hỏi user; chỗ làm xịn hơn được thì cứ làm và nêu trong mock; khung xem trước dùng giờ mẫu trừ chủ đề bật `isLiveInPreview`.
+
+### Thay đổi
+
+- Chỉ thêm, không đổi chủ đề đang có: mục `COMPASS` ở `AodThemeValue`, nhánh `when` ở `AodPortrait` / `AodLandscape` / `AodMediaControls`, cờ `AodState.isPreview` (mặc định `false`, chỉ `toPreviewAodState` đặt `true`) và `AodThemeSpec.isLiveInPreview` (mặc định `false`, chỉ La bàn bật; mặt số đọc `AodState.isClockLive`), khung xem trước các chủ đề khác vẫn dùng giờ mẫu, màu `Amber`, `FontFamilyGoogleSansText` (Regular + Bold, họ riêng để dòng pin của Vành giữ Bold) và `FontFamilyKronaOne`; `make_static_fonts.py` thêm Google Sans Regular và Krona One (file `google_sans_bold.ttf` giữ nguyên byte).
+
 ## [Chưa phát hành] – 2026-10-18 – Thẻ chủ đề luôn là kiểu mặc định
 
 ### Sửa

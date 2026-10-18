@@ -43,6 +43,11 @@ interface AodThemeSpec : AodOptionSpec {
     // báo mới nhất (Chuỗi) thì bật lại.
     val hasNotificationContent: Boolean
         get() = AodBlockValue.STATUS !in ownBlocks
+
+    // Chủ đề có chuyển động theo giờ thật như app mẫu (vòng giây của La bàn) thì mặt số chạy theo giờ thật cả ở khung xem trước; các chủ đề khác
+    // xem trước ở giờ mẫu cố định (CustomizePreviewSamples, 08:30).
+    val isLiveInPreview: Boolean
+        get() = false
 }
 
 val AodOptionSpec.options: List<AodThemeOption<*>>
