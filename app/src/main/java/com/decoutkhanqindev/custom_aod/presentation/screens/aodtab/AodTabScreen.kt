@@ -4,9 +4,17 @@ import android.Manifest
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavBackStack
@@ -14,8 +22,10 @@ import androidx.navigation3.runtime.NavKey
 import com.decoutkhanqindev.custom_aod.data.device.permission.PermissionManager
 import com.decoutkhanqindev.custom_aod.presentation.aod.AodNotificationListener
 import com.decoutkhanqindev.custom_aod.presentation.aod.AodService
+import com.decoutkhanqindev.custom_aod.presentation.components.AppToastHost
 import com.decoutkhanqindev.custom_aod.presentation.components.LocalTag
 import com.decoutkhanqindev.custom_aod.presentation.effects.LaunchedWithLifecycleEffect
+import com.decoutkhanqindev.custom_aod.presentation.model.ToastUiModel
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.PermissionValue
 import com.decoutkhanqindev.custom_aod.presentation.model.permission.isGranted
 import com.decoutkhanqindev.custom_aod.presentation.navigation.CustomizeDestination
@@ -27,6 +37,7 @@ import com.decoutkhanqindev.custom_aod.utils.openAppSettings
 import com.decoutkhanqindev.custom_aod.utils.openMiuiPermissionSettings
 import com.decoutkhanqindev.custom_aod.utils.openNotificationSettings
 import com.decoutkhanqindev.custom_aod.utils.openOverlaySettings
+import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -38,10 +49,13 @@ fun AodTabScreen(
     isPermissionSkipped: Boolean,
 ) {
     val context = LocalContext.current
+    val resources = LocalResources.current
     val tag = LocalTag.current
     val viewModel: AodTabViewModel = koinViewModel { parametersOf(isPermissionSkipped) }
     val permissionManager: PermissionManager = koinInject()
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val scope = rememberCoroutineScope()
+    val toastState = remember { SnackbarHostState() }
     val notificationPermissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission(),
     ) { isGranted ->
@@ -85,6 +99,11 @@ fun AodTabScreen(
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                             notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                         }
+
+                    is AodTabEffect.ShowMessage -> scope.launch {
+                        toastState.currentSnackbarData?.dismiss()
+                        toastState.showSnackbar(ToastUiModel(resources.getString(effect.messageRes), effect.isError))
+                    }
                 }
             },
             catch = { e -> Timber.tag(tag).e(e.stackTraceToString()) },
@@ -97,5 +116,12 @@ fun AodTabScreen(
         onPauseOrDispose { }
     }
 
-    AodTabContent(state = state, onIntent = viewModel::onIntent)
+    Box(modifier = Modifier.fillMaxSize()) {
+        AodTabContent(state = state, onIntent = viewModel::onIntent)
+
+        AppToastHost(
+            hostState = toastState,
+            modifier = Modifier.align(Alignment.Center),
+        )
+    }
 }

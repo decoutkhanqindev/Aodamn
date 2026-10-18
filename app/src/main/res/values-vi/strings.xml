@@ -49,6 +49,7 @@
     <string name="aod_tab_theme_reset">Đặt lại chủ đề mặc định</string>
     <string name="aod_tab_theme_reset_title">Đặt lại chủ đề mặc định?</string>
     <string name="aod_tab_theme_reset_desc">AOD sẽ dùng lại chủ đề %1$s. Những gì bạn đã chỉnh và lưu ở từng chủ đề vẫn được giữ.</string>
+    <string name="aod_tab_theme_reset_done">Đã đặt lại chủ đề mặc định</string>
     <string name="theme_classic">Cổ điển</string>
     <string name="theme_pebble">Sỏi</string>
     <string name="theme_jersey">Số áo</string>
@@ -398,6 +399,7 @@
     <string name="customize_permission_desc">Mục này cần quyền bên dưới. Cấp xong mục sẽ tự bật.</string>
     <string name="customize_background_loading">Đang mở…</string>
     <string name="customize_applying">Đang áp dụng…</string>
+    <string name="customize_applied">Đã áp dụng tùy chỉnh</string>
     <string name="customize_memo_remove">Xoá ghi chú</string>
     <string name="customize_glow_preview">Xem thử viền sáng</string>
     <string name="customize_sample_notification_title">Lan</string>

@@ -1,6 +1,7 @@
 package com.decoutkhanqindev.custom_aod.presentation.screens.aodtab
 
 import androidx.lifecycle.viewModelScope
+import com.decoutkhanqindev.custom_aod.R
 import com.decoutkhanqindev.custom_aod.data.device.permission.PermissionManager
 import com.decoutkhanqindev.custom_aod.data.local.datastore.DataStoreManager
 import com.decoutkhanqindev.custom_aod.data.local.image.AodImageManager
@@ -87,6 +88,7 @@ class AodTabViewModel(
         viewModelScope.launch {
             dataStoreManager.saveAodThemeId(AodThemeValue.DEFAULT.id).join()
             refreshDesign()
+            sendEffect(AodTabEffect.ShowMessage(R.string.aod_tab_theme_reset_done))
         }
     }
 

@@ -710,8 +710,8 @@ chọn theo các khối đang có dữ liệu, dùng chung cho mọi chủ đề
    trước Áp dụng (nút hoàn tác, hướng dẫn 40dp cho vừa), không có ô bước; máy hẹp 360dp vẫn không tràn. Hướng dẫn: bước Xoay chỉ vào nút xoay nổi, bước
    cuối chỉ vào thanh trên. Màn chủ đề: lúc xem thanh trên là tên chủ đề (dòng "Đang dùng" màu mint bên dưới nếu đang dùng)
    · Sửa · Áp dụng / Tùy chỉnh; lúc sửa là hoàn tác, làm lại, đặt lại · Lưu; nút xoay là nút tròn nổi cạnh phải, trên banner
-   lúc xem và trên panel lúc sửa. Ở Tùy chỉnh: tab Đồng hồ chỉ có dòng dẫn sang màn chủ đề (không có chọn mặt, font, màu); Đặt lại không đổi chủ đề đang dùng; Áp dụng xong quay về tab AOD và thẻ đổi theo
-   giao diện mới: icon khối và dòng "N khối · nền" khớp đúng các khối vừa bật (khối cần quyền mà chưa có quyền thì không
+   lúc xem và trên panel lúc sửa. Ở Tùy chỉnh: tab Đồng hồ chỉ có dòng dẫn sang màn chủ đề (không có chọn mặt, font, màu); Đặt lại không đổi chủ đề đang dùng; Áp dụng xong ở lại Tùy chỉnh, hiện toast "Đã áp dụng tùy chỉnh",
+   nút Áp dụng mờ lại tới khi đổi tiếp; quay về tab AOD thì thẻ đổi theo giao diện mới: icon khối và dòng "N khối · nền" khớp đúng các khối vừa bật (khối cần quyền mà chưa có quyền thì không
    tính), không bật khối nào thì "Chỉ đồng hồ · Nền đen"; bật nhiều khối thì ô cuối là "+N", máy hẹp vẫn không tràn hàng.
    Nút bút chì nằm giữa thẻ theo chiều dọc. TalkBack đọc cả thẻ một lần (tiêu đề, chủ đề, số khối, nền), không đọc từng icon.
    Thanh tab Main cao 56dp, chỉ icon; tab đang chọn icon đặc có tên, TalkBack đọc tên cả ba tab.
@@ -724,7 +724,7 @@ chọn theo các khối đang có dữ liệu, dùng chung cho mọi chủ đề
 3a. Áp dụng khi thiếu quyền bắt buộc: thu hồi một quyền bắt buộc (vd "Hiển thị trên ứng dụng khác"), đổi gì đó ở Tùy chỉnh
    (mở từ tab AOD) rồi Áp dụng: không quay về, hiện sheet "Cấp quyền để áp dụng" liệt kê các quyền bắt buộc; bấm Để sau
    (hoặc vuốt sheet xuống): sheet đóng, chưa áp dụng gì, bấm Áp dụng lại thì sheet hiện lại. Cấp quyền từ sheet: app tự quay
-   về, dòng quyền thành "Đã cấp"; cấp đủ thì sheet đóng và tự áp dụng (lớp phủ "Đang áp dụng…" rồi về tab AOD). Tương tự ở
+   về, dòng quyền thành "Đã cấp"; cấp đủ thì sheet đóng và tự áp dụng (lớp phủ "Đang áp dụng…" rồi toast, ở lại Tùy chỉnh). Tương tự ở
    màn chủ đề (tab AOD › Chủ đề › một chủ đề chưa dùng › Áp dụng): cấp đủ thì tự áp dụng, ở lại màn chủ đề và báo đã áp
    dụng. Lưu (lúc Sửa) không đòi quyền. Onboarding vẫn như cũ: Áp dụng thiếu quyền thì sang màn quyền.
 4. Khóa máy: đồng hồ có hiện sau khoảng 1 giây không, có phủ kín cả thanh trạng thái và thanh điều

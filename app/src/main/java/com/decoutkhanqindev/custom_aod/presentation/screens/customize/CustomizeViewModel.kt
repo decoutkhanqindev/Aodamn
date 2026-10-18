@@ -531,8 +531,9 @@ class CustomizeViewModel(
         updateState { copy(guideStep = null) }
     }
 
-    // Chỉ bấm được khi bản nháp đã khác lúc vào màn; ghi phần đã đổi rồi sang bước sau. Mở từ màn chính mà còn thiếu quyền bắt buộc thì
-    // chưa ghi gì, hiện sheet quyền; cấp đủ thì tự áp dụng (refreshApplyPermissions). Onboarding thì sang màn quyền như cũ (navigateNext).
+    // Chỉ bấm được khi bản nháp đã khác lúc vào màn; ghi phần đã đổi. Mở từ màn chính thì ở lại màn và báo toast, bản vừa ghi thành bản
+    // gốc mới (ảnh ghi lỗi thì giữ bản gốc cũ để Áp dụng lại được); còn thiếu quyền bắt buộc thì chưa ghi gì, hiện sheet quyền, cấp đủ
+    // thì tự áp dụng (refreshApplyPermissions). Onboarding thì sang bước sau (navigateNext).
     private fun confirmCustomization() {
         if (state.value.isApplying || !state.value.history.hasChanges) return
         if (!isFirstOpen) {
@@ -545,36 +546,39 @@ class CustomizeViewModel(
         viewModelScope.launch {
             updateState { copy(isApplying = true, selectedTab = null) }
             val draft = state.value.draft
-            save(draft, initialDraft)
-            navigateNext()
+            val isSaved = save(draft, initialDraft)
+            if (isFirstOpen) {
+                navigateNext()
+            } else if (isSaved) {
+                initialDraft = draft
+                undoStack.clear()
+                redoStack.clear()
+                publish(draft)
+                sendEffect(CustomizeEffect.ShowMessage(R.string.customize_applied))
+            }
             updateState { copy(isApplying = false) }
         }
     }
 
     // Onboarding: đủ quyền bắt buộc thì vào thẳng Main, không thì sang màn quyền. Bỏ qua không đi qua đây: không ghi gì và vào thẳng Main
     // (thiếu quyền thì Main hiện bottom sheet nhắc), vì user đã muốn bỏ qua mà còn bắt cấp quyền thì dễ bỏ app.
-    // Mở từ Main thì quay lại Main (quyền bắt buộc đã đủ, confirmCustomization kiểm trước).
     private suspend fun navigateNext() {
         val isReady = permissionManager.requiredAodPermissions().hasRequiredPermissions
-        sendEffect(
-            when {
-                !isFirstOpen -> CustomizeEffect.Navigation.NavigateBack
-                isReady -> CustomizeEffect.Navigation.NavigateToMain
-                else -> CustomizeEffect.Navigation.NavigateToPermission
-            },
-        )
+        sendEffect(if (isReady) CustomizeEffect.Navigation.NavigateToMain else CustomizeEffect.Navigation.NavigateToPermission)
     }
 
     // Chỉ ghi phần đã đổi: mục cần quyền user không đụng tới giữ cờ đã lưu (vd icon thông báo mặc định bật nhưng chưa có quyền).
-    private suspend fun save(draft: CustomizeDraftUiModel, initial: CustomizeDraftUiModel) {
+    // false khi ảnh nền hay nét vẽ ghi lỗi (đã báo toast lỗi).
+    private suspend fun save(draft: CustomizeDraftUiModel, initial: CustomizeDraftUiModel): Boolean {
         saveAppearance(draft.appearance, initial.appearance)
         saveInfo(draft.info, initial.info)
         if (draft.effects.isEdgeGlowEnabled != initial.effects.isEdgeGlowEnabled) {
             dataStoreManager.saveIsAodEdgeGlowEnabled(draft.effects.isEdgeGlowEnabled)
         }
         if (draft.decor.memo != initial.decor.memo) dataStoreManager.saveAodMemo(draft.decor.memo)
-        saveBackground(draft.decor, initial.decor)
-        saveDrawing(draft.decor.drawing, initial.decor.drawing)
+        val isBackgroundSaved = saveBackground(draft.decor, initial.decor)
+        val isDrawingSaved = saveDrawing(draft.decor.drawing, initial.decor.drawing)
+        return isBackgroundSaved && isDrawingSaved
     }
 
     private fun saveAppearance(
@@ -622,17 +626,17 @@ class CustomizeViewModel(
     private suspend fun saveBackground(
         draft: CustomizeDecorUiModel,
         initial: CustomizeDecorUiModel
-    ) {
-        if (draft.wallpaper == initial.wallpaper && draft.background === initial.background) return
+    ): Boolean {
+        if (draft.wallpaper == initial.wallpaper && draft.background === initial.background) return true
         val background = draft.background
         val wallpaper = draft.wallpaper
         when {
             background != null -> {
-                if (aodImageManager.saveBackground(background)) {
-                    dataStoreManager.saveAodWallpaper(WallpaperValue.NONE_CODE)
-                } else {
+                if (!aodImageManager.saveBackground(background)) {
                     sendEffect(CustomizeEffect.ShowMessage(R.string.background_save_failed, isError = true))
+                    return false
                 }
+                dataStoreManager.saveAodWallpaper(WallpaperValue.NONE_CODE)
             }
 
             wallpaper != null -> {
@@ -645,15 +649,18 @@ class CustomizeViewModel(
                 aodImageManager.removeBackground()
             }
         }
+        return true
     }
 
-    private suspend fun saveDrawing(drawing: Bitmap?, initialDrawing: Bitmap?) {
-        if (drawing === initialDrawing) return
+    private suspend fun saveDrawing(drawing: Bitmap?, initialDrawing: Bitmap?): Boolean {
+        if (drawing === initialDrawing) return true
         if (drawing == null) {
             aodImageManager.removeDrawing()
         } else if (!aodImageManager.saveDrawing(drawing)) {
             sendEffect(CustomizeEffect.ShowMessage(R.string.drawing_save_failed, isError = true))
+            return false
         }
+        return true
     }
 
     private companion object {

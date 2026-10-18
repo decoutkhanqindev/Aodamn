@@ -7,6 +7,17 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-10-18 – Toast khi áp dụng
+
+Build được, lint không thêm cảnh báo, unit test pass, `tools/check-rules.sh` ra 0 vi phạm (38 rule). Chưa test trên máy.
+
+### Đổi
+
+- Tùy chỉnh mở từ tab AOD: Áp dụng xong ở lại màn và hiện toast "Đã áp dụng tùy chỉnh" thay vì quay về tab AOD; bản vừa ghi thành
+  bản gốc mới (nút Áp dụng mờ lại, lịch sử hoàn tác xoá như lúc Lưu ở màn chủ đề). Ảnh nền hay nét vẽ ghi lỗi thì chỉ hiện toast lỗi,
+  giữ bản gốc cũ để Áp dụng lại được. Onboarding vẫn sang Main / màn quyền như cũ.
+- Tab AOD › Đặt lại về chủ đề mặc định: ghi xong hiện toast "Đã đặt lại chủ đề mặc định".
+
 ## [Chưa phát hành] – 2026-10-18 – Thẻ chủ đề luôn là kiểu mặc định
 
 ### Sửa
