@@ -3,7 +3,9 @@ package com.decoutkhanqindev.aodamn.presentation.components.aod.theme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import com.decoutkhanqindev.aodamn.presentation.components.aod.AodDetails
+import com.decoutkhanqindev.aodamn.presentation.components.aod.AodBottomDetails
+import com.decoutkhanqindev.aodamn.presentation.components.aod.AodPortraitSpread
+import com.decoutkhanqindev.aodamn.presentation.components.aod.AodTopDetails
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.bezel.AodBezelLandscape
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.bezel.AodBezelPortrait
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.capsule.AodCapsuleLandscape
@@ -26,8 +28,8 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeValue
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodIntent
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
 
-// Bố cục AOD màn dọc theo chủ đề: Cổ điển và Sỏi là đồng hồ rồi các khối thông tin bên dưới; Số áo, Viên nang, Thẻ, Tháp, Chuỗi, Vành và La bàn tự vẽ cả
-// cụm (số, ngày, dòng trạng thái) cùng các khối thông tin.
+// Bố cục AOD màn dọc theo chủ đề: Cổ điển và Sỏi giãn trên - dưới (AodPortraitSpread: đồng hồ, ngày, khối thêm ở trên; nhạc, dòng pin neo đáy);
+// Số áo, Viên nang, Thẻ, Tháp, Chuỗi, Vành và La bàn tự vẽ cả cụm (số, ngày, dòng trạng thái) cùng các khối thông tin.
 // Thêm chủ đề = thêm một nhánh ở đây và ở AodLandscape.
 @Composable
 fun AodPortrait(
@@ -85,9 +87,14 @@ private fun ClockAndDetails(
     onIntent: (AodIntent) -> Unit,
     clock: @Composable () -> Unit,
 ) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        clock()
+    AodPortraitSpread(
+        top = {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                clock()
 
-        AodDetails(state = state, onIntent = onIntent)
-    }
+                AodTopDetails(state = state, onIntent = onIntent)
+            }
+        },
+        bottom = { AodBottomDetails(state = state, onIntent = onIntent) },
+    )
 }

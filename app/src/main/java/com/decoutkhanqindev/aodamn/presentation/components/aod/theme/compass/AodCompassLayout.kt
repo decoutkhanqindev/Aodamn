@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -45,40 +47,45 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.component.AodCom
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodIntent
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
 
-// La bàn, màn dọc (mock đã duyệt): mặt số giữa màn như layout mẫu; ngày (+ thời tiết), dòng pin · thông báo, thông báo mới nhất và trình phát
-// xếp dọc giữa màn, thẳng đáy cách đáy 60dp (khối lớn lên phía trên khi có thêm dòng). Trình phát rộng bằng màn trừ 40dp mỗi bên như layout mẫu.
+// La bàn, màn dọc (mock đã duyệt): mặt số giữa màn như layout mẫu; ngày (+ thời tiết) giữa vùng trên mặt số; dòng pin · thông báo, thông báo
+// mới nhất và trình phát xếp dọc giữa vùng dưới mặt số (nhóm tự căn giữa lại khi thêm / bớt dòng). Trình phát rộng bằng màn trừ 40dp mỗi bên
+// như layout mẫu.
 @Composable
 fun AodCompassPortrait(
     state: AodState,
     onIntent: (AodIntent) -> Unit,
 ) {
     val paints = rememberCompassPaints()
+    val config = state.appearance.theme.config
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val infoWidth = maxWidth - CompassMetrics.SideMargin * 2
         val playerWidth = maxWidth - CompassMetrics.PlayerMargin * 2
+        val dial = minOf(maxWidth, maxHeight) * (CompassMetrics.DIAL_FRACTION * config[CompassThemeSpec.Size] / 100f)
+        val zone = (maxHeight - dial) / 2
 
         AodCompassDial(
             nowMillis = state.nowMillis,
             isLive = state.isClockLive,
-            config = state.appearance.theme.config,
+            config = config,
             paints = paints,
         )
 
-        Column(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = CompassMetrics.BottomMargin),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            CompassInfo(state = state, maxWidth = infoWidth)
+        CompassBand(height = zone, modifier = Modifier.align(Alignment.TopCenter)) {
+            CompassDateRow(state = state)
+        }
 
-            CompassPlayer(
-                state = state,
-                width = playerWidth,
-                onIntent = onIntent,
-                modifier = Modifier.padding(top = CompassMetrics.MediaGap),
-            )
+        CompassBand(height = zone, modifier = Modifier.align(Alignment.BottomCenter)) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                CompassStatus(state = state, maxWidth = infoWidth)
+
+                CompassPlayer(
+                    state = state,
+                    width = playerWidth,
+                    onIntent = onIntent,
+                    modifier = Modifier.padding(top = CompassMetrics.MediaGap),
+                )
+            }
         }
     }
 }
@@ -142,6 +149,22 @@ private fun CompassZone(
         modifier = Modifier
             .width(width)
             .fillMaxHeight(),
+        contentAlignment = Alignment.Center,
+    ) {
+        content()
+    }
+}
+
+@Composable
+private fun CompassBand(
+    height: Dp,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(height),
         contentAlignment = Alignment.Center,
     ) {
         content()

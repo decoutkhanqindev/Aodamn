@@ -23,16 +23,14 @@ import com.decoutkhanqindev.aodamn.presentation.components.aod.landscapePlan
 import com.decoutkhanqindev.aodamn.presentation.components.aod.panelBlocks
 import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.AodAppearanceUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.info.BatteryUiModel
-import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodPanelBlockValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.component.AodComponentValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.tower.TowerThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodIntent
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
-import kotlinx.collections.immutable.toImmutableList
 
-// Tháp, màn dọc như layout app mẫu: hàng số sát đỉnh màn hình (TowerMetrics.TOP_RATIO) → ngày (thời tiết cạnh ngày khi không có sự kiện); khoảng
+// Tháp, màn dọc như layout app mẫu: hàng số sát đỉnh màn hình (TowerMetrics.TOP_RATIO) → ngày (thời tiết một dòng riêng, mock đã duyệt); khoảng
 // còn lại chia 0,8 / 0,2, các khối thêm (thời tiết, sự kiện, ghi nhớ) → nhạc → pin + icon thông báo neo đáy phần 0,8. Nhiều khối không vừa thì
 // hàng số nhỏ lại (đo khối thêm trước rồi mới chọn R).
 @Composable
@@ -41,12 +39,7 @@ fun AodTowerPortrait(
     onIntent: (AodIntent) -> Unit,
 ) {
     val spec = state.appearance.theme.value.spec
-    val isWeatherBesideDate = state.landscapePlan().isWeatherBesideDate
-    val blocks = remember(spec, isWeatherBesideDate) {
-        spec.panelBlocks()
-            .filter { block -> !(block == AodPanelBlockValue.WEATHER && isWeatherBesideDate) }
-            .toImmutableList()
-    }
+    val blocks = remember(spec) { spec.panelBlocks() }
     val config = state.appearance.theme.config
     val glyphs = rememberTowerGlyphs()
 
@@ -72,7 +65,7 @@ fun AodTowerPortrait(
                     unit = r,
                     dateGap = r * TowerMetrics.DATE_GAP,
                     dateFont = r * TowerMetrics.DATE_FONT,
-                    isWeatherShown = isWeatherBesideDate,
+                    isWeatherShown = false,
                 )
             },
             status = { r -> TowerStatus(state = state, glyphHeight = r * TowerMetrics.STATUS_GLYPH) },

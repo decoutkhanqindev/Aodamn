@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -30,27 +31,37 @@ import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
-// Các khối thông tin dưới đồng hồ của màn dọc (Cổ điển, Sỏi). Khối chủ đề không có (AodThemeSpec.components) thì không vẽ dù đang bật.
+// Cụm trên của màn dọc giãn trên - dưới (Cổ điển, Sỏi), dưới đồng hồ: ngày, thời tiết một dòng riêng giữa bề ngang, sự kiện, ghi nhớ, nét vẽ.
+// Khối chủ đề không có (AodThemeSpec.components) thì không vẽ dù đang bật.
 @Composable
-fun AodDetails(
+fun AodTopDetails(
     state: AodState,
     onIntent: (AodIntent) -> Unit,
 ) {
     val spec = state.appearance.theme.value.spec
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        AodDateAndWeather(state = state, isWeatherShown = AodComponentValue.WEATHER in spec.components)
+        AodDateAndWeather(state = state, isWeatherShown = false)
 
-        if (AodComponentValue.EVENTS in spec.components) {
-            AodPanelBlock(block = AodPanelBlockValue.EVENTS, state = state, onIntent = onIntent)
+        spec.topPanelBlocks().forEach { block ->
+            key(block) {
+                AodPanelBlock(block = block, state = state, onIntent = onIntent)
+            }
         }
+    }
+}
 
-        if (AodComponentValue.MEMO in spec.components) {
-            AodPanelBlock(block = AodPanelBlockValue.MEMO, state = state, onIntent = onIntent)
-        }
+// Cụm đáy của màn dọc giãn trên - dưới (Cổ điển, Sỏi): nhạc, rồi icon thông báo, thông báo mới nhất và pin sát đáy.
+@Composable
+fun AodBottomDetails(
+    state: AodState,
+    onIntent: (AodIntent) -> Unit,
+) {
+    val spec = state.appearance.theme.value.spec
 
-        if (AodComponentValue.DRAWING in spec.components) {
-            AodPanelBlock(block = AodPanelBlockValue.DRAWING, state = state, onIntent = onIntent)
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        if (AodComponentValue.MEDIA in spec.components) {
+            AodPanelBlock(block = AodPanelBlockValue.MEDIA, state = state, onIntent = onIntent)
         }
 
         // Chủ đề tự vẽ dòng trạng thái (AodBlockValue.STATUS) thì pin, đèn pin, icon thông báo nằm trong bố cục của chủ đề.
@@ -64,10 +75,6 @@ fun AodDetails(
             if (AodComponentValue.BATTERY in spec.components) {
                 AodBatteryBlock(state = state)
             }
-        }
-
-        if (AodComponentValue.MEDIA in spec.components) {
-            AodPanelBlock(block = AodPanelBlockValue.MEDIA, state = state, onIntent = onIntent)
         }
     }
 }
@@ -212,6 +219,17 @@ fun AodThemeSpec.panelBlocks(): ImmutableList<AodPanelBlockValue> =
             block.component in components && (block != AodPanelBlockValue.NOTIFICATION || AodBlockValue.STATUS !in ownBlocks)
         }
         .toImmutableList()
+
+// Màn dọc giãn trên - dưới (AodPortraitSpread): thời tiết, sự kiện, ghi nhớ, nét vẽ ở cụm trên dưới ngày; thông báo mới nhất và nhạc ở cụm đáy
+// trên dòng trạng thái.
+fun AodThemeSpec.topPanelBlocks(): ImmutableList<AodPanelBlockValue> =
+    panelBlocks().filter { block -> !block.isAtPortraitBottom() }.toImmutableList()
+
+fun AodThemeSpec.bottomPanelBlocks(): ImmutableList<AodPanelBlockValue> =
+    panelBlocks().filter { block -> block.isAtPortraitBottom() }.toImmutableList()
+
+private fun AodPanelBlockValue.isAtPortraitBottom(): Boolean =
+    this == AodPanelBlockValue.NOTIFICATION || this == AodPanelBlockValue.MEDIA
 
 // Khối dùng chung đang có dữ liệu để hiện (cùng điều kiện với AodPanelBlock), theo thứ tự màn dọc.
 fun AodState.shownPanelBlocks(): ImmutableList<AodPanelBlockValue> =

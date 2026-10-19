@@ -42,9 +42,8 @@ object CompassMetrics {
     val LineWidth = 1.3.dp
     val CircleWidth = 1.dp
 
-    // Khối dưới mặt số cách đáy 60dp: ngày in hoa Bold 14sp giãn 0,25em, cách 15dp dòng pin (icon pin 14dp, chữ 13sp), thông báo mới nhất (icon
-    // 16dp, cách 10dp, chữ in hoa 12,5sp giãn 0,1em); thời tiết cách ngày 12dp; trình phát cách 24dp.
-    val BottomMargin = 60.dp
+    // Chữ quanh mặt số: ngày in hoa Bold 14sp giãn 0,25em (màn ngang cách 15dp dòng pin), dòng pin (icon pin 14dp, chữ 13sp), thông báo mới
+    // nhất (icon 16dp, cách 10dp, chữ in hoa 12,5sp giãn 0,1em); thời tiết cách ngày 12dp; trình phát cách 24dp.
     val DateSize = 14.sp
     val DateSpacing = 0.25.em
     val DateGap = 15.dp

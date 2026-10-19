@@ -50,7 +50,8 @@ object CardMetrics {
     const val DATE_TOP = 0.108f
 
     // Khối thêm cách ngày BLOCKS_TOP; dòng trạng thái cao bằng icon pin STATUS_GLYPH (16dp ở R = 190), cách khối bên trên STATUS_TOP (40dp như
-    // app mẫu; màn ngang LANDSCAPE_STATUS_TOP). Màn dọc nhiều khối thì thẻ nhỏ lại (tới MIN_SCALE) cho cả cột vừa HEIGHT_FILL chiều cao.
+    // app mẫu; màn ngang LANDSCAPE_STATUS_TOP). Màn dọc nhiều khối thì thẻ nhỏ lại (tới MIN_SCALE) cho hai cụm vừa AodSpreadMetrics.ROOM_RATIO
+    // chiều cao; màn ngang cả cụm không cao quá HEIGHT_FILL.
     const val BLOCKS_TOP = 0.08f
     const val STATUS_GLYPH = 0.082f
     const val STATUS_TOP = 0.21f

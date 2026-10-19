@@ -35,8 +35,8 @@ import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodIntent
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
 import kotlin.math.roundToInt
 
-// Vành, màn dọc (mock đã duyệt): mặt số phủ màn; thứ + ngày (+ thời tiết) giữa vùng từ số 12 tới đầu kim phút, dòng pin · thông báo và trình phát
-// gọn giữa vùng từ đầu kim tới số 6, nên kim không bao giờ đè lên chữ. Nhạc phát / dừng thì nhóm dưới cao thấp có animation, nhóm tự căn giữa lại.
+// Vành, màn dọc (mock đã duyệt): mặt số phủ màn; thứ + ngày (+ thời tiết) và dòng pin · thông báo ngay dưới giữa vùng từ số 12 tới đầu kim
+// phút, trình phát gọn giữa vùng từ đầu kim tới số 6, nên kim không bao giờ đè lên chữ. Nhạc phát / dừng thì trình phát hiện / ẩn có animation.
 @Composable
 fun AodBezelPortrait(
     state: AodState,
@@ -56,14 +56,16 @@ fun AodBezelPortrait(
 
         AodBezelDial(nowMillis = state.nowMillis, config = state.appearance.theme.config, paints = paints)
 
-        BezelDateRow(state = state, modifier = Modifier.anchorAt(x = centerX, centerY = topCenter, anchor = 0.5f))
-
         Column(
-            modifier = Modifier.anchorAt(x = centerX, centerY = bottomCenter, anchor = 0.5f),
+            modifier = Modifier.anchorAt(x = centerX, centerY = topCenter, anchor = 0.5f),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            BezelStatus(state = state)
+            BezelDateRow(state = state)
 
+            BezelStatus(state = state, modifier = Modifier.padding(top = BezelMetrics.GroupGap))
+        }
+
+        Box(modifier = Modifier.anchorAt(x = centerX, centerY = bottomCenter, anchor = 0.5f)) {
             AodPanelBlock(block = AodPanelBlockValue.MEDIA, state = state, onIntent = onIntent)
         }
     }

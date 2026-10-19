@@ -5,6 +5,7 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -16,10 +17,12 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.aodamn.presentation.components.aod.AodLandscapeLayout
 import com.decoutkhanqindev.aodamn.presentation.components.aod.AodPanelColumn
+import com.decoutkhanqindev.aodamn.presentation.components.aod.AodSpreadMetrics
 import com.decoutkhanqindev.aodamn.presentation.components.aod.block.AodStatusLine
 import com.decoutkhanqindev.aodamn.presentation.components.aod.block.AodWeather
+import com.decoutkhanqindev.aodamn.presentation.components.aod.bottomPanelBlocks
 import com.decoutkhanqindev.aodamn.presentation.components.aod.landscapePlan
-import com.decoutkhanqindev.aodamn.presentation.components.aod.panelBlocks
+import com.decoutkhanqindev.aodamn.presentation.components.aod.topPanelBlocks
 import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.AodAppearanceUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.info.BatteryUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeUiModel
@@ -29,26 +32,29 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.component.AodCom
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodIntent
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
 
-// Thẻ, màn dọc: thẻ → ngày → các khối thêm (thời tiết, sự kiện, ghi nhớ, nét vẽ, nhạc) → pin + icon thông báo, cả cột giữa màn hình; nhạc và
-// dòng pin ở cuối như app mẫu. Kích thước theo R (CardMetrics); có nhiều khối thêm thì R nhỏ lại cho cả cột vừa màn hình.
+// Thẻ, màn dọc giãn trên - dưới (AodSpreadMetrics, mock đã duyệt): thẻ → ngày → các khối thêm (thời tiết, sự kiện, ghi nhớ, nét vẽ) ở trên;
+// thông báo mới nhất, nhạc rồi pin + icon thông báo neo đáy. Kích thước theo R (CardMetrics); nhiều khối thì R nhỏ lại cho hai cụm vừa phần
+// giữa TOP_RATIO và BOTTOM_RATIO.
 @Composable
 fun AodCardPortrait(
     state: AodState,
     onIntent: (AodIntent) -> Unit,
 ) {
     val spec = state.appearance.theme.value.spec
-    val blocks = remember(spec) { spec.panelBlocks() }
+    val topBlocks = remember(spec) { spec.topPanelBlocks() }
+    val bottomBlocks = remember(spec) { spec.bottomPanelBlocks() }
     val config = state.appearance.theme.config
     val glyphs = rememberCardGlyphs()
 
     BoxWithConstraints {
         val unit = CardMetrics.unit(maxWidth, maxHeight, config[CardThemeSpec.Size] / 100f)
-        val fill = maxHeight * CardMetrics.HEIGHT_FILL
+        val room = maxHeight * AodSpreadMetrics.ROOM_RATIO
 
-        CardColumn(
-            extras = { AodPanelColumn(blocks = blocks, state = state, onIntent = onIntent) },
-            unitFor = { extrasHeight ->
-                ((fill - extrasHeight) / CardMetrics.COLUMN_HEIGHT).coerceIn(unit * CardMetrics.MIN_SCALE, unit)
+        CardSpread(
+            extras = { AodPanelColumn(blocks = topBlocks, state = state, onIntent = onIntent) },
+            footer = { AodPanelColumn(blocks = bottomBlocks, state = state, onIntent = onIntent) },
+            unitFor = { blocksHeight ->
+                ((room - blocksHeight) / CardMetrics.COLUMN_HEIGHT).coerceIn(unit * CardMetrics.MIN_SCALE, unit)
             },
             head = { r -> CardClockAndDate(state = state, glyphs = glyphs, unit = r, isWeatherShown = false) },
             status = { r -> CardStatus(state = state, unit = r) },
@@ -88,36 +94,51 @@ fun AodCardLandscape(
     }
 }
 
-// Đo khối thêm trước để biết R (unitFor), rồi xếp thẻ + ngày → khối thêm → dòng trạng thái giữa bề ngang. Khối thêm đổi cỡ có animation nên thẻ
-// co giãn theo chứ không nhảy; phần nào không có thì bỏ luôn khoảng cách phía trên nó.
+// Đo khối thêm và cụm đáy trước để biết R (unitFor), rồi xếp thẻ + ngày → khối thêm từ trên, khối cụm đáy → dòng trạng thái thẳng đáy
+// (AodSpreadMetrics), mỗi phần giữa bề ngang. Khối đổi cỡ có animation nên thẻ co giãn theo chứ không nhảy; phần nào không có thì bỏ luôn
+// khoảng cách cạnh nó.
 @Composable
-private fun CardColumn(
+private fun CardSpread(
     extras: @Composable () -> Unit,
-    unitFor: (extrasHeight: Dp) -> Dp,
+    footer: @Composable () -> Unit,
+    unitFor: (blocksHeight: Dp) -> Dp,
     head: @Composable (unit: Dp) -> Unit,
     status: @Composable (unit: Dp) -> Unit,
 ) {
-    SubcomposeLayout { constraints ->
+    SubcomposeLayout(modifier = Modifier.fillMaxSize()) { constraints ->
         val loose = constraints.copy(minWidth = 0, minHeight = 0)
         val extrasPlaceables = subcompose("extras", extras).map { measurable -> measurable.measure(loose) }
+        val footerPlaceables = subcompose("footer", footer).map { measurable -> measurable.measure(loose) }
         val extrasHeight = extrasPlaceables.sumOf { placeable -> placeable.height }
-        val unit = unitFor(extrasHeight.toDp())
+        val footerHeight = footerPlaceables.sumOf { placeable -> placeable.height }
+        val unit = unitFor((extrasHeight + footerHeight).toDp())
         val headPlaceables = subcompose("head") { head(unit) }.map { measurable -> measurable.measure(loose) }
         val statusPlaceables = subcompose("status") { status(unit) }.map { measurable -> measurable.measure(loose) }
         val statusHeight = statusPlaceables.sumOf { placeable -> placeable.height }
         val blocksTop = if (extrasHeight > 0) (unit * CardMetrics.BLOCKS_TOP).roundToPx() else 0
-        val statusTop = if (statusHeight > 0) (unit * CardMetrics.STATUS_TOP).roundToPx() else 0
-        val height = headPlaceables.sumOf { placeable -> placeable.height } + blocksTop + extrasHeight + statusTop + statusHeight
+        val statusTop = if (footerHeight > 0 && statusHeight > 0) (unit * CardMetrics.STATUS_TOP).roundToPx() else 0
         val width = constraints.maxWidth
+        val height = constraints.maxHeight
+        val bottomY = AodSpreadMetrics.bottomY(
+            height = height,
+            topHeight = headPlaceables.sumOf { placeable -> placeable.height } + blocksTop + extrasHeight,
+            bottomHeight = footerHeight + statusTop + statusHeight,
+            minGap = (unit * CardMetrics.STATUS_TOP).roundToPx(),
+        )
 
         layout(width = width, height = height) {
-            var y = 0
+            var y = AodSpreadMetrics.topY(height)
             headPlaceables.forEach { placeable ->
                 placeable.place(x = (width - placeable.width) / 2, y = y)
                 y += placeable.height
             }
             y += blocksTop
             extrasPlaceables.forEach { placeable ->
+                placeable.place(x = (width - placeable.width) / 2, y = y)
+                y += placeable.height
+            }
+            y = bottomY
+            footerPlaceables.forEach { placeable ->
                 placeable.place(x = (width - placeable.width) / 2, y = y)
                 y += placeable.height
             }

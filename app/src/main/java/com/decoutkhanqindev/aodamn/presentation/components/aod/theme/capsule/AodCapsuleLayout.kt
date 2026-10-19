@@ -15,10 +15,12 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.aodamn.presentation.components.aod.AodLandscapeLayout
 import com.decoutkhanqindev.aodamn.presentation.components.aod.AodPanelColumn
+import com.decoutkhanqindev.aodamn.presentation.components.aod.AodPortraitSpread
 import com.decoutkhanqindev.aodamn.presentation.components.aod.block.AodStatusLine
 import com.decoutkhanqindev.aodamn.presentation.components.aod.block.AodWeather
+import com.decoutkhanqindev.aodamn.presentation.components.aod.bottomPanelBlocks
 import com.decoutkhanqindev.aodamn.presentation.components.aod.landscapePlan
-import com.decoutkhanqindev.aodamn.presentation.components.aod.panelBlocks
+import com.decoutkhanqindev.aodamn.presentation.components.aod.topPanelBlocks
 import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.AodAppearanceUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.info.BatteryUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeUiModel
@@ -28,36 +30,48 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.component.AodCom
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodIntent
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
 
-// Viên nang, màn dọc: viên nang → ngày → các khối thêm (thời tiết, sự kiện, ghi nhớ, nét vẽ, nhạc) → pin + icon thông báo, cả cột giữa màn hình;
-// nhạc và dòng pin ở cuối như ảnh mẫu. Kích thước theo R (CapsuleMetrics), khối thêm theo kiểu user chọn ở Tùy chỉnh.
+// Viên nang, màn dọc giãn trên - dưới (AodPortraitSpread, mock đã duyệt): viên nang → ngày → các khối thêm (thời tiết, sự kiện, ghi nhớ, nét
+// vẽ) ở trên; thông báo mới nhất, nhạc rồi pin + icon thông báo neo đáy. Kích thước theo R (CapsuleMetrics), khối thêm theo kiểu user chọn ở
+// Tùy chỉnh.
 @Composable
 fun AodCapsulePortrait(
     state: AodState,
     onIntent: (AodIntent) -> Unit,
 ) {
     val spec = state.appearance.theme.value.spec
-    val blocks = remember(spec) { spec.panelBlocks() }
+    val topBlocks = remember(spec) { spec.topPanelBlocks() }
+    val bottomBlocks = remember(spec) { spec.bottomPanelBlocks() }
     val config = state.appearance.theme.config
 
     BoxWithConstraints {
         val unit = CapsuleMetrics.unit(maxWidth, maxHeight, config[CapsuleThemeSpec.Size] / 100f)
 
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            CapsuleClockAndDate(state = state, unit = unit, isWeatherShown = false)
+        AodPortraitSpread(
+            top = {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    CapsuleClockAndDate(state = state, unit = unit, isWeatherShown = false)
 
-            AodPanelColumn(
-                blocks = blocks,
-                state = state,
-                onIntent = onIntent,
-                modifier = Modifier.padding(top = unit * CapsuleMetrics.BLOCKS_TOP),
-            )
+                    AodPanelColumn(
+                        blocks = topBlocks,
+                        state = state,
+                        onIntent = onIntent,
+                        modifier = Modifier.padding(top = unit * CapsuleMetrics.BLOCKS_TOP),
+                    )
+                }
+            },
+            bottom = {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    AodPanelColumn(blocks = bottomBlocks, state = state, onIntent = onIntent)
 
-            CapsuleStatus(
-                state = state,
-                unit = unit,
-                modifier = Modifier.padding(top = unit * CapsuleMetrics.STATUS_TOP),
-            )
-        }
+                    CapsuleStatus(
+                        state = state,
+                        unit = unit,
+                        modifier = Modifier.padding(top = unit * CapsuleMetrics.STATUS_TOP),
+                    )
+                }
+            },
+            minGap = unit * CapsuleMetrics.STATUS_TOP,
+        )
     }
 }
 

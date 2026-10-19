@@ -7,6 +7,23 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-10-19 – Màn dọc giãn trên - dưới
+
+Build được, lint không thêm cảnh báo, unit test pass, `tools/check-rules.sh` ra 0 vi phạm (38 rule). Chưa test trên máy. Màn ngang không đổi.
+
+### Đổi
+
+- Cổ điển, Sỏi, Viên nang, Thẻ (màn dọc, mock đã duyệt): không còn dồn cả cột vào giữa màn. Đồng hồ + ngày bắt đầu ở 12% chiều cao, ngay
+  dưới là thời tiết (một dòng riêng giữa bề ngang, Cổ điển trước đây đứng cạnh ngày), sự kiện, ghi nhớ, nét vẽ; thông báo mới nhất, nhạc
+  và dòng pin thẳng đáy cách đáy 10%; giữa để trống. Hai cụm chạm nhau thì cụm đáy nằm ngay dưới cụm trên. Dùng chung `AodPortraitSpread`
+  + `AodSpreadMetrics`, khối chia bằng `AodThemeSpec.topPanelBlocks()` / `bottomPanelBlocks()`; `AodDetails` tách thành `AodTopDetails`
+  / `AodBottomDetails`. Thẻ vẫn thu nhỏ khi nhiều khối, giờ theo phần chiều cao giữa hai lề (`CardSpread`).
+- La bàn (màn dọc): mặt số vẫn giữa màn; ngày (+ thời tiết) lên giữa vùng trên mặt số, dòng pin · thông báo, thông báo mới nhất và trình phát
+  giữa vùng dưới mặt số (trước đây tất cả xếp dọc cách đáy 60dp, bỏ `CompassMetrics.BottomMargin`).
+- Vành (màn dọc): dòng pin · thông báo lên ngay dưới ngày (vùng giữa số 12 và đầu kim phút), vùng dưới kim chỉ còn trình phát.
+- Tháp (màn dọc): thời tiết luôn một dòng riêng dưới ngày, không đứng cạnh ngày cả khi không có sự kiện.
+- CLAUDE.md, README › Thêm chủ đề mới: ghi quy tắc màn dọc giãn trên - dưới cho chủ đề sau.
+
 ## [Chưa phát hành] – 2026-10-18 – Đổi tên thành Aodamn
 
 ### Đổi

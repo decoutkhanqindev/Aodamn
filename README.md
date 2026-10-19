@@ -500,6 +500,12 @@ chủ đề mới không cần màn riêng; chỉ tách màn khi chủ đề c�
    - Mock trước khi code, cả màn dọc lẫn màn ngang (`tools/mockups/aod_landscape_mockups.py`, khung dọc 393 × 873 bằng
      `frame_portrait`, chữ số lấy đường viền thật từ font), vẽ thẳng trong khung chat; ghi kèm font định dùng và tuỳ chọn.
      Sửa mock theo góp ý xong thì vẽ lại cả bản mock (mọi khung), không chỉ khung vừa sửa.
+   - Màn dọc giãn trên - dưới, không dồn cả cụm vào giữa màn (user chốt 2026-10-19): chủ đề có đồng hồ là khối chữ / số (Cổ
+     điển, Sỏi, Viên nang, Thẻ) đặt đồng hồ + ngày + khối thêm ở trên (thời tiết một dòng riêng giữa bề ngang ngay dưới ngày, rồi
+     sự kiện, ghi nhớ, nét vẽ), thông báo mới nhất + nhạc + dòng pin thẳng đáy, giữa để trống (`AodPortraitSpread` +
+     `AodSpreadMetrics`, chia khối bằng `topPanelBlocks` / `bottomPanelBlocks`); chủ đề lấy mặt số / hàng số làm điểm nhấn (La bàn,
+     Vành, Số áo) giữ điểm nhấn giữa màn và chia thông tin ra hai phía (La bàn: ngày trên, pin + nhạc dưới; Vành: ngày + pin trên
+     kim, nhạc dưới). Tự đánh giá theo dáng của từng chủ đề, không rập khuôn Tháp; ghi cách đặt trong mock.
    - Tên chủ đề (en + vi), cỡ mặc định (Số áo: to như ảnh).
 2. Lấy số đo. App mẫu đã dịch ngược được (`tools/reference/`) thì **không xin user chụp ảnh**: lấy thẳng từ layout XML
    (`aapt2 dump xmltree`: cỡ chữ sp, đệm, bo góc, màu, alpha), code của chủ đề (cỡ nhân theo tuỳ chọn, kiểu đặc / viền,
@@ -519,8 +525,8 @@ chủ đề mới không cần màn riêng; chỉ tách màn khi chủ đề c�
 4. Vẽ ở `components/aod/theme/<chủ đề>/`, nối vào các chỗ chọn theo chủ đề (`when` đủ mọi chủ đề nên quên là không
    build được): `theme/AodThemeLayout.kt` (`AodPortrait` và `AodLandscape`, mỗi chủ đề một bố cục dọc và một bố cục
    ngang riêng nhận cả `AodState`), `block/AodMediaControls.kt`. Chủ đề tự vẽ cả cụm (số, ngày, dòng trạng thái) thì
-   `AodPortrait` gọi thẳng bố cục của nó và `AodDetails` bỏ qua pin / thông báo chung (`AodBlockValue.STATUS`). Khối tự vẽ
-   loại mới: thêm `AodBlockValue`, gắn `AodComponentValue.ownBlock`, nhánh trong `AodDetails`, mẫu trong
+   `AodPortrait` gọi thẳng bố cục của nó và `AodBottomDetails` bỏ qua pin / thông báo chung (`AodBlockValue.STATUS`). Khối tự vẽ
+   loại mới: thêm `AodBlockValue`, gắn `AodComponentValue.ownBlock`, nhánh trong `AodTopDetails` / `AodBottomDetails`, mẫu trong
    `toThemePreviewDraft`. Bố cục ngang dựng trên bố cục chung (mục Bố cục ngang bên dưới). Xem trước màn ngang: nút
    xoay ở thanh trên Tùy chỉnh / màn chủ đề (`AodPreviewFrame`).
 5. Kích thước tính theo chỗ trống (`BoxWithConstraints`, kiểm cả `maxWidth > maxHeight` cho màn ngang) và theo R,
@@ -825,9 +831,11 @@ chọn theo các khối đang có dữ liệu, dùng chung cho mọi chủ đề
     trước khi có chủ đề: mở lại app, Cổ điển vẫn giữ đúng các lựa chọn đó.
 25. Font, màu, cỡ: đổi từng tùy chọn ở màn chủ đề, Lưu rồi khóa máy. Ở cỡ 150%, đồng hồ, ngày, pin và nhạc không
     bị che hay tràn màn hình.
-25e. Căn giữa: khóa máy với từng chủ đề (Cổ điển, Sỏi, Số áo): cả cụm đồng hồ + thông tin nằm giữa màn hình (khoảng trống
-    trên và dưới như nhau, như khung xem trước), đứng yên qua các phút; dòng "Chạm 2 lần để thoát" sát đáy màn hình rồi
-    mờ đi, không đẩy cụm lên.
+25e. Màn dọc giãn trên - dưới: khóa máy với Cổ điển, Sỏi, Viên nang, Thẻ: đồng hồ + ngày ở khoảng 1/8 trên màn hình, thời tiết
+    một dòng riêng giữa bề ngang dưới ngày, rồi sự kiện, ghi nhớ, nét vẽ; nhạc rồi pin · icon thông báo thẳng đáy (cách đáy khoảng
+    1/10), giữa màn trống. Bật / tắt khối, nhạc phát / dừng: cụm trên dài xuống, cụm đáy dài lên có animation, đồng hồ không
+    dời; bật đủ khối + nhạc: hai cụm không chồng lên nhau (Thẻ nhỏ lại cho vừa). Số áo vẫn hai hàng số giữa màn. Cả bố cục
+    đứng yên qua các phút, giống khung xem trước; dòng "Chạm 2 lần để thoát" sát đáy màn hình rồi mờ đi, không đẩy cụm lên.
 25a. Chủ đề Sỏi: tab AOD › Chủ đề › Sỏi: xem trước đúng hai khối giờ / phút (giờ khối bánh quy đặc tím, phút khối hoa viền
     hồng) và dòng ngày in hoa lavender, nút phát hồng; Sửa, đổi hình và kiểu
     (đặc / viền) của từng khối, kéo màu khối và màu số (xem trước theo tay, thả tay mới thành một bước hoàn tác), hoàn
@@ -862,8 +870,8 @@ chọn theo các khối đang có dữ liệu, dùng chung cho mọi chủ đề
     tròn, ngày in hoa đậm ngay dưới ("THỨ TƯ • 14 THG 10"), trình phát mẫu (tên bài, nghệ sĩ xám, lùi · nút phát tròn đặc ·
     tới, thanh dày tách đôi), dòng "pin 42% • icon" dưới cùng. Đổi giờ (vd 11:11, 12:00, 09:04): viên không đổi bề ngang,
     số giữa viên. Sửa: tab Đồng hồ (Kiểu Đặc / Viền: viền là nét mảnh màu viên; Cỡ 60–150%; màu Chữ số, màu Viên), tab
-    Ngày (màu ngày), tab Nhạc (màu tên bài, nút phát, thanh), tab Pin & thông báo (màu dòng pin + icon). Áp dụng rồi khóa máy: cả cột giữa màn hình;
-    bật thời tiết, sự kiện, ghi nhớ, nét vẽ: các khối nằm giữa ngày và nhạc; cắm sạc: pin có tia sét. Xoay ngang (nút ở
+    Ngày (màu ngày), tab Nhạc (màu tên bài, nút phát, thanh), tab Pin & thông báo (màu dòng pin + icon). Áp dụng rồi khóa máy: viên nang + ngày
+    ở trên, nhạc + dòng pin thẳng đáy (bước 25e); bật thời tiết, sự kiện, ghi nhớ, nét vẽ: các khối nằm ngay dưới ngày; cắm sạc: pin có tia sét. Xoay ngang (nút ở
     Tùy chỉnh / Luôn xoay ngang): viên nang + ngày + dòng pin cỡ như màn dọc, bố cục theo các khối như Cổ điển (chỉ thời
     tiết: thời tiết cạnh ngày; nhạc: viên nang | trình phát; nhạc + khối khác: ba cột).
 25h. Chủ đề Thẻ: tab AOD › Chủ đề › Thẻ: số giờ rất cao và hẹp màu xanh dương (thẻ nền xanh dương nhạt), bên phải là phút nhỏ bằng nửa (ngang đỉnh số
@@ -873,8 +881,8 @@ chọn theo các khối đang có dữ liệu, dùng chung cho mọi chủ đề
     10:08, 21:59): thẻ không đổi bề ngang, phút đổi thì chỉ số phút mờ chéo trong ô. Sửa: tab Đồng hồ (Kiểu số Đặc / Viền:
     viền là nét mảnh, ô AM/PM thành viền; Nền thẻ Nền mờ / Viền / Không; Cỡ 80–120%; màu Giờ, màu Phút & AM/PM, màu
     Thẻ: đổi màu nền mờ hoặc nét viền của thẻ theo kiểu nền, số giờ giữ màu cũ), tab Ngày,
-    tab Nhạc (màu tên bài, nút, thanh), tab Pin & thông báo. Áp dụng rồi khóa máy: cả cột giữa màn hình; bật thời tiết, sự
-    kiện, ghi nhớ, nét vẽ: các khối nằm giữa ngày và nhạc, nhiều khối thì thẻ nhỏ lại cho cả cột vừa màn hình (có animation);
+    tab Nhạc (màu tên bài, nút, thanh), tab Pin & thông báo. Áp dụng rồi khóa máy: thẻ + ngày ở trên, nhạc + dòng pin thẳng
+    đáy (bước 25e); bật thời tiết, sự kiện, ghi nhớ, nét vẽ: các khối nằm ngay dưới ngày, nhiều khối thì thẻ nhỏ lại cho hai cụm vừa màn hình (có animation);
     nhạc phát: thanh gợn sóng, dừng: thanh thẳng. Xoay ngang: thẻ (cỡ 0,9 màn dọc) + ngày + dòng pin, bố cục theo các khối
     như Cổ điển (chỉ thời tiết: thời tiết cạnh ngày; nhạc: thẻ | trình phát; nhạc + khối khác: ba cột, thẻ không chạm vạch).
     Sỏi: thanh gợn sóng giữ y như trước (dùng chung `AodWaveTrack`).
@@ -883,8 +891,8 @@ chọn theo các khối đang có dữ liệu, dùng chung cho mọi chủ đề
     tới, thanh mảnh) và dòng "pin 72% • icon" neo ở khoảng 4/5 phần dưới màn hình. Đổi giờ (vd 11:11, 10:08, 21:59): hàng số
     không đổi bề ngang, phút đổi thì chỉ số đó mờ chéo trong ô. Sửa: tab Đồng hồ (Kiểu số: Viền / Nhạt dần xuống / Nhạt dần
     lên / Đặc / Giờ đặc / Phút đặc; Cỡ 80–110%; màu Giờ, màu Phút), tab Ngày, tab Nhạc, tab Pin & thông báo. Tùy chỉnh khi
-    đang dùng Tháp: không có tab Nét vẽ. Áp dụng rồi khóa máy: bật thời tiết (không có sự kiện): thời tiết cạnh ngày; bật
-    sự kiện: thời tiết, sự kiện, ghi nhớ nằm trên trình phát; nhiều khối thì hàng số nhỏ lại (có animation), không đè lên
+    đang dùng Tháp: không có tab Nét vẽ. Áp dụng rồi khóa máy: bật thời tiết: thời tiết một dòng riêng dưới ngày (không đứng cạnh
+    ngày, kể cả khi không có sự kiện); bật sự kiện: thời tiết, sự kiện, ghi nhớ nằm trên trình phát; nhiều khối thì hàng số nhỏ lại (có animation), không đè lên
     ngày. Nhạc: chạm tên bài là phát / dừng (dừng thì tên bài mờ đi, TalkBack đọc "Phát" / "Tạm dừng"), lùi / tới ở hai bên.
     Xoay ngang: hàng số + ngày + dòng pin, bố cục theo các khối như Cổ điển. Các chủ đề khác (Cổ điển, Sỏi, Số áo, Viên nang,
     Thẻ) không đổi gì.
@@ -905,8 +913,8 @@ chọn theo các khối đang có dữ liệu, dùng chung cho mọi chủ đề
 25k. Chủ đề Vành: tab AOD › Chủ đề › Vành: thẻ ở lưới là mặt số kim phủ cả thẻ, vạch quanh mép, số 12 / 3 / 6 / 9 xanh cyan. Áp
     dụng rồi khóa máy: vạch là tia từ tâm cắt theo khung chữ nhật sát mép (vạch giờ dài, vạch phút mờ; không có vạch dài ở chỗ
     số 3 / 9), kim giờ / phút có bóng mờ, chấm tâm có vòng cyan; sang phút mới kim quay 0,4 giây (59 → 0 phút quay tiếp, không
-    quay ngược cả vòng). Trên kim: "THỨ BẢY 17" (tiếng Anh "SAT 17"), thứ và số ngày cùng màu; dưới kim: pin · icon thông báo. Bật thời
-    tiết: thời tiết cạnh ngày. Phát nhạc: trình phát gọn dưới dòng pin, chạm tên bài là phát / dừng (dừng thì chữ mờ); kim
+    quay ngược cả vòng). Trên kim: "THỨ BẢY 17" (tiếng Anh "SAT 17"), thứ và số ngày cùng màu, ngay dưới là pin · icon thông báo. Bật thời
+    tiết: thời tiết cạnh ngày. Phát nhạc: trình phát gọn dưới kim (phía số 6), chạm tên bài là phát / dừng (dừng thì chữ mờ); kim
     không bao giờ đè lên chữ ở màn dọc. Sửa: tab Đồng hồ (Kiểu vạch: Vạch phút / Vạch giờ, màu Chữ số, màu Kim và vạch), Ngày
     (một màu cho cả thứ và số ngày), Pin & thông báo, Nhạc. Tùy chỉnh khi đang dùng Vành: không có tab Ghi chú, Sự kiện, Nét vẽ; tab Thông báo không
     có công tắc nội dung thông báo. Xoay ngang: mặt số vẫn phủ màn; không nhạc: pin · thông báo trái, ngày phải; phát nhạc:
@@ -915,8 +923,9 @@ chọn theo các khối đang có dữ liệu, dùng chung cho mọi chủ đề
 25l. Chủ đề La bàn: tab AOD › Chủ đề › La bàn: thẻ ở lưới là ba vòng số quanh đường chỉ hổ phách, số giờ hổ phách, đứng yên ở
     08:30 (thẻ ở tab AOD không chạy); khung xem trước ở màn chủ đề, Tùy chỉnh thì chạy theo giờ thật (các chủ đề khác vẫn đứng ở 08:30). Áp dụng rồi khóa máy: vòng giây trong cùng quay đều một vòng
     mỗi phút, vòng phút và giờ trôi liên tục (không nhảy nấc); số đang chỉ của cả ba vòng nằm ngang trên đường chỉ và khớp giờ
-    của máy (so với thanh trạng thái khi mở khóa); 10:30 thì "10:30" nằm trên đường chỉ. Dưới mặt số, cách đáy 60dp: "18 THÁNG
-    10 2026" (tiếng Anh "18 OCTOBER 2026") giãn chữ, pin · icon thông báo xám. Bật nội dung thông báo (tab Thông báo có công tắc):
+    của máy (so với thanh trạng thái khi mở khóa); 10:30 thì "10:30" nằm trên đường chỉ. Giữa vùng trên mặt số: "18 THÁNG
+    10 2026" (tiếng Anh "18 OCTOBER 2026") giãn chữ; giữa vùng dưới mặt số: pin · icon thông báo xám (thêm dòng, nhạc thì nhóm tự
+    căn giữa lại). Bật nội dung thông báo (tab Thông báo có công tắc):
     dòng icon + "TIÊU ĐỀ: NỘI DUNG" in hoa dưới dòng pin, dài thì chạy chữ một lần. Phát nhạc: trình phát dưới cùng, lùi · tên
     bài / nghệ sĩ · tới, chạm tên bài là phát / dừng (dừng thì chữ mờ), đổi bài thì tên trượt lên. Sửa: tab Đồng hồ (Kiểu đồng hồ:
     Có vòng giây / Không vòng giây: đổi sang Không thì vòng giây mờ dần, đường chỉ lùi ra ngoài trong 0,3 giây, vòng phút và giờ
