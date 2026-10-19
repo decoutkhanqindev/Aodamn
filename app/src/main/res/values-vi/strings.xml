@@ -439,4 +439,9 @@
     <plurals name="aod_tab_design_blocks">
         <item quantity="other">%d khối</item>
     </plurals>
+    <string name="color_picker_presets">Màu có sẵn</string>
+    <string name="color_picker_custom">Tự chọn</string>
+    <string name="color_swatch_white">Trắng</string>
+    <string name="color_swatch_grey">Xám</string>
+    <string name="color_swatch_mint">Xanh mint Aodamn</string>
 </resources>

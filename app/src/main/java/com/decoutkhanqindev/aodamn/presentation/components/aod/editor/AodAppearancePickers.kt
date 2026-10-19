@@ -1,6 +1,8 @@
 package com.decoutkhanqindev.aodamn.presentation.components.aod.editor
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
@@ -10,6 +12,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -19,6 +22,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,14 +33,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.aodamn.R
+import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.ColorSwatchValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.WallpaperValue
 import com.decoutkhanqindev.aodamn.presentation.theme.Grey9A
 import com.decoutkhanqindev.aodamn.presentation.theme.GreyED
@@ -159,6 +166,17 @@ fun ClockColorPicker(
             .padding(vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
+        ColorSwatchGrid(
+            color = color,
+            onColorChange = { swatch -> currentOnColorChange(swatch) },
+        )
+
+        Text(
+            text = stringResource(R.string.color_picker_custom),
+            color = Grey9A,
+            style = LabelMedium,
+        )
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -210,5 +228,61 @@ fun ClockColorPicker(
             onColorChanged = { envelope -> if (envelope.fromUser) currentOnColorPreview(envelope.color) },
             onFinish = { currentOnColorChange(controller.selectedColor.value) },
         )
+    }
+}
+
+@Composable
+private fun ColorSwatchGrid(
+    color: Color,
+    onColorChange: (Color) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val selectedArgb = color.toArgb()
+
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        Text(
+            text = stringResource(R.string.color_picker_presets),
+            modifier = Modifier.padding(bottom = 4.dp),
+            color = Grey9A,
+            style = LabelMedium,
+        )
+
+        ColorSwatchValue.entries.chunked(ColorSwatchValue.COLUMN_COUNT).forEach { row ->
+            Row(modifier = Modifier.fillMaxWidth()) {
+                row.forEach { swatch ->
+                    val isSelected = swatch.color.toArgb() == selectedArgb
+                    val ringColor by animateColorAsState(
+                        targetValue = if (isSelected) Mint else Color.Transparent,
+                        label = "swatchRing",
+                    )
+                    val label = stringResource(swatch.labelRes)
+
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(44.dp)
+                            .clip(CircleShape)
+                            .selectable(
+                                selected = isSelected,
+                                role = Role.RadioButton,
+                                onClick = { onColorChange(swatch.color) },
+                            )
+                            .semantics { contentDescription = label },
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(38.dp)
+                                .border(width = 2.dp, color = ringColor, shape = CircleShape)
+                                .padding(4.dp)
+                                .background(color = swatch.color, shape = CircleShape),
+                        )
+                    }
+                }
+            }
+        }
     }
 }

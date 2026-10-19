@@ -479,4 +479,22 @@
         <item quantity="one">%d block</item>
         <item quantity="other">%d blocks</item>
     </plurals>
+    <string name="color_picker_presets">Preset colors</string>
+    <string name="color_picker_custom">Custom</string>
+    <string name="color_swatch_white">White</string>
+    <string name="color_swatch_grey">Grey</string>
+    <string name="color_swatch_mint">Aodamn mint</string>
+    <string name="color_swatch_youtube" translatable="false">YouTube</string>
+    <string name="color_swatch_soundcloud" translatable="false">SoundCloud</string>
+    <string name="color_swatch_amazon" translatable="false">Amazon</string>
+    <string name="color_swatch_snapchat" translatable="false">Snapchat</string>
+    <string name="color_swatch_duolingo" translatable="false">Duolingo</string>
+    <string name="color_swatch_spotify" translatable="false">Spotify</string>
+    <string name="color_swatch_tiktok" translatable="false">TikTok</string>
+    <string name="color_swatch_telegram" translatable="false">Telegram</string>
+    <string name="color_swatch_zalo" translatable="false">Zalo</string>
+    <string name="color_swatch_discord" translatable="false">Discord</string>
+    <string name="color_swatch_twitch" translatable="false">Twitch</string>
+    <string name="color_swatch_instagram" translatable="false">Instagram</string>
+    <string name="color_swatch_tinder" translatable="false">Tinder</string>
 </resources>

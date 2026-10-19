@@ -29,6 +29,21 @@ val Cyan = Color(0xFF80DEEA)
 val Amber = Color(0xFFFFD54F)
 val GreyE0 = Color(0xFFE0E0E0)
 
+// Màu có sẵn của bảng chọn màu (ColorSwatchValue): màu đặc trưng của các app quen thuộc, xếp theo sắc độ.
+val YoutubeRed = Color(0xFFFF0033)
+val SoundcloudOrange = Color(0xFFFF5500)
+val AmazonOrange = Color(0xFFFF9900)
+val SnapchatYellow = Color(0xFFFFFC00)
+val DuolingoGreen = Color(0xFF58CC02)
+val SpotifyGreen = Color(0xFF1ED760)
+val TiktokCyan = Color(0xFF25F4EE)
+val TelegramBlue = Color(0xFF24A1DE)
+val ZaloBlue = Color(0xFF0068FF)
+val DiscordBlurple = Color(0xFF5865F2)
+val TwitchPurple = Color(0xFF9146FF)
+val InstagramMagenta = Color(0xFFC13584)
+val TinderPink = Color(0xFFFE3C72)
+
 // Chữ phụ của chủ đề Thẻ lấy từ app mẫu (dịch ngược): phút / AM-PM / ngày xám sáng.
 val GreyE4 = Color(0xFFE4E4E4)
 

@@ -7,6 +7,15 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-10-19 – Màu có sẵn trong bảng màu
+
+### Thêm
+
+- Bảng màu (Tùy chỉnh và màn chủ đề, mọi khối / phần có màu) có thêm hàng "Màu có sẵn" phía trên vòng màu: 16 ô, 2 hàng × 8, xếp theo
+  sắc độ: trắng, xám, YouTube, SoundCloud, Amazon, Snapchat, Duolingo, Spotify, mint Aodamn, TikTok, Telegram, Zalo, Discord, Twitch,
+  Instagram, Tinder (`ColorSwatchValue`, màu ở `Colors.kt`). Chọn ô ghi thẳng màu ARGB như vòng màu nên không đổi cách lưu; ô đang chọn
+  có vòng mint (chuyển mờ dần), tên ô cho TalkBack.
+
 ## [Chưa phát hành] – 2026-10-19 – Baseline profile
 
 Đã tạo profile khởi động trên máy thật; bản release build, cài và mở được (hết crash lúc khởi động).
