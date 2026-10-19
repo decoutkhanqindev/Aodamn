@@ -14,6 +14,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.lifecycle.lifecycleScope
 import com.decoutkhanqindev.aodamn.ads.AdsManager
 import com.decoutkhanqindev.aodamn.data.local.datastore.DataStoreManager
+import com.decoutkhanqindev.aodamn.data.network.connectivity.NetworkManager
 import com.decoutkhanqindev.aodamn.presentation.aod.AodService
 import com.decoutkhanqindev.aodamn.presentation.components.AppLanguageProvider
 import com.decoutkhanqindev.aodamn.presentation.navigation.AppNavDisplay
@@ -27,12 +28,13 @@ class MainActivity : ComponentActivity() {
 
     private val dataStoreManager: DataStoreManager by inject()
     private val adsManager: AdsManager by inject()
+    private val networkManager: NetworkManager by inject()
 
     @OptIn(ExperimentalComposeUiApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         ComposeUiFlags.isBypassUnfocusableComposeViewEnabled = false
         super.onCreate(savedInstanceState)
-        adsManager.requestConsent(this)
+        requestConsent()
         runCatching { requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT }
         // Theme luôn tối: icon thanh hệ thống luôn sáng, không theo theme hệ thống.
         enableEdgeToEdge(
@@ -49,12 +51,19 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private fun requestConsent() {
+        lifecycleScope.launch {
+            networkManager.isAvailable.first { it }
+            adsManager.requestConsent(this@MainActivity)
+        }
+    }
+
     // Mở app là cách chạy lại service nếu hệ thống (vd Xiaomi) đã đóng nó; khi khởi động máy thì BootReceiver lo.
     private fun startAodServiceIfEnabled() {
         lifecycleScope.launch {
-            if (dataStoreManager.isAodEnabled.filterNotNull()
-                    .first()
-            ) AodService.start(this@MainActivity)
+            if (dataStoreManager.isAodEnabled.filterNotNull().first()) {
+                AodService.start(this@MainActivity)
+            }
         }
     }
 }
