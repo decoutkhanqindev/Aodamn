@@ -50,10 +50,14 @@ import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import timber.log.Timber
 
+// Trong OnboardingNavDisplay: backStack là back stack onboarding (sang màn quyền, quay lại), rootBackStack là back stack gốc (vào Main, màn
+// chủ đề); banner do OnboardingNavDisplay đặt, onPeekingChange báo nhấn giữ xem AOD để nó giấu banner.
 @Composable
 fun CustomizeScreen(
     backStack: NavBackStack<NavKey>,
     isFirstOpen: Boolean,
+    rootBackStack: NavBackStack<NavKey> = backStack,
+    onPeekingChange: (Boolean) -> Unit = {},
 ) {
     val context = LocalContext.current
     val resources = LocalResources.current
@@ -141,7 +145,7 @@ fun CustomizeScreen(
                     )
 
                     is CustomizeEffect.Navigation.NavigateToMain ->
-                        backStack.navigateTo(MainDestination(isPermissionSkipped = false), preserveState = false)
+                        rootBackStack.navigateTo(MainDestination(isPermissionSkipped = false), preserveState = false)
 
                     is CustomizeEffect.Navigation.NavigateBack -> backStack.navigateBack()
 
@@ -149,13 +153,13 @@ fun CustomizeScreen(
                     // mở sẵn tab đó (màn cũ đang ở chế độ xem vì chỉ chế độ xem mới có nút Tùy chỉnh, không mất gì).
                     is CustomizeEffect.Navigation.NavigateToThemeEditor -> {
                         val destination = ThemeEditorDestination(effect.themeId, focusBlock = effect.focusBlock)
-                        if (backStack.any { key -> key is ThemeEditorDestination }) {
-                            backStack.navigateBack()
-                            if (effect.focusBlock != null && backStack.last() is ThemeEditorDestination) {
-                                backStack[backStack.lastIndex] = destination
+                        if (rootBackStack.any { key -> key is ThemeEditorDestination }) {
+                            rootBackStack.navigateBack()
+                            if (effect.focusBlock != null && rootBackStack.last() is ThemeEditorDestination) {
+                                rootBackStack[rootBackStack.lastIndex] = destination
                             }
                         } else {
-                            backStack.add(destination)
+                            rootBackStack.add(destination)
                         }
                     }
                 }
@@ -194,9 +198,8 @@ fun CustomizeScreen(
         CustomizeContent(
             state = state,
             onIntent = viewModel::onIntent,
-            bannerAd = {
-                BannerAdView(adUnit = { if (isFirstOpen) adsManager.bannerOnboardingCustomize else adsManager.bannerCustomize })
-            },
+            bannerAd = { if (!isFirstOpen) BannerAdView(adUnit = { adsManager.bannerCustomize }) },
+            onPeekingChange = onPeekingChange,
         )
 
         AppToastHost(

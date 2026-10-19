@@ -11,8 +11,6 @@ import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
-import com.decoutkhanqindev.aodamn.ads.AdsManager
-import com.decoutkhanqindev.aodamn.ads.composables.BannerAdView
 import com.decoutkhanqindev.aodamn.data.device.permission.PermissionManager
 import com.decoutkhanqindev.aodamn.presentation.aod.AodService
 import com.decoutkhanqindev.aodamn.presentation.components.LocalTag
@@ -32,12 +30,15 @@ import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import timber.log.Timber
 
+// rootBackStack: back stack gốc để vào Main khi màn nằm trong OnboardingNavDisplay.
 @Composable
-fun PermissionScreen(backStack: NavBackStack<NavKey>) {
+fun PermissionScreen(
+    backStack: NavBackStack<NavKey>,
+    rootBackStack: NavBackStack<NavKey> = backStack,
+) {
     val context = LocalContext.current
     val tag = LocalTag.current
     val viewModel: PermissionViewModel = koinViewModel()
-    val adsManager: AdsManager = koinInject()
     val permissionManager: PermissionManager = koinInject()
     val state by viewModel.state.collectAsStateWithLifecycle()
     val notificationPermissionLauncher = rememberLauncherForActivityResult(
@@ -67,7 +68,7 @@ fun PermissionScreen(backStack: NavBackStack<NavKey>) {
                         }
 
                     is PermissionEffect.StartAodService -> AodService.start(context)
-                    is PermissionEffect.NavigateToMain -> backStack.navigateTo(
+                    is PermissionEffect.NavigateToMain -> rootBackStack.navigateTo(
                         MainDestination(isPermissionSkipped = effect.isPermissionSkipped),
                         preserveState = false,
                     )
@@ -87,6 +88,5 @@ fun PermissionScreen(backStack: NavBackStack<NavKey>) {
     PermissionContent(
         state = state,
         onIntent = viewModel::onIntent,
-        bannerAd = { BannerAdView(adUnit = { adsManager.bannerPermission }) },
     )
 }

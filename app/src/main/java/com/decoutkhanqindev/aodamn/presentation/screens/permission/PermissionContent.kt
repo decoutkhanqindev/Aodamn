@@ -36,7 +36,6 @@ import kotlinx.collections.immutable.persistentListOf
 fun PermissionContent(
     state: PermissionState,
     onIntent: (PermissionIntent) -> Unit,
-    bannerAd: @Composable () -> Unit,
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -72,7 +71,6 @@ fun PermissionContent(
                 },
                 hint = if (state.isConfirmEnabled) null else pluralStringResource(R.plurals.permission_remaining, remaining, remaining),
                 actionIconRes = if (state.isConfirmEnabled) null else R.drawable.ic_caret_right,
-                ad = bannerAd,
             )
         },
     ) { innerPadding ->
@@ -119,7 +117,6 @@ private fun PermissionContentMissingPreview() {
                 ),
             ),
             onIntent = {},
-            bannerAd = {},
         )
     }
 }
@@ -135,7 +132,6 @@ private fun PermissionContentReadyPreview() {
                 ),
             ),
             onIntent = {},
-            bannerAd = {},
         )
     }
 }

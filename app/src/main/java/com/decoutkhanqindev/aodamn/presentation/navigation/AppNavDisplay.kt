@@ -21,7 +21,6 @@ import com.decoutkhanqindev.aodamn.presentation.components.dialog.AppNoInternetD
 import com.decoutkhanqindev.aodamn.presentation.screens.customize.CustomizeScreen
 import com.decoutkhanqindev.aodamn.presentation.screens.iap.IapScreen
 import com.decoutkhanqindev.aodamn.presentation.screens.language.LanguageScreen
-import com.decoutkhanqindev.aodamn.presentation.screens.permission.PermissionScreen
 import com.decoutkhanqindev.aodamn.presentation.screens.splash.SplashScreen
 import com.decoutkhanqindev.aodamn.presentation.screens.themeeditor.ThemeEditorScreen
 import com.decoutkhanqindev.aodamn.presentation.theme.BackgroundGradient
@@ -45,6 +44,7 @@ fun AppNavDisplay() {
             ),
             entryProvider = entryProvider {
                 screen<SplashDestination> { SplashScreen(backStack) }
+                screen<OnboardingDestination> { OnboardingNavDisplay(backStack) }
                 screen<LanguageDestination> { dest ->
                     LanguageScreen(
                         backStack = backStack,
@@ -57,7 +57,6 @@ fun AppNavDisplay() {
                         isFirstOpen = dest.isFirstOpen,
                     )
                 }
-                screen<PermissionDestination> { PermissionScreen(backStack) }
                 screen<MainDestination> { dest -> MainNavDisplay(backStack, isPermissionSkipped = dest.isPermissionSkipped) }
                 screen<IapDestination> { IapScreen(backStack) }
                 screen<ThemeEditorDestination> { dest ->
@@ -78,7 +77,7 @@ fun AppNavDisplay() {
 }
 
 // Mỗi màn được cấp LocalTag = tên class của destination (vd MainDestination), cùng ý với interface Tag của lớp thường.
-// AppNavDisplay và MainNavDisplay (các tab) dùng chung.
+// AppNavDisplay, MainNavDisplay (các tab) và OnboardingNavDisplay dùng chung.
 inline fun <reified K : NavKey> EntryProviderScope<NavKey>.screen(
     crossinline content: @Composable (K) -> Unit,
 ) {

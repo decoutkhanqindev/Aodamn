@@ -11,6 +11,10 @@ data object SplashDestination : NavKey
 @Serializable
 data class MainDestination(val isPermissionSkipped: Boolean) : NavKey
 
+// Onboarding lần đầu: Ngôn ngữ → Tùy chỉnh → Quyền trong OnboardingNavDisplay (back stack riêng, một banner chung).
+@Serializable
+data object OnboardingDestination : NavKey
+
 @Serializable
 data class LanguageDestination(val isFirstOpen: Boolean) : NavKey
 

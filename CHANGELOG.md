@@ -7,6 +7,25 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-10-19 – Banner Splash, onboarding chung một banner
+
+Build được, lint không thêm cảnh báo, unit test pass, `tools/check-rules.sh` ra 0 vi phạm (38 rule). Chưa test trên máy.
+
+### Thêm
+
+- Banner ở đáy Splash (`bannerSplash`, `BANNER_SPLASH_ALL_ID`), dưới thanh tải; chỉ tải khi đã có kết quả consent.
+- `OnboardingNavDisplay` (`OnboardingDestination`): Ngôn ngữ → Tùy chỉnh → Quyền lúc mở lần đầu nằm trong back stack riêng, một banner
+  chung `bannerOnboarding` (`BANNER_ONBOARDING_ALL_ID`) ở đáy ngoài `NavDisplay` nên chuyển màn không tải lại banner. Màn bên trong không tự
+  chừa thanh điều hướng (inset đã tiêu thụ, slot banner chừa); Tùy chỉnh báo nhấn giữ xem AOD (`onPeekingChange`) để banner trượt xuống,
+  chỗ banner thành nền đen như khung xem trước. Vào Main / màn chủ đề đi bằng back stack gốc (`rootBackStack` của `CustomizeScreen`,
+  `PermissionScreen`).
+
+### Bỏ
+
+- Banner riêng của từng màn onboarding: `bannerLanguage`, `bannerOnboardingCustomize`, `bannerPermission` và id `BANNER_LANGUAGE_ALL_ID`,
+  `BANNER_ONBOARDING_CUSTOMIZE_ALL_ID`, `BANNER_PERMISSION_ALL_ID`; slot `bannerAd` của `LanguageContent`, `PermissionContent`.
+  `PermissionDestination` chỉ còn trong `OnboardingNavDisplay`.
+
 ## [Chưa phát hành] – 2026-10-19 – Màn dọc giãn trên - dưới
 
 Build được, lint không thêm cảnh báo, unit test pass, `tools/check-rules.sh` ra 0 vi phạm (38 rule). Chưa test trên máy. Màn ngang không đổi.

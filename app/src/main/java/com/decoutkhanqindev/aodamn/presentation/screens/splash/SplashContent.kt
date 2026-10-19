@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -25,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -32,6 +32,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.aodamn.R
+import com.decoutkhanqindev.aodamn.presentation.components.AppBottomAdSlot
 import com.decoutkhanqindev.aodamn.presentation.components.AppLottie
 import com.decoutkhanqindev.aodamn.presentation.components.AppSlider
 import com.decoutkhanqindev.aodamn.presentation.theme.BodyMedium
@@ -44,7 +45,7 @@ import com.decoutkhanqindev.aodamn.presentation.theme.Theme
 import kotlin.math.roundToInt
 
 @Composable
-fun SplashContent() {
+fun SplashContent(bannerAd: @Composable () -> Unit) {
     val enterDuration = 600
     val titleState = remember { MutableTransitionState(false).apply { targetState = true } }
     val loadingProgress = remember { Animatable(0f) }
@@ -103,43 +104,54 @@ fun SplashContent() {
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .fillMaxWidth()
-                .navigationBarsPadding()
-                .padding(32.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
+                .fillMaxWidth(),
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = stringResource(R.string.loading),
-                    modifier = Modifier.weight(1f),
-                    color = Grey9A,
-                    style = BodyMedium,
-                )
+            SplashLoading(progress = { loadingProgress.value })
 
-                SplashLoadingPercent { loadingProgress.value }
-            }
-
-            AppSlider(
-                progress = { loadingProgress.value.roundToInt() },
-                valueRange = 0..LOADING_PROGRESS_MAX,
-                step = 1,
-                modifier = Modifier.fillMaxWidth(),
-                label = stringResource(R.string.loading),
-                isThumbVisible = false,
-            )
-
-            Text(
-                text = stringResource(R.string.may_contain_ads),
-                color = Grey9A,
-                fontStyle = FontStyle.Italic,
-                textAlign = TextAlign.Center,
-                style = BodySmall,
-            )
+            AppBottomAdSlot(background = Color.Transparent, content = bannerAd)
         }
+    }
+}
+
+@Composable
+private fun SplashLoading(progress: () -> Float) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(32.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = stringResource(R.string.loading),
+                modifier = Modifier.weight(1f),
+                color = Grey9A,
+                style = BodyMedium,
+            )
+
+            SplashLoadingPercent(progress = progress)
+        }
+
+        AppSlider(
+            progress = { progress().roundToInt() },
+            valueRange = 0..LOADING_PROGRESS_MAX,
+            step = 1,
+            modifier = Modifier.fillMaxWidth(),
+            label = stringResource(R.string.loading),
+            isThumbVisible = false,
+        )
+
+        Text(
+            text = stringResource(R.string.may_contain_ads),
+            color = Grey9A,
+            fontStyle = FontStyle.Italic,
+            textAlign = TextAlign.Center,
+            style = BodySmall,
+        )
     }
 }
 
@@ -169,6 +181,6 @@ private const val LOADING_PROGRESS_CAP = 990
 @Composable
 private fun SplashContentPreview() {
     Theme {
-        SplashContent()
+        SplashContent(bannerAd = {})
     }
 }

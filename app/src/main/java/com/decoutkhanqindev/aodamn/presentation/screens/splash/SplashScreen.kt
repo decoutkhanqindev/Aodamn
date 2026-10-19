@@ -12,10 +12,11 @@ import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import com.decoutkhanqindev.aodamn.ads.AdsManager
 import com.decoutkhanqindev.aodamn.ads.ad_unit.AdUnitState
+import com.decoutkhanqindev.aodamn.ads.composables.BannerAdView
 import com.decoutkhanqindev.aodamn.data.local.datastore.DataStoreManager
 import com.decoutkhanqindev.aodamn.data.network.connectivity.NetworkManager
-import com.decoutkhanqindev.aodamn.presentation.navigation.LanguageDestination
 import com.decoutkhanqindev.aodamn.presentation.navigation.MainDestination
+import com.decoutkhanqindev.aodamn.presentation.navigation.OnboardingDestination
 import com.decoutkhanqindev.aodamn.utils.navigateTo
 import org.koin.compose.koinInject
 
@@ -32,7 +33,7 @@ fun SplashScreen(backStack: NavBackStack<NavKey>) {
     val interSplashState by interSplash.state.collectAsStateWithLifecycle()
     val handleNext = {
         if (dataStoreManager.isFirstOpen.value == true) {
-            backStack.navigateTo(LanguageDestination(isFirstOpen = true), preserveState = false)
+            backStack.navigateTo(OnboardingDestination, preserveState = false)
         } else {
             backStack.navigateTo(MainDestination(isPermissionSkipped = false), preserveState = false)
         }
@@ -68,5 +69,8 @@ fun SplashScreen(backStack: NavBackStack<NavKey>) {
 
     BackHandler { }
 
-    SplashContent()
+    // Chỉ tải banner khi đã có kết quả consent (MainActivity chờ có mạng mới hỏi): tải trước đó thì AdUnit báo lỗi và banner không hiện.
+    SplashContent(
+        bannerAd = { if (isConsentGathered) BannerAdView(adUnit = { adsManager.bannerSplash }) },
+    )
 }

@@ -179,8 +179,8 @@ app xin, nên không có trong danh sách trên: `AodTileService` (`BIND_QUICK_S
 - **Mở app:** Splash xin consent (form UMP, chỉ hiện khi cần) rồi hiện quảng cáo xen kẽ (đang là id
   test của Google), sau đó vào màn hình chính. Splash cần mạng; mất mạng thì hộp thoại "Không có kết
   nối Internet" chặn màn hình.
-- **Banner** (id test của Google) ở đáy: màn ngôn ngữ lúc onboarding (mở từ Cài đặt thì không có), Tùy chỉnh lúc onboarding,
-  màn quyền, 3 tab chính (dưới thanh tab, một banner chung), màn chủ đề (cả lúc xem lẫn lúc sửa, một banner), Tùy chỉnh mở
+- **Banner** (id test của Google) ở đáy: Splash (khi đã có kết quả consent), 3 màn onboarding (ngôn ngữ, Tùy chỉnh, quyền: một
+  banner chung ở `OnboardingNavDisplay`, chuyển màn không tải lại; ngôn ngữ mở từ Cài đặt thì không có), 3 tab chính (dưới thanh tab, một banner chung), màn chủ đề (cả lúc xem lẫn lúc sửa, một banner), Tùy chỉnh mở
   từ tab AOD. Nhấn giữ khung xem trước để xem toàn màn hình thì banner trượt xuống cùng các thanh. Không bao giờ có quảng cáo
   trên đồng hồ AOD.
 - **Lần đầu mở app:** sau Splash là màn chọn ngôn ngữ, đã chọn sẵn ngôn ngữ của máy (ngôn ngữ của
@@ -737,8 +737,10 @@ chọn theo các khối đang có dữ liệu, dùng chung cho mọi chủ đề
    tính), không bật khối nào thì "Chỉ đồng hồ · Nền đen"; bật nhiều khối thì ô cuối là "+N", máy hẹp vẫn không tràn hàng.
    Nút bút chì nằm giữa thẻ theo chiều dọc. TalkBack đọc cả thẻ một lần (tiêu đề, chủ đề, số khối, nền), không đọc từng icon.
    Thanh tab Main cao 56dp, chỉ icon; tab đang chọn icon đặc có tên, TalkBack đọc tên cả ba tab.
-2c. Banner (id test, có nhãn "Test Ad"): màn ngôn ngữ lúc onboarding (dưới nút Tiếp tục; mở từ Cài đặt › Ngôn ngữ thì không
-   có), Tùy chỉnh lúc onboarding và màn quyền (dưới nút / thanh tab, sát thanh điều hướng, không hở khoảng trắng), 3 tab chính
+2c. Banner (id test, có nhãn "Test Ad"): Splash (dưới thanh tải, hiện sau hộp consent; tắt mạng thì không có); onboarding lần
+   đầu: một banner dưới nút Tiếp tục của màn ngôn ngữ, đi Tiếp sang Tùy chỉnh rồi màn quyền vẫn là banner đó (không nháy, không
+   tải lại; ở Tùy chỉnh nằm ngay dưới thanh tab, sát thanh điều hướng, không hở khoảng trắng; nhấn giữ xem AOD thì banner trượt
+   xuống, chỗ đó đen như nền xem trước); mở từ Cài đặt › Ngôn ngữ thì không có banner; 3 tab chính
    (dưới thanh tab, chuyển tab banner giữ nguyên), màn chủ đề (lúc xem banner ở đáy, bấm Sửa thì panel + thanh tab nằm ngay trên
    banner), Tùy chỉnh mở từ tab AOD. Nhấn giữ khung xem trước ở Tùy chỉnh / màn chủ đề: banner trượt xuống cùng các thanh, thả
    tay hiện lại ngay, không tải lại. Tắt mạng rồi mở các màn đó: không có banner, không chừa chỗ trống. Khóa máy: đồng hồ không

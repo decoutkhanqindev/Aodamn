@@ -61,18 +61,15 @@ class AdsManager : KoinComponent, Application.ActivityLifecycleCallbacks, Tag {
         InterstitialAdUnit(floors = listOf(BuildConfig.INTER_SPLASH_ALL_ID to "inter_splash_all"))
     }
 
-    // Banner ở đáy từng màn (BannerAdView), mỗi màn một placement: 3 tab chính chung một, màn chủ đề lúc xem và lúc sửa chung một, Tùy
-    // chỉnh lúc onboarding và mở từ tab AOD tách riêng; Ngôn ngữ chỉ có lúc onboarding.
-    val bannerLanguage: BannerAdUnit by lazy {
-        BannerAdUnit(floors = listOf(BuildConfig.BANNER_LANGUAGE_ALL_ID to "banner_language_all"))
+    // Banner ở đáy màn (BannerAdView): Splash một placement; 3 màn onboarding (Ngôn ngữ, Tùy chỉnh, Quyền) chung một banner đặt ở
+    // OnboardingNavDisplay nên chuyển màn không tải lại; 3 tab chính chung một; màn chủ đề lúc xem và lúc sửa chung một; Tùy chỉnh mở từ tab
+    // AOD một placement riêng.
+    val bannerSplash: BannerAdUnit by lazy {
+        BannerAdUnit(floors = listOf(BuildConfig.BANNER_SPLASH_ALL_ID to "banner_splash_all"))
     }
 
-    val bannerOnboardingCustomize: BannerAdUnit by lazy {
-        BannerAdUnit(floors = listOf(BuildConfig.BANNER_ONBOARDING_CUSTOMIZE_ALL_ID to "banner_onboarding_customize_all"))
-    }
-
-    val bannerPermission: BannerAdUnit by lazy {
-        BannerAdUnit(floors = listOf(BuildConfig.BANNER_PERMISSION_ALL_ID to "banner_permission_all"))
+    val bannerOnboarding: BannerAdUnit by lazy {
+        BannerAdUnit(floors = listOf(BuildConfig.BANNER_ONBOARDING_ALL_ID to "banner_onboarding_all"))
     }
 
     val bannerMain: BannerAdUnit by lazy {
