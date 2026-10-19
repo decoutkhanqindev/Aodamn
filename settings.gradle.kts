@@ -31,3 +31,4 @@ plugins {
 
 rootProject.name = "Aodamn"
 include(":app")
+include(":baselineprofile")

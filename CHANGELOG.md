@@ -7,6 +7,25 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-10-19 – Baseline profile
+
+Đã tạo profile khởi động trên máy thật; bản release build, cài và mở được (hết crash lúc khởi động).
+
+### Sửa
+
+- Release crash ngay lúc mở ("Failed to create an instance of androidx.work.impl.WorkDatabase"): R8 xoá constructor rỗng của
+  `WorkDatabase_Impl` mà Room gọi bằng reflection (WorkManager 2.7.0 đi kèm Google Mobile Ads, rule của nó không giữ constructor ở R8
+  full mode). Thêm rule hẹp `-keep class * extends androidx.room.RoomDatabase { <init>(); }` ở `proguard-rules.pro`.
+
+### Thêm
+
+- Module `:baselineprofile` (`com.android.test`, plugin `androidx.baselineprofile`, chạy trên máy thật đang cắm): `BaselineProfileGenerator`
+  ghi đoạn khởi động, `StartupBenchmarks` đo khởi động lạnh không / có profile; `:app` có `profileinstaller` và nhận profile qua
+  `baselineProfile(project(":baselineprofile"))`. Tạo bằng `./gradlew :app:generateReleaseBaselineProfile`.
+- Sửa lại bộ khung mẫu: thư mục `baselineprofile` khớp `include(":baselineprofile")` (trước là `baselineProfile`, chỉ chạy được trên máy
+  không phân biệt hoa thường), namespace / package `com.decoutkhanqindev.aodamn.baselineprofile` thay `com.example`, cả hai lớp đọc app id
+  từ `targetAppId` thay vì viết cứng, `benchmark-macro-junit4` cùng version `1.5.0-beta01` với plugin.
+
 ## [Chưa phát hành] – 2026-10-19 – Banner Splash, onboarding chung một banner
 
 Build được, lint không thêm cảnh báo, unit test pass, `tools/check-rules.sh` ra 0 vi phạm (38 rule). Chưa test trên máy.

@@ -75,6 +75,12 @@ Khi chạy bằng dòng lệnh:
 | `./gradlew assembleDebug` · `./gradlew installDebug` | Build và cài bản debug       |
 | `./gradlew assembleRelease`                          | Bản release, cần signing     |
 | `./gradlew lint`                                     | Lint                         |
+| `./gradlew :app:generateReleaseBaselineProfile`      | Tạo baseline profile         |
+
+Baseline profile: module `:baselineprofile` (`com.android.test`, `BaselineProfileGenerator`, `StartupBenchmarks` đo khởi động có /
+không profile) chạy trên máy thật đang cắm (`useConnectedDevices`), ghi profile vào `app/src/release/generated/baselineProfiles/`
+để đưa vào bản release (`profileinstaller` cài lúc chạy lần đầu). Generator mới đi đoạn khởi động (tới Splash); app id đọc từ
+`targetAppId` nên đổi `applicationId` không phải sửa. Plugin `androidx.baselineprofile` và `benchmark-macro-junit4` cùng version.
 
 Phiên bản đang dùng, khai báo trong `gradle/libs.versions.toml`:
 
@@ -94,6 +100,7 @@ Phiên bản đang dùng, khai báo trong `gradle/libs.versions.toml`:
 | Timber · Lottie · kotlinx-collections-immutable                           | 5.0.1 · 6.7.1 · 0.5.2                               |
 | colorpicker-compose (skydoves)                                            | 1.3.0                                               |
 | Retrofit (+ converter kotlinx-serialization) · kotlinx-serialization-json | 3.0.0 · 1.11.0                                      |
+| Baseline profile plugin · benchmark-macro-junit4 · profileinstaller · uiautomator | 1.5.0-beta01 · 1.5.0-beta01 · 1.3.1 · 2.2.0 |
 | `compileSdk` / `minSdk` / `targetSdk`                                     | 37 / 30 / 37 (Android 17 / Android 11 / Android 17) |
 
 Từ AGP 9, Kotlin được tích hợp sẵn nên project không có plugin `org.jetbrains.kotlin.android`.

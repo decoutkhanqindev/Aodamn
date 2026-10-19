@@ -10,7 +10,7 @@ và báo lại.
 hồ che màn hình khoá rồi tự bật màn hình lại. Repo:
 [decoutkhanqindev/Aodamn](https://github.com/decoutkhanqindev/Aodamn).
 
-- `com.decoutkhanqindev.aodamn` · single module `:app` · minSdk 30 · targetSdk 37 · phiên bản
+- `com.decoutkhanqindev.aodamn` · module `:app` (+ `:baselineprofile` chỉ để tạo baseline profile / đo khởi động) · minSdk 30 · targetSdk 37 · phiên bản
   thư viện: `gradle/libs.versions.toml`.
 - Compose · Clean Architecture + MVI · Navigation 3 · Koin · Coroutines/Flow. Theme luôn tối (nền
   gradient chéo mint → đen → tím, accent mint; màn AOD và khung xem trước AOD nền đen).
@@ -21,6 +21,7 @@ hồ che màn hình khoá rồi tự bật màn hình lại. Repo:
 
 - Verify nhanh: `./gradlew :app:compileDebugKotlin`
 - Kiểm rule: `bash tools/check-rules.sh` (phải ra 0 vi phạm)
+- Baseline profile: `./gradlew :app:generateReleaseBaselineProfile` (cần máy thật cắm vào)
 - Build, test, lint: `assembleDebug` · `testDebugUnitTest` · `lint` (release cần signing trong
   `local.properties`, xem README).
 - Build treo → `./gradlew --stop`. Báo thiếu resource dù file còn (sau khi đổi tên / di chuyển
