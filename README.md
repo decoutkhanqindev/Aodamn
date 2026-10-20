@@ -841,7 +841,8 @@ chọn theo các khối đang có dữ liệu, dùng chung cho mọi chủ đề
     trăm tô gradient. Chủ đề Cổ điển (màn chủ đề và tab Đồng hồ lúc onboarding): màu giờ / phút có tab Gradient; thử 4 mặt: mặt số
     và xếp chồng tô gradient lên chữ số, mặt kim tô dọc theo từng kim và mốc giờ chính (gốc màu Đầu, đầu kim màu Cuối). Sỏi: cả 6 màu có tab
     Gradient; thử khối đặc / viền, nút phát lúc xoay (gradient xoay theo), thanh sóng lúc phát, ngày thường / đậm. Số áo: giờ, phút, ngày, dòng
-    trạng thái có tab Gradient; thử màn dọc và ngang, viên thuốc thứ, pin đang sạc (tia sét vẫn khoét đen) và pin yếu (vẫn đỏ). Panel đang mở, chạm vào khung xem trước (ngoài panel): panel
+    trạng thái có tab Gradient; thử màn dọc và ngang, viên thuốc thứ, pin đang sạc (tia sét vẫn khoét đen) và pin yếu (vẫn đỏ). Viên nang: cả 5 màu
+    có tab Gradient; thử viên đặc / viền, nút phát, thanh tiến trình, dòng trạng thái. Panel đang mở, chạm vào khung xem trước (ngoài panel): panel
     đóng (Tùy chỉnh và màn chủ đề lúc Sửa). Khung xem trước ở Tùy chỉnh, màn chủ đề, thẻ "Giao diện của bạn" và lưới chủ
     đề luôn hiện 08:30 hôm nay với dữ liệu mẫu cố định (pin 72%, nhạc dừng ở cùng một chỗ): để qua phút mới không có gì
     đổi; chỉ AOD thật chạy theo giờ.

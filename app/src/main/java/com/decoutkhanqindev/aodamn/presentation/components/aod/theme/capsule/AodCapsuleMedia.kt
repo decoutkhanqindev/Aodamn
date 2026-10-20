@@ -12,17 +12,19 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -50,7 +52,7 @@ fun AodCapsuleMedia(
     config: AodThemeConfig,
     onIntent: (AodIntent) -> Unit,
 ) {
-    val color = config[CapsuleThemeSpec.MediaColor]
+    val brush = config.brushOf(CapsuleThemeSpec.MediaColor)
     val progress = media.progress
 
     Column(
@@ -66,7 +68,7 @@ fun AodCapsuleMedia(
             ) {
                 Text(
                     text = media.title,
-                    color = color,
+                    style = LocalTextStyle.current.merge(TextStyle(brush = brush)),
                     fontSize = 17.sp,
                     fontWeight = FontWeight.Medium,
                     fontFamily = CapsuleThemeSpec.Font,
@@ -96,7 +98,7 @@ fun AodCapsuleMedia(
 
             CapsulePlayButton(
                 isPlaying = media.isPlaying,
-                color = color,
+                brush = brush,
                 onClick = { onIntent(AodIntent.PlayPauseMedia) },
                 modifier = Modifier.padding(horizontal = 10.dp),
             )
@@ -113,7 +115,7 @@ fun AodCapsuleMedia(
         if (progress != null) {
             AodMediaProgress(
                 progress = progress,
-                track = { fraction -> CapsuleProgressTrack(fraction = fraction, color = color) },
+                track = { fraction -> CapsuleProgressTrack(fraction = fraction, brush = brush) },
                 modifier = Modifier.padding(top = 18.dp),
             )
         }
@@ -124,7 +126,7 @@ fun AodCapsuleMedia(
 @Composable
 private fun CapsulePlayButton(
     isPlaying: Boolean,
-    color: Color,
+    brush: Brush,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -137,7 +139,7 @@ private fun CapsulePlayButton(
         Box(
             modifier = Modifier
                 .size(35.dp)
-                .background(color = color, shape = CircleShape),
+                .background(brush = brush, shape = CircleShape),
             contentAlignment = Alignment.Center,
         ) {
             Crossfade(targetState = isPlaying, label = "CapsulePlayIcon") { playing ->
@@ -156,7 +158,7 @@ private fun CapsulePlayButton(
 @Composable
 private fun CapsuleProgressTrack(
     fraction: () -> Float,
-    color: Color,
+    brush: Brush,
 ) {
     Box(
         modifier = Modifier
@@ -186,7 +188,7 @@ private fun CapsuleProgressTrack(
                         }
                         if (fraction() > 0f) {
                             drawLine(
-                                color = color,
+                                brush = brush,
                                 start = Offset(start, centerY),
                                 end = Offset(playedEnd, centerY),
                                 strokeWidth = strokeWidth,

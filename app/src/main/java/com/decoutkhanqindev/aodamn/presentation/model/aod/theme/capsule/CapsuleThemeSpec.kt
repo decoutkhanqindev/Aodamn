@@ -38,13 +38,13 @@ object CapsuleThemeSpec : AodThemeSpec {
         step = 10,
         default = 100,
     )
-    val DigitColor = AodColorOption(key = "digit_color", labelRes = R.string.theme_color_digits, default = Lime)
-    val CapsuleColor = AodColorOption(key = "capsule_color", labelRes = R.string.theme_color_capsule, default = Lime)
-    val DateColor = AodColorOption(key = "date_color", labelRes = R.string.theme_color_date, default = GreyED)
+    val DigitColor = AodColorOption(key = "digit_color", labelRes = R.string.theme_color_digits, default = Lime, isGradientAllowed = true)
+    val CapsuleColor = AodColorOption(key = "capsule_color", labelRes = R.string.theme_color_capsule, default = Lime, isGradientAllowed = true)
+    val DateColor = AodColorOption(key = "date_color", labelRes = R.string.theme_color_date, default = GreyED, isGradientAllowed = true)
 
     // Tên bài, nút phát và phần đã nghe của thanh tiến trình; nghệ sĩ, nút lùi / tới giữ xám.
-    val MediaColor = AodColorOption(key = "media_color", labelRes = R.string.theme_color_media, default = Lime)
-    val StatusColor = AodColorOption(key = "status_color", labelRes = R.string.theme_color_status, default = GreyED)
+    val MediaColor = AodColorOption(key = "media_color", labelRes = R.string.theme_color_media, default = Lime, isGradientAllowed = true)
+    val StatusColor = AodColorOption(key = "status_color", labelRes = R.string.theme_color_status, default = GreyED, isGradientAllowed = true)
 
     // Mỗi khối chủ đề tự vẽ (ownBlocks) có tab ở đây: Tùy chỉnh › Ngày / Pin / Thông báo / Nhạc dẫn sang màn chủ đề.
     override val tabs = persistentListOf(

@@ -103,6 +103,9 @@ dòng nào. Đã test trên máy.
   - Số áo: giờ, phút, ngày, dòng trạng thái bật gradient. Nét viền mỗi chữ số tô theo ô của số đó; chữ ngày và viền viên thuốc thứ tô
     bằng brush. `AodStatusLine` thêm `brush` (mặc định null = như cũ, chủ đề khác chưa truyền): pin, chữ, chấm ngăn, icon app tô gradient,
     pin yếu vẫn đỏ. `Modifier.aodTint(brush)` cho chỗ nhận Brush thẳng.
+  - Viên nang: 5 màu (chữ số, viên nang, ngày, nhạc, dòng trạng thái) bật gradient. Viên nang đặc (giữ độ mờ) lẫn viền tô theo khung
+    viên; mỗi chữ số tô theo khung số đó, hai chấm của dấu hai chấm theo khung viên; ngày, tên bài, nút phát tròn, phần đã nghe của thanh
+    tiến trình tô bằng brush; nghệ sĩ, nút lùi / tới vẫn xám.
 - Test `AodColorOptionTest`: màu cũ đọc như cũ, gradient lưu / đọc lại, về Một màu xoá khoá phụ, mặc định gradient, đặt lại, đổi hướng.
 
 ### Đổi

@@ -9,7 +9,7 @@ import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -47,8 +47,8 @@ fun AodCapsuleClock(
     val description = now.format(rememberTimeFormatter())
     val textMeasurer = rememberTextMeasurer()
     val isFilled = config[CapsuleThemeSpec.Style] == AodTileStyleValue.FILLED
-    val capsuleColor = config[CapsuleThemeSpec.CapsuleColor]
-    val digitColor = config[CapsuleThemeSpec.DigitColor]
+    val capsuleBrush = config.brushOf(CapsuleThemeSpec.CapsuleColor)
+    val digitBrush = config.brushOf(CapsuleThemeSpec.DigitColor)
 
     Spacer(
         modifier = modifier
@@ -56,8 +56,9 @@ fun AodCapsuleClock(
             .clearAndSetSemantics { contentDescription = description }
             .drawWithCache {
                 val r = unit.toPx()
+                // Mỗi chữ số đo riêng nên gradient của số trải theo khung từng số; hai chấm của dấu hai chấm theo khung viên nang.
                 val style = TextStyle(
-                    color = digitColor,
+                    brush = digitBrush,
                     fontSize = (r * CapsuleMetrics.DIGIT_FONT).toSp(),
                     fontWeight = FontWeight.ExtraBold,
                     fontFamily = CapsuleThemeSpec.Font,
@@ -74,13 +75,13 @@ fun AodCapsuleClock(
                 onDrawBehind {
                     if (isFilled) {
                         drawRoundRect(
-                            color = capsuleColor,
+                            brush = capsuleBrush,
                             alpha = CapsuleMetrics.FILL_ALPHA,
                             cornerRadius = CornerRadius(size.height / 2f),
                         )
                     } else {
                         drawRoundRect(
-                            color = capsuleColor,
+                            brush = capsuleBrush,
                             topLeft = Offset(outline / 2f, outline / 2f),
                             size = Size(size.width - outline, size.height - outline),
                             cornerRadius = CornerRadius((size.height - outline) / 2f),
@@ -97,12 +98,12 @@ fun AodCapsuleClock(
                     }
 
                     drawCircle(
-                        color = digitColor,
+                        brush = digitBrush,
                         radius = r * CapsuleMetrics.COLON_DOT / 2f,
                         center = Offset(colonX, centerY - r * CapsuleMetrics.COLON_OFFSET),
                     )
                     drawCircle(
-                        color = digitColor,
+                        brush = digitBrush,
                         radius = r * CapsuleMetrics.COLON_DOT / 2f,
                         center = Offset(colonX, centerY + r * CapsuleMetrics.COLON_OFFSET),
                     )
@@ -115,7 +116,7 @@ fun AodCapsuleClock(
 @Composable
 fun CapsuleDate(
     nowMillis: Long,
-    color: Color,
+    brush: Brush,
     unit: Dp,
     modifier: Modifier = Modifier,
 ) {
@@ -126,13 +127,13 @@ fun CapsuleDate(
     Text(
         text = now.format(formatter).uppercase(),
         modifier = modifier,
-        color = color,
         fontSize = fontSize,
         fontWeight = FontWeight.Bold,
         fontFamily = CapsuleThemeSpec.Font,
         maxLines = 1,
         softWrap = false,
         style = TextStyle(
+            brush = brush,
             lineHeight = fontSize,
             lineHeightStyle = LineHeightStyle(
                 alignment = LineHeightStyle.Alignment.Center,

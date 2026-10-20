@@ -122,7 +122,7 @@ private fun CapsuleClockAndDate(
             AnimatedVisibility(visible = state.extras.isDateEnabled) {
                 CapsuleDate(
                     nowMillis = state.nowMillis,
-                    color = config[CapsuleThemeSpec.DateColor],
+                    brush = config.brushOf(CapsuleThemeSpec.DateColor),
                     unit = unit,
                     modifier = Modifier.padding(end = if (isWeatherShown) 12.dp else 0.dp),
                 )
@@ -150,6 +150,7 @@ private fun CapsuleStatus(
         isFlashlightOn = state.isFlashlightOn,
         notifications = state.notifications,
         color = state.appearance.theme.config[CapsuleThemeSpec.StatusColor],
+        brush = state.appearance.theme.config.gradientOf(CapsuleThemeSpec.StatusColor)?.toBrush(),
         glyphHeight = unit * CapsuleMetrics.STATUS_GLYPH,
         fontFamily = CapsuleThemeSpec.Font,
         modifier = modifier,
