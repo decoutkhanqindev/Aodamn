@@ -1750,6 +1750,212 @@ compass = [
 ]
 compass_defs = "".join(g for _, g in CP_RINGS.values())
 
+# ================================================================== BÁN NGUYỆT (Half Concentric của Muviz Edge; số đo lấy từ layout dec22_screen_layout dọc / ngang
+# và HalfConcentricClock trong APK, không từ ảnh chụp). Mặt số vuông cạnh 0,9 cạnh ngắn, r = nửa cạnh, tâm lùi ra ngoài mép trái 0,95r (chỉ thấy
+# nửa phải tới 1,05r), giữa chiều cao. Vòng ngoài là giây: 60 vạch tới r (vạch mỗi 5 giây từ 0,93r, còn lại từ 0,96r), số 00–55 Google Sans
+# Regular 0,08r ở 0,86r; vòng trong là phút: vạch 0,68r / 0,72r → 0,76r, số 0,09r ở 0,58r. Chữ số đứng thẳng, hai vòng xoay theo giờ thật mỗi
+# khung hình để giá trị hiện tại chỉ sang phải. Giờ "HH" 0,36r ở tâm + 0,18r, phút "mm" 0,155r trong viên viền ở tâm + 0,6r: vạch / số hai vòng
+# khoét quanh viên (vuông 2,4 × cao chữ, bo 0,6 cao chữ), viền viên 3 px cao 2,4 × cao chữ bo tròn hết, kéo tới mép mặt số như lúc thức của
+# app mẫu (user bỏ trạng thái nghỉ: viền thu về, số giây mờ). Phủ tối dạng tròn tâm cách tâm mặt số 1,75r về bên phải, bán
+# kính 2r, tối từ 0,85: đỉnh, đáy, mép trái mặt số chìm vào nền. Ngày "dd MMM yyyy" 12 sp (tối hơn 30%) + thứ "EEEE" 13 sp in hoa Bold giãn
+# 0,25 em, cách 8 dp, ở nửa phải giữa chiều cao (trên trục số đang chỉ).
+HC_FONTS = ('<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;700&display=swap">'
+            '<style>.cpb{font-family:"Google Sans";font-weight:700}.cpr{font-family:"Google Sans";font-weight:400}</style>')
+HC_ACCENT = "#E5484D"  # màu nhấn đề xuất: đỏ (Red), chưa chủ đề nào dùng
+HC_COLORS = {"hour": GE, "minute": GE, "ring": HC_ACCENT, "dash": "#6E6E6E", "date": GE, "status": "#9A9A9A", "media": "#E0E0E0"}
+HC_REF = {"hour": "#FFFFFF", "minute": "#FFFFFF", "ring": "#FFFFFF", "dash": "#757575", "date": "#FFFFFF", "status": "#909498",
+          "media": "#CED4DA"}
+HC_MIX = {**HC_COLORS, "hour": "#FFD54F", "minute": "#80DEEA", "ring": "#80DEEA", "dash": "#5A5A5A"}
+HC_DATE, HC_DAY = "19 THG 10 2026", "THỨ HAI"
+HC_PX = 1 / 2.75  # 1 px ở mật độ 2,75 (1080 px / 393 dp)
+HC_LIVE = []
+HC_N = [0]
+
+
+def hc_dark(c, k=0.7):
+    return "#" + "".join(f"{int(int(c[i:i + 2], 16) * k):02X}" for i in (1, 3, 5))
+
+
+def hc_offset(text, size):
+    """Độ lệch gốc chữ so với tâm nét chữ (getTextBounds + exactCenter của app mẫu)."""
+    lo, top, hi, bottom = CP_REG.ink(text, size)
+    return -(lo + hi) / 2, -(top + bottom) / 2
+
+
+def hc_label(text, size, color, px, py, opacity=1.0, lid=""):
+    ox, oy = hc_offset(text, size)
+    s = CP_REG.text(px + ox, py + oy, text, size, color, opacity=opacity)
+    return s.replace("<text ", f'<text id="{lid}" data-o="{f(ox)},{f(oy)}" ', 1) if lid else s
+
+
+def hc_tick_path(kind, major, minor, outer):
+    """60 vạch lúc giá trị 0 ở bán kính 100 (một lần trong defs, mỗi khung dùng lại bằng <use> co theo r)."""
+    d = ""
+    for i in range(60):
+        a = math.radians(90 + 6 * i)
+        r0 = (major if i % 5 == 0 else minor) * 100
+        d += f"M{f(math.sin(a) * r0)},{f(math.cos(a) * r0)}L{f(math.sin(a) * outer * 100)},{f(math.cos(a) * outer * 100)}"
+    return f'<path id="hct{kind}" d="{d}" stroke-linecap="round" fill="none"/>'
+
+
+HC_DEFS = hc_tick_path("s", 0.93, 0.96, 1.0) + hc_tick_path("m", 0.68, 0.72, 0.76)
+
+
+def hc_ticks(cx, cy, r, value, kind, color, lid=""):
+    """Xoay cả nhóm 6° mỗi đơn vị (vạch nằm theo bán kính nên xoay cứng là đúng); nét 2 px không đổi theo r."""
+    i = f' id="{lid}"' if lid else ""
+    return (f'<use{i} href="#hct{kind}" stroke="{color}" stroke-width="{f(2 * HC_PX * 100 / r)}" '
+            f'transform="translate({f(cx)} {f(cy)}) rotate({f(6 * value)}) scale({r / 100:.4f})"/>')
+
+
+def hc_dial(cy, r, hh=10, mm=8, ss=42, colors=HC_COLORS, awake=True, live=False):
+    """Nửa mặt số sát mép trái (toạ độ màn: tâm x = 0,05r). Thứ tự vẽ như app mẫu: hai vòng (khoét viên), giờ, phút, viền viên, phủ tối."""
+    n = HC_N[0]
+    HC_N[0] += 1
+    lid = f"hcl{n}" if live else ""
+    if live:
+        HC_LIVE.append((lid, 0.05 * r, cy, r))
+    cx = 0.05 * r
+    sv, mv = ss, mm + ss / 60
+    mtext = f"{mm:02d}"
+    lo, top, hi, bottom = CP_REG.ink(mtext, 0.155 * r)
+    th = bottom - top
+    px, hc, mc = cx + 0.6 * r, 1.2 * th, 1.3 * th
+    dash = colors["dash"]
+    s = (f'<defs><mask id="hcm{n}" maskUnits="userSpaceOnUse"><rect x="-20" y="{f(cy - r - 20)}" width="{f(2 * r + 40)}" '
+         f'height="{f(2 * r + 40)}" fill="#fff"/><rect x="{f(px - hc)}" y="{f(cy - hc)}" width="{f(2 * hc)}" height="{f(2 * hc)}" '
+         f'rx="{f(0.5 * hc)}" fill="#000"/></mask>'
+         f'<radialGradient id="hcv{n}" gradientUnits="userSpaceOnUse" cx="{f(cx + 1.75 * r)}" cy="{f(cy)}" r="{f(2 * r)}">'
+         f'<stop offset=".85" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000"/></radialGradient></defs>'
+         f'<g mask="url(#hcm{n})">')
+    s += hc_ticks(cx, cy, r, sv, "s", dash, lid and lid + "ts") + hc_ticks(cx, cy, r, mv, "m", dash, lid and lid + "tm")
+    for kind, v, d, size, op in (("s", sv, 0.86, 0.08, 1.0 if awake else 0.0), ("m", mv, 0.58, 0.09, 1.0)):
+        for i in range(0, 60, 5):
+            a = math.radians(90 - 6 * v + 6 * i)
+            s += hc_label(f"{i:02d}", size * r, dash, cx + math.sin(a) * d * r, cy + math.cos(a) * d * r, op, lid and f"{lid}{kind}{i}")
+    s += "</g>"
+    s += hc_label(f"{hh:02d}", 0.36 * r, colors["hour"], cx + 0.18 * r, cy, lid=lid and lid + "h")
+    s += hc_label(mtext, 0.155 * r, colors["minute"], px, cy, lid=lid and lid + "n")
+    right = (1.05 * r - 1.5 * HC_PX) if awake else px + mc
+    s += (f'<rect x="{f(px - mc)}" y="{f(cy - hc)}" width="{f(right - (px - mc))}" height="{f(2 * hc)}" rx="{f(hc)}" fill="none" '
+          f'stroke="{colors["ring"]}" stroke-width="{f(3 * HC_PX)}"/>')
+    return s + f'<circle cx="{f(cx)}" cy="{f(cy)}" r="{f(r)}" fill="url(#hcv{n})"/>'
+
+
+def hc_live_script():
+    """Khung live: vạch xoay, số đứng thẳng chạy theo vòng, giờ / phút đổi theo giờ của máy xem mock, mỗi khung hình như app mẫu."""
+    frames = ",".join(f'["{lid}",{f(cx)},{f(cy)},{f(r)}]' for lid, cx, cy, r in HC_LIVE)
+    return ('<script>(function(){var c=[' + frames + '];function p(n){return(n<10?"0":"")+n}'
+            'function t(){var d=new Date(),s=d.getSeconds()+d.getMilliseconds()/1e3,m=d.getMinutes()+s/60;'
+            'c.forEach(function(e){var id=e[0],x=e[1],y=e[2],r=e[3];'
+            '[["s",s,.86],["m",m,.58]].forEach(function(k){var g=document.getElementById(id+"t"+k[0]);'
+            'if(g)g.setAttribute("transform","translate("+x+" "+y+") rotate("+(6*k[1]).toFixed(2)+") scale("+r/100+")");'
+            'for(var i=0;i<60;i+=5){var l=document.getElementById(id+k[0]+i);if(!l)continue;var o=l.getAttribute("data-o").split(","),'
+            'a=(90-6*k[1]+6*i)*Math.PI/180;l.setAttribute("x",(x+Math.sin(a)*k[2]*r+ +o[0]).toFixed(1));'
+            'l.setAttribute("y",(y+Math.cos(a)*k[2]*r+ +o[1]).toFixed(1));}});'
+            '[["h",p(d.getHours()),.18],["n",p(d.getMinutes()),.6]].forEach(function(k){var l=document.getElementById(id+k[0]);'
+            'if(!l||l.textContent===k[1])return;l.textContent=k[1];var b=l.getBBox();'
+            'l.setAttribute("x",(x+k[2]*r-b.width/2).toFixed(1));});});requestAnimationFrame(t);}t();})();</script>')
+
+
+def hc_column(x, cy, colors=HC_COLORS, date=True, weather=False, n=2, charging=False, latest=False, w=180, sizes=(12, 13)):
+    """Cột bên phải trên trục số đang chỉ, căn giữa tại x, cả cụm giữa cy: ngày (tối hơn 30%), cách 8 dp thứ, thời tiết một dòng riêng; cách
+    12 dp dòng pin · thông báo, cách 12 dp thông báo mới nhất (rộng tối đa w). Dòng nào tắt thì không chiếm chỗ, cả khoảng cách."""
+    ds, ys = sizes
+    rows = []
+    if date:
+        rows += [(1.25 * ds, 0, lambda t: cp_text(CP_BOLD, x, t + BZ_ASC * ds, HC_DATE, ds, hc_dark(colors["date"]), "middle", 0.25)),
+                 (1.25 * ys, 8, lambda t: cp_text(CP_BOLD, x, t + BZ_ASC * ys, HC_DAY, ys, colors["date"], "middle", 0.25))]
+    if weather:
+        def wx(t):
+            ww = 25 + CP_BOLD.width("24°", ys)
+            x0, base = x - ww / 2, t + BZ_ASC * ys
+            return cloud(x0 - 1, base, 0.52, colors["date"], 1.6) + CP_BOLD.text(x0 + 25, base, "24°", ys, colors["date"])
+        rows.append((1.25 * ys, 8, wx))
+    rows.append((14, 12, lambda t: cp_status(x, t + 7, "middle", colors["status"], n, charging)))
+    if latest:
+        rows.append((16, 12, lambda t: cp_latest(x, t + 8, w, "middle", colors["status"])))
+    h = sum(r[0] for r in rows) + sum(r[1] for r in rows[1:])
+    s, y = "", cy - h / 2
+    for i, (rh, gap, draw) in enumerate(rows):
+        y += gap if i else 0
+        s += draw(y)
+        y += rh
+    return s
+
+
+def hc_portrait(hh=10, mm=8, ss=42, colors=HC_COLORS, awake=True, live=False, date=True, weather=False, n=2, charging=False,
+                latest=False, media=False, paused=False):
+    """Màn dọc: nửa mặt số giữa chiều cao (điểm nhấn); cột ngày, thứ (+ thời tiết), dòng pin · thông báo (+ thông báo mới nhất) ở nửa phải
+    trên trục số đang chỉ (user chốt: dòng pin dưới ngày); trình phát giữa vùng dưới mặt số."""
+    r, cy = 0.45 * PW, PH / 2
+    zone = cy - r
+    s = hc_dial(cy, r, hh, mm, ss, colors, awake, live)
+    s += hc_column(0.75 * PW, cy, colors, date, weather, n, charging, latest, PW / 2 - 16)
+    if media:
+        s += cp_player(PW / 2, PH - zone / 2 - 20, PW - 80, "middle", colors["media"], paused)
+    return s
+
+
+def hc_landscape(hh=10, mm=8, ss=42, colors=HC_COLORS, awake=True, live=False, weather=False, n=2, charging=False, latest=False,
+                 media=False, paused=False):
+    """Màn ngang: nửa mặt số sát mép trái, r = 0,65 cạnh ngắn (app mẫu 0,45 chỉ chiếm 1/5 bề ngang, để trống giữa); đỉnh / đáy hai vòng ra
+    ngoài màn, chìm trong phủ tối. Cột như màn dọc (ngày + thứ 14 / 15 sp như layout ngang mẫu) giữa vùng còn lại trên trục; có nhạc thì cột
+    và trình phát (cách 28 dp) thành một khối giữa chiều cao (đặt trình phát ở đáy thì nửa trên trống, xếp hàng ngang thì trình phát sát mép)."""
+    r = 0.65 * H
+    xm = (1.05 * r + W) / 2
+    s = hc_dial(CY, r, hh, mm, ss, colors, awake, live)
+    if not media:
+        return s + hc_column(xm, CY, colors, True, weather, n, charging, latest, 420, (14, 15))
+    h = hc_column_h(weather, latest, (14, 15))
+    top = CY - (h + 28 + 40) / 2
+    s += hc_column(xm, top + h / 2, colors, True, weather, n, charging, latest, 420, (14, 15))
+    return s + cp_player(xm, top + h + 28, 360, "middle", colors["media"], paused)
+
+
+def hc_column_h(weather, latest, sizes):
+    ds, ys = sizes
+    return 1.25 * ds + 8 + 1.25 * ys + (8 + 1.25 * ys if weather else 0) + 12 + 14 + (28 if latest else 0)
+
+
+def hc_strip():
+    k = 0.4
+    s = ""
+    for i, (label, kw) in enumerate((("Mặc định: viền phút đỏ", {}),
+                                      ("Buổi tối, 23:41", {"hh": 23, "mm": 41, "ss": 12}),
+                                      ("Màu như app mẫu", {"colors": HC_REF, "hh": 7, "mm": 21, "ss": 5}),
+                                      ("Đổi màu từng phần", {"colors": HC_MIX, "hh": 4, "mm": 38, "ss": 50}))):
+        x = 36 + i * 212
+        s += (f'<g transform="translate({x} 14) scale({k})"><clipPath id="hcc{i}"><rect width="{PW}" height="{PH}" rx="34"/></clipPath>'
+              f'<rect width="{PW}" height="{PH}" rx="34" fill="#000" stroke="#333" stroke-width="2"/><g clip-path="url(#hcc{i})">')
+        s += hc_portrait(**kw) + "</g></g>" + txt(x + PW * k / 2, 14 + PH * k + 22, label, 13, DM, 400, "middle")
+    return (f'<p style="font-size:13px;color:var(--text-secondary);margin:1.25rem 0 6px">Màu (giờ, phút, viền phút, vạch, '
+            f'ngày, dòng pin, nhạc)</p>'
+            f'<svg viewBox="0 0 {W} 400" width="100%" role="img" aria-label="Màu" '
+            f'style="display:block;font-family:\'Plus Jakarta Sans\',sans-serif" fill="{G}">'
+            f'<rect width="{W}" height="400" rx="20" fill="#111"/>{s}</svg>')
+
+
+half = [
+    HC_FONTS,
+    hc_strip(),
+    '<div style="font-size:0">',
+    frame_portrait("D1 · Dọc, mặc định (cũng là thẻ ở lưới chủ đề), chạy theo giờ thật: vòng giây quay một vòng mỗi phút, vòng phút trôi "
+                   "liên tục", hc_portrait(live=True)),
+    frame_portrait("D2 · Dọc, 10:08:42, thời tiết dưới thứ, nhạc", hc_portrait(weather=True, media=True)),
+    frame_portrait("D3 · Dọc, 21:47:15, đang sạc, thông báo mới nhất, nhạc đang dừng (mờ)",
+                   hc_portrait(hh=21, mm=47, ss=15, charging=True, latest=True, n=1, media=True, paused=True)),
+    frame_portrait("D4 · Dọc, 4:38, màu như app mẫu, tắt ngày",
+                   hc_portrait(hh=4, mm=38, ss=0, colors=HC_REF, date=False, n=3)),
+    '</div>',
+    frame("N1 · Ngang, chạy theo giờ thật, không nhạc: ngày + thời tiết, dòng pin · thông báo trên trục",
+          hc_landscape(live=True, weather=True)),
+    frame("N2 · Ngang, 10:08:42, nhạc", hc_landscape(media=True)),
+    frame("N3 · Ngang, 21:47:15, đang sạc, thông báo mới nhất, nhạc đang dừng",
+          hc_landscape(hh=21, mm=47, ss=15, charging=True, latest=True, n=1, media=True, paused=True)),
+    hc_live_script(),
+]
+
 for name, summary, defs, frames in [
     ("w_classic", "Bảy bố cục ngang của chủ đề Cổ điển theo các khối đang bật", classic_defs, classic),
     ("w_jersey", "Bố cục ngang của chủ đề Số áo: ngày, bốn chữ số một hàng, dòng pin", jersey_defs, jersey),
@@ -1760,6 +1966,7 @@ for name, summary, defs, frames in [
     ("w_chain", "Chủ đề Chuỗi (Bullet List): đồng hồ viên thuốc, bốn khung dọc và bốn bố cục ngang", chain_defs, chain),
     ("w_bezel", "Chủ đề Vành (iOS Fill Clock): hai kiểu vạch, bốn khung dọc và ba bố cục ngang", bezel_defs, bezel),
     ("w_compass", "Chủ đề La bàn (Ambitio Face): màu và cỡ mặt số, bốn khung dọc và ba bố cục ngang", compass_defs, compass),
+    ("w_half", "Chủ đề Bán nguyệt (Half Concentric): màu, bốn khung dọc và ba bố cục ngang", HC_DEFS, half),
 ]:
     code = widget(summary, defs, frames)
     OUT.mkdir(parents=True, exist_ok=True)

@@ -7,6 +7,43 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-10-20 – Chủ đề Bán nguyệt
+
+Build được, lint 0 lỗi, 16 cảnh báo đều ở file không đụng tới (4 cảnh báo mới so với 12 cũ là bản mới hơn của thư viện baseline profile),
+unit test pass (thêm test chặn Bán nguyệt có lại khối đã bỏ hay thiếu màu của app mẫu; test nội dung thông báo và chạy
+theo giờ thật ở khung xem trước cho phép Bán nguyệt như La bàn), `tools/check-rules.sh` ra 0 vi phạm (38 rule), thư mục các chủ đề cũ không đổi
+dòng nào. Đã test trên máy.
+
+### Thêm
+
+- Chủ đề Bán nguyệt (Half Concentric của Muviz Edge, số đo lấy từ `HalfConcentricClock` và layout `dec22_screen_layout` dọc / ngang dịch ngược;
+  mock duyệt trước khi code): mặt số tròn bán kính 0,45 cạnh ngắn, tâm lùi ra ngoài mép trái 0,95r nên chỉ thấy nửa phải, giữa chiều cao. Vòng
+  ngoài là giây (60 vạch, số 00–55 Google Sans Regular), vòng trong là phút; cả hai xoay theo giờ thật mỗi khung hình như app mẫu (vòng giây
+  quay một vòng mỗi phút, vòng phút trôi liên tục) để giá trị hiện tại chỉ sang phải, số luôn đứng thẳng. Giờ "HH" to, phút "mm" trong viên
+  viền; vạch và số hai vòng khoét quanh viên; đĩa đen 50% dưới mặt số (thấy khi có ảnh nền) và phủ tối tròn làm đỉnh, đáy, mép trái chìm vào
+  nền như app mẫu. Viền viên luôn kéo tới mép mặt số ôm số giây đang chỉ như lúc thức của app mẫu; bỏ trạng thái nghỉ (app mẫu sau 15 giây
+  mặc định, cài đặt "Low power after", thu viên về và ẩn số giây) để vòng giây luôn hiện (user chọn sau khi test trên máy). Hai vòng vạch vẽ một lần vào `GraphicsLayer` rồi chỉ xoay, số đặt lại trong pha vẽ nên không recompose. Khung xem trước ở màn chủ đề,
+  Tùy chỉnh chạy theo giờ thật (`isLiveInPreview`), thẻ ở tab AOD đứng yên.
+- Cột bên phải trên trục số đang chỉ (user chốt dòng pin dưới ngày): ngày "dd MMM yyyy" tối hơn 30% rồi thứ "EEEE", in hoa Google Sans Bold
+  giãn chữ (12 / 13sp màn dọc, 14 / 15sp màn ngang như layout mẫu), thời tiết một dòng riêng, dòng pin · thông báo (`AodStatusLine`), thông
+  báo mới nhất (icon + "TIÊU ĐỀ: NỘI DUNG" in hoa, chạy chữ một lần). Trình phát như app mẫu (lùi · tên bài / nghệ sĩ in hoa giãn chữ · tới,
+  chạm tên bài để phát / dừng, dừng thì chữ mờ; đổi bài thì tên trượt lên) giữa vùng dưới mặt số. Màn ngang: nửa mặt số to hơn (r = 0,65 cạnh
+  ngắn, app mẫu 0,45 chỉ chiếm 1/5 bề ngang), đỉnh / đáy vòng chìm vào phủ tối; cột giữa phần còn lại, có nhạc thì cột và trình phát thành một
+  khối giữa chiều cao.
+- Mặc định bắt mắt: viền viên phút `Red` (#E5484D, màu nhấn chưa chủ đề nào dùng), giờ / phút / ngày GreyED, vạch và số Grey6E (#757575 của
+  app mẫu), dòng pin Grey9A, nhạc GreyE0. Đủ 6 màu của app mẫu: Đồng hồ (giờ, phút, viền phút, vạch & số), Ngày, Pin & thông báo, Nhạc (màu
+  điều khiển tách theo phần, user duyệt).
+- Bán nguyệt chỉ có ngày, thời tiết, pin, thông báo (kèm thông báo mới nhất, `hasNotificationContent = true`), nhạc: ghi nhớ, sự kiện, nét vẽ
+  không có chỗ đặt cân quanh nửa mặt số ở cả dọc lẫn ngang.
+- `tools/mockups/aod_landscape_mockups.py` có nhóm khung của Bán nguyệt (màu, bốn khung dọc, ba khung ngang; khung D1 và N1
+  xoay theo giờ thật của máy xem mock).
+
+### Thay đổi
+
+- Chỉ thêm, không đổi chủ đề đang có: mục `HALF_MOON` ở `AodThemeValue`, nhánh `when` ở `AodPortrait` / `AodLandscape` / `AodMediaControls`,
+  chuỗi vi / en (`theme_half_moon`, `theme_color_minute_ring`, `theme_color_dial`, mẫu ngày / thứ / thông báo); không thêm màu, font hay cờ dùng
+  chung (dùng `Red`, `FontFamilyGoogleSansText`, `AodState.isClockLive` có sẵn).
+
 ## [Chưa phát hành] – 2026-10-19 – Màu có sẵn trong bảng màu
 
 ### Thêm

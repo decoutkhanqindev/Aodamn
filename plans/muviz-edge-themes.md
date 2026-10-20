@@ -43,6 +43,7 @@ code dịch ngược, không lấy asset (font, ảnh, Lottie) từ APK. APK và
 | Chuỗi (`CHAIN`) | **28 · Aug23 "Bullet List"** | làm từ danh mục này (2026-10-17), số đo lấy từ layout `aug23_screen_layout` / `Aug23Clock` / font trong APK |
 | Vành (`BEZEL`) | **40 · Aug24 "iOS Fill Clock"** | làm từ danh mục này (2026-10-18), số đo lấy từ layout `aug24_screen_layout` / `IosFillClock` / font trong APK |
   | La bàn (`COMPASS`) | **25 · May23 "Ambitio Face"** | làm từ danh mục này (2026-10-18), số đo lấy từ layout `may23_screen_layout` / `AmbitioClock` / font trong APK |
+| Bán nguyệt (`HALF_MOON`) | **20 · Dec22 "Half Concentric"** | làm từ danh mục này (2026-10-20), số đo lấy từ layout `dec22_screen_layout` dọc / ngang / `HalfConcentricClock` |
 
 ## Danh mục đủ 44 chủ đề
 
@@ -70,7 +71,7 @@ text view chung) hoặc font dùng trong code; "chữ (font layout)" nghĩa là 
 | 17 | Sep22 | Nothing(1) | Clock Size, Theme Color | Hour, Minute, Second, Date, Notification, Controls, Battery Status | chữ: ndot47, ndot55 | font độc quyền | chưa có |
 | 18 | Oct22 | Pixel Default | Clock Weight, Clock Size, Theme Color | Hour, Minute, Date, Notification, Controls, Battery Status | chữ: google_sans_clock | font độc quyền | chưa có |
 | 19 | Nov22 | Concentric | Clock Size, Hour Color, Minute Color, Ring Color, Dash Color, Controls Color | – | ConcentricClock | – | chưa có |
-| 20 | Dec22 | Half Concentric ⭐ | Hour Color, Minute Color, Ring Color, Dash Color, Date Color, Controls Color | – | HalfConcentricClock | – | chưa có |
+| 20 | Dec22 | Half Concentric ⭐ | Hour Color, Minute Color, Ring Color, Dash Color, Date Color, Controls Color | – | HalfConcentricClock | – | **Bán nguyệt** (`HALF_MOON`) |
 | 21 | Jan23 | Moon Phase ⭐ | Clock Color, Date Color, Clock Size, Character Color, Character Size, Peek, Rotation, Glow Color, Particle Color, Controls Color | – | MoonSpace, StarField | – | chưa có |
 | 22 | Feb23 | Vertical Text | Text, Spacing, Text Size, Text Style, Text Color, Notification Color, Controls Color | – | chữ: 12 font (abril, bebas, monoton, rye…) | ô nhập chữ | chưa có |
 | 23 | Mar23 | Big Overlap Clock | Clock Style, Clock Size, Color 1, Color 2, Theme Color | Color 3, Color 4, Date, Notification, Controls, Battery Status | BigPixel2Clock | – | chưa có |
@@ -132,9 +133,11 @@ mỗi phút (`AodViewModel`), nên phần chạy theo giây của app mẫu ph�
   mũi tên bên trái): vòng ngoài giờ 1–12 lớn xen "hh:30" nhỏ, vòng giữa phút 00–55 xen vạch, vòng trong giây mờ; hai vòng tròn
   mảnh alpha 40. Font Krona One (Google Fonts, chỉ vẽ số). Đang làm thành chủ đề La bàn (2026-10-18): user muốn giữ vòng giây, cả ba vòng
   xoay theo giờ thật mỗi khung hình như app mẫu (mặt số tự chạy đồng hồ khung hình, không đổi nhịp phút của AOD).
-- **20 · Half Concentric** ⭐ (`HalfConcentricClock`): hình tròn lớn đẩy ra ngoài mép trái (chỉ thấy nửa phải), vòng ngoài là
-  **giây** 00–55, vòng trong là phút, cùng xoay để giá trị hiện tại chỉ sang phải; giờ "HH" lớn (0,36r), phút "mm" trong viên
-  thuốc viền ở 0,6r; tối dần ở mép phải. Font Product Sans (= Google Sans, đã có). Vòng giây phải đổi nghĩa (vd vòng phút / giờ).
+- ~~**20 · Half Concentric**~~ ⭐ (`HalfConcentricClock`, đã làm thành Bán nguyệt 2026-10-20): mặt số vuông 0,9 cạnh ngắn, tâm lùi ra ngoài
+  mép trái 0,95r (chỉ thấy nửa phải), vòng ngoài là **giây** 00–55, vòng trong là phút, cùng xoay theo giờ thật mỗi khung hình để giá trị
+  hiện tại chỉ sang phải, số đứng thẳng; giờ "HH" lớn (0,36r), phút "mm" trong viên viền ở 0,6r, vạch khoét quanh viên; phủ tối tròn làm
+  đỉnh, đáy, mép trái chìm vào nền; chế độ tiết kiệm (`LOW_POWER_AFTER`) thu viên về và làm mờ số giây. Font Product Sans (= Google Sans).
+  Giữ vòng giây chạy theo giờ thật như La bàn; bỏ trạng thái nghỉ (mặc định sau 15 giây ở app mẫu) để vòng giây luôn hiện (user chọn).
 - **30 · Coum Face** ⭐ (`CoumTick` + `oct23_screen_layout`): giờ số "09:50" 50sp + ngày 16sp ở giữa, vòng 60 vạch phủ màn xoay
   theo **giây**, số giây trong chấm tròn ở mép phải, tối dần trên / dưới; màu vòng có thể là gradient. Nét đặc trưng là giây.
 - **39 · Nothing Wide** (`NothingWideClock`): khung chữ nhật bo góc sát mép, 60 vạch là tia cắt trong dải (như Vành), kim có

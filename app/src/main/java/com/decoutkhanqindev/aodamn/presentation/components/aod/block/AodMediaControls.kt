@@ -41,6 +41,7 @@ import com.decoutkhanqindev.aodamn.R
 import com.decoutkhanqindev.aodamn.presentation.components.AppSlider
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.bezel.AodBezelMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.compass.AodCompassMedia
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.halfmoon.AodHalfMoonMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.capsule.AodCapsuleMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.card.AodCardMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.chain.AodChainMedia
@@ -86,6 +87,7 @@ fun AodMediaControls(
                 AodThemeValue.CHAIN -> AodChainMedia(media = target, config = theme.config, onIntent = onIntent)
                 AodThemeValue.BEZEL -> AodBezelMedia(media = target, config = theme.config, onIntent = onIntent)
                 AodThemeValue.COMPASS -> AodCompassMedia(media = target, config = theme.config, onIntent = onIntent)
+                AodThemeValue.HALF_MOON -> AodHalfMoonMedia(media = target, config = theme.config, onIntent = onIntent)
             }
         }
     }

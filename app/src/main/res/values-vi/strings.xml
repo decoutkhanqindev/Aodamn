@@ -59,6 +59,7 @@
     <string name="theme_chain">Chuỗi</string>
     <string name="theme_bezel">Vành</string>
     <string name="theme_compass">La bàn</string>
+    <string name="theme_half_moon">Bán nguyệt</string>
     <string name="aod_jersey_date_first_pattern">dd</string>
     <string name="aod_jersey_date_second_pattern">MM</string>
     <string name="aod_bezel_weekday_pattern">EEEE</string>
@@ -102,6 +103,8 @@
     <string name="theme_color_minute">Phút</string>
     <string name="theme_color_half_hour">Giờ rưỡi</string>
     <string name="theme_color_second">Giây</string>
+    <string name="theme_color_minute_ring">Viền phút</string>
+    <string name="theme_color_dial">Vạch &amp; số</string>
     <string name="theme_color_minute_tag">Phút &amp; AM/PM</string>
     <string name="theme_opt_digit_style">Kiểu số</string>
     <string name="theme_opt_card_background">Nền thẻ</string>

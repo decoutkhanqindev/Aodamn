@@ -66,6 +66,7 @@
     <string name="theme_chain">Chain</string>
     <string name="theme_bezel">Bezel</string>
     <string name="theme_compass">Compass</string>
+    <string name="theme_half_moon">Half moon</string>
     <string name="theme_in_use">In use</string>
     <string name="theme_edit">Edit</string>
     <string name="theme_saved">Theme saved</string>
@@ -106,6 +107,8 @@
     <string name="theme_color_minute">Minute</string>
     <string name="theme_color_half_hour">Half hours</string>
     <string name="theme_color_second">Seconds</string>
+    <string name="theme_color_minute_ring">Minute ring</string>
+    <string name="theme_color_dial">Ticks &amp; numbers</string>
     <string name="theme_color_minute_tag">Minute &amp; AM/PM</string>
     <string name="theme_opt_digit_style">Digit style</string>
     <string name="theme_opt_card_background">Card background</string>
@@ -363,6 +366,9 @@
     <string name="aod_bezel_day_pattern" translatable="false">dd</string>
     <string name="aod_compass_date_pattern" translatable="false">dd MMMM yyyy</string>
     <string name="aod_compass_notification" translatable="false">%1$s: %2$s</string>
+    <string name="aod_half_moon_date_pattern" translatable="false">dd MMM yyyy</string>
+    <string name="aod_half_moon_day_pattern" translatable="false">EEEE</string>
+    <string name="aod_half_moon_notification" translatable="false">%1$s: %2$s</string>
     <string name="aod_hint">Double-tap to exit</string>
     <string name="aod_battery" translatable="false">%1$d%%</string>
     <string name="aod_battery_charging">Charging · %1$d%%</string>

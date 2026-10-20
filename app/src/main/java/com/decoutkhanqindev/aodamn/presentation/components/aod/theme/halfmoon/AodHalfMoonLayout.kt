@@ -1,0 +1,339 @@
+package com.decoutkhanqindev.aodamn.presentation.components.aod.theme.halfmoon
+
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.basicMarquee
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.dp
+import com.decoutkhanqindev.aodamn.R
+import com.decoutkhanqindev.aodamn.presentation.components.aod.AodPanelBlock
+import com.decoutkhanqindev.aodamn.presentation.components.aod.block.AodStatusLine
+import com.decoutkhanqindev.aodamn.presentation.components.aod.block.AodWeather
+import com.decoutkhanqindev.aodamn.presentation.components.rememberFormatter
+import com.decoutkhanqindev.aodamn.presentation.components.rememberZonedDateTime
+import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.AodAppearanceUiModel
+import com.decoutkhanqindev.aodamn.presentation.model.aod.info.BatteryUiModel
+import com.decoutkhanqindev.aodamn.presentation.model.aod.info.NotificationContentUiModel
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodPanelBlockValue
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeUiModel
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeValue
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.component.AodComponentValue
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.halfmoon.HalfMoonThemeSpec
+import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodIntent
+import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
+import com.decoutkhanqindev.aodamn.presentation.theme.Black
+
+// Bán nguyệt, màn dọc (mock đã duyệt): nửa mặt số sát mép trái giữa chiều cao như layout mẫu; cột ngày, thứ, thời tiết, dòng pin · thông báo,
+// thông báo mới nhất giữa nửa phải trên trục số đang chỉ (user chốt dòng pin dưới ngày); trình phát giữa vùng dưới mặt số, rộng bằng màn trừ
+// 40dp mỗi bên như layout mẫu.
+@Composable
+fun AodHalfMoonPortrait(
+    state: AodState,
+    onIntent: (AodIntent) -> Unit,
+) {
+    val paints = rememberHalfMoonPaints()
+
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        val half = maxWidth / 2
+        val zone = (maxHeight / 2 - minOf(maxWidth, maxHeight) * HalfMoonMetrics.PORTRAIT_RADIUS).coerceAtLeast(0.dp)
+        val playerWidth = maxWidth - HalfMoonMetrics.PlayerMargin * 2
+
+        HalfMoonDial(state = state, radiusFraction = HalfMoonMetrics.PORTRAIT_RADIUS, paints = paints)
+
+        Box(
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .width(half)
+                .fillMaxHeight(),
+            contentAlignment = Alignment.Center,
+        ) {
+            HalfMoonColumn(
+                state = state,
+                dateSize = HalfMoonMetrics.PortraitDateSize,
+                daySize = HalfMoonMetrics.PortraitDaySize,
+                maxWidth = half - HalfMoonMetrics.ColumnInset,
+            )
+        }
+
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .height(zone),
+            contentAlignment = Alignment.Center,
+        ) {
+            HalfMoonPlayer(state = state, width = playerWidth, onIntent = onIntent)
+        }
+    }
+}
+
+// Bán nguyệt, màn ngang (mock đã duyệt): nửa mặt số sát mép trái, r = 0,65 cạnh ngắn; cột như màn dọc (ngày, thứ 14 / 15sp như layout ngang
+// mẫu) giữa vùng còn lại, có nhạc thì cột và trình phát thành một khối giữa chiều cao (trình phát ở đáy thì nửa trên trống).
+@Composable
+fun AodHalfMoonLandscape(
+    state: AodState,
+    onIntent: (AodIntent) -> Unit,
+) {
+    val paints = rememberHalfMoonPaints()
+
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        val radius = minOf(maxWidth, maxHeight) * HalfMoonMetrics.LANDSCAPE_RADIUS
+        val area = (maxWidth - radius * (2f - HalfMoonMetrics.CENTER_SHIFT)).coerceAtLeast(0.dp)
+        val inner = (area - HalfMoonMetrics.ColumnInset * 2).coerceAtLeast(0.dp)
+
+        HalfMoonDial(state = state, radiusFraction = HalfMoonMetrics.LANDSCAPE_RADIUS, paints = paints)
+
+        Box(
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .width(area)
+                .fillMaxHeight(),
+            contentAlignment = Alignment.Center,
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                HalfMoonColumn(
+                    state = state,
+                    dateSize = HalfMoonMetrics.LandscapeDateSize,
+                    daySize = HalfMoonMetrics.LandscapeDaySize,
+                    maxWidth = minOf(HalfMoonMetrics.LandscapeColumnWidth, inner),
+                )
+
+                HalfMoonPlayer(
+                    state = state,
+                    width = minOf(HalfMoonMetrics.LandscapePlayerWidth, inner),
+                    onIntent = onIntent,
+                    modifier = Modifier.padding(top = HalfMoonMetrics.LandscapePlayerGap),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun HalfMoonDial(
+    state: AodState,
+    radiusFraction: Float,
+    paints: HalfMoonPaints,
+) {
+    AodHalfMoonDial(
+        nowMillis = state.nowMillis,
+        isLive = state.isClockLive,
+        radiusFraction = radiusFraction,
+        config = state.appearance.theme.config,
+        paints = paints,
+    )
+}
+
+// Ngày, thứ, cách 8dp thời tiết, cách 12dp dòng pin · thông báo, cách 12dp thông báo mới nhất; dòng nào không có thì không chiếm chỗ (cả khoảng
+// cách), cột tự căn giữa lại.
+@Composable
+private fun HalfMoonColumn(
+    state: AodState,
+    dateSize: TextUnit,
+    daySize: TextUnit,
+    maxWidth: Dp,
+) {
+    val config = state.appearance.theme.config
+    val components = state.appearance.components
+    val isDateShown = state.extras.isDateEnabled
+    val isWeatherShown = state.weather != null && AodComponentValue.WEATHER in state.appearance.theme.value.spec.components
+    val statusColor = config[HalfMoonThemeSpec.StatusColor]
+    val latest = state.notifications.latest
+
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        AnimatedVisibility(visible = isDateShown) {
+            HalfMoonDate(
+                nowMillis = state.nowMillis,
+                color = config[HalfMoonThemeSpec.DateColor],
+                dateSize = dateSize,
+                daySize = daySize,
+            )
+        }
+
+        AnimatedVisibility(
+            visible = isWeatherShown,
+            modifier = Modifier.padding(top = if (isDateShown) HalfMoonMetrics.WeatherGap else 0.dp),
+        ) {
+            AodWeather(
+                weather = state.weather,
+                style = components.styleOf(AodComponentValue.WEATHER),
+                layout = components.weatherLayout,
+            )
+        }
+
+        AodStatusLine(
+            battery = state.battery?.takeIf { state.extras.isBatteryEnabled },
+            isFlashlightOn = state.isFlashlightOn,
+            notifications = state.notifications,
+            color = statusColor,
+            glyphHeight = HalfMoonMetrics.StatusGlyph,
+            fontFamily = HalfMoonThemeSpec.Font,
+            modifier = Modifier.padding(top = if (isDateShown || isWeatherShown) HalfMoonMetrics.StatusGap else 0.dp),
+        )
+
+        AnimatedVisibility(visible = latest != null) {
+            if (latest != null) {
+                HalfMoonLatest(
+                    latest = latest,
+                    color = statusColor,
+                    modifier = Modifier
+                        .padding(top = HalfMoonMetrics.LatestGap)
+                        .widthIn(max = maxWidth),
+                )
+            }
+        }
+    }
+}
+
+// Ngày "dd MMM yyyy" tối hơn 30% rồi thứ "EEEE", in hoa Bold giãn chữ như date_tv / day_tv của layout mẫu.
+@Composable
+private fun HalfMoonDate(
+    nowMillis: Long,
+    color: Color,
+    dateSize: TextUnit,
+    daySize: TextUnit,
+) {
+    val time = rememberZonedDateTime(nowMillis)
+    val date = time.format(rememberFormatter(R.string.aod_half_moon_date_pattern)).uppercase()
+    val day = time.format(rememberFormatter(R.string.aod_half_moon_day_pattern)).uppercase()
+
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        HalfMoonDateText(text = date, color = lerp(color, Black, HalfMoonMetrics.DATE_DARKEN), fontSize = dateSize)
+
+        HalfMoonDateText(
+            text = day,
+            color = color,
+            fontSize = daySize,
+            modifier = Modifier.padding(top = HalfMoonMetrics.DayGap),
+        )
+    }
+}
+
+@Composable
+private fun HalfMoonDateText(
+    text: String,
+    color: Color,
+    fontSize: TextUnit,
+    modifier: Modifier = Modifier,
+) {
+    Text(
+        text = text,
+        modifier = modifier,
+        color = color,
+        fontSize = fontSize,
+        fontWeight = FontWeight.Bold,
+        fontFamily = HalfMoonThemeSpec.Font,
+        letterSpacing = HalfMoonMetrics.DateSpacing,
+        maxLines = 1,
+        softWrap = false,
+    )
+}
+
+// Thông báo mới nhất như notify_lt của app mẫu: icon 17dp, chữ in hoa một dòng chạy chữ (marquee một lần) khi dài.
+@Composable
+private fun HalfMoonLatest(
+    latest: NotificationContentUiModel,
+    color: Color,
+    modifier: Modifier = Modifier,
+) {
+    val text = when {
+        latest.isHidden -> stringResource(R.string.aod_notification_content_hidden)
+        latest.text.isEmpty() -> latest.title
+        else -> stringResource(R.string.aod_half_moon_notification, latest.title, latest.text)
+    }
+
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Image(
+            bitmap = remember(latest.icon) { latest.icon.asImageBitmap() },
+            contentDescription = null,
+            modifier = Modifier.size(HalfMoonMetrics.LatestIcon),
+            colorFilter = ColorFilter.tint(color),
+        )
+
+        Text(
+            text = text.uppercase(),
+            modifier = Modifier
+                .padding(start = HalfMoonMetrics.LatestIconGap)
+                .basicMarquee(iterations = 1),
+            color = color,
+            fontSize = HalfMoonMetrics.LatestSize,
+            fontFamily = HalfMoonThemeSpec.Font,
+            letterSpacing = HalfMoonMetrics.LatestSpacing,
+            maxLines = 1,
+        )
+    }
+}
+
+// Trình phát của chủ đề (AodHalfMoonMedia qua AodMediaControls) trong khung rộng cố định; không có nhạc thì không chiếm chỗ (cả khoảng cách).
+@Composable
+private fun HalfMoonPlayer(
+    state: AodState,
+    width: Dp,
+    onIntent: (AodIntent) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    AnimatedVisibility(
+        visible = state.media != null && AodComponentValue.MEDIA in state.appearance.theme.value.spec.components,
+        modifier = modifier,
+    ) {
+        Box(modifier = Modifier.width(width)) {
+            AodPanelBlock(block = AodPanelBlockValue.MEDIA, state = state, onIntent = onIntent)
+        }
+    }
+}
+
+@Preview(widthDp = 393, heightDp = 873)
+@Composable
+private fun AodHalfMoonPortraitPreview() {
+    AodHalfMoonPortrait(
+        state = AodState(
+            nowMillis = System.currentTimeMillis(),
+            appearance = AodAppearanceUiModel(theme = AodThemeUiModel(value = AodThemeValue.HALF_MOON)),
+            battery = BatteryUiModel(percent = 72, isCharging = false),
+            isPreview = true,
+        ),
+        onIntent = {},
+    )
+}
+
+@Preview(widthDp = 873, heightDp = 393)
+@Composable
+private fun AodHalfMoonLandscapePreview() {
+    AodHalfMoonLandscape(
+        state = AodState(
+            nowMillis = System.currentTimeMillis(),
+            appearance = AodAppearanceUiModel(theme = AodThemeUiModel(value = AodThemeValue.HALF_MOON)),
+            battery = BatteryUiModel(percent = 72, isCharging = false),
+            isPreview = true,
+        ),
+        onIntent = {},
+    )
+}

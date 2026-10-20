@@ -4,6 +4,7 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.AodAppearan
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.compass.AodCompassStyleValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.compass.CompassThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.component.AodComponentValue
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.halfmoon.HalfMoonThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -32,14 +33,14 @@ class AodThemeSpecTest {
         }
     }
 
-    // Chủ đề mới thêm khối tự vẽ / bật lại nội dung thông báo không được đổi hành vi chủ đề cũ: chỉ Chuỗi tự vẽ ghi nhớ, sự kiện; chỉ Chuỗi và La
-    // bàn hiện nội dung thông báo dù tự vẽ dòng trạng thái (tự vẽ thông báo mới nhất như app mẫu); các chủ đề khác giữ như trước (nội dung thông
-    // báo chỉ khi không tự vẽ dòng trạng thái).
+    // Chủ đề mới thêm khối tự vẽ / bật lại nội dung thông báo không được đổi hành vi chủ đề cũ: chỉ Chuỗi tự vẽ ghi nhớ, sự kiện; chỉ Chuỗi, La
+    // bàn và Bán nguyệt hiện nội dung thông báo dù tự vẽ dòng trạng thái (tự vẽ thông báo mới nhất như app mẫu); các chủ đề khác giữ như trước
+    // (nội dung thông báo chỉ khi không tự vẽ dòng trạng thái).
     @Test
-    fun `only chain owns memo and events and only chain and compass keep notification content with their status line`() {
+    fun `only chain owns memo and events and only chain, compass and half moon keep notification content with their status line`() {
         AodThemeValue.entries.forEach { theme ->
             val isChain = theme == AodThemeValue.CHAIN
-            val drawsLatest = isChain || theme == AodThemeValue.COMPASS
+            val drawsLatest = isChain || theme == AodThemeValue.COMPASS || theme == AodThemeValue.HALF_MOON
             assertEquals("${theme.id}: ghi nhớ", isChain, AodBlockValue.MEMO in theme.spec.ownBlocks)
             assertEquals("${theme.id}: sự kiện", isChain, AodBlockValue.EVENTS in theme.spec.ownBlocks)
             assertEquals(
@@ -88,12 +89,43 @@ class AodThemeSpecTest {
         assertEquals(AodCompassStyleValue.SECONDS, CompassThemeSpec.Style.default)
     }
 
-    // Khung xem trước dùng giờ mẫu; chỉ chủ đề có chuyển động theo giờ thật như app mẫu (La bàn) chạy theo giờ thật cả ở xem trước, chủ đề cũ
-    // không đổi.
+    // Bán nguyệt chỉ có các khối đặt cân quanh nửa mặt số (mock đã duyệt): ghi nhớ, sự kiện, nét vẽ bỏ hẳn; thông báo mới nhất do chủ đề tự vẽ
+    // dưới dòng pin. Đủ 6 màu của app mẫu, màu điều khiển tách thành dòng pin và nhạc.
     @Test
-    fun `only compass runs in real time in previews`() {
+    fun `half moon only has the blocks that fit around its half dial and keeps every reference color`() {
+        val spec = AodThemeValue.HALF_MOON.spec
+        assertEquals(
+            setOf(
+                AodComponentValue.DATE,
+                AodComponentValue.BATTERY,
+                AodComponentValue.WEATHER,
+                AodComponentValue.NOTIFICATIONS,
+                AodComponentValue.MEDIA,
+            ),
+            spec.components,
+        )
+        assertEquals(true, spec.hasNotificationContent)
+        assertEquals(
+            listOf(
+                HalfMoonThemeSpec.HourColor,
+                HalfMoonThemeSpec.MinuteColor,
+                HalfMoonThemeSpec.RingColor,
+                HalfMoonThemeSpec.DialColor,
+                HalfMoonThemeSpec.DateColor,
+                HalfMoonThemeSpec.StatusColor,
+                HalfMoonThemeSpec.MediaColor,
+            ),
+            spec.options,
+        )
+    }
+
+    // Khung xem trước dùng giờ mẫu; chỉ chủ đề có chuyển động theo giờ thật như app mẫu (La bàn, Bán nguyệt) chạy theo giờ thật cả ở xem trước,
+    // chủ đề cũ không đổi.
+    @Test
+    fun `only compass and half moon run in real time in previews`() {
+        val liveThemes = setOf(AodThemeValue.COMPASS, AodThemeValue.HALF_MOON)
         AodThemeValue.entries.forEach { theme ->
-            assertEquals("${theme.id}: xem trước theo giờ thật", theme == AodThemeValue.COMPASS, theme.spec.isLiveInPreview)
+            assertEquals("${theme.id}: xem trước theo giờ thật", theme in liveThemes, theme.spec.isLiveInPreview)
             val preview = AodState(appearance = AodAppearanceUiModel(theme = AodThemeUiModel(value = theme)), isPreview = true)
             assertEquals("${theme.id}: mặt số khung xem trước", theme.spec.isLiveInPreview, preview.isClockLive)
             assertEquals("${theme.id}: mặt số AOD thật", true, preview.copy(isPreview = false).isClockLive)
