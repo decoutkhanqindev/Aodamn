@@ -171,7 +171,7 @@ private fun CardClockAndDate(
             AnimatedVisibility(visible = state.extras.isDateEnabled) {
                 CardDate(
                     nowMillis = state.nowMillis,
-                    color = config[CardThemeSpec.DateColor],
+                    brush = config.brushOf(CardThemeSpec.DateColor),
                     unit = unit,
                     modifier = Modifier.padding(end = if (isWeatherShown) 12.dp else 0.dp),
                 )
@@ -199,6 +199,7 @@ private fun CardStatus(
         isFlashlightOn = state.isFlashlightOn,
         notifications = state.notifications,
         color = state.appearance.theme.config[CardThemeSpec.StatusColor],
+        brush = state.appearance.theme.config.gradientOf(CardThemeSpec.StatusColor)?.toBrush(),
         glyphHeight = unit * CardMetrics.STATUS_GLYPH,
         fontFamily = CardThemeSpec.Font,
         modifier = modifier,

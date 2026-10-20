@@ -106,6 +106,9 @@ dòng nào. Đã test trên máy.
   - Viên nang: 5 màu (chữ số, viên nang, ngày, nhạc, dòng trạng thái) bật gradient. Viên nang đặc (giữ độ mờ) lẫn viền tô theo khung
     viên; mỗi chữ số tô theo khung số đó, hai chấm của dấu hai chấm theo khung viên; ngày, tên bài, nút phát tròn, phần đã nghe của thanh
     tiến trình tô bằng brush; nghệ sĩ, nút lùi / tới vẫn xám.
+  - Thẻ: 6 màu (giờ, phút + ô AM/PM, thẻ, ngày, nhạc, dòng trạng thái) bật gradient. Mỗi chữ số (đặc lẫn viền) tô theo ô của số đó, ô
+    AM/PM và chữ trong ô theo khung ô, nền / viền thẻ theo khung thẻ (giữ độ mờ); ngày, tên bài, nghệ sĩ, nút phát, nút lùi / tới (lúc
+    bấm được) và thanh sóng tô gradient; icon nút phát chọn đen / trắng theo màu Đầu.
 - Test `AodColorOptionTest`: màu cũ đọc như cũ, gradient lưu / đọc lại, về Một màu xoá khoá phụ, mặc định gradient, đặt lại, đổi hướng.
 
 ### Đổi

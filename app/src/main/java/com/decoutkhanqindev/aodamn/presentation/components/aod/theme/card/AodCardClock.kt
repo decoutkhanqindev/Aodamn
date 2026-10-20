@@ -18,7 +18,7 @@ import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -72,9 +72,9 @@ fun AodCardClock(
     val description = now.format(rememberTimeFormatter())
     val isOutline = config[CardThemeSpec.Style] == AodTileStyleValue.OUTLINE
     val background = config[CardThemeSpec.Background]
-    val hourColor = config[CardThemeSpec.HourColor]
-    val minuteColor = config[CardThemeSpec.MinuteColor]
-    val cardColor = config[CardThemeSpec.CardColor]
+    val hourBrush = config.brushOf(CardThemeSpec.HourColor)
+    val minuteBrush = config.brushOf(CardThemeSpec.MinuteColor)
+    val cardBrush = config.brushOf(CardThemeSpec.CardColor)
 
     // Giờ luôn đọc trái sang phải: ngôn ngữ RTL không được đảo thứ tự chữ số hay đưa cột phút sang trái.
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
@@ -82,13 +82,13 @@ fun AodCardClock(
             modifier = modifier
                 .size(width = unit * CardMetrics.CARD_WIDTH, height = unit * CardMetrics.CARD_HEIGHT)
                 .clearAndSetSemantics { contentDescription = description }
-                .drawBehind { drawCardBackground(background = background, color = cardColor, unit = unit.toPx()) },
+                .drawBehind { drawCardBackground(background = background, brush = cardBrush, unit = unit.toPx()) },
         ) {
             CardDigitRow(
                 text = hours,
                 glyphs = glyphs,
                 height = unit,
-                color = hourColor,
+                brush = hourBrush,
                 isOutline = isOutline,
                 modifier = Modifier.offset(x = unit * CardMetrics.HOUR_LEFT, y = unit * CardMetrics.PADDING),
             )
@@ -97,7 +97,7 @@ fun AodCardClock(
                 text = minutes,
                 glyphs = glyphs,
                 height = unit * CardMetrics.MINUTE,
-                color = minuteColor,
+                brush = minuteBrush,
                 isOutline = isOutline,
                 modifier = Modifier.offset(x = unit * CardMetrics.MINUTE_LEFT, y = unit * CardMetrics.PADDING),
             )
@@ -105,7 +105,7 @@ fun AodCardClock(
             CardTag(
                 text = tag,
                 glyphs = glyphs,
-                color = minuteColor,
+                brush = minuteBrush,
                 isOutline = isOutline,
                 unit = unit,
                 modifier = Modifier
@@ -118,16 +118,16 @@ fun AodCardClock(
 
 private fun DrawScope.drawCardBackground(
     background: AodCardBackgroundValue,
-    color: Color,
+    brush: Brush,
     unit: Float,
 ) {
     val corner = CornerRadius(unit * CardMetrics.CORNER)
     when (background) {
-        AodCardBackgroundValue.TINTED -> drawRoundRect(color = color, alpha = CardMetrics.CARD_FILL_ALPHA, cornerRadius = corner)
+        AodCardBackgroundValue.TINTED -> drawRoundRect(brush = brush, alpha = CardMetrics.CARD_FILL_ALPHA, cornerRadius = corner)
         AodCardBackgroundValue.OUTLINE -> {
             val stroke = unit * CardMetrics.CARD_STROKE
             drawRoundRect(
-                color = color,
+                brush = brush,
                 alpha = CardMetrics.CARD_STROKE_ALPHA,
                 topLeft = Offset(stroke / 2f, stroke / 2f),
                 size = Size(size.width - stroke, size.height - stroke),
@@ -145,7 +145,7 @@ private fun CardDigitRow(
     text: String,
     glyphs: CardGlyphs,
     height: Dp,
-    color: Color,
+    brush: Brush,
     isOutline: Boolean,
     modifier: Modifier = Modifier,
 ) {
@@ -157,7 +157,7 @@ private fun CardDigitRow(
                 animationSpec = tween(durationMillis = CardMetrics.DIGIT_CHANGE_MILLIS),
                 label = "CardDigit",
             ) { target ->
-                CardDigit(digit = target, glyphs = glyphs, color = color, isOutline = isOutline)
+                CardDigit(digit = target, glyphs = glyphs, brush = brush, isOutline = isOutline)
             }
         }
     }
@@ -167,7 +167,7 @@ private fun CardDigitRow(
 private fun CardDigit(
     digit: Char,
     glyphs: CardGlyphs,
-    color: Color,
+    brush: Brush,
     isOutline: Boolean,
 ) {
     Box(
@@ -181,18 +181,19 @@ private fun CardDigit(
                 )
 
                 onDrawBehind {
-                    if (isOutline) drawPath(path = path, color = color, style = stroke) else drawPath(path = path, color = color)
+                    if (isOutline) drawPath(path = path, brush = brush, style = stroke) else drawPath(path = path, brush = brush)
                 }
             },
     )
 }
 
-// Ô AM / PM (24 giờ: chữ của app mẫu): tô màu phút pha nhạt, kiểu viền là nét mảnh; chữ luôn tô đặc như app mẫu.
+// Ô AM / PM (24 giờ: chữ của app mẫu): tô màu phút pha nhạt, kiểu viền là nét mảnh; chữ luôn tô đặc như app mẫu. Màu phút là gradient thì
+// ô và chữ tô theo khung ô; mỗi chữ số tô theo ô của số đó, nền thẻ theo khung thẻ.
 @Composable
 private fun CardTag(
     text: String,
     glyphs: CardGlyphs,
-    color: Color,
+    brush: Brush,
     isOutline: Boolean,
     unit: Dp,
     modifier: Modifier = Modifier,
@@ -204,7 +205,7 @@ private fun CardTag(
             if (isOutline) {
                 val stroke = r * CardMetrics.TAG_STROKE
                 drawRoundRect(
-                    color = color,
+                    brush = brush,
                     alpha = CardMetrics.TAG_STROKE_ALPHA,
                     topLeft = Offset(stroke / 2f, stroke / 2f),
                     size = Size(size.width - stroke, size.height - stroke),
@@ -212,7 +213,7 @@ private fun CardTag(
                     style = Stroke(width = stroke),
                 )
             } else {
-                drawRoundRect(color = color, alpha = CardMetrics.TAG_FILL_ALPHA, cornerRadius = corner)
+                drawRoundRect(brush = brush, alpha = CardMetrics.TAG_FILL_ALPHA, cornerRadius = corner)
             }
         },
     ) {
@@ -226,7 +227,7 @@ private fun CardTag(
                         val top = (size.height - capHeight) / 2f
 
                         onDrawBehind {
-                            translate(top = top) { drawPath(path = path, color = color) }
+                            translate(top = top) { drawPath(path = path, brush = brush) }
                         }
                     },
             )
@@ -238,7 +239,7 @@ private fun CardTag(
 @Composable
 fun CardDate(
     nowMillis: Long,
-    color: Color,
+    brush: Brush,
     unit: Dp,
     modifier: Modifier = Modifier,
 ) {
@@ -249,13 +250,13 @@ fun CardDate(
     Text(
         text = now.format(formatter).uppercase(),
         modifier = modifier,
-        color = color,
         fontSize = fontSize,
         fontWeight = FontWeight.Bold,
         fontFamily = CardThemeSpec.Font,
         maxLines = 1,
         softWrap = false,
         style = TextStyle(
+            brush = brush,
             lineHeight = fontSize,
             lineHeightStyle = LineHeightStyle(
                 alignment = LineHeightStyle.Alignment.Center,

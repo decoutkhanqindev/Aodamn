@@ -12,15 +12,18 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,6 +32,7 @@ import androidx.compose.ui.unit.sp
 import com.decoutkhanqindev.aodamn.R
 import com.decoutkhanqindev.aodamn.presentation.components.aod.block.AodMediaButton
 import com.decoutkhanqindev.aodamn.presentation.components.aod.block.AodMediaProgress
+import com.decoutkhanqindev.aodamn.presentation.components.aod.block.aodTint
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.AodWaveTrack
 import com.decoutkhanqindev.aodamn.presentation.components.onClick
 import com.decoutkhanqindev.aodamn.presentation.model.aod.info.MediaProgressUiModel
@@ -50,6 +54,8 @@ fun AodCardMedia(
     onIntent: (AodIntent) -> Unit,
 ) {
     val color = config[CardThemeSpec.MediaColor]
+    val brush = config.brushOf(CardThemeSpec.MediaColor)
+    val gradientBrush = config.gradientOf(CardThemeSpec.MediaColor)?.toBrush()
     val progress = media.progress
     val wave = animateFloatAsState(
         targetValue = if (media.isPlaying) 1f else 0f,
@@ -70,7 +76,7 @@ fun AodCardMedia(
             ) {
                 Text(
                     text = media.title,
-                    color = color,
+                    style = LocalTextStyle.current.merge(TextStyle(brush = brush)),
                     fontSize = 17.sp,
                     fontWeight = FontWeight.Medium,
                     fontFamily = CardThemeSpec.Font,
@@ -84,7 +90,7 @@ fun AodCardMedia(
                         modifier = Modifier
                             .padding(top = 2.dp)
                             .alpha(0.8f),
-                        color = color,
+                        style = LocalTextStyle.current.merge(TextStyle(brush = brush)),
                         fontSize = 14.sp,
                         fontFamily = CardThemeSpec.Font,
                         maxLines = 1,
@@ -98,7 +104,9 @@ fun AodCardMedia(
                 contentDescription = stringResource(R.string.aod_media_previous),
                 isEnabled = media.canSkipToPrevious,
                 onClick = { onIntent(AodIntent.SkipToPreviousTrack) },
-                modifier = Modifier.alpha(0.8f),
+                modifier = Modifier
+                    .alpha(0.8f)
+                    .aodTint(gradientBrush.takeIf { media.canSkipToPrevious }),
                 size = 43.dp,
                 tint = color,
             )
@@ -106,6 +114,7 @@ fun AodCardMedia(
             CardPlayButton(
                 isPlaying = media.isPlaying,
                 color = color,
+                brush = brush,
                 onClick = { onIntent(AodIntent.PlayPauseMedia) },
                 modifier = Modifier.padding(horizontal = 5.dp),
             )
@@ -115,7 +124,9 @@ fun AodCardMedia(
                 contentDescription = stringResource(R.string.aod_media_next),
                 isEnabled = media.canSkipToNext,
                 onClick = { onIntent(AodIntent.SkipToNextTrack) },
-                modifier = Modifier.alpha(0.8f),
+                modifier = Modifier
+                    .alpha(0.8f)
+                    .aodTint(gradientBrush.takeIf { media.canSkipToNext }),
                 size = 43.dp,
                 tint = color,
             )
@@ -130,6 +141,7 @@ fun AodCardMedia(
                         wave = { wave.value },
                         color = color,
                         trackColor = Grey5A,
+                        brush = brush,
                         height = 12.dp,
                         strokeWidth = 6.dp,
                         wavelength = 40.dp,
@@ -142,18 +154,19 @@ fun AodCardMedia(
     }
 }
 
-// Nút phát tròn đặc 48dp màu nhạc, icon 18dp (đen trên màu sáng, trắng trên màu tối).
+// Nút phát tròn đặc 48dp màu nhạc, icon 18dp (đen trên màu sáng, trắng trên màu tối; gradient thì theo màu Đầu).
 @Composable
 private fun CardPlayButton(
     isPlaying: Boolean,
     color: Color,
+    brush: Brush,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
         modifier = modifier
             .size(48.dp)
-            .background(color = color, shape = CircleShape)
+            .background(brush = brush, shape = CircleShape)
             .onClick(shape = CircleShape, ripple = false, action = onClick),
         contentAlignment = Alignment.Center,
     ) {

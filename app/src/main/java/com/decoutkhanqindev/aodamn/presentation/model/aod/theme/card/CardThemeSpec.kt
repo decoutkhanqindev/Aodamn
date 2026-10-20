@@ -49,14 +49,19 @@ object CardThemeSpec : AodThemeSpec {
 
     // Màu phút còn tô ô AM/PM như app mẫu. Màu thẻ là nền mờ hay nét viền tuỳ kiểu nền, mặc định trùng màu giờ như app mẫu; giờ và thẻ mặc
     // định xanh dương cho thẻ chủ đề bắt mắt.
-    val HourColor = AodColorOption(key = "hour_color", labelRes = R.string.theme_color_hour, default = Blue)
-    val MinuteColor = AodColorOption(key = "minute_color", labelRes = R.string.theme_color_minute_tag, default = GreyE4)
-    val CardColor = AodColorOption(key = "card_color", labelRes = R.string.theme_color_card, default = Blue)
-    val DateColor = AodColorOption(key = "date_color", labelRes = R.string.theme_color_date, default = GreyE4)
+    val HourColor = AodColorOption(key = "hour_color", labelRes = R.string.theme_color_hour, default = Blue, isGradientAllowed = true)
+    val MinuteColor = AodColorOption(
+        key = "minute_color",
+        labelRes = R.string.theme_color_minute_tag,
+        default = GreyE4,
+        isGradientAllowed = true,
+    )
+    val CardColor = AodColorOption(key = "card_color", labelRes = R.string.theme_color_card, default = Blue, isGradientAllowed = true)
+    val DateColor = AodColorOption(key = "date_color", labelRes = R.string.theme_color_date, default = GreyE4, isGradientAllowed = true)
 
     // Tên bài, nghệ sĩ, các nút và phần đã nghe của thanh tiến trình.
-    val MediaColor = AodColorOption(key = "media_color", labelRes = R.string.theme_color_media, default = GreyE4)
-    val StatusColor = AodColorOption(key = "status_color", labelRes = R.string.theme_color_status, default = GreyE4)
+    val MediaColor = AodColorOption(key = "media_color", labelRes = R.string.theme_color_media, default = GreyE4, isGradientAllowed = true)
+    val StatusColor = AodColorOption(key = "status_color", labelRes = R.string.theme_color_status, default = GreyE4, isGradientAllowed = true)
 
     // Mỗi khối chủ đề tự vẽ (ownBlocks) có tab ở đây: Tùy chỉnh › Ngày / Pin / Thông báo / Nhạc dẫn sang màn chủ đề.
     override val tabs = persistentListOf(
