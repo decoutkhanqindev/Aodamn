@@ -6,11 +6,11 @@ regular: arrow-left arrow-u-up-left arrow-u-up-right arrow-counter-clockwise car
 regular: crown-simple share-network clock device-mobile gear-six calendar-blank battery-full image paint-brush note-pencil bell calendar-check cloud-sun music-notes sparkle
 
 # Tab và nút của màn sửa chủ đề
-regular: timer text-aa magic-wand pencil-simple device-rotate
+regular: timer text-aa magic-wand pencil-simple device-rotate line-vertical
 
 # Tab đang chọn và dấu hoàn thành
 fill: clock device-mobile gear-six check-circle
-fill: calendar-blank battery-full image paint-brush note-pencil bell calendar-check cloud-sun music-notes sparkle timer text-aa magic-wand
+fill: calendar-blank battery-full image paint-brush note-pencil bell calendar-check cloud-sun music-notes sparkle timer text-aa magic-wand line-vertical
 
 # Ô icon ở màn Cài đặt, thẻ quyền, thẻ giao diện
 duotone: sun eye-closed timer device-rotate plugs-connected calendar-dots battery-warning

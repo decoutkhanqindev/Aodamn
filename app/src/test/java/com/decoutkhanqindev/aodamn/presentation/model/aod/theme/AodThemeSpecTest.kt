@@ -3,7 +3,9 @@ package com.decoutkhanqindev.aodamn.presentation.model.aod.theme
 import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.AodAppearanceUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.compass.AodCompassStyleValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.compass.CompassThemeSpec
+import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.GradientSwatchValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.component.AodComponentValue
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.gradientline.GradientLineThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.halfmoon.HalfMoonThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
 import org.junit.Assert.assertEquals
@@ -34,13 +36,13 @@ class AodThemeSpecTest {
     }
 
     // Chủ đề mới thêm khối tự vẽ / bật lại nội dung thông báo không được đổi hành vi chủ đề cũ: chỉ Chuỗi tự vẽ ghi nhớ, sự kiện; chỉ Chuỗi, La
-    // bàn và Bán nguyệt hiện nội dung thông báo dù tự vẽ dòng trạng thái (tự vẽ thông báo mới nhất như app mẫu); các chủ đề khác giữ như trước
-    // (nội dung thông báo chỉ khi không tự vẽ dòng trạng thái).
+    // bàn, Bán nguyệt và Dải màu hiện nội dung thông báo dù tự vẽ dòng trạng thái (tự vẽ thông báo mới nhất như app mẫu); các chủ đề khác giữ như
+    // trước (nội dung thông báo chỉ khi không tự vẽ dòng trạng thái).
     @Test
-    fun `only chain owns memo and events and only chain, compass and half moon keep notification content with their status line`() {
+    fun `only chain owns memo and events and only chain, compass, half moon and gradient line keep notification content with their status line`() {
         AodThemeValue.entries.forEach { theme ->
             val isChain = theme == AodThemeValue.CHAIN
-            val drawsLatest = isChain || theme == AodThemeValue.COMPASS || theme == AodThemeValue.HALF_MOON
+            val drawsLatest = isChain || theme in setOf(AodThemeValue.COMPASS, AodThemeValue.HALF_MOON, AodThemeValue.GRADIENT_LINE)
             assertEquals("${theme.id}: ghi nhớ", isChain, AodBlockValue.MEMO in theme.spec.ownBlocks)
             assertEquals("${theme.id}: sự kiện", isChain, AodBlockValue.EVENTS in theme.spec.ownBlocks)
             assertEquals(
@@ -117,6 +119,38 @@ class AodThemeSpecTest {
             ),
             spec.options,
         )
+    }
+
+    // Dải màu chỉ có các khối đặt được trên / dưới vạch (mock đã duyệt): ghi nhớ, sự kiện, nét vẽ bỏ hẳn; thông báo mới nhất do chủ đề tự vẽ trên
+    // dòng pin. Đủ tuỳ chọn của app mẫu: cỡ 80–150% (mặc định 110%), vị trí mặc định theo giờ, vạch mặc định gradient của app mẫu.
+    @Test
+    fun `gradient line only has the blocks that fit along its line and keeps every reference option`() {
+        val spec = AodThemeValue.GRADIENT_LINE.spec
+        assertEquals(
+            setOf(
+                AodComponentValue.DATE,
+                AodComponentValue.BATTERY,
+                AodComponentValue.WEATHER,
+                AodComponentValue.NOTIFICATIONS,
+                AodComponentValue.MEDIA,
+            ),
+            spec.components,
+        )
+        assertEquals(true, spec.hasNotificationContent)
+        assertEquals(80..150, GradientLineThemeSpec.Size.range)
+        assertEquals(110, GradientLineThemeSpec.Size.default)
+        assertEquals(AodRangeOption.AUTO, AodThemeConfig()[GradientLineThemeSpec.Position])
+        assertEquals(GradientSwatchValue.SUNSET.gradient, AodThemeConfig().gradientOf(GradientLineThemeSpec.LineColor))
+    }
+
+    // Vị trí ghim kéo được trong 0–100%; giá trị tự động chỉ hợp lệ ở thuộc tính có chế độ tự động, thuộc tính cũ vẫn kẹp vào range như trước.
+    @Test
+    fun `auto range keeps the auto value and old ranges still clamp it`() {
+        val position = GradientLineThemeSpec.Position
+        assertEquals(AodRangeOption.AUTO, position.decode(AodRangeOption.AUTO))
+        assertEquals(35, position.decode(35))
+        assertEquals(100, position.decode(140))
+        assertEquals(80, GradientLineThemeSpec.Size.decode(AodRangeOption.AUTO))
     }
 
     // Khung xem trước dùng giờ mẫu; chỉ chủ đề có chuyển động theo giờ thật như app mẫu (La bàn, Bán nguyệt) chạy theo giờ thật cả ở xem trước,

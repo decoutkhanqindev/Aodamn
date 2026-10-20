@@ -53,7 +53,8 @@ class AodColorOption(
     override fun decode(raw: Int?): Color = raw?.let { Color(it) } ?: default
 }
 
-// labelRes nhận giá trị hiện tại làm tham số, vd "Cỡ đồng hồ: %1$d%%".
+// labelRes nhận giá trị hiện tại làm tham số, vd "Cỡ đồng hồ: %1$d%%". autoLabelRes khác null: thuộc tính có chế độ tự động (giá trị AUTO,
+// ngoài range, vd vị trí theo giờ của Dải màu), màn sửa có công tắc tự động, tắt thì thanh trượt ghim một giá trị trong range.
 @Immutable
 class AodRangeOption(
     override val key: String,
@@ -61,10 +62,19 @@ class AodRangeOption(
     val range: IntRange,
     val step: Int,
     override val default: Int,
+    @param:StringRes val autoLabelRes: Int? = null,
 ) : AodThemeOption<Int> {
     override fun encode(value: Int): Int = value
 
-    override fun decode(raw: Int?): Int = raw?.coerceIn(range) ?: default
+    override fun decode(raw: Int?): Int = when {
+        raw == null -> default
+        autoLabelRes != null && raw == AUTO -> AUTO
+        else -> raw.coerceIn(range)
+    }
+
+    companion object {
+        const val AUTO = -1
+    }
 }
 
 @Immutable

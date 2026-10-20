@@ -1956,6 +1956,186 @@ half = [
     hc_live_script(),
 ]
 
+
+# ================================================================== DẢI MÀU (Gradient Line Clock của Muviz Edge; số đo lấy từ layout sep23_screen_layout (chỉ
+# có bản dọc) và Sep23Clock trong APK, không từ ảnh chụp). Lề 40 dp hai bên, 60 dp trên / dưới; trình phát trên cùng cách vạch 30 dp, khối dưới
+# (thông báo mới nhất, dòng pin hai màu) neo đáy. Vạch dọc giữa vùng còn lại, dày 0,008 cạnh ngắn, tô gradient vàng → hồng tím → xanh từ đầu
+# tới cuối vạch. Giờ Google Sans Regular 0,11 cạnh ngắn × cỡ (110%) căn theo nét chữ trên vạch, tâm chạy từ th tới hết vạch trừ 2th theo phút
+# trong ngày (hoặc ghim); ngày "EEEE, dd MMM" 0,043 mờ 78% cách tâm giờ 1,2th, thời tiết cạnh ngày; vạch khoét 1,1th trước tới 2th sau. Màn
+# ngang (app mẫu dùng chung layout dọc nên vạch ngắn, giờ nhỏ): vạch ngang hết bề rộng trừ lề 40, cao hơn giữa 0,35th, giờ chạy trái → phải,
+# khoét quanh giờ 0,6th mỗi bên, ngày dưới vạch; trình phát giữa phía trên, dòng pin giữa phía dưới.
+GL_SUNSET = ("#FFCC70", "#C850C0", "#4158D0")  # bộ mặc định của app mẫu, màu nhấn của chủ đề
+GL_FIRE = ("#D24C4C", "#D47C3A", "#E1B500")
+GL_PASTEL = ("#A9C9FF", "#CEC4F7", "#FFBBEC")
+GL_GREY = ("#6A6A61", "#898989", "#D6D6D6")
+GL_TEXT = "#E0E0E0"
+GL_DATE = "Thứ Ba, 20 thg 10"
+GL_N = [0]
+
+
+def gl_id():
+    GL_N[0] += 1
+    return f"gl{GL_N[0]}"
+
+
+def gl_grad(gid, x1, y1, x2, y2, g):
+    stops = "".join(f'<stop offset="{o}" stop-color="{c}"/>' for o, c in zip((0, .5, 1), g))
+    return f'<linearGradient id="{gid}" gradientUnits="userSpaceOnUse" x1="{f(x1)}" y1="{f(y1)}" x2="{f(x2)}" y2="{f(y2)}">{stops}</linearGradient>'
+
+
+def gl_row_w(ds, date=True, weather=False):
+    w = CP_REG.width(GL_DATE, ds) if date else 0
+    return w + ((ds * .5 if date else 0) + ds * 1.2 + 4 + CP_REG.width("24°", ds) if weather else 0)
+
+
+def gl_row(cx, cy, ds, date=True, weather=False, color=GL_TEXT):
+    """Dòng ngày mờ 78% (+ thời tiết cạnh ngày), căn giữa tại cx, giữa dòng ở cy."""
+    base, x, s = cy + .35 * ds, cx - gl_row_w(ds, date, weather) / 2, ""
+    if date:
+        s += CP_REG.text(x, base, GL_DATE, ds, color, opacity=.78)
+        x += CP_REG.width(GL_DATE, ds) + (ds * .5 if weather else 0)
+    if weather:
+        s += cloud(x - ds * .15, base, ds / 28, color, ds / 10) + CP_REG.text(x + ds * 1.2 + 4, base, "24°", ds, color, opacity=.78)
+    return s
+
+
+def gl_time(cx, cy, text, ts, color=GL_TEXT):
+    """Giờ căn theo nét chữ (getTextBounds + exactCenter như app mẫu)."""
+    lo, top, hi, bottom = CP_REG.ink(text, ts)
+    return CP_REG.text(cx - (lo + hi) / 2, cy - (top + bottom) / 2, text, ts, color)
+
+
+def gl_vclock(x0, y0, w, h, hh, mm, pos=None, size=1.1, g=GL_SUNSET, date=True, weather=False):
+    """Vạch dọc như Sep23Clock: tâm giờ ở th + (dài − th − 2th) · phần đã qua của ngày (pos: vị trí ghim)."""
+    mn, gid = min(w, h), gl_id()
+    ts, ds, text = .11 * mn * size, .043 * mn * size, f"{hh:02d}:{mm:02d}"
+    lo, top, hi, bottom = CP_REG.ink(text, ts)
+    th, row, rh = bottom - top, date or weather, 1.25 * ds
+    off = max(1.2 * th, .85 * th + rh / 2)
+    fr = (hh * 60 + mm) / 1440 if pos is None else pos
+    cy = y0 + th + max(h - th - max(2 * th, off + rh / 2 if row else 0), 0) * fr
+    after = max(2 * th, off + rh / 2 + .45 * th) if row else 1.1 * th
+    lx, sw = x0 + w / 2, .008 * mn
+    s = (f'<defs>{gl_grad(gid, lx, y0, lx, y0 + h, g)}<mask id="{gid}m" maskUnits="userSpaceOnUse" x="0" y="0" width="{W}" height="{PH}">'
+         f'<rect width="{W}" height="{PH}" fill="#fff"/><rect y="{f(cy - 1.1 * th)}" width="{W}" height="{f(1.1 * th + after)}" fill="#000"/>'
+         f'</mask></defs><line x1="{f(lx)}" y1="{f(y0 + sw)}" x2="{f(lx)}" y2="{f(y0 + h - sw)}" stroke="url(#{gid})" stroke-width="{f(sw)}" '
+         f'stroke-linecap="round" mask="url(#{gid}m)"/>')
+    s += gl_time(lx, cy, text, ts)
+    return s + (gl_row(lx, cy + off, ds, date, weather) if row else "")
+
+
+def gl_status(cx, cy, n=2, charging=False, bat=GL_TEXT, noti=GL_TEXT):
+    """Dòng pin hai màu như app mẫu: pin (mờ 0,9) theo màu pin, chấm và icon theo màu thông báo; icon pin cao 16 dp."""
+    g, fs = 16.0, 0.915 * 16
+    tw = CP_REG.width("72%", fs)
+    w = 0.522 * g + 0.717 * g + tw + (1.13 * g + 0.228 * g + 1.065 * g + n * 0.978 * g + (n - 1) * 1.13 * g if n else 0)
+    x = cx - w / 2
+    s = f'<g opacity=".9">{bz_battery(x, cy - g / 2, g, bat, charging)}{CP_REG.text(x + 1.239 * g, cy + 0.34 * fs, "72%", fs, bat)}</g>'
+    if n:
+        dx = x + 1.239 * g + tw + 1.13 * g
+        s += f'<circle cx="{f(dx + 0.114 * g)}" cy="{f(cy)}" r="{f(0.114 * g)}" fill="{noti}"/>'
+        shapes = icon_shapes(noti)
+        s += "".join(shapes[i % 3](dx + 0.228 * g + 1.065 * g + i * 2.108 * g, cy - 0.489 * g, 0.978 * g) for i in range(n))
+    return s
+
+
+def gl_latest(cx, cy, color=GL_TEXT, text="Mai: Tối nay đi ăn nhé"):
+    """Thông báo mới nhất như notify_lt: icon 20 dp, cách 10 dp, chữ 16 sp."""
+    x = cx - (30 + CP_REG.width(text, 16)) / 2
+    return icon_shapes(color)[0](x, cy - 10, 20) + CP_REG.text(x + 30, cy + .34 * 16, text, 16, color)
+
+
+def gl_player(cx, top, w, color=GL_TEXT, paused=False):
+    """Trình phát như media_widget_lt: nút 35 dp (icon 9 dp) mờ 0,7, tên 16 sp, cách 4 dp nghệ sĩ 13 sp mờ 0,7; dừng thì chữ mờ 0,6."""
+    x, op, cy = cx - w / 2, .6 if paused else 1.0, top + 19
+    s = ""
+    for bx, d in ((x + 17.5, -1), (x + w - 17.5, 1)):
+        s += (f'<g opacity=".7"><path d="M{f(bx - 3.5 * d)},{f(cy - 4.5)} L{f(bx + 2.5 * d)},{f(cy)} L{f(bx - 3.5 * d)},{f(cy + 4.5)} Z" '
+              f'fill="{color}"/><rect x="{f(bx + 2.5 * d - (1.4 if d < 0 else 0))}" y="{f(cy - 4.5)}" width="1.4" height="9" fill="{color}"/></g>')
+    s += CP_REG.text(cx, top + 15, "That Cool Song", 16, color, "middle", op)
+    return s + CP_REG.text(cx, top + 33, "It's Artist", 13, color, "middle", .7 * op)
+
+
+def gl_portrait(hh=10, mm=8, pos=None, size=1.1, g=GL_SUNSET, date=True, weather=False, media=False, paused=False, latest=False, n=2,
+                charging=False):
+    """Màn dọc như layout mẫu: trình phát trên vạch, vạch chiếm phần còn lại, khối dưới neo đáy."""
+    top, s = 60, ""
+    if media:
+        s += gl_player(PW / 2, 60, 313, paused=paused)
+        top = 60 + 38 + 30
+    sy = PH - 60 - 9
+    details_top = sy - 9 - (30 if latest else 0)
+    s += gl_vclock(40, top, 313, details_top - 15 - 15 - top, hh, mm, pos, size, g, date, weather)
+    s += gl_status(PW / 2, sy, n, charging)
+    return s + (gl_latest(PW / 2, sy - 29) if latest else "")
+
+
+def gl_landscape(hh=10, mm=8, pos=None, size=1.1, g=GL_SUNSET, date=True, weather=False, media=False, paused=False, latest=False, n=2,
+                 charging=False):
+    """Màn ngang: vạch ngang hết bề rộng trừ lề 40, giờ + dòng ngày không ra khỏi vùng; trình phát trên, dòng pin dưới."""
+    gid, ts, ds, text = gl_id(), .11 * H * size, .043 * H * size, f"{hh:02d}:{mm:02d}"
+    lo, top, hi, bottom = CP_REG.ink(text, ts)
+    th, tw, row = bottom - top, hi - lo, date or weather
+    ly = H / 2 - .35 * th
+    lw = max(tw, gl_row_w(ds, date, weather) if row else 0)
+    fr = (hh * 60 + mm) / 1440 if pos is None else pos
+    cx = 40 + lw / 2 + (W - 80 - lw) * fr
+    c0, c1 = cx - tw / 2 - .6 * th, cx + tw / 2 + .6 * th
+    sw = .008 * H
+    s = (f'<defs>{gl_grad(gid, 40, ly, W - 40, ly, g)}<mask id="{gid}m" maskUnits="userSpaceOnUse" x="0" y="0" width="{W}" height="{H}">'
+         f'<rect width="{W}" height="{H}" fill="#fff"/><rect x="{f(c0)}" width="{f(c1 - c0)}" height="{H}" fill="#000"/></mask></defs>'
+         f'<line x1="{f(40 + sw)}" y1="{f(ly)}" x2="{f(W - 40 - sw)}" y2="{f(ly)}" stroke="url(#{gid})" stroke-width="{f(sw)}" '
+         f'stroke-linecap="round" mask="url(#{gid}m)"/>')
+    s += gl_time(cx, ly, text, ts)
+    if row:
+        s += gl_row(cx, ly + max(1.2 * th, .85 * th + 1.25 * ds / 2), ds, date, weather)
+    if media:
+        s += gl_player(W / 2, 30, 360, paused=paused)
+    sy = H - 32 - 9
+    s += gl_status(W / 2, sy, n, charging)
+    return s + (gl_latest(W / 2, sy - 29) if latest else "")
+
+
+def gl_reference_landscape():
+    """App mẫu ở màn ngang: dùng chung layout dọc nên vạch dọc chỉ cao 188 dp, giờ 0,11 × 188 × 1,1 ≈ 23 dp."""
+    return gl_vclock(40, 60, W - 80, 188, 10, 8) + gl_status(W / 2, H - 60 - 9)
+
+
+def gl_strip():
+    k, s = 0.4, ""
+    for i, (label, kw) in enumerate((("Mặc định: bộ của app mẫu", {}),
+                                      ("Bộ có sẵn: lửa", {"g": GL_FIRE, "hh": 19, "mm": 5}),
+                                      ("Bộ có sẵn: pastel", {"g": GL_PASTEL, "hh": 6, "mm": 40}),
+                                      ("Một màu, cỡ 150%", {"g": (MINT, MINT, MINT), "size": 1.5, "hh": 13, "mm": 30}))):
+        x = 36 + i * 212
+        s += (f'<g transform="translate({x} 14) scale({k})"><clipPath id="glc{i}"><rect width="{PW}" height="{PH}" rx="34"/></clipPath>'
+              f'<rect width="{PW}" height="{PH}" rx="34" fill="#000" stroke="#333" stroke-width="2"/><g clip-path="url(#glc{i})">')
+        s += gl_portrait(**kw) + "</g></g>" + txt(x + PW * k / 2, 14 + PH * k + 22, label, 13, DM, 400, "middle")
+    return (f'<p style="font-size:13px;color:var(--text-secondary);margin:1.25rem 0 6px">Màu vạch: bộ gradient có sẵn hoặc tự chỉnh</p>'
+            f'<svg viewBox="0 0 {W} 400" width="100%" role="img" aria-label="Màu vạch" '
+            f'style="display:block;font-family:\'Plus Jakarta Sans\',sans-serif" fill="{G}">'
+            f'<rect width="{W}" height="400" rx="20" fill="#111"/>{s}</svg>')
+
+
+gradient_line = [
+    HC_FONTS,
+    gl_strip(),
+    '<div style="font-size:0">',
+    frame_portrait("D1 · Dọc, mặc định 10:08 (cũng là thẻ ở lưới chủ đề): giờ nằm trên vạch theo phút trong ngày, 00:00 ở đỉnh, 23:59 ở đáy",
+                   gl_portrait()),
+    frame_portrait("D2 · Dọc, 08:30, nhạc ở trên vạch, thời tiết cạnh ngày", gl_portrait(hh=8, mm=30, media=True, weather=True)),
+    frame_portrait("D3 · Dọc, 21:47, đang sạc, thông báo mới nhất, nhạc đang dừng (mờ)",
+                   gl_portrait(hh=21, mm=47, charging=True, latest=True, n=1, media=True, paused=True)),
+    frame_portrait("D4 · Dọc, 23:10, ghim vị trí 50%, tắt ngày, bộ xám", gl_portrait(hh=23, mm=10, pos=.5, date=False, n=3, g=GL_GREY)),
+    '</div>',
+    frame("N1 · Ngang, 10:08: vạch nằm ngang hết bề rộng, giờ chạy trái → phải theo phút trong ngày", gl_landscape()),
+    frame("N2 · Ngang, 08:30, nhạc ở trên, thời tiết cạnh ngày", gl_landscape(hh=8, mm=30, media=True, weather=True)),
+    frame("N3 · Ngang, 21:47, đang sạc, thông báo mới nhất, nhạc đang dừng",
+          gl_landscape(hh=21, mm=47, charging=True, latest=True, n=1, media=True, paused=True)),
+    frame("N4 · Để so: app mẫu ở màn ngang dùng chung layout dọc, vạch dọc chỉ cao 188 dp, giờ 23 dp", gl_reference_landscape()),
+]
+
+
 for name, summary, defs, frames in [
     ("w_classic", "Bảy bố cục ngang của chủ đề Cổ điển theo các khối đang bật", classic_defs, classic),
     ("w_jersey", "Bố cục ngang của chủ đề Số áo: ngày, bốn chữ số một hàng, dòng pin", jersey_defs, jersey),
@@ -1967,6 +2147,7 @@ for name, summary, defs, frames in [
     ("w_bezel", "Chủ đề Vành (iOS Fill Clock): hai kiểu vạch, bốn khung dọc và ba bố cục ngang", bezel_defs, bezel),
     ("w_compass", "Chủ đề La bàn (Ambitio Face): màu và cỡ mặt số, bốn khung dọc và ba bố cục ngang", compass_defs, compass),
     ("w_half", "Chủ đề Bán nguyệt (Half Concentric): màu, bốn khung dọc và ba bố cục ngang", HC_DEFS, half),
+    ("w_gradient_line", "Chủ đề Dải màu (Gradient Line Clock): màu vạch, bốn khung dọc và bốn khung ngang", "", gradient_line),
 ]:
     code = widget(summary, defs, frames)
     OUT.mkdir(parents=True, exist_ok=True)

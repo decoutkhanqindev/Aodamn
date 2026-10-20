@@ -60,6 +60,7 @@
     <string name="theme_bezel">Vành</string>
     <string name="theme_compass">La bàn</string>
     <string name="theme_half_moon">Bán nguyệt</string>
+    <string name="theme_gradient_line">Dải màu</string>
     <string name="aod_jersey_date_first_pattern">dd</string>
     <string name="aod_jersey_date_second_pattern">MM</string>
     <string name="aod_bezel_weekday_pattern">EEEE</string>
@@ -78,6 +79,7 @@
     <string name="theme_tab_effects">Hiệu ứng</string>
     <string name="theme_tab_media">Nhạc</string>
     <string name="theme_tab_status">Pin &amp; thông báo</string>
+    <string name="theme_tab_line">Vạch</string>
     <string name="theme_opt_shape">Hình</string>
     <string name="theme_opt_tile_style">Kiểu</string>
     <string name="tile_style_filled">Đặc</string>
@@ -106,6 +108,7 @@
     <string name="theme_color_minute_ring">Viền phút</string>
     <string name="theme_color_dial">Vạch &amp; số</string>
     <string name="theme_color_minute_tag">Phút &amp; AM/PM</string>
+    <string name="theme_color_line">Vạch</string>
     <string name="theme_opt_digit_style">Kiểu số</string>
     <string name="theme_opt_card_background">Nền thẻ</string>
     <string name="card_background_tinted">Nền mờ</string>
@@ -209,6 +212,8 @@
     <string name="clock_font_geometric">Hình học</string>
     <string name="opt_clock_color">Màu</string>
     <string name="opt_size_value">Cỡ: %1$d%%</string>
+    <string name="opt_position_value">Vị trí: %1$d%%</string>
+    <string name="opt_position_auto">Chạy theo giờ</string>
     <string name="opt_layout">Kiểu</string>
     <string name="date_layout_spaced">Giãn chữ</string>
     <string name="date_layout_sentence">Một câu</string>

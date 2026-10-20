@@ -122,6 +122,7 @@ private fun filledIconOf(@DrawableRes iconRes: Int): Int = when (iconRes) {
     R.drawable.ic_timer -> R.drawable.ic_timer_fill
     R.drawable.ic_text_aa -> R.drawable.ic_text_aa_fill
     R.drawable.ic_magic_wand -> R.drawable.ic_magic_wand_fill
+    R.drawable.ic_line_vertical -> R.drawable.ic_line_vertical_fill
     else -> iconRes
 }
 

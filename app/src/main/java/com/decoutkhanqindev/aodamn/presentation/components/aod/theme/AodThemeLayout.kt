@@ -18,6 +18,8 @@ import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.classic.Aod
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.classic.AodClassicLandscape
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.compass.AodCompassLandscape
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.compass.AodCompassPortrait
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.gradientline.AodGradientLineLandscape
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.gradientline.AodGradientLinePortrait
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.halfmoon.AodHalfMoonLandscape
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.halfmoon.AodHalfMoonPortrait
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.jersey.AodJerseyLandscape
@@ -61,12 +63,13 @@ fun AodPortrait(
         AodThemeValue.BEZEL -> AodBezelPortrait(state = state, onIntent = onIntent)
         AodThemeValue.COMPASS -> AodCompassPortrait(state = state, onIntent = onIntent)
         AodThemeValue.HALF_MOON -> AodHalfMoonPortrait(state = state, onIntent = onIntent)
+        AodThemeValue.GRADIENT_LINE -> AodGradientLinePortrait(state = state, onIntent = onIntent)
     }
 }
 
 // Bố cục AOD màn ngang theo chủ đề: mỗi chủ đề một bố cục riêng, dựng trên bố cục chung theo các khối đang hiện (AodLandscapeLayout); Chuỗi giữ
 // dạng chuỗi nên tự xếp cột (AodChainLandscape), Vành giữ mặt số phủ màn (AodBezelLandscape), La bàn giữ mặt số giữa màn (AodCompassLandscape),
-// Bán nguyệt giữ nửa mặt số sát mép trái (AodHalfMoonLandscape).
+// Bán nguyệt giữ nửa mặt số sát mép trái (AodHalfMoonLandscape), Dải màu cho vạch nằm ngang hết bề rộng (AodGradientLineLandscape).
 @Composable
 fun AodLandscape(
     state: AodState,
@@ -83,6 +86,7 @@ fun AodLandscape(
         AodThemeValue.BEZEL -> AodBezelLandscape(state = state, onIntent = onIntent)
         AodThemeValue.COMPASS -> AodCompassLandscape(state = state, onIntent = onIntent)
         AodThemeValue.HALF_MOON -> AodHalfMoonLandscape(state = state, onIntent = onIntent)
+        AodThemeValue.GRADIENT_LINE -> AodGradientLineLandscape(state = state, onIntent = onIntent)
     }
 }
 

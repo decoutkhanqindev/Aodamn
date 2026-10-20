@@ -67,6 +67,7 @@
     <string name="theme_bezel">Bezel</string>
     <string name="theme_compass">Compass</string>
     <string name="theme_half_moon">Half moon</string>
+    <string name="theme_gradient_line">Gradient line</string>
     <string name="theme_in_use">In use</string>
     <string name="theme_edit">Edit</string>
     <string name="theme_saved">Theme saved</string>
@@ -82,6 +83,7 @@
     <string name="theme_tab_effects">Effects</string>
     <string name="theme_tab_media">Music</string>
     <string name="theme_tab_status">Battery &amp; alerts</string>
+    <string name="theme_tab_line">Line</string>
     <string name="theme_opt_shape">Shape</string>
     <string name="theme_opt_tile_style">Style</string>
     <string name="tile_style_filled">Filled</string>
@@ -110,6 +112,7 @@
     <string name="theme_color_minute_ring">Minute ring</string>
     <string name="theme_color_dial">Ticks &amp; numbers</string>
     <string name="theme_color_minute_tag">Minute &amp; AM/PM</string>
+    <string name="theme_color_line">Line</string>
     <string name="theme_opt_digit_style">Digit style</string>
     <string name="theme_opt_card_background">Card background</string>
     <string name="card_background_tinted">Tinted</string>
@@ -214,6 +217,8 @@
     <string name="clock_font_geometric">Geometric</string>
     <string name="opt_clock_color">Color</string>
     <string name="opt_size_value">Size: %1$d%%</string>
+    <string name="opt_position_value">Position: %1$d%%</string>
+    <string name="opt_position_auto">Follow the time</string>
     <string name="opt_layout">Style</string>
     <string name="date_layout_spaced">Spaced</string>
     <string name="date_layout_sentence">Sentence</string>
@@ -369,6 +374,10 @@
     <string name="aod_half_moon_date_pattern" translatable="false">dd MMM yyyy</string>
     <string name="aod_half_moon_day_pattern" translatable="false">EEEE</string>
     <string name="aod_half_moon_notification" translatable="false">%1$s: %2$s</string>
+    <string name="aod_gradient_line_time_24h" translatable="false">HH:mm</string>
+    <string name="aod_gradient_line_time_12h" translatable="false">hh:mm</string>
+    <string name="aod_gradient_line_date_pattern" translatable="false">EEEE, dd MMM</string>
+    <string name="aod_gradient_line_notification" translatable="false">%1$s: %2$s</string>
     <string name="aod_hint">Double-tap to exit</string>
     <string name="aod_battery" translatable="false">%1$d%%</string>
     <string name="aod_battery_charging">Charging · %1$d%%</string>

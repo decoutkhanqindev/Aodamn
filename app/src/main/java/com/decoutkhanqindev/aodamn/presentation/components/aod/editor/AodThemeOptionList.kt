@@ -1,5 +1,6 @@
 package com.decoutkhanqindev.aodamn.presentation.components.aod.editor
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.horizontalScroll
@@ -113,13 +114,17 @@ private fun ThemeOptionControl(
             )
         }
 
-        is AodRangeOption -> AppSliderRow(
-            label = stringResource(option.labelRes, config[option]),
-            progress = { config[option] },
-            valueRange = option.range,
-            step = option.step,
-            onProgressChange = { value -> onOptionChange(option.key, value) },
-        )
+        is AodRangeOption -> if (option.autoLabelRes != null) {
+            AutoRangeControl(option = option, config = config, onOptionChange = onOptionChange)
+        } else {
+            AppSliderRow(
+                label = stringResource(option.labelRes, config[option]),
+                progress = { config[option] },
+                valueRange = option.range,
+                step = option.step,
+                onProgressChange = { value -> onOptionChange(option.key, value) },
+            )
+        }
 
         is AodToggleOption -> AppSwitchRow(
             label = stringResource(option.labelRes),
@@ -127,6 +132,35 @@ private fun ThemeOptionControl(
             onCheckedChange = { isChecked ->
                 onOptionChange(option.key, option.encode(isChecked))
             },
+        )
+    }
+}
+
+// Thuộc tính có chế độ tự động (vị trí theo giờ của Dải màu): công tắc tự động; tắt thì hiện thanh trượt ghim, bắt đầu ở giữa range.
+@Composable
+private fun AutoRangeControl(
+    option: AodRangeOption,
+    config: AodThemeConfig,
+    onOptionChange: (key: String, raw: Int) -> Unit,
+) {
+    val isAuto = config[option] == AodRangeOption.AUTO
+    val pinned = { config[option].coerceIn(option.range) }
+
+    AppSwitchRow(
+        label = stringResource(option.autoLabelRes ?: option.labelRes),
+        isChecked = isAuto,
+        onCheckedChange = { isChecked ->
+            onOptionChange(option.key, if (isChecked) AodRangeOption.AUTO else (option.range.first + option.range.last) / 2)
+        },
+    )
+
+    AnimatedVisibility(visible = !isAuto) {
+        AppSliderRow(
+            label = stringResource(option.labelRes, pinned()),
+            progress = pinned,
+            valueRange = option.range,
+            step = option.step,
+            onProgressChange = { value -> onOptionChange(option.key, value) },
         )
     }
 }

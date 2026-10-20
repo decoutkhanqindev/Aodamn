@@ -44,6 +44,7 @@ code dịch ngược, không lấy asset (font, ảnh, Lottie) từ APK. APK và
 | Vành (`BEZEL`) | **40 · Aug24 "iOS Fill Clock"** | làm từ danh mục này (2026-10-18), số đo lấy từ layout `aug24_screen_layout` / `IosFillClock` / font trong APK |
   | La bàn (`COMPASS`) | **25 · May23 "Ambitio Face"** | làm từ danh mục này (2026-10-18), số đo lấy từ layout `may23_screen_layout` / `AmbitioClock` / font trong APK |
 | Bán nguyệt (`HALF_MOON`) | **20 · Dec22 "Half Concentric"** | làm từ danh mục này (2026-10-20), số đo lấy từ layout `dec22_screen_layout` dọc / ngang / `HalfConcentricClock` |
+| Dải màu (`GRADIENT_LINE`) | **29 · Sep23 "Gradient Line Clock"** | làm từ danh mục này (2026-10-20), số đo lấy từ layout `sep23_screen_layout` (chỉ có bản dọc) / `Sep23Clock` |
 
 ## Danh mục đủ 44 chủ đề
 
@@ -80,7 +81,7 @@ text view chung) hoặc font dùng trong code; "chữ (font layout)" nghĩa là 
 | 26 | Jun23 | iOS Lockscreen | Clock Style, Clock Size, Clock Color, Theme Color | Date, Notification, Controls, Battery Status | chữ: 5 font iOS | font độc quyền | chưa có |
 | 27 | Jul23 | Nothing(2) | Clock Size, Theme Color | Clock, Date, Notification, Controls, Battery Status | chữ: ndot47 | font độc quyền | chưa có |
 | 28 | Aug23 | Bullet List | Clock Size, Theme Color | Clock, Date, Battery Status, Notification, Controls | Aug23Clock | – | **Chuỗi** (`CHAIN`) |
-| 29 | Sep23 | Gradient Line Clock | Clock Size, Dash Color, Theme Color | Position, Clock, Battery Status, Notification, Controls | Sep23Clock | – | chưa có |
+| 29 | Sep23 | Gradient Line Clock | Clock Size, Dash Color, Theme Color | Position, Clock, Battery Status, Notification, Controls | Sep23Clock | – | **Dải màu** (`GRADIENT_LINE`) |
 | 30 | Oct23 | Coum Face Clock ⭐ | Clock Size, Ring Color, Clock Color, Controls Color | – | CoumTick | – | chưa có |
 | 31 | Nov23 | Space Mono | Clock Size, Hour Color, Minute Color, Theme Color | Date, Notification, Controls | chữ (font layout) | – | chưa có |
 | 32 | Dec23 | Flex Round | Clock Style, Color 1, Color 2, Clock Size | – | chữ (font layout) | – | **Viên nang** (`CAPSULE`) |
@@ -138,6 +139,12 @@ mỗi phút (`AodViewModel`), nên phần chạy theo giây của app mẫu ph�
   hiện tại chỉ sang phải, số đứng thẳng; giờ "HH" lớn (0,36r), phút "mm" trong viên viền ở 0,6r, vạch khoét quanh viên; phủ tối tròn làm
   đỉnh, đáy, mép trái chìm vào nền; chế độ tiết kiệm (`LOW_POWER_AFTER`) thu viên về và làm mờ số giây. Font Product Sans (= Google Sans).
   Giữ vòng giây chạy theo giờ thật như La bàn; bỏ trạng thái nghỉ (mặc định sau 15 giây ở app mẫu) để vòng giây luôn hiện (user chọn).
+- ~~**29 · Gradient Line Clock**~~ (`Sep23Clock`, đã làm thành Dải màu 2026-10-20): vạch dọc giữa màn tô gradient (mặc định #4158D0 → #C850C0
+  → #FFCC70 từ dưới lên), giờ "HH:mm" Product Sans 0,11 cạnh ngắn × cỡ nằm trên vạch, trượt theo phút trong ngày (Position −1) hoặc ghim
+  0–100%, ngày "EEEE, dd MMM" mờ 200 / 255 dưới giờ, vạch khoét quanh giờ + ngày; trình phát trên vạch, thông báo + chữ pin dưới. Một layout
+  cho cả màn ngang (vạch ngắn, giờ nhỏ) nên bên mình cho vạch nằm ngang. Bảng màu AOD của app mẫu có 211 màu đơn + 13 bộ gradient 3 màu kèm
+  hướng (`ab/a0`, một bộ trùng) và màn tự tạo gradient (`AddColorActivity`: 3 ô màu, vòng màu, mã hex, 6 hướng): bên mình thành bộ chọn
+  Một màu / Gradient dùng chung (12 bộ có sẵn, 4 hướng + đảo chiều, mã hex).
 - **30 · Coum Face** ⭐ (`CoumTick` + `oct23_screen_layout`): giờ số "09:50" 50sp + ngày 16sp ở giữa, vòng 60 vạch phủ màn xoay
   theo **giây**, số giây trong chấm tròn ở mép phải, tối dần trên / dưới; màu vòng có thể là gradient. Nét đặc trưng là giây.
 - **39 · Nothing Wide** (`NothingWideClock`): khung chữ nhật bo góc sát mép, 60 vạch là tia cắt trong dải (như Vành), kim có

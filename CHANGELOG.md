@@ -7,6 +7,37 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-10-20 – Chủ đề Dải màu
+
+Build được, unit test pass (thêm test chặn Dải màu có lại khối đã bỏ hay thiếu tuỳ chọn của app mẫu, test vị trí giờ trên vạch theo app mẫu,
+test thuộc tính có chế độ tự động; test nội dung thông báo cho phép Dải màu như Bán nguyệt), `tools/check-rules.sh` ra 0 vi phạm (38 rule),
+thư mục các chủ đề cũ không đổi dòng nào. Chưa test trên máy.
+
+### Thêm
+
+- Chủ đề Dải màu (Gradient Line Clock của Muviz Edge, số đo lấy từ `Sep23Clock` và layout `sep23_screen_layout` dịch ngược; mock duyệt trước
+  khi code): vạch mảnh dọc giữa màn (dày 0,008 cạnh ngắn, đầu tròn) tô gradient của app mẫu vàng → hồng tím → xanh từ đầu tới cuối vạch. Giờ
+  "HH:mm" / "hh:mm" Google Sans Regular cỡ 0,11 cạnh ngắn × cỡ nằm trên vạch, căn theo nét chữ như app mẫu, trượt từ đỉnh (00:00) tới đáy
+  (23:59) theo phút trong ngày; ngày "EEEE, dd MMM" mờ 78% dưới giờ; vạch khoét quanh giờ và ngày. Thời tiết (khối dùng chung) nằm cạnh ngày,
+  đi cùng giờ; kiểu thời tiết cao thì dòng ngày lùi xuống, vạch khoét dài theo. Trình phát như app mẫu ở đầu màn (lùi · tên bài / nghệ sĩ mờ
+  · tới, nút mờ 0,7, chạm tên để phát / dừng, dừng thì chữ mờ, đổi bài thì tên trượt lên), hiện / ẩn thì vạch co giãn mượt; đáy là thông báo
+  mới nhất (icon + "Tiêu đề: nội dung") trên dòng pin · thông báo. Màn ngang (app mẫu dùng chung layout dọc nên vạch ngắn, giờ nhỏ): vạch nằm
+  ngang hết bề rộng, giờ to hơn trượt từ trái sang phải, trình phát giữa phía trên, dòng pin giữa phía dưới.
+- Tuỳ chọn đủ như app mẫu: cỡ 80–150% (mặc định 110%), vị trí ("Chạy theo giờ" mặc định bật, tắt thì ghim 0–100% chiều dài vạch, 20 nấc),
+  màu giờ, màu vạch (gradient, dùng bộ chọn Một màu / Gradient), màu pin, màu thông báo, màu nhạc; màu chủ đạo của app mẫu tách thành màu
+  từng phần mặc định #E0E0E0, thêm màu ngày riêng (app mẫu dùng màu giờ mờ 78%) cho tab Ngày, giờ và ngày tô được gradient. Dòng pin hai màu
+  như app mẫu (pin theo màu pin, mờ 0,9; chấm và icon theo màu thông báo), một dòng như các chủ đề khác (user duyệt).
+- Dải màu chỉ có ngày, thời tiết, pin, thông báo (kèm thông báo mới nhất, `hasNotificationContent = true`), nhạc: ghi nhớ, sự kiện, nét vẽ
+  không có chỗ vì giờ trượt hết chiều dài vạch, hai bên vạch hẹp.
+- Thuộc tính khoảng số có chế độ tự động (`AodRangeOption.autoLabelRes`, giá trị `AUTO`): màn sửa có công tắc tự động, tắt thì hiện thanh
+  trượt ghim, bắt đầu ở giữa dải. Icon tab Vạch `line-vertical` (Phosphor, bản thường + fill).
+
+### Thay đổi
+
+- Chỉ thêm, không đổi chủ đề đang có: mục `GRADIENT_LINE` ở `AodThemeValue`, nhánh `when` ở `AodPortrait` / `AodLandscape` /
+  `AodMediaControls`, chuỗi vi / en (`theme_gradient_line`, `theme_tab_line`, `theme_color_line`, `opt_position_*`, mẫu giờ / ngày / thông báo),
+  `autoLabelRes` mặc định `null` nên các thanh trượt cũ không đổi (`decode` vẫn kẹp vào dải), một dòng ở `filledIconOf` cho icon tab mới.
+
 ## [Chưa phát hành] – 2026-10-20 – Chủ đề Bán nguyệt
 
 Build được, lint 0 lỗi, 16 cảnh báo đều ở file không đụng tới (4 cảnh báo mới so với 12 cũ là bản mới hơn của thư viện baseline profile),
