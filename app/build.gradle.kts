@@ -69,6 +69,7 @@ android {
             signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true
             isShrinkResources = true
+            isDebuggable = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -107,6 +108,7 @@ android {
         }
 
         debug {
+            isDebuggable = true
             buildConfigField(
                 "String",
                 "INTER_SPLASH_ALL_ID",
