@@ -75,6 +75,39 @@ dòng nào. Đã test trên máy.
   chuỗi vi / en (`theme_half_moon`, `theme_color_minute_ring`, `theme_color_dial`, mẫu ngày / thứ / thông báo); không thêm màu, font hay cờ dùng
   chung (dùng `Red`, `FontFamilyGoogleSansText`, `AodState.isClockLive` có sẵn).
 
+## [Chưa phát hành] – 2026-10-20 – Bộ chọn màu Một màu / Gradient, mã hex
+
+### Thêm
+
+- `AodColorPicker` thay chỗ `ClockColorPicker` trong `AodThemeOptionList` (màu chủ đề và màu khối ở Tùy chỉnh). Tab Một màu giữ 16 ô +
+  vòng màu + thanh độ sáng, thêm ô mã hex 6 ký tự. Thuộc tính bật `isGradientAllowed` (hoặc có `defaultGradient`) có thêm tab Gradient:
+  12 bộ có sẵn lấy từ bảng màu app mẫu Muviz Edge (`GradientSwatchValue`, bộ trùng đã bỏ, hướng quy về Đầu → Cuối), 3 chấm Đầu / Giữa /
+  Cuối, 4 hướng (`AodGradientDirection`) + Đảo chiều = 8 hướng, bảng màu và mã hex của chấm đang chọn. Chip phần tô đang là gradient hiện
+  3 chấm chồng nhau (`AodGradientDots`).
+- Cách lưu: khoá màu cũ giữ màu Đầu (code chỉ đọc `config[option]` không phải sửa), gradient thêm `<khoá>_gradient_2`,
+  `<khoá>_gradient_3`, `<khoá>_gradient_direction`; không có khoá phụ là một màu nên màu đã lưu giữ nguyên. Đọc bằng
+  `config.gradientOf(option)` (null = một màu), tô bằng `AodGradient.toBrush()` (trải theo khung của chính phần được tô).
+- Bật gradient cho 7 khối dùng chung ở Tùy chỉnh: ngày, pin, thời tiết, sự kiện, ghi nhớ, thông báo, nhạc (nét vẽ giữ một màu vì tô bằng
+  ảnh đã vẽ). `AodComponentStyle.gradient` mang gradient của khối; `Modifier.aodTint(style)` vẽ phần tô bằng `style.color` ra lớp riêng
+  rồi phủ gradient SrcIn, nên mỗi chữ / icon / chấm tô theo khung của chính nó, giữ độ trong; khối một màu không đổi gì. Nút nhạc tắt
+  vẫn xám, thanh nhạc tô gradient phần đã phát; pin đang sạc / yếu giữ màu báo của phần đầy, chỉ chữ phần trăm tô gradient. Chủ đề
+  Dải màu và các chủ đề cũ bật sau.
+- Chủ đề cũ, mỗi chủ đề một lượt, chỉ đổi chỗ tô màu (bố cục, số đo giữ nguyên). Hàm dùng chung `AodThemeConfig.brushOf(option)`
+  (gradient hoặc `SolidColor`) cho chữ, `colorsOf(option)` cho hình tự dựng gradient.
+  - Cổ điển: giờ và phút bật gradient (cả tab Đồng hồ lúc onboarding). Mặt số: span brush, giờ và phút cùng gradient thì liền một dải;
+    xếp chồng: mỗi dòng một gradient; kim: kim, mốc giờ chính tô dọc theo chính nó (gốc màu Đầu → đầu kim màu Cuối, bỏ qua hướng vì kim
+    xoay), chấm giữa màu Đầu của giờ.
+  - Sỏi: 6 màu (khối giờ / phút, số giờ / phút, ngày, nhạc) bật gradient. Khối (đặc lẫn viền) và nút phát tô theo khung của khối, nút
+    phát xoay thì gradient xoay theo; chữ số, ngày tô bằng brush; thanh sóng tô phần đã nghe (`AodWaveTrack` thêm `brush` mặc định
+    `SolidColor(color)`, chủ đề khác không đổi). Icon trên nút phát chọn đen / trắng theo màu Đầu.
+- Test `AodColorOptionTest`: màu cũ đọc như cũ, gradient lưu / đọc lại, về Một màu xoá khoá phụ, mặc định gradient, đặt lại, đổi hướng.
+
+### Đổi
+
+- Callback của `AodThemeOptionList` và intent Preview / Change option ở Tùy chỉnh, màn chủ đề mang map khoá → giá trị (null = xoá)
+  thay cho một cặp khoá / giá trị, để một lần đổi gradient ghi nhiều khoá trong một bước hoàn tác (`AodThemeConfig.withRaws`).
+  `isDefault` / `isSame` / đặt lại tab tính cả khoá phụ.
+
 ## [Chưa phát hành] – 2026-10-19 – Màu có sẵn trong bảng màu
 
 ### Thêm

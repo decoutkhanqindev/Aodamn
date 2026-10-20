@@ -85,8 +85,8 @@ private fun ComponentStyle(
         AodThemeOptionList(
             tab = AodComponentSpec.optionsOf(component).tab,
             config = clock.components.config,
-            onOptionPreview = { key, raw -> onIntent(CustomizeIntent.Appearance.PreviewComponentOption(key, raw)) },
-            onOptionChange = { key, raw -> onIntent(CustomizeIntent.Appearance.ChangeComponentOption(key, raw)) },
+            onOptionPreview = { raws -> onIntent(CustomizeIntent.Appearance.PreviewComponentOption(raws)) },
+            onOptionChange = { raws -> onIntent(CustomizeIntent.Appearance.ChangeComponentOption(raws)) },
         )
     }
 }
@@ -127,8 +127,8 @@ private fun ClockPanel(
         AodThemeOptionList(
             tab = ClassicThemeSpec.ClockTab,
             config = theme.config,
-            onOptionPreview = { key, raw -> onIntent(CustomizeIntent.Appearance.PreviewThemeOption(key, raw)) },
-            onOptionChange = { key, raw -> onIntent(CustomizeIntent.Appearance.ChangeThemeOption(key, raw)) },
+            onOptionPreview = { raws -> onIntent(CustomizeIntent.Appearance.PreviewThemeOption(raws)) },
+            onOptionChange = { raws -> onIntent(CustomizeIntent.Appearance.ChangeThemeOption(raws)) },
         )
     } else {
         AppValueRow(

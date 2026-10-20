@@ -25,6 +25,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.res.painterResource
@@ -209,7 +210,7 @@ private fun AodClassicMedia(
 
             Text(
                 text = listOfNotNull(media.title, media.artist).joinToString(separator = "  ·  "),
-                modifier = Modifier.weight(1f, fill = false),
+                modifier = Modifier.weight(1f, fill = false).aodTint(style),
                 color = style.color,
                 fontSize = 13.sp * style.scale,
                 fontFamily = style.fontFamily,
@@ -223,6 +224,7 @@ private fun AodClassicMedia(
                 isEnabled = media.canSkipToNext,
                 onClick = { onIntent(AodIntent.SkipToNextTrack) },
                 size = 36.dp * style.scale,
+                modifier = if (media.canSkipToNext) Modifier.aodTint(style) else Modifier,
                 tint = style.color,
             )
         }
@@ -239,7 +241,7 @@ private fun TrackInfo(
     Column(modifier = modifier) {
         Text(
             text = media.title,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().aodTint(style),
             color = style.color,
             fontSize = 14.sp * style.scale,
             fontWeight = FontWeight.SemiBold,
@@ -254,7 +256,8 @@ private fun TrackInfo(
                 text = artist,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .alpha(0.7f),
+                    .alpha(0.7f)
+                    .aodTint(style),
                 color = style.color,
                 fontSize = 12.sp * style.scale,
                 fontFamily = style.fontFamily,
@@ -278,6 +281,7 @@ private fun MediaButtons(
         isEnabled = media.canSkipToPrevious,
         onClick = { onIntent(AodIntent.SkipToPreviousTrack) },
         size = 40.dp * style.scale,
+        modifier = if (media.canSkipToPrevious) Modifier.aodTint(style) else Modifier,
         tint = style.color,
     )
 
@@ -289,6 +293,7 @@ private fun MediaButtons(
         isEnabled = media.canSkipToNext,
         onClick = { onIntent(AodIntent.SkipToNextTrack) },
         size = 40.dp * style.scale,
+        modifier = if (media.canSkipToNext) Modifier.aodTint(style) else Modifier,
         tint = style.color,
     )
 }
@@ -305,6 +310,7 @@ private fun PlayPauseButton(
         isEnabled = true,
         onClick = { onIntent(AodIntent.PlayPauseMedia) },
         size = 40.dp * style.scale,
+        modifier = Modifier.aodTint(style),
         tint = style.color,
     )
 }
@@ -316,7 +322,7 @@ private fun MediaProgress(
 ) {
     AodMediaProgress(
         progress = progress,
-        track = { fraction -> ClassicProgressTrack(fraction = fraction, color = style.color) },
+        track = { fraction -> ClassicProgressTrack(fraction = fraction, color = style.color, brush = style.gradient?.toBrush()) },
         modifier = Modifier.padding(top = 10.dp),
     )
 }
@@ -325,6 +331,7 @@ private fun MediaProgress(
 private fun ClassicProgressTrack(
     fraction: () -> Float,
     color: Color,
+    brush: Brush?,
 ) {
     Box(
         modifier = Modifier
@@ -337,11 +344,12 @@ private fun ClassicProgressTrack(
                 onDrawBehind {
                     withTransform({ if (isRtl) scale(scaleX = -1f, scaleY = 1f, pivot = center) }) {
                         drawRoundRect(color = Grey3A, cornerRadius = radius)
-                        drawRoundRect(
-                            color = color,
-                            size = Size(width = size.width * fraction(), height = size.height),
-                            cornerRadius = radius,
-                        )
+                        val filled = Size(width = size.width * fraction(), height = size.height)
+                        if (brush != null) {
+                            drawRoundRect(brush = brush, size = filled, cornerRadius = radius)
+                        } else {
+                            drawRoundRect(color = color, size = filled, cornerRadius = radius)
+                        }
                     }
                 }
             },

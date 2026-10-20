@@ -32,8 +32,13 @@ object ClassicThemeSpec : AodThemeSpec {
     )
 
     // Giờ giữ khoá "color" của bản chỉ có một màu đồng hồ nên cấu hình đã lưu không mất; phút có màu riêng.
-    val HourColor = AodColorOption(key = "color", labelRes = R.string.theme_color_hour, default = Mint)
-    val MinuteColor = AodColorOption(key = "minute_color", labelRes = R.string.theme_color_minute, default = GreyED)
+    val HourColor = AodColorOption(key = "color", labelRes = R.string.theme_color_hour, default = Mint, isGradientAllowed = true)
+    val MinuteColor = AodColorOption(
+        key = "minute_color",
+        labelRes = R.string.theme_color_minute,
+        default = GreyED,
+        isGradientAllowed = true,
+    )
     val Size = AodRangeOption(
         key = "size",
         labelRes = R.string.opt_size_value,

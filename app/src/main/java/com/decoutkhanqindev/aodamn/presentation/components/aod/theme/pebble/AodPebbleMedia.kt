@@ -18,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.luminance
@@ -59,6 +60,7 @@ fun AodPebbleMedia(
     onIntent: (AodIntent) -> Unit,
 ) {
     val mediaColor = config[PebbleThemeSpec.MediaColor]
+    val mediaBrush = config.brushOf(PebbleThemeSpec.MediaColor)
     val fontFamily = PebbleThemeSpec.Font
     val progressStyle = config[PebbleThemeSpec.ProgressStyle]
     val progress = media.progress
@@ -88,7 +90,7 @@ fun AodPebbleMedia(
             PebblePlayButton(
                 isPlaying = media.isPlaying,
                 shape = config[PebbleThemeSpec.PlayShape],
-                color = mediaColor,
+                brush = mediaBrush,
                 iconColor = if (mediaColor.luminance() > 0.3f) Black else GreyED,
                 onClick = { onIntent(AodIntent.PlayPauseMedia) },
                 modifier = Modifier.padding(horizontal = 4.dp),
@@ -108,6 +110,7 @@ fun AodPebbleMedia(
                     progress = progress,
                     isWavy = media.isPlaying && progressStyle == AodProgressStyleValue.WAVE,
                     color = mediaColor,
+                    brush = mediaBrush,
                     modifier = Modifier.padding(top = 12.dp),
                 )
             }
@@ -149,7 +152,7 @@ private fun PebbleTrackInfo(
 private fun PebblePlayButton(
     isPlaying: Boolean,
     shape: AodShapeValue,
-    color: Color,
+    brush: Brush,
     iconColor: Color,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -170,7 +173,7 @@ private fun PebblePlayButton(
 
                 onDrawBehind {
                     rotate(degrees = rotation.value) {
-                        drawPath(path = path, color = color)
+                        drawPath(path = path, brush = brush)
                     }
                 }
             },
@@ -192,6 +195,7 @@ private fun PebbleProgress(
     progress: MediaProgressUiModel,
     isWavy: Boolean,
     color: Color,
+    brush: Brush,
     modifier: Modifier = Modifier,
 ) {
     val wave = animateFloatAsState(
@@ -212,6 +216,7 @@ private fun PebbleProgress(
                 strokeWidth = 4.dp,
                 wavelength = 26.dp,
                 gap = 6.dp,
+                brush = brush,
             )
         },
         modifier = modifier,

@@ -7,8 +7,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -23,7 +25,8 @@ import kotlin.math.PI
 import kotlin.math.sin
 
 // Thanh tiến trình nhạc gợn sóng của các chủ đề có trình phát riêng (Sỏi, Thẻ): phần đã nghe là sóng sin biên độ wave() × (height −
-// strokeWidth) / 2 (0 là thẳng), cách gap rồi tới phần còn lại thẳng màu trackColor. fraction và wave chỉ đọc ở pha vẽ.
+// strokeWidth) / 2 (0 là thẳng), cách gap rồi tới phần còn lại thẳng màu trackColor. fraction và wave chỉ đọc ở pha vẽ. brush (mặc
+// định màu color) tô phần đã nghe, để chủ đề có màu nhạc gradient.
 @Composable
 fun AodWaveTrack(
     fraction: () -> Float,
@@ -35,6 +38,7 @@ fun AodWaveTrack(
     wavelength: Dp,
     gap: Dp,
     modifier: Modifier = Modifier,
+    brush: Brush = SolidColor(color),
 ) {
     Box(
         modifier = modifier
@@ -76,7 +80,7 @@ fun AodWaveTrack(
                                 x = minOf(x + sampleStep, activeEnd)
                                 path.lineTo(x, centerY + waveHeight * sin(2f * PI.toFloat() * (x - start) / length))
                             }
-                            drawPath(path = path, color = color, style = style)
+                            drawPath(path = path, brush = brush, style = style)
                         }
                     }
                 }

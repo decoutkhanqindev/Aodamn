@@ -99,13 +99,13 @@ class CustomizeViewModel(
         when (intent) {
             is CustomizeIntent.Appearance.ToggleDate -> editAppearance { copy(isDateEnabled = intent.isEnabled) }
             is CustomizeIntent.Appearance.ToggleBattery -> editAppearance { copy(isBatteryEnabled = intent.isEnabled) }
-            is CustomizeIntent.Appearance.PreviewThemeOption -> previewOption { withThemeOption(intent.key, intent.raw) }
-            is CustomizeIntent.Appearance.ChangeThemeOption -> changeOption { withThemeOption(intent.key, intent.raw) }
+            is CustomizeIntent.Appearance.PreviewThemeOption -> previewOption { withThemeOption(intent.raws) }
+            is CustomizeIntent.Appearance.ChangeThemeOption -> changeOption { withThemeOption(intent.raws) }
             is CustomizeIntent.Appearance.PreviewComponentOption ->
-                previewOption { withComponentOption(intent.key, intent.raw) }
+                previewOption { withComponentOption(intent.raws) }
 
             is CustomizeIntent.Appearance.ChangeComponentOption ->
-                changeOption { withComponentOption(intent.key, intent.raw) }
+                changeOption { withComponentOption(intent.raws) }
 
             is CustomizeIntent.Appearance.ResetComponentStyle -> edit {
                 val clock = appearance.clock
@@ -368,17 +368,17 @@ class CustomizeViewModel(
         }
     }
 
-    private fun CustomizeDraftUiModel.withThemeOption(key: String, raw: Int): CustomizeDraftUiModel {
+    private fun CustomizeDraftUiModel.withThemeOption(raws: Map<String, Int?>): CustomizeDraftUiModel {
         val theme = appearance.clock.theme
-        return withTheme(theme.copy(config = theme.config.withRaw(key, raw)))
+        return withTheme(theme.copy(config = theme.config.withRaws(raws)))
     }
 
-    private fun CustomizeDraftUiModel.withComponentOption(key: String, raw: Int): CustomizeDraftUiModel {
+    private fun CustomizeDraftUiModel.withComponentOption(raws: Map<String, Int?>): CustomizeDraftUiModel {
         val clock = appearance.clock
         val components = clock.components
         return copy(
             appearance = appearance.copy(
-                clock = clock.copy(components = components.copy(config = components.config.withRaw(key, raw))),
+                clock = clock.copy(components = components.copy(config = components.config.withRaws(raws))),
             ),
         )
     }

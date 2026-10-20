@@ -63,7 +63,7 @@ bắt buộc (compiler không chặn hộ):
   phần vẽ ở `components/aod/theme/<chủ đề>/` nối vào `AodPortrait` / `AodLandscape` (bố cục dọc, ngang
   riêng từng chủ đề, `theme/AodThemeLayout.kt`; ngang dựng trên bố cục chung theo khối đang hiện `AodLandscapePlan` +
   `AodLandscapeLayout`, mock bằng `tools/mockups/` và chốt với user trước khi code) và `AodMediaControls`. Các bước
-  thêm chủ đề và những chỗ dễ vướng: README › Thêm chủ đề mới. Control dựng theo loại thuộc tính (`AodThemeOptionList`), không viết màn
+  thêm chủ đề và những chỗ dễ vướng: README › Thêm chủ đề mới. Control dựng theo loại thuộc tính (`AodThemeOptionList`; màu Một màu / Gradient: `AodColorOption.isGradientAllowed`, khoá chính = màu Đầu, gradient thêm khoá phụ, đọc `config.gradientOf`, tô `AodGradient.toBrush()`; khối dùng chung tô bằng `Modifier.aodTint(style)` trên từng chữ / icon vẽ bằng `style.color`), không viết màn
   riêng cho chủ đề; thêm thuộc tính không đổi cách lưu. Khối dùng chung (ngày, pin, thời tiết, sự
   kiện, ghi nhớ, thông báo, nhạc, nét vẽ) có kiểu hiển thị (`Aod*LayoutValue`), font / cỡ / màu riêng
   từng khối (`AodComponentSpec`, `AodAppearanceUiModel.components`, chỉnh ở Tùy chỉnh) và không viền, không

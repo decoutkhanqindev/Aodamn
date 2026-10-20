@@ -40,6 +40,7 @@ fun AodDate(
         AodDateLayoutValue.SPACED -> Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = weekday.uppercase(),
+                modifier = Modifier.aodTint(style),
                 color = style.color,
                 fontSize = 13.sp * scale,
                 fontWeight = FontWeight.SemiBold,
@@ -51,11 +52,13 @@ fun AodDate(
                 modifier = Modifier
                     .padding(horizontal = 8.dp * scale)
                     .size(4.dp * scale)
+                    .aodTint(style)
                     .background(color = style.color, shape = CircleShape),
             )
 
             Text(
                 text = now.format(rememberFormatter(R.string.aod_date_day_pattern)),
+                modifier = Modifier.aodTint(style),
                 color = style.color,
                 fontSize = 15.sp * scale,
                 fontFamily = style.fontFamily,
@@ -65,7 +68,7 @@ fun AodDate(
         // Thứ Bảy, 11 tháng 10
         AodDateLayoutValue.SENTENCE -> Text(
             text = now.format(rememberFormatter(R.string.aod_date_full_pattern)),
-            modifier = modifier,
+            modifier = modifier.aodTint(style),
             color = style.color,
             fontSize = 16.sp * scale,
             fontFamily = style.fontFamily,
@@ -75,6 +78,7 @@ fun AodDate(
         AodDateLayoutValue.CALENDAR -> Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
                 text = weekday.uppercase(),
+                modifier = Modifier.aodTint(style),
                 color = style.color,
                 fontSize = 11.sp * scale,
                 fontWeight = FontWeight.SemiBold,
@@ -84,6 +88,7 @@ fun AodDate(
 
             Text(
                 text = now.format(rememberFormatter(R.string.aod_date_number_pattern)),
+                modifier = Modifier.aodTint(style),
                 color = style.color,
                 fontSize = 40.sp * scale,
                 fontWeight = FontWeight.Light,
@@ -93,6 +98,7 @@ fun AodDate(
 
             Text(
                 text = now.format(rememberFormatter(R.string.aod_date_month_pattern)).uppercase(),
+                modifier = Modifier.aodTint(style),
                 color = style.color,
                 fontSize = 11.sp * scale,
                 fontFamily = style.fontFamily,
@@ -104,6 +110,7 @@ fun AodDate(
         AodDateLayoutValue.SPLIT -> Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = now.format(rememberFormatter(R.string.aod_date_number_pattern)),
+                modifier = Modifier.aodTint(style),
                 color = style.color,
                 fontSize = 40.sp * scale,
                 fontWeight = FontWeight.Light,
@@ -113,6 +120,7 @@ fun AodDate(
             Column(modifier = Modifier.padding(start = 10.dp * scale)) {
                 Text(
                     text = weekday,
+                    modifier = Modifier.aodTint(style),
                     color = style.color,
                     fontSize = 14.sp * scale,
                     fontWeight = FontWeight.SemiBold,
@@ -121,6 +129,7 @@ fun AodDate(
 
                 Text(
                     text = now.format(rememberFormatter(R.string.aod_date_month_year_pattern)),
+                    modifier = Modifier.aodTint(style),
                     color = style.color,
                     fontSize = 12.sp * scale,
                     fontFamily = style.fontFamily,
@@ -132,6 +141,7 @@ fun AodDate(
         AodDateLayoutValue.NUMERIC -> Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = now.format(rememberFormatter(R.string.aod_date_weekday_short_pattern)).uppercase(),
+                modifier = Modifier.aodTint(style),
                 color = style.color,
                 fontSize = 14.sp * scale,
                 fontWeight = FontWeight.SemiBold,
@@ -142,11 +152,13 @@ fun AodDate(
                 modifier = Modifier
                     .padding(horizontal = 8.dp * scale)
                     .size(4.dp * scale)
+                    .aodTint(style)
                     .background(color = style.color, shape = CircleShape),
             )
 
             Text(
                 text = now.format(rememberFormatter(R.string.aod_date_numeric_pattern)),
+                modifier = Modifier.aodTint(style),
                 color = style.color,
                 fontSize = 15.sp * scale,
                 fontFamily = style.fontFamily,

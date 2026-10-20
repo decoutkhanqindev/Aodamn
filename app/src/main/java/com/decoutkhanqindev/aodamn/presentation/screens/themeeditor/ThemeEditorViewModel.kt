@@ -89,13 +89,13 @@ class ThemeEditorViewModel(
             is ThemeEditorIntent.Option.PreviewOption -> {
                 val current = state.value.config
                 if (dragBase == null) dragBase = current
-                publish(current.withRaw(intent.key, intent.raw))
+                publish(current.withRaws(intent.raws))
             }
 
             is ThemeEditorIntent.Option.ChangeOption -> {
                 val base = dragBase ?: state.value.config
                 dragBase = null
-                commit(from = base, next = base.withRaw(intent.key, intent.raw))
+                commit(from = base, next = base.withRaws(intent.raws))
             }
 
             is ThemeEditorIntent.Option.ResetTab -> {

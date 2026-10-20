@@ -146,8 +146,8 @@ fun ThemeEditorContent(
                         AodThemeOptionList(
                             tab = tab,
                             config = state.config,
-                            onOptionPreview = { key, raw -> onIntent(ThemeEditorIntent.Option.PreviewOption(key, raw)) },
-                            onOptionChange = { key, raw -> onIntent(ThemeEditorIntent.Option.ChangeOption(key, raw)) },
+                            onOptionPreview = { raws -> onIntent(ThemeEditorIntent.Option.PreviewOption(raws)) },
+                            onOptionChange = { raws -> onIntent(ThemeEditorIntent.Option.ChangeOption(raws)) },
                         )
                     }
 

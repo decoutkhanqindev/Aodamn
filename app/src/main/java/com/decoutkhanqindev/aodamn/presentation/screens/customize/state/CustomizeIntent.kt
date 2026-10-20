@@ -18,12 +18,12 @@ sealed interface CustomizeIntent {
         data class ToggleBattery(val isEnabled: Boolean) : Appearance
 
         // Giá trị đã mã hoá theo AodThemeOption.encode; Preview là lúc đang kéo (không ghi lịch sử hoàn tác).
-        data class PreviewThemeOption(val key: String, val raw: Int) : Appearance
-        data class ChangeThemeOption(val key: String, val raw: Int) : Appearance
+        data class PreviewThemeOption(val raws: Map<String, Int?>) : Appearance
+        data class ChangeThemeOption(val raws: Map<String, Int?>) : Appearance
 
         // Kiểu font / cỡ / màu của từng khối dùng chung (AodComponentSpec), cùng cách mã hoá giá trị.
-        data class PreviewComponentOption(val key: String, val raw: Int) : Appearance
-        data class ChangeComponentOption(val key: String, val raw: Int) : Appearance
+        data class PreviewComponentOption(val raws: Map<String, Int?>) : Appearance
+        data class ChangeComponentOption(val raws: Map<String, Int?>) : Appearance
         data class ResetComponentStyle(val component: AodComponentValue) : Appearance
         data object ResetClockStyle : Appearance
         // block: khối chủ đề tự vẽ của tab đang đứng (mở thẳng tab đó ở màn chủ đề); null từ tab Đồng hồ.

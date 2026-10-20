@@ -3,18 +3,23 @@ package com.decoutkhanqindev.aodamn.presentation.components.aod.theme.classic
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -38,29 +43,31 @@ fun AodClassicFacePreview(face: ClockFaceValue) {
     val nowMillis = rememberAodPreviewSamples().nowMillis
     val hourColor = ClassicThemeSpec.HourColor.default
     val minuteColor = ClassicThemeSpec.MinuteColor.default
+    val hourBrush = SolidColor(hourColor)
+    val minuteBrush = SolidColor(minuteColor)
     val fontFamily = ClassicThemeSpec.Font.default.fontFamily
 
     when (face) {
         ClockFaceValue.DIGITAL -> AodDigitalClock(
             nowMillis = nowMillis,
-            hourColor = hourColor,
-            minuteColor = minuteColor,
+            hourBrush = hourBrush,
+            minuteBrush = minuteBrush,
             scale = 0.3f,
             fontFamily = fontFamily,
         )
 
         ClockFaceValue.STACKED -> AodStackedClock(
             nowMillis = nowMillis,
-            hourColor = hourColor,
-            minuteColor = minuteColor,
+            hourBrush = hourBrush,
+            minuteBrush = minuteBrush,
             scale = 0.24f,
             fontFamily = fontFamily,
         )
 
         ClockFaceValue.ANALOG, ClockFaceValue.ANALOG_MINIMAL -> AodAnalogClock(
             nowMillis = nowMillis,
-            hourColor = hourColor,
-            minuteColor = minuteColor,
+            hourColors = listOf(hourColor),
+            minuteColors = listOf(minuteColor),
             scale = 0.27f,
             hasTicks = face == ClockFaceValue.ANALOG,
         )
@@ -73,40 +80,42 @@ fun AodClassicClock(
     nowMillis: Long,
     config: AodThemeConfig,
 ) {
-    val hourColor = config[ClassicThemeSpec.HourColor]
-    val minuteColor = config[ClassicThemeSpec.MinuteColor]
+    val hourBrush = config.brushOf(ClassicThemeSpec.HourColor)
+    val minuteBrush = config.brushOf(ClassicThemeSpec.MinuteColor)
+    val hourColors = config.colorsOf(ClassicThemeSpec.HourColor)
+    val minuteColors = config.colorsOf(ClassicThemeSpec.MinuteColor)
     val scale = config[ClassicThemeSpec.Size] / 100f
     val fontFamily = config[ClassicThemeSpec.Font].fontFamily
 
     when (config[ClassicThemeSpec.Face]) {
         ClockFaceValue.DIGITAL -> AodDigitalClock(
             nowMillis = nowMillis,
-            hourColor = hourColor,
-            minuteColor = minuteColor,
+            hourBrush = hourBrush,
+            minuteBrush = minuteBrush,
             scale = scale,
             fontFamily = fontFamily,
         )
 
         ClockFaceValue.STACKED -> AodStackedClock(
             nowMillis = nowMillis,
-            hourColor = hourColor,
-            minuteColor = minuteColor,
+            hourBrush = hourBrush,
+            minuteBrush = minuteBrush,
             scale = scale,
             fontFamily = fontFamily,
         )
 
         ClockFaceValue.ANALOG -> AodAnalogClock(
             nowMillis = nowMillis,
-            hourColor = hourColor,
-            minuteColor = minuteColor,
+            hourColors = hourColors,
+            minuteColors = minuteColors,
             scale = scale,
             hasTicks = true,
         )
 
         ClockFaceValue.ANALOG_MINIMAL -> AodAnalogClock(
             nowMillis = nowMillis,
-            hourColor = hourColor,
-            minuteColor = minuteColor,
+            hourColors = hourColors,
+            minuteColors = minuteColors,
             scale = scale,
             hasTicks = false,
         )
@@ -116,8 +125,8 @@ fun AodClassicClock(
 @Composable
 private fun AodDigitalClock(
     nowMillis: Long,
-    hourColor: Color,
-    minuteColor: Color,
+    hourBrush: Brush,
+    minuteBrush: Brush,
     scale: Float,
     fontFamily: FontFamily,
 ) {
@@ -125,22 +134,22 @@ private fun AodDigitalClock(
     val timeFormatter = rememberTimeFormatter()
     val time = now.format(timeFormatter)
 
-    // Phần trước dấu ':' là giờ, từ dấu ':' trở đi là phút (kèm AM / PM); định dạng giờ không có ':' thì cả chuỗi theo màu giờ.
+    // Phần trước dấu ':' là giờ, từ dấu ':' trở đi là phút (kèm AM / PM); định dạng giờ không có ':' thì cả chuỗi theo màu giờ. Gradient
+    // của span trải theo cả dòng giờ nên giờ và phút cùng gradient thì liền một dải.
     val colon = time.indexOf(':')
-    val text = remember(time, hourColor, minuteColor) {
+    val text = remember(time, hourBrush, minuteBrush) {
         buildAnnotatedString {
             if (colon < 0) {
-                withStyle(SpanStyle(color = hourColor)) { append(time) }
+                withStyle(SpanStyle(brush = hourBrush)) { append(time) }
             } else {
-                withStyle(SpanStyle(color = hourColor)) { append(time.substring(0, colon)) }
-                withStyle(SpanStyle(color = minuteColor)) { append(time.substring(colon)) }
+                withStyle(SpanStyle(brush = hourBrush)) { append(time.substring(0, colon)) }
+                withStyle(SpanStyle(brush = minuteBrush)) { append(time.substring(colon)) }
             }
         }
     }
 
     Text(
         text = text,
-        color = hourColor,
         fontSize = 76.sp * scale,
         fontWeight = FontWeight.Thin,
         fontFamily = fontFamily,
@@ -150,8 +159,8 @@ private fun AodDigitalClock(
 @Composable
 private fun AodStackedClock(
     nowMillis: Long,
-    hourColor: Color,
-    minuteColor: Color,
+    hourBrush: Brush,
+    minuteBrush: Brush,
     scale: Float,
     fontFamily: FontFamily,
 ) {
@@ -165,7 +174,7 @@ private fun AodStackedClock(
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             text = now.format(hourFormatter),
-            color = hourColor,
+            style = LocalTextStyle.current.merge(TextStyle(brush = hourBrush)),
             fontSize = fontSize,
             fontWeight = FontWeight.Light,
             fontFamily = fontFamily,
@@ -174,7 +183,7 @@ private fun AodStackedClock(
 
         Text(
             text = now.format(minuteFormatter),
-            color = minuteColor,
+            style = LocalTextStyle.current.merge(TextStyle(brush = minuteBrush)),
             fontSize = fontSize,
             fontWeight = FontWeight.Light,
             fontFamily = fontFamily,
@@ -186,8 +195,8 @@ private fun AodStackedClock(
 @Composable
 private fun AodAnalogClock(
     nowMillis: Long,
-    hourColor: Color,
-    minuteColor: Color,
+    hourColors: List<Color>,
+    minuteColors: List<Color>,
     scale: Float,
     hasTicks: Boolean,
 ) {
@@ -204,8 +213,8 @@ private fun AodAnalogClock(
             repeat(12) { index ->
                 val isMajor = index % 3 == 0
                 rotate(degrees = index * 30f) {
-                    drawLine(
-                        color = if (isMajor) hourColor else Grey6E,
+                    drawGradientLine(
+                        colors = if (isMajor) hourColors else listOf(Grey6E),
                         start = Offset(x = center.x, y = center.y - radius),
                         end = Offset(
                             x = center.x,
@@ -213,29 +222,47 @@ private fun AodAnalogClock(
                                     (if (isMajor) 16.dp else 8.dp).toPx(),
                         ),
                         strokeWidth = (if (isMajor) 3.dp else 2.dp).toPx(),
-                        cap = StrokeCap.Round,
                     )
                 }
             }
         }
         rotate(degrees = now.hour % 12 * 30f + now.minute * 0.5f) {
-            drawLine(
-                color = hourColor,
+            drawGradientLine(
+                colors = hourColors,
                 start = center,
                 end = Offset(x = center.x, y = center.y - radius * 0.5f),
                 strokeWidth = 6.dp.toPx(),
-                cap = StrokeCap.Round,
             )
         }
         rotate(degrees = now.minute * 6f) {
-            drawLine(
-                color = minuteColor,
+            drawGradientLine(
+                colors = minuteColors,
                 start = center,
                 end = Offset(x = center.x, y = center.y - radius * 0.78f),
                 strokeWidth = 3.dp.toPx(),
-                cap = StrokeCap.Round,
             )
         }
-        drawCircle(color = hourColor, radius = 5.dp.toPx(), center = center)
+        drawCircle(color = hourColors.first(), radius = 5.dp.toPx(), center = center)
+    }
+}
+
+// Kim và mốc giờ tô gradient dọc theo chính nó (gốc = màu Đầu, đầu kim = màu Cuối), không theo hướng của gradient: kim xoay nên hướng cố
+// định sẽ làm kim đổi màu theo giờ.
+private fun DrawScope.drawGradientLine(
+    colors: List<Color>,
+    start: Offset,
+    end: Offset,
+    strokeWidth: Float,
+) {
+    if (colors.size == 1) {
+        drawLine(color = colors.first(), start = start, end = end, strokeWidth = strokeWidth, cap = StrokeCap.Round)
+    } else {
+        drawLine(
+            brush = Brush.linearGradient(colors = colors, start = start, end = end),
+            start = start,
+            end = end,
+            strokeWidth = strokeWidth,
+            cap = StrokeCap.Round,
+        )
     }
 }

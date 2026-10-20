@@ -23,16 +23,27 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.InputTransformation
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.maxLength
+import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
+import androidx.compose.foundation.text.input.then
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
@@ -41,20 +52,30 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.aodamn.R
+import com.decoutkhanqindev.aodamn.presentation.components.LocalTag
 import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.ColorSwatchValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.WallpaperValue
+import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.toHexCode
+import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.toHexColorOrNull
+import com.decoutkhanqindev.aodamn.presentation.theme.BodyLarge
 import com.decoutkhanqindev.aodamn.presentation.theme.Grey9A
 import com.decoutkhanqindev.aodamn.presentation.theme.GreyED
 import com.decoutkhanqindev.aodamn.presentation.theme.LabelMedium
 import com.decoutkhanqindev.aodamn.presentation.theme.Mint
 import com.decoutkhanqindev.aodamn.presentation.theme.NeutralVariant30
+import com.decoutkhanqindev.aodamn.presentation.theme.NeutralVariant60
 import com.decoutkhanqindev.aodamn.presentation.theme.RoundedCornerShape12dp
 import com.decoutkhanqindev.aodamn.presentation.theme.RoundedCornerShape8dp
+import com.decoutkhanqindev.aodamn.utils.collectCatching
 import com.github.skydoves.colorpicker.compose.BrightnessSlider
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
+import timber.log.Timber
 
 @Composable
 fun WallpaperPicker(
@@ -227,6 +248,89 @@ fun ClockColorPicker(
             wheelColor = GreyED,
             onColorChanged = { envelope -> if (envelope.fromUser) currentOnColorPreview(envelope.color) },
             onFinish = { currentOnColorChange(controller.selectedColor.value) },
+        )
+
+        HexColorField(
+            color = color,
+            onColorChange = { hex -> currentOnColorChange(hex) },
+        )
+    }
+}
+
+// Gõ đủ 6 ký tự hex là đổi màu ngay; màu đổi từ ngoài (kéo vòng màu, chọn ô, hoàn tác) thì chữ theo, trừ khi đang là mã của chính màu đó.
+@Composable
+private fun HexColorField(
+    color: Color,
+    onColorChange: (Color) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val tag = LocalTag.current
+    val state = rememberTextFieldState(initialText = color.toHexCode())
+    val currentColor by rememberUpdatedState(color)
+    val currentOnColorChange by rememberUpdatedState(onColorChange)
+
+    SideEffect(color) {
+        if (state.text.toString().toHexColorOrNull() != color) state.setTextAndPlaceCursorAtEnd(color.toHexCode())
+    }
+
+    LaunchedEffect(state) {
+        snapshotFlow { state.text.toString().toHexColorOrNull() }.collectCatching(
+            block = { typed -> if (typed != null && typed != currentColor) currentOnColorChange(typed) },
+            catch = { e -> Timber.tag(tag).e(e.stackTraceToString()) },
+        )
+    }
+
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Text(
+            text = stringResource(R.string.color_picker_hex),
+            color = Grey9A,
+            style = LabelMedium,
+        )
+
+        BasicTextField(
+            state = state,
+            modifier = Modifier.fillMaxWidth(),
+            textStyle = BodyLarge.copy(color = GreyED),
+            cursorBrush = SolidColor(Mint),
+            inputTransformation = InputTransformation.maxLength(6).then(
+                InputTransformation {
+                    if (!asCharSequence().all { char -> char in '0'..'9' || char.uppercaseChar() in 'A'..'F' }) revertAllChanges()
+                },
+            ),
+            keyboardOptions = KeyboardOptions(
+                capitalization = KeyboardCapitalization.Characters,
+                autoCorrectEnabled = false,
+                keyboardType = KeyboardType.Ascii,
+                imeAction = ImeAction.Done,
+            ),
+            lineLimits = TextFieldLineLimits.SingleLine,
+            decorator = { innerTextField ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp)
+                        .border(width = 1.dp, color = NeutralVariant30, shape = RoundedCornerShape12dp)
+                        .padding(horizontal = 14.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(20.dp)
+                            .background(color = color, shape = CircleShape)
+                            .border(width = 1.dp, color = NeutralVariant60, shape = CircleShape),
+                    )
+
+                    Text(text = stringResource(R.string.color_picker_hex_prefix), color = Grey9A, style = BodyLarge)
+
+                    Box(modifier = Modifier.weight(1f)) {
+                        innerTextField()
+                    }
+                }
+            },
         )
     }
 }

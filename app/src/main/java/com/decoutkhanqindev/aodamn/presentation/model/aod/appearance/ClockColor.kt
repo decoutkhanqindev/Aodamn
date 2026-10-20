@@ -22,3 +22,9 @@ fun clockColorOf(stored: Int?): Color = when (stored) {
 }
 
 fun Color.toStoredClockColor(): Int = toArgb() or (0xFF shl 24)
+
+// Mã hex 6 ký tự RRGGBB (không "#", không alpha: màu lưu luôn đục) cho ô nhập mã ở bảng màu.
+fun Color.toHexCode(): String = (toArgb() and 0xFFFFFF).toString(16).padStart(6, '0').uppercase()
+
+fun String.toHexColorOrNull(): Color? =
+    takeIf { it.length == 6 }?.toIntOrNull(16)?.let { rgb -> Color(rgb or (0xFF shl 24)) }

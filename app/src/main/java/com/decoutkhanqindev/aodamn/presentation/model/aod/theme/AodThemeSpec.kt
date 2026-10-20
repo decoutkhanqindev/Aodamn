@@ -56,12 +56,9 @@ val AodOptionSpec.options: List<AodThemeOption<*>>
 fun AodOptionSpec.tabOf(block: AodBlockValue?): AodThemeTab? =
     block?.let { tabs.find { tab -> tab.block == block } }
 
-// So theo giá trị đọc ra chứ không theo map đã lưu: khoá thiếu và khoá ghi giá trị mặc định là như nhau.
-fun AodOptionSpec.isDefault(config: AodThemeConfig): Boolean =
-    options.all { option -> option.decode(config.values[option.key]) == option.default }
+fun AodOptionSpec.isDefault(config: AodThemeConfig): Boolean = options.all { option -> option.isDefault(config) }
 
-fun AodThemeTab.isDefault(config: AodThemeConfig): Boolean =
-    options.all { option -> option.decode(config.values[option.key]) == option.default }
+fun AodThemeTab.isDefault(config: AodThemeConfig): Boolean = options.all { option -> option.isDefault(config) }
 
 fun AodOptionSpec.isSame(first: AodThemeConfig, second: AodThemeConfig): Boolean =
-    options.all { option -> option.decode(first.values[option.key]) == option.decode(second.values[option.key]) }
+    options.all { option -> option.isSame(first, second) }

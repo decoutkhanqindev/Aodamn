@@ -66,7 +66,7 @@ fun AodWeather(
                 Icon(
                     painter = painterResource(target.iconRes),
                     contentDescription = stringResource(target.condition.labelRes),
-                    modifier = Modifier.size(size.dp * style.scale),
+                    modifier = Modifier.size(size.dp * style.scale).aodTint(style),
                     tint = style.color,
                 )
             }
@@ -126,7 +126,7 @@ private fun WeatherText(
 ) {
     Text(
         text = text,
-        modifier = modifier,
+        modifier = modifier.aodTint(style),
         color = style.color,
         fontSize = fontSize.sp * style.scale,
         fontWeight = fontWeight,
@@ -164,7 +164,7 @@ fun AodEvents(
                         Icon(
                             painter = painterResource(R.drawable.ic_calendar_check_light),
                             contentDescription = null,
-                            modifier = Modifier.size(16.dp * style.scale),
+                            modifier = Modifier.size(16.dp * style.scale).aodTint(style),
                             tint = style.color,
                         )
 
@@ -196,6 +196,7 @@ fun AodEvents(
                                     Box(
                                         modifier = Modifier
                                             .size(7.dp * style.scale)
+                                            .aodTint(style)
                                             .background(color = style.color, shape = CircleShape),
                                     )
 
@@ -206,6 +207,7 @@ fun AodEvents(
                                                 .width(1.dp)
                                                 .height(26.dp * style.scale)
                                                 .alpha(0.4f)
+                                                .aodTint(style)
                                                 .background(color = style.color),
                                         )
                                     }
@@ -293,7 +295,7 @@ private fun EventText(
 ) {
     Text(
         text = text,
-        modifier = modifier,
+        modifier = modifier.aodTint(style),
         color = style.color,
         fontSize = fontSize.sp * style.scale,
         fontWeight = fontWeight,
@@ -322,7 +324,7 @@ fun AodMemo(
                         Icon(
                             painter = painterResource(R.drawable.ic_note_pencil_light),
                             contentDescription = null,
-                            modifier = Modifier.size(16.dp * style.scale),
+                            modifier = Modifier.size(16.dp * style.scale).aodTint(style),
                             tint = style.color,
                         )
 
@@ -339,6 +341,7 @@ fun AodMemo(
                 ) {
                     Text(
                         text = "“",
+                        modifier = Modifier.aodTint(style),
                         color = style.color,
                         fontSize = 36.sp * style.scale,
                         fontFamily = style.fontFamily,
@@ -366,7 +369,7 @@ fun AodMemo(
                 ) {
                     Text(
                         text = stringResource(R.string.aod_memo_label),
-                        modifier = Modifier.alpha(0.7f),
+                        modifier = Modifier.alpha(0.7f).aodTint(style),
                         color = style.color,
                         fontSize = 11.sp * style.scale,
                         fontWeight = FontWeight.SemiBold,
@@ -390,7 +393,7 @@ private fun MemoText(
 ) {
     Text(
         text = text,
-        modifier = modifier,
+        modifier = modifier.aodTint(style),
         color = style.color,
         fontSize = 14.sp * style.scale,
         fontFamily = style.fontFamily,

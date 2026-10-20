@@ -103,11 +103,13 @@ private fun AodBattery(
         battery.isLow -> Red
         else -> style.color
     }
+    // Đang sạc / pin yếu thì phần đầy giữ màu báo trạng thái nên chỉ chữ phần trăm tô gradient.
+    val glyphTint = if (battery.isCharging || battery.isLow) Modifier else Modifier.aodTint(style)
     val percent = stringResource(R.string.aod_battery, battery.percent)
 
     when (layout) {
         AodBatteryLayoutValue.ICON -> {
-            BatteryGlyph(level = level, color = style.color, fill = fill, scale = style.scale)
+            BatteryGlyph(level = level, color = style.color, fill = fill, scale = style.scale, modifier = glyphTint)
             BatteryText(text = percent, style = style, modifier = Modifier.padding(start = 6.dp))
             ChargingMark(battery = battery, style = style)
         }
@@ -117,6 +119,7 @@ private fun AodBattery(
             Box(
                 modifier = Modifier
                     .size(34.dp * style.scale)
+                    .then(glyphTint)
                     .drawWithCache {
                         val strokeWidth = 2.5.dp.toPx()
                         val inset = strokeWidth / 2f
@@ -149,6 +152,7 @@ private fun AodBattery(
             ) {
                 Text(
                     text = battery.percent.toString(),
+                    modifier = Modifier.aodTint(style),
                     color = style.color,
                     fontSize = 10.sp * style.scale,
                     fontWeight = FontWeight.SemiBold,
@@ -163,6 +167,7 @@ private fun AodBattery(
             Box(
                 modifier = Modifier
                     .size(width = 64.dp * style.scale, height = 4.dp * style.scale)
+                    .then(glyphTint)
                     .drawWithCache {
                         val radius = CornerRadius(size.height / 2f)
 
@@ -183,7 +188,7 @@ private fun AodBattery(
         // Năm chấm, mỗi chấm 20%
         AodBatteryLayoutValue.DOTS -> {
             val filled = (battery.percent + 19) / 20
-            Row(horizontalArrangement = Arrangement.spacedBy(4.dp * style.scale)) {
+            Row(modifier = glyphTint, horizontalArrangement = Arrangement.spacedBy(4.dp * style.scale)) {
                 repeat(5) { index ->
                     Box(
                         modifier = Modifier
@@ -213,7 +218,7 @@ private fun BatteryText(
 ) {
     Text(
         text = text,
-        modifier = modifier,
+        modifier = modifier.aodTint(style),
         color = style.color,
         fontSize = 13.sp * style.scale,
         fontFamily = style.fontFamily,
@@ -243,9 +248,10 @@ private fun BatteryGlyph(
     color: Color,
     fill: Color,
     scale: Float,
+    modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .size(width = 22.dp * scale, height = 11.dp * scale)
             .drawWithCache {
                 val strokeWidth = 1.2.dp.toPx()

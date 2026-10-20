@@ -1,6 +1,10 @@
 package com.decoutkhanqindev.aodamn.presentation.model.aod.theme
 
 import androidx.compose.runtime.Immutable
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.AodGradient
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.persistentMapOf
 
@@ -22,7 +26,31 @@ data class AodThemeConfig(val values: PersistentMap<String, Int> = persistentMap
 
     fun withRaw(key: String, raw: Int): AodThemeConfig = copy(values = values.put(key, raw))
 
-    // Bỏ khoá của các thuộc tính này để chúng về mặc định (đặt lại một khối).
+    // Một lần đổi có thể ghi nhiều khoá (gradient: màu Đầu + khoá phụ); null là xoá khoá.
+    fun withRaws(raws: Map<String, Int?>): AodThemeConfig = copy(
+        values = raws.entries.fold(values) { map, (key, raw) -> if (raw == null) map.remove(key) else map.put(key, raw) },
+    )
+
+    // null là một màu.
+    fun gradientOf(option: AodColorOption): AodGradient? = option.decodeGradient(values)
+
+    // Tô chữ / hình theo khung đang vẽ: gradient của thuộc tính hoặc màu đơn.
+    fun brushOf(option: AodColorOption): Brush = gradientOf(option)?.toBrush() ?: SolidColor(get(option))
+
+    // Màu để tự dựng gradient theo hình (vd dọc theo kim, theo vạch): một màu thì danh sách một phần tử.
+    fun colorsOf(option: AodColorOption): List<Color> = gradientOf(option)?.colors ?: listOf(get(option))
+
+    // Bỏ khoá của các thuộc tính này (cả khoá phụ gradient) để chúng về mặc định (đặt lại một khối).
     fun without(options: List<AodThemeOption<*>>): AodThemeConfig =
-        copy(values = options.fold(values) { map, option -> map.remove(option.key) })
+        copy(values = options.flatMap { option -> option.storedKeys }.fold(values) { map, key -> map.remove(key) })
 }
+
+val AodThemeOption<*>.storedKeys: List<String>
+    get() = if (this is AodColorOption) listOf(key) + gradientKeys else listOf(key)
+
+// So theo giá trị đọc ra chứ không theo map đã lưu: khoá thiếu và khoá ghi giá trị mặc định là như nhau; màu so cả gradient.
+fun AodThemeOption<*>.isSame(first: AodThemeConfig, second: AodThemeConfig): Boolean =
+    decode(first.values[key]) == decode(second.values[key]) &&
+        (this !is AodColorOption || first.gradientOf(this) == second.gradientOf(this))
+
+fun AodThemeOption<*>.isDefault(config: AodThemeConfig): Boolean = isSame(config, AodThemeConfig())

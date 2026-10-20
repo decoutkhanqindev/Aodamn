@@ -7,6 +7,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import com.decoutkhanqindev.aodamn.R
 import com.decoutkhanqindev.aodamn.data.local.datastore.DataStoreManager
+import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.AodGradient
 import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.ClockFontValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodBlockValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodChoiceOption
@@ -79,10 +80,12 @@ object AodComponentSpec : AodOptionSpec {
             step = 10,
             default = 100,
         )
+        // Nét vẽ tô bằng ảnh đã vẽ nên chỉ một màu; các khối còn lại tô gradient lên chữ / icon (Modifier.aodTint).
         val color = AodColorOption(
             key = "${component.key}_color",
             labelRes = R.string.opt_clock_color,
             default = GreyB4,
+            isGradientAllowed = component != AodComponentValue.DRAWING,
         )
         val tab = AodThemeTab(
             iconRes = component.iconRes,
@@ -124,6 +127,7 @@ data class AodComponentStyle(
     val font: ClockFontValue,
     val scale: Float,
     val color: Color,
+    val gradient: AodGradient? = null,
 ) {
     val fontFamily: FontFamily
         get() = font.fontFamily
@@ -158,6 +162,7 @@ data class AodComponentsUiModel(val config: AodThemeConfig = AodThemeConfig()) {
             font = options.font?.let { font -> config[font] } ?: ClockFontValue.DEFAULT,
             scale = config[options.size] / 100f,
             color = config[options.color],
+            gradient = config.gradientOf(options.color),
         )
     }
 }

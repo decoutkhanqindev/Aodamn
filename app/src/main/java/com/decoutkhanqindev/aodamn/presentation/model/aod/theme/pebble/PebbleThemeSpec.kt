@@ -40,12 +40,32 @@ object PebbleThemeSpec : AodThemeSpec {
 
     // Màu từng phần: số trên khối đặc mặc định đen như khoét lỗ, trên khối viền cùng màu khối. Mặc định hai tông tím + hồng (giờ tím, phút
     // và nhạc hồng, ngày lavender) cho thẻ chủ đề bắt mắt.
-    val HourTileColor = AodColorOption(key = "hour_tile_color", labelRes = R.string.theme_color_hour_tile, default = Purple)
-    val HourDigitColor = AodColorOption(key = "hour_digit_color", labelRes = R.string.theme_color_hour_digits, default = Black)
-    val MinuteTileColor = AodColorOption(key = "minute_tile_color", labelRes = R.string.theme_color_minute_tile, default = Pink)
-    val MinuteDigitColor = AodColorOption(key = "minute_digit_color", labelRes = R.string.theme_color_minute_digits, default = Pink)
-    val DateColor = AodColorOption(key = "date_color", labelRes = R.string.theme_color_date, default = Lavender)
-    val MediaColor = AodColorOption(key = "media_color", labelRes = R.string.theme_color_media, default = Pink)
+    val HourTileColor = AodColorOption(
+        key = "hour_tile_color",
+        labelRes = R.string.theme_color_hour_tile,
+        default = Purple,
+        isGradientAllowed = true,
+    )
+    val HourDigitColor = AodColorOption(
+        key = "hour_digit_color",
+        labelRes = R.string.theme_color_hour_digits,
+        default = Black,
+        isGradientAllowed = true,
+    )
+    val MinuteTileColor = AodColorOption(
+        key = "minute_tile_color",
+        labelRes = R.string.theme_color_minute_tile,
+        default = Pink,
+        isGradientAllowed = true,
+    )
+    val MinuteDigitColor = AodColorOption(
+        key = "minute_digit_color",
+        labelRes = R.string.theme_color_minute_digits,
+        default = Pink,
+        isGradientAllowed = true,
+    )
+    val DateColor = AodColorOption(key = "date_color", labelRes = R.string.theme_color_date, default = Lavender, isGradientAllowed = true)
+    val MediaColor = AodColorOption(key = "media_color", labelRes = R.string.theme_color_media, default = Pink, isGradientAllowed = true)
     val DateStyle = AodChoiceOption(
         key = "date_style",
         labelRes = R.string.theme_opt_date_style,

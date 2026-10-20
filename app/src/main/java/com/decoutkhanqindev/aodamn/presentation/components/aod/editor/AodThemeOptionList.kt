@@ -58,15 +58,17 @@ import com.decoutkhanqindev.aodamn.presentation.theme.Theme
 
 // Control của một tab dựng theo loại thuộc tính, không biết chủ đề nào (màn chủ đề, khối ở Tùy chỉnh): chủ đề mới chỉ khai báo thuộc tính
 // trong AodThemeSpec. Tab có nhiều màu thì gom thành chip chọn phần cần tô + một bảng màu, đặt ở chỗ màu đầu tiên. Nút đặt lại riêng tab
-// nằm ở thanh tiêu đề panel (AppEditorResetButton).
+// nằm ở thanh tiêu đề panel (AppEditorResetButton). Mỗi lần đổi phát map khoá → giá trị (null = xoá khoá): màu gradient ghi nhiều khoá
+// một lúc để ViewModel ghi thành một bước hoàn tác.
 @Composable
 fun AodThemeOptionList(
     tab: AodThemeTab,
     config: AodThemeConfig,
-    onOptionPreview: (key: String, raw: Int) -> Unit,
-    onOptionChange: (key: String, raw: Int) -> Unit,
+    onOptionPreview: (raws: Map<String, Int?>) -> Unit,
+    onOptionChange: (raws: Map<String, Int?>) -> Unit,
 ) {
     val colorOptions = remember(tab) { tab.options.filterIsInstance<AodColorOption>() }
+    val onRawChange = { key: String, raw: Int -> onOptionChange(mapOf(key to raw)) }
 
     Column {
         tab.options.forEach { option ->
@@ -76,16 +78,17 @@ fun AodThemeOptionList(
                         ThemeOptionControl(
                             option = option,
                             config = config,
-                            onOptionPreview = onOptionPreview,
-                            onOptionChange = onOptionChange,
+                            onOptionChange = onRawChange,
+                            onColorPreview = onOptionPreview,
+                            onColorChange = onOptionChange,
                         )
 
                     option == colorOptions.first() ->
                         ColorGroupControl(
                             options = colorOptions,
                             config = config,
-                            onOptionPreview = onOptionPreview,
-                            onOptionChange = onOptionChange,
+                            onColorPreview = onOptionPreview,
+                            onColorChange = onOptionChange,
                         )
                 }
             }
@@ -97,8 +100,9 @@ fun AodThemeOptionList(
 private fun ThemeOptionControl(
     option: AodThemeOption<*>,
     config: AodThemeConfig,
-    onOptionPreview: (key: String, raw: Int) -> Unit,
     onOptionChange: (key: String, raw: Int) -> Unit,
+    onColorPreview: (raws: Map<String, Int?>) -> Unit,
+    onColorChange: (raws: Map<String, Int?>) -> Unit,
 ) {
     when (option) {
         is AodChoiceOption<*> -> ChoiceControl(option = option, config = config, onOptionChange = onOptionChange)
@@ -106,11 +110,11 @@ private fun ThemeOptionControl(
         is AodColorOption -> {
             AppSectionLabel(text = stringResource(option.labelRes))
 
-            ColorControl(
+            AodColorPicker(
                 option = option,
                 config = config,
-                onOptionPreview = onOptionPreview,
-                onOptionChange = onOptionChange,
+                onPreview = onColorPreview,
+                onChange = onColorChange,
             )
         }
 
@@ -210,31 +214,13 @@ private fun ChoiceControl(
     }
 }
 
-@Composable
-private fun ColorControl(
-    option: AodColorOption,
-    config: AodThemeConfig,
-    onOptionPreview: (key: String, raw: Int) -> Unit,
-    onOptionChange: (key: String, raw: Int) -> Unit,
-) {
-    ClockColorPicker(
-        color = config[option],
-        onColorPreview = { color ->
-            onOptionPreview(option.key, option.encode(color))
-        },
-        onColorChange = { color ->
-            onOptionChange(option.key, option.encode(color))
-        },
-    )
-}
-
-// Chip mang chấm màu hiện tại của từng phần; chọn chip nào thì bảng màu bên dưới tô phần đó.
+// Chip mang chấm màu hiện tại của từng phần (phần đang là gradient thì 3 chấm chồng nhau); chọn chip nào thì bảng màu bên dưới tô phần đó.
 @Composable
 private fun ColorGroupControl(
     options: List<AodColorOption>,
     config: AodThemeConfig,
-    onOptionPreview: (key: String, raw: Int) -> Unit,
-    onOptionChange: (key: String, raw: Int) -> Unit,
+    onColorPreview: (raws: Map<String, Int?>) -> Unit,
+    onColorChange: (raws: Map<String, Int?>) -> Unit,
 ) {
     var selectedKey by rememberSaveable { mutableStateOf(options.first().key) }
     val selected = options.find { it.key == selectedKey } ?: options.first()
@@ -252,23 +238,30 @@ private fun ColorGroupControl(
                 onClick = { selectedKey = option.key },
                 label = { Text(text = stringResource(option.labelRes)) },
                 leadingIcon = {
-                    Box(
-                        modifier = Modifier
-                            .size(14.dp)
-                            .background(color = config[option], shape = CircleShape)
-                            .border(width = 1.dp, color = NeutralVariant60, shape = CircleShape),
-                    )
+                    val gradient = config.gradientOf(option)
+                    if (gradient != null) {
+                        AodGradientDots(colors = gradient.colors, dotSize = 12.dp)
+                    } else {
+                        Box(
+                            modifier = Modifier
+                                .size(14.dp)
+                                .background(color = config[option], shape = CircleShape)
+                                .border(width = 1.dp, color = NeutralVariant60, shape = CircleShape),
+                        )
+                    }
                 },
             )
         }
     }
 
-    ColorControl(
-        option = selected,
-        config = config,
-        onOptionPreview = onOptionPreview,
-        onOptionChange = onOptionChange,
-    )
+    key(selected.key) {
+        AodColorPicker(
+            option = selected,
+            config = config,
+            onPreview = onColorPreview,
+            onChange = onColorChange,
+        )
+    }
 }
 
 // Ô xem trước 112 × 64dp nền đen như AOD, tên bên dưới (font thì viết bằng chính font đó). Lớp phủ trong ô chặn chạm vào nút của ảnh xem
@@ -365,8 +358,8 @@ private fun AodThemeOptionListPreview() {
         AodThemeOptionList(
             tab = PebbleThemeSpec.tabs.first(),
             config = AodThemeConfig(),
-            onOptionPreview = { _, _ -> },
-            onOptionChange = { _, _ -> },
+            onOptionPreview = { },
+            onOptionChange = { },
         )
     }
 }

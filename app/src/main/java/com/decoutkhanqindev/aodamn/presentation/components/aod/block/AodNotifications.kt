@@ -74,7 +74,7 @@ fun AodNotificationIcons(
                                     Image(
                                         bitmap = remember(icon.icon) { icon.icon.asImageBitmap() },
                                         contentDescription = null,
-                                        modifier = Modifier.size(18.dp * style.scale),
+                                        modifier = Modifier.size(18.dp * style.scale).aodTint(style),
                                         colorFilter = ColorFilter.tint(style.color),
                                     )
                                 }
@@ -97,7 +97,7 @@ fun AodNotificationIcons(
                                         Image(
                                             bitmap = remember(icon.icon) { icon.icon.asImageBitmap() },
                                             contentDescription = null,
-                                            modifier = Modifier.size(16.dp * style.scale),
+                                            modifier = Modifier.size(16.dp * style.scale).aodTint(style),
                                             colorFilter = ColorFilter.tint(style.color),
                                         )
                                     }
@@ -112,7 +112,7 @@ fun AodNotificationIcons(
                         Icon(
                             painter = painterResource(R.drawable.ic_bell_light),
                             contentDescription = null,
-                            modifier = Modifier.size(18.dp * style.scale),
+                            modifier = Modifier.size(18.dp * style.scale).aodTint(style),
                             tint = style.color,
                         )
 
@@ -132,6 +132,7 @@ fun AodNotificationIcons(
                                 Box(
                                     modifier = Modifier
                                         .size(6.dp * style.scale)
+                                        .aodTint(style)
                                         .background(color = style.color, shape = CircleShape),
                                 )
                             }
@@ -166,7 +167,7 @@ fun AodNotificationContent(
                             Image(
                                 bitmap = remember(target.icon) { target.icon.asImageBitmap() },
                                 contentDescription = null,
-                                modifier = Modifier.size(16.dp * style.scale),
+                                modifier = Modifier.size(16.dp * style.scale).aodTint(style),
                                 colorFilter = ColorFilter.tint(style.color),
                             )
 
@@ -222,7 +223,7 @@ private fun NotificationText(
 ) {
     Text(
         text = text,
-        modifier = modifier,
+        modifier = modifier.aodTint(style),
         color = style.color,
         fontSize = fontSize.sp * style.scale,
         fontWeight = if (isBold) FontWeight.SemiBold else FontWeight.Normal,

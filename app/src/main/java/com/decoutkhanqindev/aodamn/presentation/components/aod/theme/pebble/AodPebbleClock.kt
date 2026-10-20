@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -29,13 +30,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -114,8 +116,8 @@ fun PebbleTimeTile(
         text = rememberZonedDateTime(nowMillis).format(formatter),
         shape = config[if (isHour) PebbleThemeSpec.HourShape else PebbleThemeSpec.MinuteShape],
         isFilled = config[if (isHour) PebbleThemeSpec.HourStyle else PebbleThemeSpec.MinuteStyle] == AodTileStyleValue.FILLED,
-        tileColor = config[if (isHour) PebbleThemeSpec.HourTileColor else PebbleThemeSpec.MinuteTileColor],
-        digitColor = config[if (isHour) PebbleThemeSpec.HourDigitColor else PebbleThemeSpec.MinuteDigitColor],
+        tileBrush = config.brushOf(if (isHour) PebbleThemeSpec.HourTileColor else PebbleThemeSpec.MinuteTileColor),
+        digitBrush = config.brushOf(if (isHour) PebbleThemeSpec.HourDigitColor else PebbleThemeSpec.MinuteDigitColor),
         fontFamily = PebbleThemeSpec.Font,
         size = size,
         fontSize = with(LocalDensity.current) { (size * 50f / 112f).toSp() },
@@ -129,8 +131,8 @@ private fun PebbleTile(
     text: String,
     shape: AodShapeValue,
     isFilled: Boolean,
-    tileColor: Color,
-    digitColor: Color,
+    tileBrush: Brush,
+    digitBrush: Brush,
     fontFamily: FontFamily,
     size: Dp,
     fontSize: TextUnit,
@@ -180,9 +182,9 @@ private fun PebbleTile(
                         )
                     }
                     if (isFilled) {
-                        drawPath(path = path, color = tileColor)
+                        drawPath(path = path, brush = tileBrush)
                     } else {
-                        drawPath(path = path, color = tileColor, style = stroke)
+                        drawPath(path = path, brush = tileBrush, style = stroke)
                     }
                 }
             },
@@ -190,7 +192,7 @@ private fun PebbleTile(
     ) {
         PebbleDigits(
             text = text,
-            color = digitColor,
+            brush = digitBrush,
             fontFamily = fontFamily,
             fontSize = fontSize,
             transition = transition,
@@ -201,7 +203,7 @@ private fun PebbleTile(
 @Composable
 private fun PebbleDigits(
     text: String,
-    color: Color,
+    brush: Brush,
     fontFamily: FontFamily,
     fontSize: TextUnit,
     transition: AodTransitionValue,
@@ -209,7 +211,7 @@ private fun PebbleDigits(
     val digits = @Composable { value: String ->
         Text(
             text = value,
-            color = color,
+            style = LocalTextStyle.current.merge(TextStyle(brush = brush)),
             fontSize = fontSize,
             fontWeight = FontWeight.Bold,
             fontFamily = fontFamily,
@@ -257,7 +259,7 @@ fun PebbleDate(
     Text(
         text = if (isBold) text.uppercase() else text,
         modifier = modifier,
-        color = config[PebbleThemeSpec.DateColor],
+        style = LocalTextStyle.current.merge(TextStyle(brush = config.brushOf(PebbleThemeSpec.DateColor))),
         fontSize = (if (isBold) 15.sp else 16.sp) * scale,
         fontWeight = if (isBold) FontWeight.Bold else FontWeight.Normal,
         fontFamily = PebbleThemeSpec.Font,
