@@ -15,7 +15,7 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -149,14 +149,14 @@ private fun JerseyPortraitClock(
 
     Layout(
         content = {
-            JerseyTimeRow(nowMillis = state.nowMillis, isHour = true, glyphs = glyphs, rowHeight = rowHeight, color = config[JerseyThemeSpec.HourColor])
+            JerseyTimeRow(nowMillis = state.nowMillis, isHour = true, glyphs = glyphs, rowHeight = rowHeight, brush = config.brushOf(JerseyThemeSpec.HourColor))
 
-            JerseyTimeRow(nowMillis = state.nowMillis, isHour = false, glyphs = glyphs, rowHeight = rowHeight, color = config[JerseyThemeSpec.MinuteColor])
+            JerseyTimeRow(nowMillis = state.nowMillis, isHour = false, glyphs = glyphs, rowHeight = rowHeight, brush = config.brushOf(JerseyThemeSpec.MinuteColor))
 
             // Bọc Box: khối ẩn hẳn (AnimatedVisibility) thì không có node, Layout đọc con theo thứ tự nên luôn cần đủ 4 con.
             Box {
                 AnimatedVisibility(visible = state.extras.isDateEnabled, enter = fadeIn(), exit = fadeOut()) {
-                    JerseyDateVertical(nowMillis = state.nowMillis, color = config[JerseyThemeSpec.DateColor], rowHeight = unit)
+                    JerseyDateVertical(nowMillis = state.nowMillis, brush = config.brushOf(JerseyThemeSpec.DateColor), rowHeight = unit)
                 }
             }
 
@@ -198,14 +198,14 @@ private fun JerseyLandscapeClock(
 
     Layout(
         content = {
-            JerseyTimeRow(nowMillis = state.nowMillis, isHour = true, glyphs = glyphs, rowHeight = rowHeight, color = config[JerseyThemeSpec.HourColor])
+            JerseyTimeRow(nowMillis = state.nowMillis, isHour = true, glyphs = glyphs, rowHeight = rowHeight, brush = config.brushOf(JerseyThemeSpec.HourColor))
 
-            JerseyTimeRow(nowMillis = state.nowMillis, isHour = false, glyphs = glyphs, rowHeight = rowHeight, color = config[JerseyThemeSpec.MinuteColor])
+            JerseyTimeRow(nowMillis = state.nowMillis, isHour = false, glyphs = glyphs, rowHeight = rowHeight, brush = config.brushOf(JerseyThemeSpec.MinuteColor))
 
             // Bọc Box: khối ẩn hẳn (AnimatedVisibility) thì không có node, Layout đọc con theo thứ tự nên luôn cần đủ 4 con.
             Box {
                 AnimatedVisibility(visible = state.extras.isDateEnabled) {
-                    JerseyDateHorizontal(nowMillis = state.nowMillis, color = config[JerseyThemeSpec.DateColor], unit = unit)
+                    JerseyDateHorizontal(nowMillis = state.nowMillis, brush = config.brushOf(JerseyThemeSpec.DateColor), unit = unit)
                 }
             }
 
@@ -242,7 +242,7 @@ private fun JerseyTimeRow(
     isHour: Boolean,
     glyphs: JerseyGlyphs,
     rowHeight: Dp,
-    color: Color,
+    brush: Brush,
 ) {
     val now = rememberZonedDateTime(nowMillis)
     val formatter = rememberFormatter(
@@ -258,7 +258,7 @@ private fun JerseyTimeRow(
         text = now.format(formatter),
         glyphs = glyphs,
         rowHeight = rowHeight,
-        color = color,
+        brush = brush,
         modifier = Modifier.clearAndSetSemantics { if (isHour) contentDescription = description },
     )
 }
@@ -273,6 +273,7 @@ private fun JerseyStatus(
         isFlashlightOn = state.isFlashlightOn,
         notifications = state.notifications,
         color = state.appearance.theme.config[JerseyThemeSpec.StatusColor],
+        brush = state.appearance.theme.config.gradientOf(JerseyThemeSpec.StatusColor)?.toBrush(),
         glyphHeight = unit * JerseyMetrics.STATUS_GLYPH_HEIGHT,
         fontFamily = JerseyThemeSpec.Font,
     )

@@ -12,7 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -34,7 +34,7 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.jersey.JerseyThe
 @Composable
 fun JerseyDateVertical(
     nowMillis: Long,
-    color: Color,
+    brush: Brush,
     rowHeight: Dp,
     modifier: Modifier = Modifier,
 ) {
@@ -51,13 +51,13 @@ fun JerseyDateVertical(
             .clearAndSetSemantics { contentDescription = description },
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        JerseyText(now.format(rememberFormatter(R.string.aod_jersey_date_first_pattern)), color, fontSize, lineHeight)
-        JerseyText("/", color, fontSize, lineHeight)
-        JerseyText(now.format(rememberFormatter(R.string.aod_jersey_date_second_pattern)), color, fontSize, lineHeight)
+        JerseyText(now.format(rememberFormatter(R.string.aod_jersey_date_first_pattern)), brush, fontSize, lineHeight)
+        JerseyText("/", brush, fontSize, lineHeight)
+        JerseyText(now.format(rememberFormatter(R.string.aod_jersey_date_second_pattern)), brush, fontSize, lineHeight)
 
         JerseyWeekdayPill(
             text = now.format(rememberFormatter(R.string.aod_date_weekday_pattern)).uppercase(),
-            color = color,
+            brush = brush,
             rowHeight = rowHeight,
             fontSize = fontSize,
             isVertical = true,
@@ -73,7 +73,7 @@ fun JerseyDateVertical(
 @Composable
 fun JerseyDateHorizontal(
     nowMillis: Long,
-    color: Color,
+    brush: Brush,
     unit: Dp,
     modifier: Modifier = Modifier,
 ) {
@@ -89,11 +89,11 @@ fun JerseyDateHorizontal(
         modifier = modifier.clearAndSetSemantics { contentDescription = description },
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        JerseyText("$first / $second", color, fontSize, lineHeight)
+        JerseyText("$first / $second", brush, fontSize, lineHeight)
 
         JerseyWeekdayPill(
             text = now.format(rememberFormatter(R.string.aod_date_weekday_pattern)).uppercase(),
-            color = color,
+            brush = brush,
             rowHeight = unit,
             fontSize = fontSize,
             isVertical = false,
@@ -109,7 +109,7 @@ fun JerseyDateHorizontal(
 @Composable
 private fun JerseyWeekdayPill(
     text: String,
-    color: Color,
+    brush: Brush,
     rowHeight: Dp,
     fontSize: TextUnit,
     isVertical: Boolean,
@@ -119,7 +119,7 @@ private fun JerseyWeekdayPill(
 
     Box(
         modifier = modifier
-            .border(width = maxOf(rowHeight * JerseyMetrics.PILL_BORDER, JerseyMetrics.MinStroke), color = color, shape = CircleShape)
+            .border(width = maxOf(rowHeight * JerseyMetrics.PILL_BORDER, JerseyMetrics.MinStroke), brush = brush, shape = CircleShape)
             .padding(
                 horizontal = if (isVertical) 0.dp else along,
                 vertical = if (isVertical) along else 0.dp,
@@ -128,7 +128,7 @@ private fun JerseyWeekdayPill(
     ) {
         JerseyText(
             text = text,
-            color = color,
+            brush = brush,
             fontSize = fontSize,
             lineHeight = fontSize,
             modifier = if (isVertical) Modifier.verticalText() else Modifier,
@@ -140,7 +140,7 @@ private fun JerseyWeekdayPill(
 @Composable
 private fun JerseyText(
     text: String,
-    color: Color,
+    brush: Brush,
     fontSize: TextUnit,
     lineHeight: TextUnit,
     modifier: Modifier = Modifier,
@@ -149,7 +149,6 @@ private fun JerseyText(
     Text(
         text = text,
         modifier = modifier,
-        color = color,
         fontSize = fontSize,
         fontWeight = FontWeight.Bold,
         fontFamily = JerseyThemeSpec.Font,
@@ -157,6 +156,7 @@ private fun JerseyText(
         maxLines = 1,
         softWrap = false,
         style = TextStyle(
+            brush = brush,
             lineHeight = lineHeight,
             lineHeightStyle = LineHeightStyle(
                 alignment = LineHeightStyle.Alignment.Center,

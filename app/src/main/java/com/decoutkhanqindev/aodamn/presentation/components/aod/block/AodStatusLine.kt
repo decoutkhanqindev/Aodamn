@@ -24,9 +24,11 @@ import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
@@ -54,6 +56,7 @@ import com.decoutkhanqindev.aodamn.presentation.theme.Red
 // Dòng trạng thái của chủ đề tự vẽ pin + thông báo (AodBlockValue.STATUS: Số áo, Viên nang): pin (icon pin dọc, đang sạc thì có tia sét) ·
 // icon các app đang có thông báo, chung một dòng. Đèn pin đang bật thì icon Mint cạnh pin. Mọi kích thước theo glyphHeight (chiều cao icon pin,
 // tỉ lệ đo trên ảnh mẫu Số áo); gapScale thu khoảng cách cho chủ đề có dòng chặt hơn (Viên nang). Không có gì để hiện thì không chiếm chỗ.
+// brush khác null (màu dòng trạng thái là gradient) thì pin, chữ, chấm, icon tô gradient theo khung của từng phần; pin yếu vẫn đỏ.
 @Composable
 fun AodStatusLine(
     battery: BatteryUiModel?,
@@ -64,6 +67,7 @@ fun AodStatusLine(
     fontFamily: FontFamily,
     modifier: Modifier = Modifier,
     gapScale: Float = 1f,
+    brush: Brush? = null,
 ) {
     val hasPower = battery != null || isFlashlightOn
     val hasIcons = notifications.icons.isNotEmpty()
@@ -92,6 +96,7 @@ fun AodStatusLine(
                     AodBatteryGlyph(
                         battery = battery,
                         color = color,
+                        brush = brush,
                         modifier = Modifier.size(
                             width = glyphHeight * 0.522f,
                             height = glyphHeight,
@@ -101,6 +106,7 @@ fun AodStatusLine(
                     StatusText(
                         text = stringResource(R.string.aod_battery, battery.percent),
                         color = color,
+                        brush = brush,
                         fontSize = fontSize,
                         fontWeight = FontWeight.Medium,
                         fontFamily = fontFamily,
@@ -126,6 +132,7 @@ fun AodStatusLine(
                 Box(
                     modifier = Modifier
                         .size(glyphHeight * 0.228f)
+                        .aodTint(brush)
                         .background(color = color, shape = CircleShape),
                 )
 
@@ -140,7 +147,8 @@ fun AodStatusLine(
                             contentDescription = null,
                             modifier = Modifier
                                 .padding(start = if (index > 0) glyphHeight * 1.13f * gapScale else 0.dp)
-                                .size(glyphHeight * 0.978f),
+                                .size(glyphHeight * 0.978f)
+                                .aodTint(brush),
                             colorFilter = ColorFilter.tint(color),
                         )
                     }
@@ -150,6 +158,7 @@ fun AodStatusLine(
                     StatusText(
                         text = stringResource(R.string.aod_notifications_overflow, notifications.overflowCount),
                         color = color,
+                        brush = brush,
                         fontSize = fontSize,
                         fontWeight = FontWeight.Normal,
                         fontFamily = fontFamily,
@@ -167,6 +176,7 @@ fun AodStatusLine(
 private fun StatusText(
     text: String,
     color: Color,
+    brush: Brush?,
     fontSize: TextUnit,
     fontWeight: FontWeight,
     fontFamily: FontFamily,
@@ -175,13 +185,14 @@ private fun StatusText(
     Text(
         text = text,
         modifier = modifier,
-        color = color,
+        color = if (brush == null) color else Color.Unspecified,
         fontSize = fontSize,
         fontWeight = fontWeight,
         fontFamily = fontFamily,
         maxLines = 1,
         softWrap = false,
         style = TextStyle(
+            brush = brush,
             lineHeight = fontSize,
             lineHeightStyle = LineHeightStyle(
                 alignment = LineHeightStyle.Alignment.Center,
@@ -197,10 +208,12 @@ private fun StatusText(
 private fun AodBatteryGlyph(
     battery: BatteryUiModel,
     color: Color,
+    brush: Brush?,
     modifier: Modifier = Modifier,
 ) {
     val level = battery.percent.coerceIn(0, 100) / 100f
-    val fill = if (battery.isLow && !battery.isCharging) Red else color
+    val outline = brush ?: SolidColor(color)
+    val fill = if (battery.isLow && !battery.isCharging) SolidColor(Red) else outline
 
     Box(
         modifier = modifier.drawWithCache {
@@ -223,14 +236,14 @@ private fun AodBatteryGlyph(
 
             onDrawBehind {
                 drawRoundRect(
-                    color = color,
+                    brush = outline,
                     topLeft = Offset((size.width - capWidth) / 2f, 0f),
                     size = Size(capWidth, capHeight + strokeWidth / 2f),
                     cornerRadius = CornerRadius(strokeWidth / 2f),
                 )
                 if (battery.isCharging) {
                     drawRoundRect(
-                        color = color,
+                        brush = outline,
                         topLeft = Offset(0f, bodyTop),
                         size = Size(size.width, bodyHeight),
                         cornerRadius = corner,
@@ -238,7 +251,7 @@ private fun AodBatteryGlyph(
                     drawPath(path = bolt, color = Black)
                 } else {
                     drawRoundRect(
-                        color = color,
+                        brush = outline,
                         topLeft = Offset(strokeWidth / 2f, bodyTop + strokeWidth / 2f),
                         size = Size(size.width - strokeWidth, bodyHeight - strokeWidth),
                         cornerRadius = corner,
@@ -246,7 +259,7 @@ private fun AodBatteryGlyph(
                     )
                     if (fillHeight > 0f) {
                         drawRoundRect(
-                            color = fill,
+                            brush = fill,
                             topLeft = Offset(padding, size.height - padding - fillHeight),
                             size = Size(size.width - padding * 2f, fillHeight),
                             cornerRadius = CornerRadius(strokeWidth / 2f),

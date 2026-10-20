@@ -2,6 +2,7 @@ package com.decoutkhanqindev.aodamn.presentation.components.aod.theme.jersey
 
 import android.graphics.Matrix
 import android.graphics.Paint
+import android.graphics.Path as AndroidPath
 import android.graphics.RectF
 import android.graphics.Typeface
 import androidx.compose.animation.Crossfade
@@ -16,7 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.asComposePath
@@ -26,7 +27,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import com.decoutkhanqindev.aodamn.presentation.theme.FontFamilyBigShouldersDisplay
 import kotlin.math.max
-import android.graphics.Path as AndroidPath
 
 // Một hàng chữ số: mỗi số một ô rộng cố định (JerseyMetrics.PITCH) nên hàng không đổi bề ngang theo giờ; số đổi thì mờ chéo trong ô.
 @Composable
@@ -34,7 +34,7 @@ fun JerseyDigitRow(
     text: String,
     glyphs: JerseyGlyphs,
     rowHeight: Dp,
-    color: Color,
+    brush: Brush,
     modifier: Modifier = Modifier,
 ) {
     Row(modifier = modifier) {
@@ -45,7 +45,7 @@ fun JerseyDigitRow(
                 animationSpec = tween(durationMillis = JerseyMetrics.DIGIT_CHANGE_MILLIS),
                 label = "JerseyDigit",
             ) { target ->
-                JerseyDigit(digit = target, glyphs = glyphs, color = color)
+                JerseyDigit(digit = target, glyphs = glyphs, brush = brush)
             }
         }
     }
@@ -55,7 +55,7 @@ fun JerseyDigitRow(
 private fun JerseyDigit(
     digit: Char,
     glyphs: JerseyGlyphs,
-    color: Color,
+    brush: Brush,
 ) {
     Box(
         modifier = Modifier
@@ -66,7 +66,7 @@ private fun JerseyDigit(
                 val stroke = Stroke(width = strokeWidth, join = StrokeJoin.Round)
 
                 onDrawBehind {
-                    drawPath(path = outline, color = color, style = stroke)
+                    drawPath(path = outline, brush = brush, style = stroke)
                 }
             },
     )

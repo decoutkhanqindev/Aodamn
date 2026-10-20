@@ -100,6 +100,9 @@ dòng nào. Đã test trên máy.
   - Sỏi: 6 màu (khối giờ / phút, số giờ / phút, ngày, nhạc) bật gradient. Khối (đặc lẫn viền) và nút phát tô theo khung của khối, nút
     phát xoay thì gradient xoay theo; chữ số, ngày tô bằng brush; thanh sóng tô phần đã nghe (`AodWaveTrack` thêm `brush` mặc định
     `SolidColor(color)`, chủ đề khác không đổi). Icon trên nút phát chọn đen / trắng theo màu Đầu.
+  - Số áo: giờ, phút, ngày, dòng trạng thái bật gradient. Nét viền mỗi chữ số tô theo ô của số đó; chữ ngày và viền viên thuốc thứ tô
+    bằng brush. `AodStatusLine` thêm `brush` (mặc định null = như cũ, chủ đề khác chưa truyền): pin, chữ, chấm ngăn, icon app tô gradient,
+    pin yếu vẫn đỏ. `Modifier.aodTint(brush)` cho chỗ nhận Brush thẳng.
 - Test `AodColorOptionTest`: màu cũ đọc như cũ, gradient lưu / đọc lại, về Một màu xoá khoá phụ, mặc định gradient, đặt lại, đổi hướng.
 
 ### Đổi

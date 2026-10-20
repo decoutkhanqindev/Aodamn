@@ -29,10 +29,10 @@ object JerseyThemeSpec : AodThemeSpec {
         default = 100,
     )
     // Mặc định giờ và ngày cam như áo đấu, phút trắng: thẻ chủ đề bắt mắt.
-    val HourColor = AodColorOption(key = "hour_color", labelRes = R.string.theme_color_hour, default = Orange)
-    val MinuteColor = AodColorOption(key = "minute_color", labelRes = R.string.theme_color_minute, default = GreyED)
-    val DateColor = AodColorOption(key = "date_color", labelRes = R.string.theme_color_date, default = Orange)
-    val StatusColor = AodColorOption(key = "status_color", labelRes = R.string.theme_color_status, default = GreyED)
+    val HourColor = AodColorOption(key = "hour_color", labelRes = R.string.theme_color_hour, default = Orange, isGradientAllowed = true)
+    val MinuteColor = AodColorOption(key = "minute_color", labelRes = R.string.theme_color_minute, default = GreyED, isGradientAllowed = true)
+    val DateColor = AodColorOption(key = "date_color", labelRes = R.string.theme_color_date, default = Orange, isGradientAllowed = true)
+    val StatusColor = AodColorOption(key = "status_color", labelRes = R.string.theme_color_status, default = GreyED, isGradientAllowed = true)
 
     // Mỗi khối chủ đề tự vẽ (ownBlocks) có tab ở đây: Tùy chỉnh › Ngày / Pin / Thông báo dẫn sang màn chủ đề.
     override val tabs = persistentListOf(
