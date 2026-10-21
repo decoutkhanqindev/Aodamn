@@ -109,6 +109,9 @@ dòng nào. Đã test trên máy.
   - Thẻ: 6 màu (giờ, phút + ô AM/PM, thẻ, ngày, nhạc, dòng trạng thái) bật gradient. Mỗi chữ số (đặc lẫn viền) tô theo ô của số đó, ô
     AM/PM và chữ trong ô theo khung ô, nền / viền thẻ theo khung thẻ (giữ độ mờ); ngày, tên bài, nghệ sĩ, nút phát, nút lùi / tới (lúc
     bấm được) và thanh sóng tô gradient; icon nút phát chọn đen / trắng theo màu Đầu.
+  - Tháp: 5 màu (giờ, phút, ngày, nhạc, dòng trạng thái) bật gradient. Mỗi chữ số tô theo ô của số đó ở cả 4 kiểu tô (đặc, viền, mờ dần
+    xuống / lên); kiểu mờ dần vẽ nét gradient rồi lấy độ mờ của dải fade làm mặt nạ (DstIn) trên lớp riêng nên mờ y như bản một màu; một
+    màu thì vẽ như cũ. Ngày, tên bài, nghệ sĩ, nút lùi / tới (lúc bấm được) và thanh tiến trình tô gradient.
 - Test `AodColorOptionTest`: màu cũ đọc như cũ, gradient lưu / đọc lại, về Một màu xoá khoá phụ, mặc định gradient, đặt lại, đổi hướng.
 
 ### Đổi

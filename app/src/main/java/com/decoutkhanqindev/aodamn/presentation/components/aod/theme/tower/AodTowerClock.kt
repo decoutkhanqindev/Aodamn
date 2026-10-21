@@ -14,10 +14,13 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -70,6 +73,7 @@ fun AodTowerClock(
                 glyphs = glyphs,
                 height = unit,
                 color = config[TowerThemeSpec.HourColor],
+                gradient = config.gradientOf(TowerThemeSpec.HourColor)?.toBrush(),
                 paint = style.hourPaint,
             )
 
@@ -78,6 +82,7 @@ fun AodTowerClock(
                 glyphs = glyphs,
                 height = unit,
                 color = config[TowerThemeSpec.MinuteColor],
+                gradient = config.gradientOf(TowerThemeSpec.MinuteColor)?.toBrush(),
                 paint = style.minutePaint,
                 modifier = Modifier.offset(x = unit * TowerMetrics.MINUTE_LEFT),
             )
@@ -91,6 +96,7 @@ private fun TowerDigitRow(
     glyphs: TowerGlyphs,
     height: Dp,
     color: Color,
+    gradient: Brush?,
     paint: AodTowerPaintValue,
     modifier: Modifier = Modifier,
 ) {
@@ -102,7 +108,7 @@ private fun TowerDigitRow(
                 animationSpec = tween(durationMillis = TowerMetrics.DIGIT_CHANGE_MILLIS),
                 label = "TowerDigit",
             ) { target ->
-                TowerDigit(digit = target, glyphs = glyphs, color = color, paint = paint)
+                TowerDigit(digit = target, glyphs = glyphs, color = color, gradient = gradient, paint = paint)
             }
         }
     }
@@ -113,11 +119,17 @@ private fun TowerDigit(
     digit: Char,
     glyphs: TowerGlyphs,
     color: Color,
+    gradient: Brush?,
     paint: AodTowerPaintValue,
 ) {
+    val isFade = paint == AodTowerPaintValue.FADE_DOWN || paint == AodTowerPaintValue.FADE_UP
+
+    // Màu gradient (null = một màu, vẽ như cũ) tô theo ô của từng số. Kiểu mờ dần thì vẽ nét gradient rồi lấy độ mờ của dải fade làm mặt nạ
+    // (DstIn) trên lớp riêng, nên cùng một độ mờ như bản một màu.
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .then(if (gradient != null && isFade) Modifier.graphicsLayer(compositingStrategy = CompositingStrategy.Offscreen) else Modifier)
             .drawWithCache {
                 val path = glyphs.digit(digit = digit, size = size)
                 val stroke = Stroke(
@@ -150,6 +162,13 @@ private fun TowerDigit(
 
                 onDrawBehind {
                     when {
+                        gradient != null && fade != null -> {
+                            drawPath(path = path, brush = gradient, style = stroke)
+                            drawRect(brush = fade, blendMode = BlendMode.DstIn)
+                        }
+
+                        gradient != null && paint == AodTowerPaintValue.FILL -> drawPath(path = path, brush = gradient)
+                        gradient != null -> drawPath(path = path, brush = gradient, style = stroke)
                         fade != null -> drawPath(path = path, brush = fade, style = stroke)
                         paint == AodTowerPaintValue.FILL -> drawPath(path = path, color = color)
                         else -> drawPath(path = path, color = color, style = stroke)
@@ -163,7 +182,7 @@ private fun TowerDigit(
 @Composable
 fun TowerDate(
     nowMillis: Long,
-    color: Color,
+    brush: Brush,
     fontSize: Dp,
     modifier: Modifier = Modifier,
 ) {
@@ -174,13 +193,13 @@ fun TowerDate(
     Text(
         text = now.format(formatter).uppercase(),
         modifier = modifier,
-        color = color,
         fontSize = size,
         fontFamily = TowerThemeSpec.Font,
         letterSpacing = TowerMetrics.DATE_TRACKING.em,
         maxLines = 1,
         softWrap = false,
         style = TextStyle(
+            brush = brush,
             lineHeight = size,
             lineHeightStyle = LineHeightStyle(
                 alignment = LineHeightStyle.Alignment.Center,

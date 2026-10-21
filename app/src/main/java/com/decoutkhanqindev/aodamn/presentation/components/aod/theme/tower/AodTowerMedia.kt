@@ -11,11 +11,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -23,6 +25,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,6 +34,7 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.decoutkhanqindev.aodamn.R
 import com.decoutkhanqindev.aodamn.presentation.components.aod.block.AodMediaProgress
+import com.decoutkhanqindev.aodamn.presentation.components.aod.block.aodTint
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.AodWaveTrack
 import com.decoutkhanqindev.aodamn.presentation.components.onClick
 import com.decoutkhanqindev.aodamn.presentation.model.aod.info.MediaProgressUiModel
@@ -50,6 +54,8 @@ fun AodTowerMedia(
     onIntent: (AodIntent) -> Unit,
 ) {
     val color = config[TowerThemeSpec.MediaColor]
+    val brush = config.brushOf(TowerThemeSpec.MediaColor)
+    val gradientBrush = config.gradientOf(TowerThemeSpec.MediaColor)?.toBrush()
     val progress = media.progress
     val textAlpha = animateFloatAsState(
         targetValue = if (media.isPlaying) 1f else 0.6f,
@@ -69,6 +75,7 @@ fun AodTowerMedia(
                 contentDescription = stringResource(R.string.aod_media_previous),
                 isEnabled = media.canSkipToPrevious,
                 color = color,
+                gradient = gradientBrush,
                 onClick = { onIntent(AodIntent.SkipToPreviousTrack) },
                 modifier = Modifier.padding(start = 20.dp, end = 10.dp),
             )
@@ -89,7 +96,7 @@ fun AodTowerMedia(
             ) {
                 Text(
                     text = media.title,
-                    color = color,
+                    style = LocalTextStyle.current.merge(TextStyle(brush = brush)),
                     fontSize = 13.sp,
                     fontFamily = TowerThemeSpec.Font,
                     letterSpacing = 0.38.em,
@@ -104,7 +111,7 @@ fun AodTowerMedia(
                         modifier = Modifier
                             .padding(top = 8.dp)
                             .alpha(0.8f),
-                        color = color,
+                        style = LocalTextStyle.current.merge(TextStyle(brush = brush)),
                         fontSize = 11.5.sp,
                         fontFamily = TowerThemeSpec.Font,
                         letterSpacing = 0.38.em,
@@ -120,6 +127,7 @@ fun AodTowerMedia(
                 contentDescription = stringResource(R.string.aod_media_next),
                 isEnabled = media.canSkipToNext,
                 color = color,
+                gradient = gradientBrush,
                 onClick = { onIntent(AodIntent.SkipToNextTrack) },
                 modifier = Modifier.padding(start = 10.dp, end = 20.dp),
             )
@@ -134,6 +142,7 @@ fun AodTowerMedia(
                         wave = { 0f },
                         color = color,
                         trackColor = color.copy(alpha = color.alpha * 0.3f),
+                        brush = brush,
                         height = 3.dp,
                         strokeWidth = 3.dp,
                         wavelength = 40.dp,
@@ -153,6 +162,7 @@ private fun TowerMediaButton(
     contentDescription: String,
     isEnabled: Boolean,
     color: Color,
+    gradient: Brush?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -165,7 +175,9 @@ private fun TowerMediaButton(
         Icon(
             painter = painterResource(iconRes),
             contentDescription = contentDescription,
-            modifier = Modifier.size(14.dp),
+            modifier = Modifier
+                .size(14.dp)
+                .aodTint(gradient.takeIf { isEnabled }),
             tint = if (isEnabled) color else Grey5A,
         )
     }

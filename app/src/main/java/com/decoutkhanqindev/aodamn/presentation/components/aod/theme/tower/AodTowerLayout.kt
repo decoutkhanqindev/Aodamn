@@ -185,7 +185,7 @@ private fun TowerClockAndDate(
             AnimatedVisibility(visible = state.extras.isDateEnabled) {
                 TowerDate(
                     nowMillis = state.nowMillis,
-                    color = config[TowerThemeSpec.DateColor],
+                    brush = config.brushOf(TowerThemeSpec.DateColor),
                     fontSize = dateFont,
                     modifier = Modifier.padding(end = if (isWeatherShown) 12.dp else 0.dp),
                 )
@@ -213,6 +213,7 @@ private fun TowerStatus(
         isFlashlightOn = state.isFlashlightOn,
         notifications = state.notifications,
         color = state.appearance.theme.config[TowerThemeSpec.StatusColor],
+        brush = state.appearance.theme.config.gradientOf(TowerThemeSpec.StatusColor)?.toBrush(),
         glyphHeight = glyphHeight,
         fontFamily = TowerThemeSpec.Font,
         modifier = modifier,
