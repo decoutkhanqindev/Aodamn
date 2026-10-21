@@ -12,12 +12,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipPath
@@ -55,9 +57,14 @@ fun AodHalfMoonDial(
     modifier: Modifier = Modifier,
 ) {
     val hourColor = config[HalfMoonThemeSpec.HourColor]
+    val hourGradient = config.gradientOf(HalfMoonThemeSpec.HourColor)
     val minuteColor = config[HalfMoonThemeSpec.MinuteColor]
+    val minuteGradient = config.gradientOf(HalfMoonThemeSpec.MinuteColor)
     val ringColor = config[HalfMoonThemeSpec.RingColor]
+    val ringGradient = config.gradientOf(HalfMoonThemeSpec.RingColor)
     val dialColor = config[HalfMoonThemeSpec.DialColor]
+    val dialGradient = config.gradientOf(HalfMoonThemeSpec.DialColor)
+    val dialBrush = config.brushOf(HalfMoonThemeSpec.DialColor)
     val is24Hour = is24HourFormat()
     val description = rememberZonedDateTime(nowMillis).format(rememberTimeFormatter())
     val clockMillis = remember { mutableLongStateOf(System.currentTimeMillis()) }
@@ -85,7 +92,7 @@ fun AodHalfMoonDial(
                             major = HalfMoonMetrics.SECOND_TICK_MAJOR,
                             minor = HalfMoonMetrics.SECOND_TICK_MINOR,
                             end = HalfMoonMetrics.SECOND_TICK_END,
-                            color = dialColor,
+                            brush = dialBrush,
                             width = HalfMoonMetrics.TICK_WIDTH_PX,
                         )
                     }
@@ -97,7 +104,7 @@ fun AodHalfMoonDial(
                             major = HalfMoonMetrics.MINUTE_TICK_MAJOR,
                             minor = HalfMoonMetrics.MINUTE_TICK_MINOR,
                             end = HalfMoonMetrics.MINUTE_TICK_END,
-                            color = dialColor,
+                            brush = dialBrush,
                             width = HalfMoonMetrics.TICK_WIDTH_PX,
                         )
                     }
@@ -141,6 +148,7 @@ fun AodHalfMoonDial(
                             radius = HalfMoonMetrics.SECOND_LABEL_RADIUS * radius,
                             size = HalfMoonMetrics.SECOND_LABEL_SIZE * radius,
                             color = dialColor,
+                            gradient = dialGradient,
                         )
                         drawHalfMoonLabels(
                             paints = paints,
@@ -149,6 +157,7 @@ fun AodHalfMoonDial(
                             radius = HalfMoonMetrics.MINUTE_LABEL_RADIUS * radius,
                             size = HalfMoonMetrics.MINUTE_LABEL_SIZE * radius,
                             color = dialColor,
+                            gradient = dialGradient,
                         )
                     }
 
@@ -158,15 +167,19 @@ fun AodHalfMoonDial(
                         center = Offset(center.x + HalfMoonMetrics.HOUR_OFFSET * radius, center.y),
                         size = HalfMoonMetrics.HOUR_SIZE * radius,
                         color = hourColor,
+                        gradient = hourGradient,
                     )
-                    paints.drawLabel(this, time.minuteText, Offset(pillX, center.y), minuteSize, minuteColor)
+                    paints.drawLabel(this, time.minuteText, Offset(pillX, center.y), minuteSize, minuteColor, gradient = minuteGradient)
 
                     val ringLeft = pillX - halfWidth
                     val ringRight = center.x + radius - HalfMoonMetrics.RING_WIDTH_PX / 2f
+                    val ringTopLeft = Offset(ringLeft, center.y - halfHeight)
+                    val ringSizePx = Size(ringRight - ringLeft, halfHeight * 2f)
+                    // Viền viên phút chỉ chiếm một phần vùng vẽ nên gradient theo khung của chính viên.
                     drawRoundRect(
-                        color = ringColor,
-                        topLeft = Offset(ringLeft, center.y - halfHeight),
-                        size = Size(ringRight - ringLeft, halfHeight * 2f),
+                        brush = ringGradient?.toBrush(Rect(ringTopLeft, ringSizePx)) ?: SolidColor(ringColor),
+                        topLeft = ringTopLeft,
+                        size = ringSizePx,
                         cornerRadius = CornerRadius(min(halfWidth, halfHeight)),
                         style = ringStroke,
                     )

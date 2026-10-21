@@ -78,6 +78,15 @@ class AodColorOptionTest {
     }
 
     @Test
+    fun `every theme color allows a gradient`() {
+        AodThemeValue.entries.forEach { theme ->
+            theme.spec.options.filterIsInstance<AodColorOption>().forEach { option ->
+                assertTrue("${theme.id}: ${option.key}", option.isGradientAllowed)
+            }
+        }
+    }
+
+    @Test
     fun `every shared block allows a gradient and carries it to its style`() {
         AodComponentValue.entries.forEach { component ->
             assertTrue(component.name, AodComponentSpec.optionsOf(component).color.isGradientAllowed)

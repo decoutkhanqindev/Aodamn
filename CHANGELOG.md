@@ -124,6 +124,13 @@ dòng nào. Đã test trên máy.
     chỗ bắt đầu ra mép mặt số; hai vòng tròn giữa (màu phút) theo khung vòng ngoài (`AodGradient.toBrush(bounds)` mới). Thông báo mới
     nhất (icon, chữ chạy), ngày, trình phát tô gradient. Shader gradient cho chỗ vẽ bằng `Paint` gom vào `AodGradientShader.kt`
     (`toShader`, `toLineShader`), Vành dùng lại.
+  - Bán nguyệt: 7 màu (giờ, phút, viền viên phút, mặt số, ngày, dòng trạng thái, nhạc) bật gradient. Số giờ, số phút trong viên, nhãn giây /
+    phút quanh mặt số là shader theo khung nét chữ của từng nhãn; vạch giây / phút tô theo cả vòng nên đổi màu quanh vòng và xoay theo giờ
+    thật; viền viên phút theo khung viên; dòng ngày vẫn tối hơn 30% (từng màu của gradient cùng tối đi), thứ, thông báo mới nhất, trình
+    phát tô gradient.
+  - Dải màu (chủ đề của phiên khác): 3 màu còn lại là pin, thông báo, nhạc cũng bật gradient (dòng pin, chấm ngăn, icon thông báo,
+    thông báo mới nhất, trình phát). Giờ mọi màu của mọi chủ đề đều có tab Gradient; test `every theme color allows a gradient` chặn chủ
+    đề mới quên bật.
   - Nét vẽ ở Tùy chỉnh bật gradient: ảnh nét vẽ phủ `Modifier.aodTint(style)` nên gradient ăn đúng theo nét, trải theo khung ảnh. Giờ cả
     8 khối dùng chung đều có tab Gradient.
 - Test `AodColorOptionTest`: màu cũ đọc như cũ, gradient lưu / đọc lại, về Một màu xoá khoá phụ, mặc định gradient, đặt lại, đổi hướng.

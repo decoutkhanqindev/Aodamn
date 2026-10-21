@@ -26,19 +26,19 @@ object HalfMoonThemeSpec : AodThemeSpec {
     val Font: FontFamily = FontFamilyGoogleSansText
 
     // Viền viên phút đỏ cho thẻ chủ đề bắt mắt (màu nhấn chưa chủ đề nào dùng); còn lại như app mẫu: số trắng, vạch xám #757575.
-    val HourColor = AodColorOption(key = "hour_color", labelRes = R.string.theme_color_hour, default = GreyED)
-    val MinuteColor = AodColorOption(key = "minute_color", labelRes = R.string.theme_color_minute, default = GreyED)
-    val RingColor = AodColorOption(key = "ring_color", labelRes = R.string.theme_color_minute_ring, default = Red)
-    val DialColor = AodColorOption(key = "dial_color", labelRes = R.string.theme_color_dial, default = Grey6E)
+    val HourColor = AodColorOption(key = "hour_color", labelRes = R.string.theme_color_hour, default = GreyED, isGradientAllowed = true)
+    val MinuteColor = AodColorOption(key = "minute_color", labelRes = R.string.theme_color_minute, default = GreyED, isGradientAllowed = true)
+    val RingColor = AodColorOption(key = "ring_color", labelRes = R.string.theme_color_minute_ring, default = Red, isGradientAllowed = true)
+    val DialColor = AodColorOption(key = "dial_color", labelRes = R.string.theme_color_dial, default = Grey6E, isGradientAllowed = true)
 
     // Thứ đủ màu, dòng ngày tối hơn 30% như app mẫu.
-    val DateColor = AodColorOption(key = "date_color", labelRes = R.string.theme_color_date, default = GreyED)
+    val DateColor = AodColorOption(key = "date_color", labelRes = R.string.theme_color_date, default = GreyED, isGradientAllowed = true)
 
     // Dòng pin · thông báo tối hơn như app mẫu (màu điều khiển pha 30% đen).
-    val StatusColor = AodColorOption(key = "status_color", labelRes = R.string.theme_color_status, default = Grey9A)
+    val StatusColor = AodColorOption(key = "status_color", labelRes = R.string.theme_color_status, default = Grey9A, isGradientAllowed = true)
 
     // Tên bài, nghệ sĩ, các nút.
-    val MediaColor = AodColorOption(key = "media_color", labelRes = R.string.theme_color_media, default = GreyE0)
+    val MediaColor = AodColorOption(key = "media_color", labelRes = R.string.theme_color_media, default = GreyE0, isGradientAllowed = true)
 
     // Mỗi khối chủ đề tự vẽ (ownBlocks) có tab ở đây: Tùy chỉnh › Ngày / Pin / Thông báo / Nhạc dẫn sang màn chủ đề.
     override val tabs = persistentListOf(

@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.aodamn.R
 import com.decoutkhanqindev.aodamn.presentation.components.aod.AodPanelBlock
 import com.decoutkhanqindev.aodamn.presentation.components.aod.block.AodStatusLine
+import com.decoutkhanqindev.aodamn.presentation.components.aod.block.aodTint
 import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.AodAppearanceUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.info.AodNotificationsUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.info.BatteryUiModel
@@ -165,6 +166,7 @@ private fun GradientLineStatus(state: AodState) {
     val hasPower = battery != null || state.isFlashlightOn
     val hasIcons = state.notifications.icons.isNotEmpty()
     val notificationsColor = config[GradientLineThemeSpec.NotificationsColor]
+    val notificationsBrush = config.gradientOf(GradientLineThemeSpec.NotificationsColor)?.toBrush()
     val glyph = GradientLineMetrics.StatusGlyph
 
     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -176,6 +178,7 @@ private fun GradientLineStatus(state: AodState) {
             glyphHeight = glyph,
             fontFamily = GradientLineThemeSpec.Font,
             modifier = Modifier.alpha(GradientLineMetrics.STATUS_ALPHA),
+            brush = config.gradientOf(GradientLineThemeSpec.BatteryColor)?.toBrush(),
         )
 
         AnimatedVisibility(visible = hasPower && hasIcons, enter = fadeIn(), exit = fadeOut()) {
@@ -183,6 +186,7 @@ private fun GradientLineStatus(state: AodState) {
                 modifier = Modifier
                     .padding(start = glyph * 1.13f, end = glyph * 1.065f)
                     .size(glyph * 0.228f)
+                    .aodTint(notificationsBrush)
                     .background(color = notificationsColor, shape = CircleShape),
             )
         }
@@ -194,6 +198,7 @@ private fun GradientLineStatus(state: AodState) {
             color = notificationsColor,
             glyphHeight = glyph,
             fontFamily = GradientLineThemeSpec.Font,
+            brush = notificationsBrush,
         )
     }
 }
@@ -206,6 +211,7 @@ private fun GradientLineLatest(
     modifier: Modifier = Modifier,
 ) {
     val color = state.appearance.theme.config[GradientLineThemeSpec.NotificationsColor]
+    val brush = state.appearance.theme.config.gradientOf(GradientLineThemeSpec.NotificationsColor)?.toBrush()
     val text = when {
         latest.isHidden -> stringResource(R.string.aod_notification_content_hidden)
         latest.text.isEmpty() -> latest.title
@@ -219,7 +225,9 @@ private fun GradientLineLatest(
         Image(
             bitmap = remember(latest.icon) { latest.icon.asImageBitmap() },
             contentDescription = null,
-            modifier = Modifier.size(GradientLineMetrics.LatestIcon),
+            modifier = Modifier
+                .size(GradientLineMetrics.LatestIcon)
+                .aodTint(brush),
             colorFilter = ColorFilter.tint(color),
         )
 
@@ -227,7 +235,8 @@ private fun GradientLineLatest(
             text = text,
             modifier = Modifier
                 .padding(start = GradientLineMetrics.LatestIconGap)
-                .basicMarquee(iterations = 1),
+                .basicMarquee(iterations = 1)
+                .aodTint(brush),
             color = color,
             fontSize = GradientLineMetrics.LatestSize,
             fontFamily = GradientLineThemeSpec.Font,

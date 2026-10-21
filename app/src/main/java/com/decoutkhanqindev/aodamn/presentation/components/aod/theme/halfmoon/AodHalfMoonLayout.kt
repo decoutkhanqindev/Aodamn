@@ -15,16 +15,20 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -34,9 +38,11 @@ import com.decoutkhanqindev.aodamn.R
 import com.decoutkhanqindev.aodamn.presentation.components.aod.AodPanelBlock
 import com.decoutkhanqindev.aodamn.presentation.components.aod.block.AodStatusLine
 import com.decoutkhanqindev.aodamn.presentation.components.aod.block.AodWeather
+import com.decoutkhanqindev.aodamn.presentation.components.aod.block.aodTint
 import com.decoutkhanqindev.aodamn.presentation.components.rememberFormatter
 import com.decoutkhanqindev.aodamn.presentation.components.rememberZonedDateTime
 import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.AodAppearanceUiModel
+import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.AodGradient
 import com.decoutkhanqindev.aodamn.presentation.model.aod.info.BatteryUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.info.NotificationContentUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodPanelBlockValue
@@ -47,6 +53,7 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.halfmoon.HalfMoo
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodIntent
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
 import com.decoutkhanqindev.aodamn.presentation.theme.Black
+import kotlinx.collections.immutable.toImmutableList
 
 // Bán nguyệt, màn dọc (mock đã duyệt): nửa mặt số sát mép trái giữa chiều cao như layout mẫu; cột ngày, thứ, thời tiết, dòng pin · thông báo,
 // thông báo mới nhất giữa nửa phải trên trục số đang chỉ (user chốt dòng pin dưới ngày); trình phát giữa vùng dưới mặt số, rộng bằng màn trừ
@@ -163,6 +170,7 @@ private fun HalfMoonColumn(
     val isDateShown = state.extras.isDateEnabled
     val isWeatherShown = state.weather != null && AodComponentValue.WEATHER in state.appearance.theme.value.spec.components
     val statusColor = config[HalfMoonThemeSpec.StatusColor]
+    val statusBrush = config.gradientOf(HalfMoonThemeSpec.StatusColor)?.toBrush()
     val latest = state.notifications.latest
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -170,6 +178,7 @@ private fun HalfMoonColumn(
             HalfMoonDate(
                 nowMillis = state.nowMillis,
                 color = config[HalfMoonThemeSpec.DateColor],
+                gradient = config.gradientOf(HalfMoonThemeSpec.DateColor),
                 dateSize = dateSize,
                 daySize = daySize,
             )
@@ -192,6 +201,7 @@ private fun HalfMoonColumn(
             notifications = state.notifications,
             color = statusColor,
             glyphHeight = HalfMoonMetrics.StatusGlyph,
+            brush = statusBrush,
             fontFamily = HalfMoonThemeSpec.Font,
             modifier = Modifier.padding(top = if (isDateShown || isWeatherShown) HalfMoonMetrics.StatusGap else 0.dp),
         )
@@ -201,6 +211,7 @@ private fun HalfMoonColumn(
                 HalfMoonLatest(
                     latest = latest,
                     color = statusColor,
+                    brush = statusBrush,
                     modifier = Modifier
                         .padding(top = HalfMoonMetrics.LatestGap)
                         .widthIn(max = maxWidth),
@@ -210,11 +221,13 @@ private fun HalfMoonColumn(
     }
 }
 
-// Ngày "dd MMM yyyy" tối hơn 30% rồi thứ "EEEE", in hoa Bold giãn chữ như date_tv / day_tv của layout mẫu.
+// Ngày "dd MMM yyyy" tối hơn 30% rồi thứ "EEEE", in hoa Bold giãn chữ như date_tv / day_tv của layout mẫu; gradient thì từng màu của dòng ngày
+// cũng tối hơn 30%.
 @Composable
 private fun HalfMoonDate(
     nowMillis: Long,
     color: Color,
+    gradient: AodGradient?,
     dateSize: TextUnit,
     daySize: TextUnit,
 ) {
@@ -223,11 +236,18 @@ private fun HalfMoonDate(
     val day = time.format(rememberFormatter(R.string.aod_half_moon_day_pattern)).uppercase()
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        HalfMoonDateText(text = date, color = lerp(color, Black, HalfMoonMetrics.DATE_DARKEN), fontSize = dateSize)
+        HalfMoonDateText(
+            text = date,
+            brush = gradient?.let {
+                gradient.copy(colors = gradient.colors.map { stop -> lerp(stop, Black, HalfMoonMetrics.DATE_DARKEN) }.toImmutableList())
+                    .toBrush()
+            } ?: SolidColor(lerp(color, Black, HalfMoonMetrics.DATE_DARKEN)),
+            fontSize = dateSize,
+        )
 
         HalfMoonDateText(
             text = day,
-            color = color,
+            brush = gradient?.toBrush() ?: SolidColor(color),
             fontSize = daySize,
             modifier = Modifier.padding(top = HalfMoonMetrics.DayGap),
         )
@@ -237,14 +257,14 @@ private fun HalfMoonDate(
 @Composable
 private fun HalfMoonDateText(
     text: String,
-    color: Color,
+    brush: Brush,
     fontSize: TextUnit,
     modifier: Modifier = Modifier,
 ) {
     Text(
         text = text,
         modifier = modifier,
-        color = color,
+        style = LocalTextStyle.current.merge(TextStyle(brush = brush)),
         fontSize = fontSize,
         fontWeight = FontWeight.Bold,
         fontFamily = HalfMoonThemeSpec.Font,
@@ -259,6 +279,7 @@ private fun HalfMoonDateText(
 private fun HalfMoonLatest(
     latest: NotificationContentUiModel,
     color: Color,
+    brush: Brush?,
     modifier: Modifier = Modifier,
 ) {
     val text = when {
@@ -274,7 +295,9 @@ private fun HalfMoonLatest(
         Image(
             bitmap = remember(latest.icon) { latest.icon.asImageBitmap() },
             contentDescription = null,
-            modifier = Modifier.size(HalfMoonMetrics.LatestIcon),
+            modifier = Modifier
+                .size(HalfMoonMetrics.LatestIcon)
+                .aodTint(brush),
             colorFilter = ColorFilter.tint(color),
         )
 
@@ -282,7 +305,8 @@ private fun HalfMoonLatest(
             text = text.uppercase(),
             modifier = Modifier
                 .padding(start = HalfMoonMetrics.LatestIconGap)
-                .basicMarquee(iterations = 1),
+                .basicMarquee(iterations = 1)
+                .aodTint(brush),
             color = color,
             fontSize = HalfMoonMetrics.LatestSize,
             fontFamily = HalfMoonThemeSpec.Font,

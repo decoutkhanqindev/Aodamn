@@ -63,11 +63,16 @@ object GradientLineThemeSpec : AodThemeSpec {
         default = GreyE0,
         isGradientAllowed = true,
     )
-    val BatteryColor = AodColorOption(key = "battery_color", labelRes = R.string.theme_color_battery, default = GreyE0)
-    val NotificationsColor = AodColorOption(key = "notifications_color", labelRes = R.string.theme_color_notifications, default = GreyE0)
+    val BatteryColor = AodColorOption(key = "battery_color", labelRes = R.string.theme_color_battery, default = GreyE0, isGradientAllowed = true)
+    val NotificationsColor = AodColorOption(
+        key = "notifications_color",
+        labelRes = R.string.theme_color_notifications,
+        default = GreyE0,
+        isGradientAllowed = true,
+    )
 
     // Tên bài, nghệ sĩ, các nút.
-    val MediaColor = AodColorOption(key = "media_color", labelRes = R.string.theme_color_media, default = GreyE0)
+    val MediaColor = AodColorOption(key = "media_color", labelRes = R.string.theme_color_media, default = GreyE0, isGradientAllowed = true)
 
     // Mỗi khối chủ đề tự vẽ (ownBlocks) có tab ở đây: Tùy chỉnh › Ngày / Pin / Thông báo / Nhạc dẫn sang màn chủ đề.
     override val tabs = persistentListOf(

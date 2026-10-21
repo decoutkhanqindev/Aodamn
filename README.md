@@ -536,7 +536,10 @@ chủ đề mới không cần màn riêng; chỉ tách màn khi chủ đề c�
    định là `val Font`; mỗi khối trong `ownBlocks` phải có đúng một tab ghi `block = AodBlockValue.X` ở màn chủ đề, vì tab của khối đó ở Tùy chỉnh mở
    thẳng tab này (`ThemeEditorDestination.focusBlock`), `AodThemeSpecTest` kiểm:
    Số áo lúc đầu thiếu tab Pin & thông báo nên user không tìm được chỗ chỉnh), mục mới trong `AodThemeValue` (id chữ thường, không đổi về sau), chuỗi `theme_xxx`. Cấu hình
-   lưu tự động theo id, khoá thuộc tính chỉ chữ thường, số, gạch dưới. Màu mới thêm vào `theme/Colors.kt`.
+   lưu tự động theo id, khoá thuộc tính chỉ chữ thường, số, gạch dưới. Màu mới thêm vào `theme/Colors.kt`. Mọi
+   `AodColorOption` bật `isGradientAllowed` (hoặc có `defaultGradient`) và phần vẽ tô được gradient: chữ / hình bằng
+   `config.brushOf`, kim / vạch tự dựng theo hình bằng `config.colorsOf`, chữ vẽ bằng `Paint` qua `toShader` / `toLineShader`
+   (`theme/AodGradientShader.kt`), icon / ảnh bằng `Modifier.aodTint(brush)`; `AodColorOptionTest` báo màu nào quên bật.
 4. Vẽ ở `components/aod/theme/<chủ đề>/`, nối vào các chỗ chọn theo chủ đề (`when` đủ mọi chủ đề nên quên là không
    build được): `theme/AodThemeLayout.kt` (`AodPortrait` và `AodLandscape`, mỗi chủ đề một bố cục dọc và một bố cục
    ngang riêng nhận cả `AodState`), `block/AodMediaControls.kt`. Chủ đề tự vẽ cả cụm (số, ngày, dòng trạng thái) thì
@@ -849,7 +852,9 @@ chọn theo các khối đang có dữ liệu, dùng chung cho mọi chủ đề
     cả 5 màu có tab Gradient; thử từng kiểu vạch (vạch đổi màu theo chỗ quanh viền), số 12 / 3 / 6 / 9 (mỗi số một gradient), kim lúc quay
     (gốc màu Đầu → đầu kim màu Cuối, bóng kim còn nguyên), trình phát. La bàn:
     cả 7 màu có tab Gradient; thử kiểu có / không vòng giây (nhãn mỗi vòng một gradient, xoay theo giờ thật), vạch phút, đường chỉ, hai vòng
-    tròn giữa, thông báo mới nhất lúc chữ chạy, trình phát. Panel đang mở, chạm vào khung xem trước (ngoài panel): panel
+    tròn giữa, thông báo mới nhất lúc chữ chạy, trình phát. Bán
+    nguyệt: cả 7 màu có tab Gradient; thử vạch và nhãn giây / phút lúc xoay, số giờ, viên phút (viền và số), dòng ngày (vẫn tối hơn
+    thứ), trình phát. Dải màu: thêm pin, thông báo, nhạc có tab Gradient. Panel đang mở, chạm vào khung xem trước (ngoài panel): panel
     đóng (Tùy chỉnh và màn chủ đề lúc Sửa). Khung xem trước ở Tùy chỉnh, màn chủ đề, thẻ "Giao diện của bạn" và lưới chủ
     đề luôn hiện 08:30 hôm nay với dữ liệu mẫu cố định (pin 72%, nhạc dừng ở cùng một chỗ): để qua phút mới không có gì
     đổi; chỉ AOD thật chạy theo giờ.
