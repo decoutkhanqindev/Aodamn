@@ -1,6 +1,7 @@
 package com.decoutkhanqindev.aodamn.data.device.media
 
 import android.app.Application
+import android.graphics.Bitmap
 import android.media.MediaMetadata
 import android.media.session.MediaController
 import android.media.session.MediaSession
@@ -8,6 +9,7 @@ import android.media.session.PlaybackState
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
+import androidx.core.graphics.scale
 import com.decoutkhanqindev.aodamn.data.device.notification.NotificationStateManager
 import com.decoutkhanqindev.aodamn.utils.Tag
 import com.decoutkhanqindev.aodamn.utils.collectCatching
@@ -28,6 +30,10 @@ class MediaStateManager(
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private val mainHandler = Handler(Looper.getMainLooper())
     private var controller: MediaController? = null
+
+    // Ảnh bìa thu nhỏ giữ theo ảnh gốc của metadata: đổi trạng thái phát không tạo bitmap mới, AOD không vẽ lại trình phát vô cớ.
+    private var artSource: Bitmap? = null
+    private var art: Bitmap? = null
 
     private val controllerCallback = object : MediaController.Callback() {
         override fun onPlaybackStateChanged(state: PlaybackState?) = publish()
@@ -91,7 +97,29 @@ class MediaStateManager(
             canSkipToPrevious = actions and PlaybackState.ACTION_SKIP_TO_PREVIOUS != 0L,
             canSkipToNext = actions and PlaybackState.ACTION_SKIP_TO_NEXT != 0L,
             progress = state?.toMediaProgress(durationMillis = metadata.getLong(MediaMetadata.METADATA_KEY_DURATION)),
+            albumArt = metadata.toAlbumArt(),
         )
+    }
+
+    // Ảnh bìa gốc có thể tới 1000 px trở lên mà AOD chỉ vẽ cỡ 55dp: thu nhỏ một lần cho mỗi ảnh gốc.
+    private fun MediaMetadata.toAlbumArt(): Bitmap? {
+        val source = getBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART)
+            ?: getBitmap(MediaMetadata.METADATA_KEY_ART)
+            ?: getBitmap(MediaMetadata.METADATA_KEY_DISPLAY_ICON)
+        if (source === artSource) return art
+        artSource = source
+        art = source?.takeIf { it.width > 0 && it.height > 0 }?.let { bitmap ->
+            val scale = ART_SIZE_PX.toFloat() / maxOf(bitmap.width, bitmap.height)
+            if (scale >= 1f) {
+                bitmap
+            } else {
+                bitmap.scale(
+                    width = (bitmap.width * scale).toInt().coerceAtLeast(1),
+                    height = (bitmap.height * scale).toInt().coerceAtLeast(1),
+                )
+            }
+        }
+        return art
     }
 
     // Radio, livestream không có độ dài, app chưa báo vị trí thì không có tiến trình. Vài app để lastPositionUpdateTime = 0:
@@ -107,6 +135,8 @@ class MediaStateManager(
     }
 
     companion object {
+        const val ART_SIZE_PX = 160
+
         // Đang tải, tua hay chuyển bài cũng tính là đang phát (nút hiện Tạm dừng), như trình phát của hệ thống.
         private val PLAYING_STATES = setOf(
             PlaybackState.STATE_PLAYING,

@@ -21,7 +21,7 @@ duotone: hand-tap arrow-fat-lines-up arrow-fat-lines-down speaker-high speaker-l
 duotone: stack lock-simple picture-in-picture bell bell-ringing calendar map-pin translate pencil-simple sparkle crown-simple
 
 # Màn AOD trên màn hình khoá: nét mảnh để hợp đồng hồ Thin và đỡ burn-in
-light: flashlight calendar-check note-pencil bell skip-back play pause skip-forward lightning
+light: flashlight calendar-check note-pencil bell skip-back play pause skip-forward lightning music-notes
 light: sun moon-stars cloud-sun cloud-moon cloud cloud-fog drop cloud-rain cloud-snow cloud-lightning
 
 # Trình phát nhạc của chủ đề Sỏi: nét đặc hợp chữ số đậm của khối

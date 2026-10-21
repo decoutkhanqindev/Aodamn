@@ -2136,6 +2136,208 @@ gradient_line = [
 ]
 
 
+
+# ================================================================== GỢN SÓNG (Android 12 của Muviz Edge; số đo lấy từ layout aug21_screen_layout (chỉ có bản dọc),
+# Android12Clock2 và Android12ClockBg2 trong APK). Vùng thông báo trên cùng cao 200 dp (hàng icon, thông báo mới nhất), vùng dưới giữ 105 dp cho thẻ
+# nhạc rồi dòng pin cách đáy 30 dp, mặt số giữa phần còn lại. half = nửa cạnh ngắn vùng mặt số; đĩa 12 gợn (±6%) bán kính 0,9 × cỡ (80%) × half,
+# đặc hoặc viền 2 dp; ngày "E  dd" Medium 0,085 half uốn theo nửa trên đĩa ở 0,75 bán kính đĩa; kim phút / giờ dày 0,1 dài 0,5 / 0,3 (theo cỡ × half),
+# chấm giây 0,05 ở 0,71. Thẻ nhạc bo tròn hết cao 65 dp (ảnh bìa 55 dp, tên 15 sp Medium, nghệ sĩ 14 sp tối hơn 40%), nút phát tròn 60 dp cách 15 dp.
+# Màn ngang (app mẫu dùng chung layout dọc nên mặt số rất nhỏ): mặt số giữa màn; không nhạc thì thông báo trái, thời tiết + pin phải; có nhạc thì
+# thông báo, thời tiết, pin trái, trình phát phải.
+RP_MED = BzFont(instancer.instantiateVariableFont(TTFont(ROOT / "tools/fonts/variable/google_sans_variable.ttf"),
+                                                  {"wght": 500, "GRAD": 0, "opsz": 18}, inplace=False), "rpm")
+RP_FONTS = ('<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500&display=swap">'
+            '<style>.cpr{font-family:"Google Sans";font-weight:400}.rpm{font-family:"Google Sans";font-weight:500}</style>')
+RP_COLORS = {"face": "#121218", "hour": "#A6E3A1", "minute": "#CED4DA", "second": "#ADB5BD", "date": "#CED4DA", "noti": "#B9BEC4",
+             "media": "#B9BEC4", "media_bg": "#121218", "battery": "#7C7F83", "weather": G}
+RP_REF = {**RP_COLORS, "hour": "#FFFFFF"}
+RP_PURPLE = {**RP_COLORS, "face": PU}
+RP_NO_ART = "#3A3A3A"  # ô ảnh bìa khi app nhạc không gửi ảnh (Grey3A)
+RP_N = [0]
+
+
+def rp_id():
+    RP_N[0] += 1
+    return f"rp{RP_N[0]}"
+
+
+def rp_dark(c, k=0.4):
+    return "#" + "".join(f"{int(int(c[i:i + 2], 16) * (1 - k)):02X}" for i in (1, 3, 5))
+
+
+def rp_point(cx, cy, deg, r):
+    a = math.radians(deg)
+    return cx + math.sin(a) * r, cy - math.cos(a) * r
+
+
+def rp_face(cx, cy, r):
+    """Viền 12 gợn như Android12ClockBg2: mỗi 15° một đường cong bậc hai, điểm điều khiển xen kẽ ngoài / trong 6%."""
+    x, y = rp_point(cx, cy, 0, r)
+    d, sign = f"M{f(x)},{f(y)}", 1
+    for deg in range(0, 360, 15):
+        qx, qy = rp_point(cx, cy, deg + 7.5, r * (1 + sign * .06))
+        ex, ey = rp_point(cx, cy, deg + 15, r)
+        d += f" Q{f(qx)},{f(qy)} {f(ex)},{f(ey)}"
+        sign = -sign
+    return d + "Z"
+
+
+def rp_dial(cx, cy, half, hh=10, mm=8, ss=42, colors=RP_COLORS, size=.8, outline=False, date=True):
+    k, s = size * half, ""
+    rd = .9 * k
+    s += (f'<path d="{rp_face(cx, cy, rd)}" fill="none" stroke="{colors["face"]}" stroke-width="2"/>' if outline
+          else f'<path d="{rp_face(cx, cy, rd)}" fill="{colors["face"]}"/>')
+    if date:
+        pid, ar = rp_id(), .75 * rd
+        s += (f'<path id="{pid}" d="M{f(cx - ar)},{f(cy)} A{f(ar)},{f(ar)} 0 0 1 {f(cx + ar)},{f(cy)}" fill="none"/>'
+              f'<text class="rpm" font-size="{f(.085 * half)}" fill="{colors["date"]}"><textPath href="#{pid}" startOffset="50%" '
+              f'text-anchor="middle" xml:space="preserve">Th 3  21</textPath></text>')
+    mi, hr = mm + ss / 60, hh % 12 + (mm + ss / 60) / 60
+    for deg, length, color in ((mi * 6, .5 * k, colors["minute"]), (hr * 30, .3 * k, colors["hour"])):
+        x, y = rp_point(cx, cy, deg, length)
+        s += f'<line x1="{f(cx)}" y1="{f(cy)}" x2="{f(x)}" y2="{f(y)}" stroke="{color}" stroke-width="{f(.1 * k)}" stroke-linecap="round"/>'
+    x, y = rp_point(cx, cy, ss * 6, .71 * k)
+    return s + f'<circle cx="{f(x)}" cy="{f(y)}" r="{f(.05 * k)}" fill="{colors["second"]}"/>'
+
+
+def rp_icons(cx, cy, n, color):
+    g, gap = 18, 14
+    w = n * g + (n - 1) * gap
+    shapes = icon_shapes(color)
+    return "".join(shapes[i % 3](cx - w / 2 + i * (g + gap), cy - g / 2, g) for i in range(n))
+
+
+def rp_latest(cx, cy, color, w=330, title="Mai", text="Tối nay đi ăn nhé, nhớ mang ô"):
+    tw = min(max(CP_REG.width(title, 16), CP_REG.width(text, 14)), w - 40)
+    while CP_REG.width(text, 14) > tw and len(text) > 2:
+        text = text[:-2].rstrip() + "…"
+    x = cx - (40 + tw) / 2
+    return (f'<circle cx="{f(x + 14)}" cy="{f(cy)}" r="14" fill="{color}"/>' + icon_shapes("#000")[0](x + 5, cy - 9, 18)
+            + CP_REG.text(x + 40, cy - 3, title, 16, color) + CP_REG.text(x + 40, cy + 15, text, 14, rp_dark(color)))
+
+
+def rp_notifications(cx, cy, colors, n=3, latest=False, w=330):
+    if not latest:
+        return rp_icons(cx, cy, n, colors["noti"]) if n else ""
+    return (rp_icons(cx, cy - 30, n, colors["noti"]) if n else "") + rp_latest(cx, cy + 18 if n else cy, colors["noti"], w)
+
+
+def rp_weather(cx, cy, colors):
+    w = 26 + CP_REG.width("24°", 14)
+    return cloud(cx - w / 2 - 1, cy + 6, .62, colors["weather"], 1.6) + CP_REG.text(cx - w / 2 + 26, cy + 5, "24°", 14, colors["weather"])
+
+
+def rp_battery(cx, cy, colors, charging=False):
+    g, fs = 16.0, 0.915 * 16
+    t = "72%"
+    w = 0.522 * g + 0.717 * g + CP_REG.width(t, fs)
+    x = cx - w / 2
+    return (f'<g opacity="{1 if charging else .8}">{bz_battery(x, cy - g / 2, g, colors["battery"], charging)}'
+            f'{CP_REG.text(x + 1.239 * g, cy + 0.34 * fs, t, fs, colors["battery"])}</g>')
+
+
+def rp_player(x, top, w, colors, outline=False, paused=False, art=True):
+    """Thẻ nhạc bo tròn hết + nút phát tròn riêng như media_widget_lt; viền 2 dp ở kiểu viền."""
+    pill, cy, bg, c = w - 75, top + 32.5, colors["media_bg"], colors["media"]
+    s = (f'<rect x="{f(x + 1)}" y="{f(top + 1)}" width="{f(pill - 2)}" height="63" rx="31.5" fill="none" stroke="{bg}" stroke-width="2"/>'
+         if outline else f'<rect x="{f(x)}" y="{f(top)}" width="{f(pill)}" height="65" rx="32.5" fill="{bg}"/>')
+    s += f'<circle cx="{f(x + 32.5)}" cy="{f(cy)}" r="27.5" fill="{"#C9A3E8" if art else RP_NO_ART}"/>'
+    tx = x + 72
+    tw = pill - 84
+    t1 = CP_REG.fit("That Cool Song", 15, tw)
+    s += RP_MED.text(tx + tw / 2, cy - 3, t1, 15, c, "middle") + CP_REG.text(tx + tw / 2, cy + 16, "It's Artist", 14, rp_dark(c), "middle")
+    bx = x + pill + 45
+    s += (f'<circle cx="{f(bx)}" cy="{f(cy)}" r="29" fill="none" stroke="{bg}" stroke-width="2"/>' if outline
+          else f'<circle cx="{f(bx)}" cy="{f(cy)}" r="30" fill="{bg}"/>')
+    if paused:
+        return s + f'<path d="M{f(bx - 5)},{f(cy - 8)} L{f(bx + 8)},{f(cy)} L{f(bx - 5)},{f(cy + 8)} Z" fill="{c}"/>'
+    return (s + f'<rect x="{f(bx - 6)}" y="{f(cy - 8)}" width="4" height="16" rx="1" fill="{c}"/>'
+            f'<rect x="{f(bx + 2)}" y="{f(cy - 8)}" width="4" height="16" rx="1" fill="{c}"/>')
+
+
+
+def rp_portrait(hh=10, mm=8, ss=42, colors=RP_COLORS, size=.8, outline=False, date=True, weather=False, media=False, paused=False,
+                latest=False, n=3, charging=False, art=True):
+    top, bottom = 200, PH - 152
+    cy = (top + bottom) / 2
+    s = rp_notifications(PW / 2, 100, colors, n, latest)
+    s += rp_dial(PW / 2, cy, PW / 2, hh, mm, ss, colors, size, outline, date)
+    reach = PW / 2 * size * .9 * 1.06
+    if weather:
+        s += rp_weather(PW / 2, cy + reach + (bottom - cy - reach) / 2, colors)
+    if media:
+        s += rp_player(40, bottom + 10, PW - 80, colors, outline, paused, art)
+    return s + rp_battery(PW / 2, PH - 30 - 9, colors, charging)
+
+
+def rp_landscape(hh=10, mm=8, ss=42, colors=RP_COLORS, size=.8, outline=False, weather=False, media=False, paused=False, latest=False, n=3,
+                 charging=False):
+    s = rp_dial(W / 2, CY, H / 2, hh, mm, ss, colors, size, outline)
+    lx, rx = 157, 716
+    if not media:
+        s += rp_notifications(lx, CY, colors, n, latest, 250)
+        if weather:
+            return s + rp_weather(rx, CY - 16, colors) + rp_battery(rx, CY + 18, colors, charging)
+        return s + rp_battery(rx, CY, colors, charging)
+    parts = []
+    if n or latest:
+        parts.append((84 if latest and n else 30 if latest else 18, lambda y: rp_notifications(lx, y, colors, n, latest, 250)))
+    if weather:
+        parts.append((20, lambda y: rp_weather(lx, y, colors)))
+    parts.append((16, lambda y: rp_battery(lx, y, colors, charging)))
+    h = sum(p[0] for p in parts) + 22 * (len(parts) - 1)
+    y = CY - h / 2
+    for ph, draw in parts:
+        s += draw(y + ph / 2)
+        y += ph + 22
+    return s + rp_player(rx - 133, CY - 32.5, 266, colors, outline, paused)
+
+
+def rp_reference_landscape():
+    """App mẫu ở màn ngang: dùng chung layout dọc nên vùng mặt số chỉ cao 41 dp, đĩa bán kính khoảng 15 dp."""
+    top, bottom = 200, H - 152
+    return (rp_icons(W / 2, 100, 3, RP_REF["noti"]) + rp_dial(W / 2, (top + bottom) / 2, (bottom - top) / 2, colors=RP_REF)
+            + rp_battery(W / 2, H - 39, RP_REF))
+
+
+def rp_strip():
+    k, s = 0.4, ""
+    for i, (label, kw) in enumerate((("Mặc định: đĩa đặc, kim giờ xanh lá", {}),
+                                      ("Màu như app mẫu (kim giờ trắng)", {"colors": RP_REF, "hh": 7, "mm": 21, "ss": 5}),
+                                      ("Kiểu viền, mặt số tím", {"outline": True, "colors": RP_PURPLE, "hh": 4, "mm": 38, "ss": 50}),
+                                      ("Cỡ 110%, tắt ngày", {"size": 1.1, "date": False, "hh": 21, "mm": 47, "ss": 15}))):
+        x = 36 + i * 212
+        s += (f'<g transform="translate({x} 14) scale({k})"><clipPath id="rpc{i}"><rect width="{PW}" height="{PH}" rx="34"/></clipPath>'
+              f'<rect width="{PW}" height="{PH}" rx="34" fill="#000" stroke="#333" stroke-width="2"/><g clip-path="url(#rpc{i})">')
+        s += rp_portrait(**kw) + "</g></g>" + txt(x + PW * k / 2, 14 + PH * k + 22, label, 13, DM, 400, "middle")
+    return (f'<p style="font-size:13px;color:var(--text-secondary);margin:1.25rem 0 6px">Kiểu mặt số và màu (màu nào cũng có thể là gradient)</p>'
+            f'<svg viewBox="0 0 {W} 400" width="100%" role="img" aria-label="Kiểu và màu" '
+            f'style="display:block;font-family:\'Plus Jakarta Sans\',sans-serif" fill="{G}">'
+            f'<rect width="{W}" height="400" rx="20" fill="#111"/>{s}</svg>')
+
+
+ripple = [
+    RP_FONTS,
+    rp_strip(),
+    '<div style="font-size:0">',
+    frame_portrait("D1 · Dọc, mặc định 10:08:42 (cũng là thẻ ở lưới chủ đề): icon thông báo trên, pin dưới; trên máy chấm giây chạy vòng",
+                   rp_portrait()),
+    frame_portrait("D2 · Dọc, 08:30, thời tiết dưới mặt số, đang phát nhạc (vuốt ngang thẻ để chuyển bài)",
+                   rp_portrait(8, 30, 12, weather=True, media=True)),
+    frame_portrait("D3 · Dọc, 21:47, đang sạc, thông báo mới nhất, nhạc đang dừng; app nhạc không có ảnh bìa",
+                   rp_portrait(21, 47, 33, charging=True, latest=True, n=1, media=True, paused=True, art=False)),
+    frame_portrait("D4 · Dọc, 23:10, kiểu viền, cỡ 110%, tắt ngày, mặt số tím",
+                   rp_portrait(23, 10, 51, RP_PURPLE, 1.1, outline=True, date=False, n=2)),
+    '</div>',
+    frame("N1 · Ngang, không nhạc: thông báo trái, thời tiết + pin phải; mặt số giữa màn", rp_landscape(weather=True)),
+    frame("N2 · Ngang, 08:30, đang phát nhạc: thông báo, thời tiết, pin trái; trình phát phải",
+          rp_landscape(8, 30, 12, weather=True, media=True, latest=True, n=2)),
+    frame("N3 · Ngang, 21:47, kiểu viền, đang sạc, nhạc đang dừng",
+          rp_landscape(21, 47, 33, RP_PURPLE, outline=True, charging=True, media=True, paused=True)),
+    frame("N4 · Để so: app mẫu ở màn ngang dùng chung layout dọc, mặt số chỉ còn bán kính khoảng 15 dp", rp_reference_landscape()),
+]
+
+
 for name, summary, defs, frames in [
     ("w_classic", "Bảy bố cục ngang của chủ đề Cổ điển theo các khối đang bật", classic_defs, classic),
     ("w_jersey", "Bố cục ngang của chủ đề Số áo: ngày, bốn chữ số một hàng, dòng pin", jersey_defs, jersey),
@@ -2148,6 +2350,7 @@ for name, summary, defs, frames in [
     ("w_compass", "Chủ đề La bàn (Ambitio Face): màu và cỡ mặt số, bốn khung dọc và ba bố cục ngang", compass_defs, compass),
     ("w_half", "Chủ đề Bán nguyệt (Half Concentric): màu, bốn khung dọc và ba bố cục ngang", HC_DEFS, half),
     ("w_gradient_line", "Chủ đề Dải màu (Gradient Line Clock): màu vạch, bốn khung dọc và bốn khung ngang", "", gradient_line),
+    ("w_ripple", "Chủ đề Gợn sóng (Android 12): kiểu và màu, bốn khung dọc và bốn khung ngang", "", ripple),
 ]:
     code = widget(summary, defs, frames)
     OUT.mkdir(parents=True, exist_ok=True)

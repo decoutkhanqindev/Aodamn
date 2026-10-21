@@ -171,6 +171,7 @@ fun ClockColorPicker(
     val controller = rememberColorPickerController()
     val currentOnColorPreview by rememberUpdatedState(onColorPreview)
     val currentOnColorChange by rememberUpdatedState(onColorChange)
+    val currentColor by rememberUpdatedState(color)
 
     SideEffect(controller) {
         controller.wheelRadius = 12.dp
@@ -217,6 +218,10 @@ fun ClockColorPicker(
                         val thumbRadius = 28.dp.toPx()
                         awaitEachGesture {
                             val down = awaitFirstDown()
+                            // Màu đang gần đen (vd mặt số, nền thẻ nhạc #121218 của Gợn sóng) thì độ sáng của wheel gần 0: chọn màu nào trên wheel
+                            // cũng ra gần đen như không chỉnh được, nên chạm wheel lúc đó đưa độ sáng về tối đa.
+                            val hsv = FloatArray(3).also { android.graphics.Color.colorToHSV(currentColor.toArgb(), it) }
+                            if (hsv[2] < 0.2f) controller.setBrightness(1f, fromUser = false)
                             if ((down.position - controller.selectedPoint.value).getDistance() <= thumbRadius) {
                                 down.consume()
                                 controller.selectByCoordinate(down.position.x, down.position.y, true)

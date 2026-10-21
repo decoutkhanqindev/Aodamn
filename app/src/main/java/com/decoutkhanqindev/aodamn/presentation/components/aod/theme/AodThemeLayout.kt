@@ -26,6 +26,8 @@ import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.jersey.AodJ
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.jersey.AodJerseyPortrait
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.pebble.AodPebbleClock
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.pebble.AodPebbleLandscape
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.ripple.AodRippleLandscape
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.ripple.AodRipplePortrait
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.tower.AodTowerLandscape
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.tower.AodTowerPortrait
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeValue
@@ -64,12 +66,14 @@ fun AodPortrait(
         AodThemeValue.COMPASS -> AodCompassPortrait(state = state, onIntent = onIntent)
         AodThemeValue.HALF_MOON -> AodHalfMoonPortrait(state = state, onIntent = onIntent)
         AodThemeValue.GRADIENT_LINE -> AodGradientLinePortrait(state = state, onIntent = onIntent)
+        AodThemeValue.RIPPLE -> AodRipplePortrait(state = state, onIntent = onIntent)
     }
 }
 
 // Bố cục AOD màn ngang theo chủ đề: mỗi chủ đề một bố cục riêng, dựng trên bố cục chung theo các khối đang hiện (AodLandscapeLayout); Chuỗi giữ
 // dạng chuỗi nên tự xếp cột (AodChainLandscape), Vành giữ mặt số phủ màn (AodBezelLandscape), La bàn giữ mặt số giữa màn (AodCompassLandscape),
-// Bán nguyệt giữ nửa mặt số sát mép trái (AodHalfMoonLandscape), Dải màu cho vạch nằm ngang hết bề rộng (AodGradientLineLandscape).
+// Bán nguyệt giữ nửa mặt số sát mép trái (AodHalfMoonLandscape), Dải màu cho vạch nằm ngang hết bề rộng (AodGradientLineLandscape), Gợn sóng
+// giữ mặt số giữa màn (AodRippleLandscape).
 @Composable
 fun AodLandscape(
     state: AodState,
@@ -87,6 +91,7 @@ fun AodLandscape(
         AodThemeValue.COMPASS -> AodCompassLandscape(state = state, onIntent = onIntent)
         AodThemeValue.HALF_MOON -> AodHalfMoonLandscape(state = state, onIntent = onIntent)
         AodThemeValue.GRADIENT_LINE -> AodGradientLineLandscape(state = state, onIntent = onIntent)
+        AodThemeValue.RIPPLE -> AodRippleLandscape(state = state, onIntent = onIntent)
     }
 }
 

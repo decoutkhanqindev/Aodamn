@@ -7,6 +7,8 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.GradientSwa
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.component.AodComponentValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.gradientline.GradientLineThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.halfmoon.HalfMoonThemeSpec
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.pebble.AodTileStyleValue
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.ripple.RippleThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -36,13 +38,14 @@ class AodThemeSpecTest {
     }
 
     // Chủ đề mới thêm khối tự vẽ / bật lại nội dung thông báo không được đổi hành vi chủ đề cũ: chỉ Chuỗi tự vẽ ghi nhớ, sự kiện; chỉ Chuỗi, La
-    // bàn, Bán nguyệt và Dải màu hiện nội dung thông báo dù tự vẽ dòng trạng thái (tự vẽ thông báo mới nhất như app mẫu); các chủ đề khác giữ như
-    // trước (nội dung thông báo chỉ khi không tự vẽ dòng trạng thái).
+    // bàn, Bán nguyệt, Dải màu và Gợn sóng hiện nội dung thông báo dù tự vẽ dòng trạng thái (tự vẽ thông báo mới nhất như app mẫu); các chủ đề
+    // khác giữ như trước (nội dung thông báo chỉ khi không tự vẽ dòng trạng thái).
     @Test
-    fun `only chain owns memo and events and only chain, compass, half moon and gradient line keep notification content with their status line`() {
+    fun `only chain owns memo and events and only chain, compass, half moon, gradient line and ripple keep notification content with their status line`() {
         AodThemeValue.entries.forEach { theme ->
             val isChain = theme == AodThemeValue.CHAIN
-            val drawsLatest = isChain || theme in setOf(AodThemeValue.COMPASS, AodThemeValue.HALF_MOON, AodThemeValue.GRADIENT_LINE)
+            val drawsLatest = isChain ||
+                theme in setOf(AodThemeValue.COMPASS, AodThemeValue.HALF_MOON, AodThemeValue.GRADIENT_LINE, AodThemeValue.RIPPLE)
             assertEquals("${theme.id}: ghi nhớ", isChain, AodBlockValue.MEMO in theme.spec.ownBlocks)
             assertEquals("${theme.id}: sự kiện", isChain, AodBlockValue.EVENTS in theme.spec.ownBlocks)
             assertEquals(
@@ -153,11 +156,51 @@ class AodThemeSpecTest {
         assertEquals(80, GradientLineThemeSpec.Size.decode(AodRangeOption.AUTO))
     }
 
-    // Khung xem trước dùng giờ mẫu; chỉ chủ đề có chuyển động theo giờ thật như app mẫu (La bàn, Bán nguyệt) chạy theo giờ thật cả ở xem trước,
+    // Gợn sóng chỉ có các khối đặt cân quanh mặt số giữa màn (mock đã duyệt): ghi nhớ, sự kiện, nét vẽ bỏ hẳn; thông báo mới nhất do chủ đề tự vẽ
+    // dưới hàng icon. Đủ tuỳ chọn của app mẫu: kiểu đặc / viền (mặc định đặc), cỡ 60–110% (mặc định 80%), màu kim giờ, kim phút, chấm giây, mặt số,
+    // ngày; màu chủ đạo tách thành thông báo, pin, nhạc, nền thẻ nhạc.
+    @Test
+    fun `ripple only has the blocks that fit around its dial and keeps every reference option`() {
+        val spec = AodThemeValue.RIPPLE.spec
+        assertEquals(
+            setOf(
+                AodComponentValue.DATE,
+                AodComponentValue.BATTERY,
+                AodComponentValue.WEATHER,
+                AodComponentValue.NOTIFICATIONS,
+                AodComponentValue.MEDIA,
+            ),
+            spec.components,
+        )
+        assertEquals(true, spec.hasNotificationContent)
+        assertEquals(AodTileStyleValue.entries, RippleThemeSpec.Style.entries)
+        assertEquals(AodTileStyleValue.FILLED, RippleThemeSpec.Style.default)
+        assertEquals(60..110, RippleThemeSpec.Size.range)
+        assertEquals(80, RippleThemeSpec.Size.default)
+        assertEquals(
+            listOf(
+                RippleThemeSpec.Style,
+                RippleThemeSpec.Size,
+                RippleThemeSpec.HourColor,
+                RippleThemeSpec.MinuteColor,
+                RippleThemeSpec.SecondColor,
+                RippleThemeSpec.FaceColor,
+                RippleThemeSpec.DateColor,
+                RippleThemeSpec.NotificationsColor,
+                RippleThemeSpec.BatteryColor,
+                RippleThemeSpec.MediaColor,
+                RippleThemeSpec.MediaBackgroundColor,
+            ),
+            spec.options,
+        )
+    }
+
+    // Khung xem trước dùng giờ mẫu; chỉ chủ đề có chuyển động theo giờ thật như app mẫu (La bàn, Bán nguyệt, chấm giây của Gợn sóng) chạy theo giờ
+    // thật cả ở xem trước,
     // chủ đề cũ không đổi.
     @Test
-    fun `only compass and half moon run in real time in previews`() {
-        val liveThemes = setOf(AodThemeValue.COMPASS, AodThemeValue.HALF_MOON)
+    fun `only compass, half moon and ripple run in real time in previews`() {
+        val liveThemes = setOf(AodThemeValue.COMPASS, AodThemeValue.HALF_MOON, AodThemeValue.RIPPLE)
         AodThemeValue.entries.forEach { theme ->
             assertEquals("${theme.id}: xem trước theo giờ thật", theme in liveThemes, theme.spec.isLiveInPreview)
             val preview = AodState(appearance = AodAppearanceUiModel(theme = AodThemeUiModel(value = theme)), isPreview = true)

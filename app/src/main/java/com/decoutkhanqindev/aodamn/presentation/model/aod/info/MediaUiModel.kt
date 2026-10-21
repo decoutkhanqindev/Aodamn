@@ -1,5 +1,6 @@
 package com.decoutkhanqindev.aodamn.presentation.model.aod.info
 
+import android.graphics.Bitmap
 import androidx.compose.runtime.Immutable
 import com.decoutkhanqindev.aodamn.data.device.media.MediaPlayback
 import com.decoutkhanqindev.aodamn.data.device.media.MediaProgress
@@ -12,6 +13,7 @@ data class MediaUiModel(
     val canSkipToPrevious: Boolean,
     val canSkipToNext: Boolean,
     val progress: MediaProgressUiModel? = null,
+    val albumArt: Bitmap? = null,
 )
 
 // updatedAtMillis cùng mốc SystemClock.elapsedRealtime() với elapsedMillis truyền vào; speed = 0 thì đứng yên (bản xem trước).
@@ -42,6 +44,7 @@ fun MediaPlayback.toUiModel(): MediaUiModel = MediaUiModel(
     canSkipToPrevious = canSkipToPrevious,
     canSkipToNext = canSkipToNext,
     progress = progress?.toUiModel(),
+    albumArt = albumArt,
 )
 
 private fun MediaProgress.toUiModel(): MediaProgressUiModel = MediaProgressUiModel(

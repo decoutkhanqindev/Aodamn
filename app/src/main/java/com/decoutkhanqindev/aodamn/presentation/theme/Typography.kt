@@ -77,6 +77,13 @@ val FontFamilyGoogleSansText = FontFamily(
     Font(R.font.google_sans_bold, FontWeight.Bold),
 )
 
+// Chữ của Gợn sóng: Google Sans Regular / Medium thay Rubik của app mẫu (Rubik thiếu tiếng Việt). Họ riêng vì thêm Medium vào
+// FontFamilyGoogleSansText thì chữ pin (Medium) của La bàn, Bán nguyệt đổi độ đậm.
+val FontFamilyGoogleSansMedium = FontFamily(
+    Font(R.font.google_sans_regular, FontWeight.Normal),
+    Font(R.font.google_sans_medium, FontWeight.Medium),
+)
+
 // Số trên các vòng của La bàn (font của app mẫu), chỉ có một độ đậm và chỉ vẽ chữ số nên không cần tiếng Việt.
 val FontFamilyKronaOne = FontFamily(
     Font(R.font.krona_one_regular, FontWeight.Normal),

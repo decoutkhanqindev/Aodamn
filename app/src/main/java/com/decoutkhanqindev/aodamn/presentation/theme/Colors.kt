@@ -29,6 +29,15 @@ val Cyan = Color(0xFF80DEEA)
 val Amber = Color(0xFFFFD54F)
 val GreyE0 = Color(0xFFE0E0E0)
 
+// Gợn sóng: kim giờ xanh lá (màu nhấn, chưa chủ đề nào dùng); mặt số / nền thẻ nhạc Ink, kim phút / ngày GreyCE, chấm giây GreyAD, thông báo /
+// nhạc GreyB9, pin Grey7C đúng màu app mẫu tính ra từ màu chủ đạo #CED4DA.
+val Green = Color(0xFFA6E3A1)
+val Ink = Color(0xFF121218)
+val GreyCE = Color(0xFFCED4DA)
+val GreyAD = Color(0xFFADB5BD)
+val GreyB9 = Color(0xFFB9BEC4)
+val Grey7C = Color(0xFF7C7F83)
+
 // Màu có sẵn của bảng chọn màu (ColorSwatchValue): màu đặc trưng của các app quen thuộc, xếp theo sắc độ.
 val YoutubeRed = Color(0xFFFF0033)
 val SoundcloudOrange = Color(0xFFFF5500)

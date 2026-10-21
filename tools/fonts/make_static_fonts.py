@@ -40,7 +40,7 @@ FONTS = {
     "big_shoulders_display": ([100, 300, 400, 600, 700, 900], {}),
     "josefin_sans": ([100, 300, 400, 600, 700], {}),
     # Bản Google Fonts nặng 5 MB vì nhiều hệ chữ: tools/fonts/variable giữ bản đã cắt còn Latin + tiếng Việt (fontTools subset, giữ mọi trục).
-    "google_sans": ([400, 700], {"GRAD": 0, "opsz": 18}),
+    "google_sans": ([400, 500, 700], {"GRAD": 0, "opsz": 18}),
 }
 
 # họ font chỉ có bản tĩnh -> độ đậm có sẵn (file <họ font>_<độ đậm>.ttf ở tools/fonts/static)

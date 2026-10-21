@@ -238,7 +238,7 @@ app xin, nên không có trong danh sách trên: `AodTileService` (`BIND_QUICK_S
     hiện thông báo mới nhất thành một dòng gọn.
   - Nhạc: Hàng ngang, Căn giữa, Gọn (một dòng, không thanh tiến trình).
   Khối mà chủ đề đang dùng tự vẽ (ngày, nhạc của Sỏi; ngày, pin và thông báo của Số áo; ngày, nhạc, pin và thông báo
-  của Viên nang, Thẻ, Tháp, Vành, La bàn, Bán nguyệt và Dải màu; thêm ghi nhớ và sự kiện ở Chuỗi) thì kiểu do chủ đề
+  của Viên nang, Thẻ, Tháp, Vành, La bàn, Bán nguyệt, Dải màu và Gợn sóng; thêm ghi nhớ và sự kiện ở Chuỗi) thì kiểu do chủ đề
   quyết định và tab đó chỉ dẫn sang màn chủ đề, mở thẳng chế độ sửa ở tab chỉnh khối đó. Khối mà bố cục của chủ đề không có chỗ (`AodThemeSpec.components`)
   thì tab đó ẩn và AOD không vẽ, cài đặt vẫn giữ cho lúc dùng chủ đề khác; Tháp không có nét vẽ (hàng số cao không còn chỗ
   cho khối lớn), Chuỗi cũng không (hình lớn không hợp dạng dòng); Vành chỉ có ngày, thời tiết, pin, thông báo và nhạc (mặt số
@@ -246,7 +246,8 @@ app xin, nên không có trong danh sách trên: `AodTileService` (`BIND_QUICK_S
   thời tiết, pin, thông báo và nhạc (mặt số tròn giữa màn không có chỗ đặt cân ghi nhớ, sự kiện, nét vẽ) nhưng tự vẽ thông báo
   mới nhất dưới dòng pin như app mẫu; Bán nguyệt cũng vậy (nửa mặt số sát mép trái chỉ chừa cột bên phải và vùng dưới cho
   trình phát); Dải màu cũng vậy (giờ trượt hết chiều dài vạch nên hai bên vạch hẹp, chỉ có chỗ ở đầu và cuối màn; thông báo
-  mới nhất nằm trên dòng pin); các chủ đề khác có đủ khối.
+  mới nhất nằm trên dòng pin); Gợn sóng cũng vậy (mặt số tròn giữa màn chỉ chừa vùng trên cho thông báo, vùng dưới cho thời
+  tiết, nhạc, pin; thông báo mới nhất dưới hàng icon); các chủ đề khác có đủ khối.
 - **Thông báo** (cần quyền "Truy cập thông báo"): dưới ngày là icon của các app đang có thông báo,
   mỗi app một icon, tối đa 5, còn lại hiện "+N". Bật "Hiện nội dung thông báo mới nhất" thì dưới các
   icon có thêm tiêu đề và nội dung của thông báo mới nhất, theo đúng quy tắc của màn hình khóa: nội
@@ -262,7 +263,9 @@ app xin, nên không có trong danh sách trên: `AodTileService` (`BIND_QUICK_S
   như Tháp nhưng tên bài in hoa đậm, nghệ sĩ mờ, thanh tiến trình 1,5dp, neo đáy màn hình. Vành: như Chuỗi nhưng gọn (rộng
   184dp, chữ Google Sans), nằm dưới dòng pin. La bàn: như app mẫu, lùi · tên bài / nghệ sĩ in hoa giãn chữ · tới, không nút
   phát, không thanh tiến trình; tên dài thì chạy chữ, đổi bài thì tên trượt lên từ dưới. Bán nguyệt: như La bàn, nằm giữa vùng
-  dưới nửa mặt số. Dải màu: như app mẫu, lùi · tên bài / nghệ sĩ mờ (chữ thường) · tới, nút mờ, nằm trên vạch.
+  dưới nửa mặt số. Dải màu: như app mẫu, lùi · tên bài / nghệ sĩ mờ (chữ thường) · tới, nút mờ, nằm trên vạch. Gợn sóng: như app
+  mẫu, thẻ bo tròn (ảnh bìa tròn, tên bài, nghệ sĩ tối hơn) và nút phát tròn riêng, nền đặc / viền theo kiểu mặt số; không nút lùi /
+  tới, vuốt ngang thẻ để chuyển bài, tên mới trượt vào theo hướng vuốt; app nhạc không gửi ảnh bìa thì ô tròn có nốt nhạc.
 - **Thông tin thêm** (mục "Thông tin thêm trên đồng hồ", mặc định tắt hết): thời tiết hiện tại (icon
   trời và nhiệt độ) cạnh ngày; tối đa 2 sự kiện còn lại trong hôm nay từ lịch của máy (giờ bắt đầu
   hoặc "Cả ngày", rồi tên sự kiện); một ghi nhớ ngắn; một hình vẽ nhanh bằng ngón tay, hiện theo màu
@@ -282,7 +285,9 @@ app xin, nên không có trong danh sách trên: `AodTileService` (`BIND_QUICK_S
   nhạc thì ngày + pin trái, trình phát phải; Bán nguyệt giữ nửa mặt số sát mép trái (to hơn màn dọc, đỉnh / đáy vòng chìm
   vào phủ tối), cột ngày, thời tiết, pin · thông báo giữa vùng còn lại, có nhạc thì cột và trình phát thành một khối; Dải màu
   cho vạch nằm ngang hết bề rộng (app mẫu dùng chung layout dọc nên vạch ngắn, giờ nhỏ), giờ trượt từ trái sang phải theo phút
-  trong ngày, trình phát giữa phía trên, dòng pin giữa phía dưới. Ảnh nền
+  trong ngày, trình phát giữa phía trên, dòng pin giữa phía dưới; Gợn sóng giữ mặt số giữa màn to như màn dọc (app mẫu dùng chung
+  layout dọc nên mặt số chỉ còn rất nhỏ): không nhạc thì thông báo trái, thời tiết + pin phải, có nhạc thì thông báo, thời tiết,
+  pin trái, trình phát phải. Ảnh nền
   không xoay theo màn ngang: nó đứng yên theo chiều dọc của máy như hình nền điện thoại.
 
 Đồng hồ hiện giờ (theo định dạng 12 hoặc 24 giờ của máy), ngày, và phần trăm pin kèm trạng thái sạc.
@@ -320,9 +325,9 @@ Mục "Giao diện đồng hồ":
 
 | Tùy chọn                      | Key                                                    | Mặc định | Tác dụng                                                                                                                                                                                          |
 |-------------------------------|--------------------------------------------------------|----------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Chủ đề                        | `aod_theme_id`                                         | Cổ điển  | Cổ điển (4 mặt đồng hồ có từ trước), Sỏi, Số áo, Viên nang, Thẻ, Tháp, Chuỗi, Vành, La bàn, Bán nguyệt hoặc Dải màu. Chọn ở tab AOD › Chủ đề, xem trước rồi Áp dụng; Cổ điển (mặc định) không nằm trong lưới, quay về bằng icon đặt lại ở tiêu đề "Chủ đề & kiểu dáng" |
+| Chủ đề                        | `aod_theme_id`                                         | Cổ điển  | Cổ điển (4 mặt đồng hồ có từ trước), Sỏi, Số áo, Viên nang, Thẻ, Tháp, Chuỗi, Vành, La bàn, Bán nguyệt, Dải màu hoặc Gợn sóng. Chọn ở tab AOD › Chủ đề, xem trước rồi Áp dụng; Cổ điển (mặc định) không nằm trong lưới, quay về bằng icon đặt lại ở tiêu đề "Chủ đề & kiểu dáng" |
 | Kiểu từng khối                | `aod_component_styles` (chuỗi `khoá=giá trị,...`)      | Mặc định | Font, cỡ 60–150%, màu của từng khối dùng chung: ngày, pin, thời tiết, sự kiện, ghi nhớ, thông báo, nhạc, nét vẽ (không có font). Sửa ở Tùy chỉnh, không áp dụng cho khối chủ đề đang dùng tự vẽ |
-| Cấu hình chủ đề               | `aod_theme_configs` (chuỗi theo chủ đề)                | Mặc định | Cổ điển: mặt (Số / Số xếp chồng / Kim / Kim tối giản), font, màu giờ và màu phút riêng, cỡ 60–150%; chưa lưu thì lấy `aod_clock_face` / `_font` / `_color` / `_size_percent` của bản cũ. Sỏi: hình và kiểu (đặc / viền) của khối giờ và khối phút (8 hình), cỡ, xếp giờ trên phút, màu riêng của khối giờ, số giờ, khối phút, số phút, ngày và nhạc, kiểu ngày, hình nút phát, thanh tiến trình nhạc (gợn sóng / thẳng / ẩn), animation khi đổi phút (trượt / phóng / nảy hình); font cố định của chủ đề. Số áo: cỡ 50–100%, màu giờ, màu phút, màu ngày, màu dòng pin + thông báo. Viên nang: kiểu viên (đặc / viền), cỡ 60–150%, màu chữ số, màu viên, màu ngày, màu nhạc, màu dòng pin + thông báo. Thẻ: kiểu số (đặc / viền), nền thẻ (nền mờ / viền / không), cỡ 80–120%, màu giờ, màu phút + AM/PM, màu thẻ (tô nền mờ hoặc nét viền theo kiểu nền), màu ngày, màu nhạc, màu dòng pin + thông báo. Tháp: kiểu số (viền / nhạt dần xuống / nhạt dần lên / đặc / giờ đặc / phút đặc), cỡ 80–110%, màu giờ, màu phút, màu ngày, màu nhạc, màu dòng pin + thông báo. Chuỗi: cỡ 70–130%, màu đồng hồ, màu ngày, màu pin, màu thông báo, màu ghi nhớ, màu sự kiện, màu nhạc. Vành: kiểu vạch (vạch phút / vạch giờ), màu số (và vòng tâm kim), màu kim và vạch, màu ngày (thứ + số ngày), màu dòng pin + thông báo, màu nhạc. La bàn: kiểu (có vòng giây / không vòng giây như Style 1 / 2 của app mẫu), cỡ 70–120%, màu giờ (và đường chỉ), màu giờ rưỡi (02:30…), màu phút (vạch giữa số phút cùng màu, mờ hơn), màu giây, màu ngày, màu dòng pin + thông báo, màu nhạc. Bán nguyệt: màu giờ, màu phút (số trong viên), màu viền phút, màu vạch và số hai vòng, màu ngày (thứ đủ màu, dòng ngày tối hơn), màu dòng pin + thông báo, màu nhạc. Dải màu: cỡ 80–150%, vị trí (chạy theo giờ hoặc ghim 0–100% chiều dài vạch), màu giờ, màu vạch (mặc định gradient vàng → hồng tím → xanh của app mẫu), màu ngày, màu pin, màu thông báo, màu nhạc |
+| Cấu hình chủ đề               | `aod_theme_configs` (chuỗi theo chủ đề)                | Mặc định | Cổ điển: mặt (Số / Số xếp chồng / Kim / Kim tối giản), font, màu giờ và màu phút riêng, cỡ 60–150%; chưa lưu thì lấy `aod_clock_face` / `_font` / `_color` / `_size_percent` của bản cũ. Sỏi: hình và kiểu (đặc / viền) của khối giờ và khối phút (8 hình), cỡ, xếp giờ trên phút, màu riêng của khối giờ, số giờ, khối phút, số phút, ngày và nhạc, kiểu ngày, hình nút phát, thanh tiến trình nhạc (gợn sóng / thẳng / ẩn), animation khi đổi phút (trượt / phóng / nảy hình); font cố định của chủ đề. Số áo: cỡ 50–100%, màu giờ, màu phút, màu ngày, màu dòng pin + thông báo. Viên nang: kiểu viên (đặc / viền), cỡ 60–150%, màu chữ số, màu viên, màu ngày, màu nhạc, màu dòng pin + thông báo. Thẻ: kiểu số (đặc / viền), nền thẻ (nền mờ / viền / không), cỡ 80–120%, màu giờ, màu phút + AM/PM, màu thẻ (tô nền mờ hoặc nét viền theo kiểu nền), màu ngày, màu nhạc, màu dòng pin + thông báo. Tháp: kiểu số (viền / nhạt dần xuống / nhạt dần lên / đặc / giờ đặc / phút đặc), cỡ 80–110%, màu giờ, màu phút, màu ngày, màu nhạc, màu dòng pin + thông báo. Chuỗi: cỡ 70–130%, màu đồng hồ, màu ngày, màu pin, màu thông báo, màu ghi nhớ, màu sự kiện, màu nhạc. Vành: kiểu vạch (vạch phút / vạch giờ), màu số (và vòng tâm kim), màu kim và vạch, màu ngày (thứ + số ngày), màu dòng pin + thông báo, màu nhạc. La bàn: kiểu (có vòng giây / không vòng giây như Style 1 / 2 của app mẫu), cỡ 70–120%, màu giờ (và đường chỉ), màu giờ rưỡi (02:30…), màu phút (vạch giữa số phút cùng màu, mờ hơn), màu giây, màu ngày, màu dòng pin + thông báo, màu nhạc. Bán nguyệt: màu giờ, màu phút (số trong viên), màu viền phút, màu vạch và số hai vòng, màu ngày (thứ đủ màu, dòng ngày tối hơn), màu dòng pin + thông báo, màu nhạc. Dải màu: cỡ 80–150%, vị trí (chạy theo giờ hoặc ghim 0–100% chiều dài vạch), màu giờ, màu vạch (mặc định gradient vàng → hồng tím → xanh của app mẫu), màu ngày, màu pin, màu thông báo, màu nhạc. Gợn sóng: kiểu mặt số (đặc / viền, thẻ nhạc và nút phát theo), cỡ 60–110%, màu kim giờ, kim phút, chấm giây, mặt số, ngày, thông báo, pin, nhạc, nền thẻ nhạc |
 | Luôn xoay ngang (đồng hồ đêm) | `is_aod_landscape`                                     | Tắt      | Đồng hồ luôn nằm ngang theo chiều dựng máy                                                                                                                                                        |
 | Ảnh nền có sẵn                | `aod_wallpaper`                                        | Không có | 18 ảnh AMOLED vẽ bằng vector, nền đen: 6 ảnh vẽ tay (Sao đêm, Cực quang, Nhật thực, Sóng, Tinh vân, Chân trời) và 12 ảnh sinh bằng script (Mưa sao băng, Hành tinh vành đai, Quỹ đạo, Núi trăng, Đom đóm, Hoa anh đào, Sứa phát sáng, Thành phố đêm, Pháo hoa, Đường đồng mức, Sóng âm, Đèn trời). Hiện mờ 50% sau đồng hồ                                                                           |
 | Ảnh từ máy                    | (file `aod_background.jpg` trong bộ nhớ riêng của app) | Không có | Chọn bằng Photo Picker, không cần quyền đọc ảnh. App lưu một bản sao đã thu về cỡ màn hình; ảnh hiện mờ 50% sau đồng hồ. Mỗi lúc chỉ một ảnh nền: chọn ảnh có sẵn thì bỏ ảnh từ máy, và ngược lại |
@@ -409,9 +414,9 @@ thông báo ──▶ AodNotificationListener ──▶ NotificationStateManager
 | `presentation/aod/AodNotificationListener.kt`                                                                                                                                                                                                       | Nhận thông báo từ hệ thống (khi đã cấp "Truy cập thông báo") và chuyển cho `NotificationStateManager`                                                                                                                                                                                                                                                                                                                                                                                             |
 | `presentation/navigation/MainNavDisplay.kt` · `MainDestinations.kt` | Main: `Scaffold` có thanh trên chung của tab (`MainTopBar`: tiêu đề theo tab, IAP, Share), `NavDisplay` của 3 tab (AOD, Viền sáng, Cài đặt) và thanh tab dưới 56dp (`AppEditorTab`: chỉ icon, tab đang chọn icon đặc và có tên), không ViewModel. Tab AOD là gốc: Back ở tab khác về tab AOD rồi mới thoát app |
 | `presentation/screens/aodtab/` | Tab AOD (MVI): cả tab là một `LazyVerticalGrid` 3 cột: công tắc AOD, thẻ "Giao diện của bạn" (AOD đang áp dụng, vẽ thu nhỏ bằng `AodThumbnail`, icon khối đang bật theo `CustomizeDraftUiModel.enabledBlockTabs()`, dòng số khối + nền; chạm để mở Customize) chiếm cả hàng, lưới chủ đề mỗi chủ đề một ô (mỗi mục luôn xem trước kiểu mặc định đẹp nhất của chủ đề, không theo cấu hình đã sửa: đồng hồ, ngày và khối chủ đề tự vẽ như trình phát nhạc của Sỏi, không có nền, thông báo, pin... của user; chạm để mở màn chủ đề), sheet và dòng cảnh báo khi thiếu quyền bắt buộc |
-| `presentation/model/aod/theme/` (+ `classic/`, `pebble/`, `jersey/`, `capsule/`, `card/`, `tower/`, `chain/`, `bezel/`, `compass/`, `halfmoon/`, `gradientline/` spec từng chủ đề, `component/` kiểu khối dùng chung) | Hệ chủ đề: `AodThemeValue` (danh sách, id lưu), `AodThemeSpec` (tab + thuộc tính) của từng chủ đề (`ClassicThemeSpec`, `PebbleThemeSpec`, `JerseyThemeSpec`, `CapsuleThemeSpec`, `CardThemeSpec`), thuộc tính `AodThemeOption` (lựa chọn / màu / khoảng số / bật tắt, lưu thành Int trong `AodThemeConfig`), hình khối `AodShapeValue` (hàm bán kính quanh tâm), khối chủ đề tự vẽ `AodBlockValue`, kiểu từng khối dùng chung `AodComponentSpec` / `AodComponentsUiModel`, đọc / ghi `aod_theme_configs` và `aod_component_styles` |
+| `presentation/model/aod/theme/` (+ `classic/`, `pebble/`, `jersey/`, `capsule/`, `card/`, `tower/`, `chain/`, `bezel/`, `compass/`, `halfmoon/`, `gradientline/`, `ripple/` spec từng chủ đề, `component/` kiểu khối dùng chung) | Hệ chủ đề: `AodThemeValue` (danh sách, id lưu), `AodThemeSpec` (tab + thuộc tính) của từng chủ đề (`ClassicThemeSpec`, `PebbleThemeSpec`, `JerseyThemeSpec`, `CapsuleThemeSpec`, `CardThemeSpec`), thuộc tính `AodThemeOption` (lựa chọn / màu / khoảng số / bật tắt, lưu thành Int trong `AodThemeConfig`), hình khối `AodShapeValue` (hàm bán kính quanh tâm), khối chủ đề tự vẽ `AodBlockValue`, kiểu từng khối dùng chung `AodComponentSpec` / `AodComponentsUiModel`, đọc / ghi `aod_theme_configs` và `aod_component_styles` |
 | `presentation/screens/themeeditor/` | Màn chủ đề (MVI) dùng chung cho mọi chủ đề: xem trước riêng chủ đề: đồng hồ, ngày và khối chủ đề tự vẽ (Sửa / Áp dụng; chủ đề đang dùng thì "Tùy chỉnh" mở Customize), sửa theo tab của `AodThemeSpec` (mỗi tab một phần của chủ đề như khối ở Tùy chỉnh, icon đặt lại riêng ở thanh tiêu đề panel) với control dựng theo loại thuộc tính, hoàn tác / làm lại / đặt lại, Lưu |
-| `presentation/components/aod/theme/` (`AodThemeLayout`: `AodPortrait` / `AodLandscape` chọn bố cục theo chủ đề; `AodShapePath`; thanh gợn sóng `AodWaveTrack` của Sỏi và Thẻ; `classic/`, `pebble/`, `jersey/`, `capsule/`, `card/`, `tower/`, `chain/`, `bezel/`, `compass/`, `halfmoon/`) · `components/aod/AodThumbnail.kt` | Chọn phần vẽ theo chủ đề và phần vẽ riêng từng chủ đề, gồm cả bố cục màn ngang (đồng hồ Cổ điển; khối hình + trình phát của Sỏi; chữ số viền, ngày dọc của Số áo; viên nang, ngày in hoa, trình phát của Viên nang; thẻ, ô AM/PM, trình phát của Thẻ; hàng số cao hẹp, sáu kiểu tô, trình phát chạm tên bài của Tháp; viên thuốc khoét số, chuỗi dòng có chấm, trình phát của Chuỗi; mặt số phủ màn vạch cắt theo khung, kim có bóng, trình phát gọn của Vành; ba vòng số xoay theo giờ thật về đường chỉ, thông báo mới nhất, trình phát của La bàn; nửa mặt số sát mép trái, vòng giây và vòng phút xoay theo giờ thật, viên phút kéo tới mép mặt số, trình phát của Bán nguyệt; vạch gradient khoét quanh giờ + ngày trượt theo phút trong ngày, dòng pin hai màu, trình phát của Dải màu; dòng pin + thông báo dùng chung của các chủ đề này ở `block/AodStatusLine`), path của hình khối, AOD thu nhỏ |
+| `presentation/components/aod/theme/` (`AodThemeLayout`: `AodPortrait` / `AodLandscape` chọn bố cục theo chủ đề; `AodShapePath`; thanh gợn sóng `AodWaveTrack` của Sỏi và Thẻ; `classic/`, `pebble/`, `jersey/`, `capsule/`, `card/`, `tower/`, `chain/`, `bezel/`, `compass/`, `halfmoon/`) · `components/aod/AodThumbnail.kt` | Chọn phần vẽ theo chủ đề và phần vẽ riêng từng chủ đề, gồm cả bố cục màn ngang (đồng hồ Cổ điển; khối hình + trình phát của Sỏi; chữ số viền, ngày dọc của Số áo; viên nang, ngày in hoa, trình phát của Viên nang; thẻ, ô AM/PM, trình phát của Thẻ; hàng số cao hẹp, sáu kiểu tô, trình phát chạm tên bài của Tháp; viên thuốc khoét số, chuỗi dòng có chấm, trình phát của Chuỗi; mặt số phủ màn vạch cắt theo khung, kim có bóng, trình phát gọn của Vành; ba vòng số xoay theo giờ thật về đường chỉ, thông báo mới nhất, trình phát của La bàn; nửa mặt số sát mép trái, vòng giây và vòng phút xoay theo giờ thật, viên phút kéo tới mép mặt số, trình phát của Bán nguyệt; vạch gradient khoét quanh giờ + ngày trượt theo phút trong ngày, dòng pin hai màu, trình phát của Dải màu; đĩa 12 gợn, ngày uốn theo đĩa, kim dày và chấm giây chạy theo giờ thật, thẻ nhạc có ảnh bìa vuốt để chuyển bài của Gợn sóng; dòng pin + thông báo dùng chung của các chủ đề này ở `block/AodStatusLine`), path của hình khối, AOD thu nhỏ |
 | `presentation/components/aod/editor/` | Control chỉnh dùng ở Tùy chỉnh và màn chủ đề: `AodThemeOptionList` (dựng theo `AodThemeSpec`), ảnh xem trước lựa chọn `aodChoicePreview`, bảng màu `AodColorPicker` (Một màu: 16 màu có sẵn `ColorSwatchValue` + vòng màu + mã hex; Gradient: `GradientSwatchValue` + 3 chấm + hướng), chọn ảnh nền, hộp thoại ghi chú / nét vẽ |
 | `presentation/components/editor/` (`AppEditorPanel`, `AppEditorTab`, `AppEditorHistoryButtons`, `AppEditorFab`, `AppApplyingOverlay`) | Tấm chỉnh trượt lên, tab của thanh tab thấp (chỉ icon, tab đang chọn có tên; cả thanh tab Main), hoàn tác / làm lại / đặt lại ở thanh trên, nút tròn nổi xoay khung và lớp phủ "Đang áp dụng…", dùng chung cho Tùy chỉnh và màn chủ đề |
 | `presentation/screens/edgelight/` | Tab Viền sáng: màn giữ chỗ |
@@ -470,8 +475,8 @@ Từ FakeAOD sang Aodamn:
 
 ## Thêm chủ đề mới
 
-Cách đã làm cho Sỏi, Số áo, Viên nang (clone từ ảnh chụp app mẫu), Thẻ, Tháp, Chuỗi, Vành, La bàn, Bán nguyệt và Dải màu (số đo lấy từ dịch
-ngược app mẫu, `CardMetrics`, `TowerMetrics`, `ChainMetrics`, `BezelMetrics`, `CompassMetrics`, `HalfMoonMetrics`, `GradientLineMetrics`). Màn chủ đề dựng control theo `AodThemeSpec` nên
+Cách đã làm cho Sỏi, Số áo, Viên nang (clone từ ảnh chụp app mẫu), Thẻ, Tháp, Chuỗi, Vành, La bàn, Bán nguyệt, Dải màu và Gợn sóng (số đo lấy từ dịch
+ngược app mẫu, `CardMetrics`, `TowerMetrics`, `ChainMetrics`, `BezelMetrics`, `CompassMetrics`, `HalfMoonMetrics`, `GradientLineMetrics`, `RippleMetrics`). Màn chủ đề dựng control theo `AodThemeSpec` nên
 chủ đề mới không cần màn riêng; chỉ tách màn khi chủ đề cần control mà `AodThemeOption` không có.
 
 1. Đọc ảnh mẫu và chốt với user trước khi code:
@@ -489,7 +494,7 @@ chủ đề mới không cần màn riêng; chỉ tách màn khi chủ đề c�
      vẽ một lần vào layer rồi chỉ xoay nên chạy mỗi khung hình vẫn nhẹ, kiểu không vòng giây xoay mượt sang phút mới thay vì nhảy).
    - Phần chủ đề tự vẽ (`ownBlocks`): đồng hồ luôn tự vẽ; ngày, nhạc, dòng pin + thông báo, ghi nhớ, sự kiện nếu khác khối
      dùng chung. Chủ đề tự vẽ dòng trạng thái mặc định không có thông báo mới nhất; tự vẽ cả thông báo mới nhất thì đặt
-     `hasNotificationContent = true` (Chuỗi, La bàn, Bán nguyệt, Dải màu).
+     `hasNotificationContent = true` (Chuỗi, La bàn, Bán nguyệt, Dải màu, Gợn sóng).
    - Khối dùng chung (thời tiết, sự kiện, ghi nhớ, nét vẽ...) là điểm khác app mẫu nên chủ đề mới có các khối hợp bố cục
      dù ảnh mẫu không có, nhưng không mặc định bật hết và không nhồi khối / tuỳ chọn chỉ vì app hỗ trợ: chọn khối thật sự có
      chỗ và nêu lý do khối bị bỏ ngay trong mock (Tháp bỏ nét vẽ vì hàng số cao không còn chỗ cho khối lớn; Vành bỏ ghi nhớ, sự
@@ -520,7 +525,7 @@ chủ đề mới không cần màn riêng; chỉ tách màn khi chủ đề c�
      `AodSpreadMetrics`, chia khối bằng `topPanelBlocks` / `bottomPanelBlocks`); chủ đề lấy mặt số / hàng số làm điểm nhấn (La bàn,
      Vành, Số áo) giữ điểm nhấn giữa màn và chia thông tin ra hai phía (La bàn: ngày trên, pin + nhạc dưới; Vành: ngày + pin trên
      kim, nhạc dưới; Bán nguyệt: ngày, thứ, pin cột phải trên trục số đang chỉ, nhạc dưới; Dải màu: vạch hết chiều cao, giờ + ngày nằm trên vạch, nhạc
-     đầu màn, pin đáy). Tự đánh giá theo dáng của từng chủ đề, không rập khuôn Tháp; ghi cách đặt trong mock.
+     đầu màn, pin đáy; Gợn sóng: thông báo trên, thời tiết, nhạc, pin dưới mặt số). Tự đánh giá theo dáng của từng chủ đề, không rập khuôn Tháp; ghi cách đặt trong mock.
    - Tên chủ đề (en + vi), cỡ mặc định (Số áo: to như ảnh).
 2. Lấy số đo. App mẫu đã dịch ngược được (`tools/reference/`) thì **không xin user chụp ảnh**: lấy thẳng từ layout XML
    (`aapt2 dump xmltree`: cỡ chữ sp, đệm, bo góc, màu, alpha), code của chủ đề (cỡ nhân theo tuỳ chọn, kiểu đặc / viền,
@@ -833,7 +838,8 @@ chọn theo các khối đang có dữ liệu, dùng chung cho mọi chủ đề
     Đổi font hay màu: các ô xem trước (kiểu, mặt đồng hồ) giữ nguyên, chỉ khung xem trước AOD đổi theo.
     Bảng màu: trên cùng "Màu có sẵn" 16 ô (2 hàng × 8: trắng, xám, mint và màu đặc trưng của các app như YouTube, Spotify, Zalo…),
     chạm một ô thì khung xem trước đổi màu, ô có vòng mint, vòng màu nhảy theo; dưới là "Tự chọn" (vòng màu + thanh độ sáng),
-    kéo ra màu không trùng ô nào thì không ô nào sáng. TalkBack đọc tên từng ô. Cuối là ô "Mã hex": gõ đủ 6 ký tự (chỉ nhận 0–9, A–F)
+    kéo ra màu không trùng ô nào thì không ô nào sáng; màu đang gần đen (vd mặt số, nền thẻ nhạc của Gợn sóng) thì chạm vòng màu là thanh
+    độ sáng tự lên tối đa, màu chọn ra đúng màu trên vòng. TalkBack đọc tên từng ô. Cuối là ô "Mã hex": gõ đủ 6 ký tự (chỉ nhận 0–9, A–F)
     thì đổi màu ngay, kéo vòng màu / chọn ô thì mã đổi theo. Thuộc tính cho phép gradient (`AodColorOption.isGradientAllowed`) có thêm
     công tắc "Một màu | Gradient" ở đầu: sang Gradient hiện 12 bộ có sẵn (2 × 6), thanh 3 chấm Đầu / Giữa / Cuối (chạm chấm để chọn),
     4 hướng + Đảo chiều và bảng màu của chấm đang chọn; chọn bộ rồi chỉnh tiếp được; quay lại Một màu lấy màu Đầu, sang Gradient lại thì
@@ -1003,6 +1009,19 @@ chọn theo các khối đang có dữ liệu, dùng chung cho mọi chủ đề
     Pin & thông báo (màu pin, màu thông báo riêng), Nhạc. Tùy chỉnh khi đang dùng Dải màu: không có tab Ghi chú, Sự kiện, Nét vẽ.
     Xoay ngang: vạch nằm ngang hết bề rộng, giờ to hơn, trượt từ trái (0 giờ) sang phải (nửa đêm), ngày dưới giờ; trình phát giữa
     phía trên, dòng pin giữa phía dưới. Trên máy Xiaomi: chữ là Google Sans. Các chủ đề khác không đổi gì.
+25o. Chủ đề Gợn sóng: tab AOD › Chủ đề › Gợn sóng: thẻ ở lưới là đĩa tròn viền 12 gợn màu tối giữa màn, "Th 3  21" uốn theo nửa
+    trên đĩa, kim giờ xanh lá ngắn và kim phút xám dài (dày, đầu tròn), chấm giây nhỏ; thẻ ở tab AOD đứng yên ở 08:30, khung xem
+    trước ở màn chủ đề, Tùy chỉnh thì chấm giây chạy vòng theo giờ thật. Áp dụng rồi khóa máy: kim trôi liên tục, chấm giây đi
+    mượt một vòng mỗi phút, đi qua chữ ngày ở trên đỉnh; trên cùng là hàng icon thông báo, bật nội dung thông báo thì dưới đó có icon
+    đen trong vòng tròn màu + tiêu đề + nội dung tối hơn (tối đa 2 dòng); bật thời tiết thì một dòng giữa đáy đĩa và vùng dưới; đáy
+    là pin (mờ hơn khi không sạc, rõ khi đang sạc). Phát nhạc: thẻ bo tròn có ảnh bìa tròn của bài (app không gửi ảnh thì ô có nốt
+    nhạc), tên bài và nghệ sĩ, nút phát tròn bên phải; vuốt thẻ sang trái là bài sau, sang phải là bài trước, tên mới trượt vào theo
+    hướng vuốt; mặt số không nhảy khi nhạc bật / tắt. Để AOD lâu hay phòng tối: chấm giây vẫn chạy, đĩa vẫn đặc (không đổi sang
+    viền như chế độ tiết kiệm của app mẫu). Sửa: tab Đồng hồ (Kiểu đồng hồ Đặc / Viền: đĩa, thẻ nhạc, nút phát cùng đổi; Cỡ 60–110%;
+    màu kim giờ, kim phút, chấm giây, mặt số), Ngày, Pin & thông báo (màu thông báo, màu pin), Nhạc (màu chữ, nền thẻ nhạc); màu
+    nào cũng có tab Gradient (kim tô từ tâm ra đầu kim). Tùy chỉnh khi đang dùng Gợn sóng: không có tab Ghi chú, Sự kiện, Nét vẽ.
+    Xoay ngang: mặt số giữa màn to như màn dọc; không nhạc: thông báo trái, thời tiết + pin phải; phát nhạc: thông báo, thời tiết,
+    pin trái, trình phát phải, đổi bằng mờ chéo. Trên máy Xiaomi: chữ là Google Sans. Các chủ đề khác không đổi gì.
 25f. Overlay mới (không còn hộp thoại / nút Material): mọi sheet có thanh kéo dải màu mint → xanh → tím; mép trên màn
     hình không có viền sáng khi sheet hiện. Đặt lại (tab AOD › Chủ đề, Tùy chỉnh, màn chủ đề): sheet có hình điện thoại với huy hiệu mũi tên xoay, nút
     "Đặt lại" mint, Hủy bằng chữ. Màn chủ đề đang sửa, Back khi còn thay đổi: "Lưu trước khi thoát?" với Lưu rồi thoát (lưu,
@@ -1036,7 +1055,8 @@ chọn theo các khối đang có dữ liệu, dùng chung cho mọi chủ đề
     mặt số luôn phủ màn; không nhạc thì pin trái, ngày phải; có nhạc thì ngày + pin bên trái, trình phát bên phải. La bàn:
     mặt số giữa màn, ba vòng vẫn xoay; không nhạc thì ngày trái, pin phải; có nhạc thì ngày + pin trái, trình phát phải. Bán
     nguyệt: nửa mặt số to sát mép trái, hai vòng vẫn xoay; cột ngày, pin giữa phần còn lại, có nhạc thì trình phát ngay dưới cột. Dải
-    màu: vạch ngang hết bề rộng, giờ + ngày trượt trái → phải, trình phát giữa phía trên, pin giữa phía dưới. Số áo: một cột giữa màn hình: ngày "13 / 10" + viên thuốc thứ nằm
+    màu: vạch ngang hết bề rộng, giờ + ngày trượt trái → phải, trình phát giữa phía trên, pin giữa phía dưới. Gợn sóng: mặt số
+    giữa màn to như màn dọc, chấm giây vẫn chạy; thông báo trái, pin phải, có nhạc thì trình phát phải. Số áo: một cột giữa màn hình: ngày "13 / 10" + viên thuốc thứ nằm
     ngang, bốn chữ số một hàng (giờ và phút cách một khoảng), pin + icon thông báo, rồi các khối thêm cạnh nhau; tắt ngày
     thì số to ra; đổi thứ (dài hay ngắn) hay phút đổi: số không dời chỗ. Xem bằng nút xoay ngang ở thanh trên Tùy chỉnh / màn chủ đề
     (không cần bật "Luôn xoay ngang"): màn hình app và các thanh vẫn dọc, chỉ AOD đổi sang bố cục ngang ở cỡ đầy đủ và

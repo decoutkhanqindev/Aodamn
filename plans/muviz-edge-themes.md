@@ -45,6 +45,7 @@ code dịch ngược, không lấy asset (font, ảnh, Lottie) từ APK. APK và
   | La bàn (`COMPASS`) | **25 · May23 "Ambitio Face"** | làm từ danh mục này (2026-10-18), số đo lấy từ layout `may23_screen_layout` / `AmbitioClock` / font trong APK |
 | Bán nguyệt (`HALF_MOON`) | **20 · Dec22 "Half Concentric"** | làm từ danh mục này (2026-10-20), số đo lấy từ layout `dec22_screen_layout` dọc / ngang / `HalfConcentricClock` |
 | Dải màu (`GRADIENT_LINE`) | **29 · Sep23 "Gradient Line Clock"** | làm từ danh mục này (2026-10-20), số đo lấy từ layout `sep23_screen_layout` (chỉ có bản dọc) / `Sep23Clock` |
+| Gợn sóng (`RIPPLE`) | **4 · Aug21 "Android 12"** | làm từ danh mục này (2026-10-21), số đo lấy từ layout `aug21_screen_layout` (chỉ có bản dọc) / `Android12Clock2` / `Android12ClockBg2` |
 
 ## Danh mục đủ 44 chủ đề
 
@@ -56,7 +57,7 @@ text view chung) hoặc font dùng trong code; "chữ (font layout)" nghĩa là 
 | 1 | May21 | Gradient | Clock Weight, Clock Size, Theme Color | Hour, Minute, Date, Notification, Controls, Battery Status | chữ: lato | – | chưa có |
 | 2 | Jun21 | Default | Symbol, Clock Weight, Symbol Size, Clock Size, Theme Color | Hour, Minute, Date, Notification, Controls, Battery Status | chữ: rubik | chọn ký hiệu | chưa có |
 | 3 | Jul21 | Nike | Clock Size, Hour Color, Minute Color, Second Color, Clock Background Color, Theme Color | Date, Notification, Controls, Battery Status | AnalogueClock1, PieClock | – | chưa có |
-| 4 | Aug21 | Android 12 | Clock Style, Clock Size, Hour Color, Minute Color, Second Color, Date Color, Theme Color | Clock Background, Controls, Controls Background, Notification, Battery Status | Android12Clock2, Android12ClockBg2 | – | chưa có |
+| 4 | Aug21 | Android 12 | Clock Style, Clock Size, Hour Color, Minute Color, Second Color, Date Color, Theme Color | Clock Background, Controls, Controls Background, Notification, Battery Status | Android12Clock2, Android12ClockBg2 | – | **Gợn sóng** (`RIPPLE`) |
 | 5 | Sep21 | Text Clock | Clock Weight, Clock Size, Theme Color | Hour, Minute, Date, Notification, Controls, Battery Status | chữ: lato | – | chưa có |
 | 6 | Oct21 | Visualizer | Clock Size, Viz Height, Viz Spread, Viz Speed, Theme Color | Viz 1, Viz 2, Viz 3, Hour, Minute, Date, Notification, Controls, Battery Status | chữ (font layout) | quyền RECORD_AUDIO | chưa có |
 | 7 | Nov21 | Retro | Clock Size, Theme Color | Clock, Date, Notification, Controls | chữ (font layout) | – | chưa có |
@@ -145,6 +146,10 @@ mỗi phút (`AodViewModel`), nên phần chạy theo giây của app mẫu ph�
   cho cả màn ngang (vạch ngắn, giờ nhỏ) nên bên mình cho vạch nằm ngang. Bảng màu AOD của app mẫu có 211 màu đơn + 13 bộ gradient 3 màu kèm
   hướng (`ab/a0`, một bộ trùng) và màn tự tạo gradient (`AddColorActivity`: 3 ô màu, vòng màu, mã hex, 6 hướng): bên mình thành bộ chọn
   Một màu / Gradient dùng chung (12 bộ có sẵn, 4 hướng + đảo chiều, mã hex).
+- ~~**4 · Android 12**~~ (`Android12Clock2` + `Android12ClockBg2`, đã làm thành Gợn sóng 2026-10-21): đĩa 12 gợn (đặc / viền, nền `#121218`),
+  ngày "E  dd" Rubik Medium uốn theo nửa trên đĩa, kim giờ / phút dày đầu tròn, chấm giây chạy vòng; hàng icon / thông báo mới (icon trong
+  vòng tròn màu) ở trên, thẻ nhạc bo tròn có ảnh bìa (vuốt để chuyển bài) + nút phát tròn và chữ pin ở dưới; trạng thái tiết kiệm đổi đĩa sang
+  viền, ẩn chấm giây. Một layout cho cả màn ngang (mặt số còn rất nhỏ) nên bên mình tự dựng màn ngang.
 - **30 · Coum Face** ⭐ (`CoumTick` + `oct23_screen_layout`): giờ số "09:50" 50sp + ngày 16sp ở giữa, vòng 60 vạch phủ màn xoay
   theo **giây**, số giây trong chấm tròn ở mép phải, tối dần trên / dưới; màu vòng có thể là gradient. Nét đặc trưng là giây.
 - **39 · Nothing Wide** (`NothingWideClock`): khung chữ nhật bo góc sát mép, 60 vạch là tia cắt trong dải (như Vành), kim có

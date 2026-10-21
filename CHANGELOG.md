@@ -7,6 +7,42 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-10-21 – Chủ đề Gợn sóng
+
+Build được, unit test pass (thêm test chặn Gợn sóng có lại khối đã bỏ hay thiếu tuỳ chọn của app mẫu; test nội dung thông báo và chạy theo
+giờ thật ở khung xem trước cho phép Gợn sóng), `tools/check-rules.sh` ra 0 vi phạm, thư mục các chủ đề cũ không đổi dòng nào. Đã test trên máy.
+
+### Thêm
+
+- Chủ đề Gợn sóng (Android 12 của Muviz Edge, số đo lấy từ `Android12Clock2`, `Android12ClockBg2` và layout `aug21_screen_layout` dịch ngược;
+  mock duyệt trước khi code): đĩa tròn viền 12 gợn (±6%) giữa màn, bán kính 0,9 × cỡ, đặc hoặc viền 2dp; ngày "E  dd" Google Sans Medium uốn theo
+  nửa trên đĩa; kim phút rồi kim giờ dày 0,1 đầu tròn (dài 0,5 / 0,3) trôi liên tục; chấm giây chạy vòng ở 0,71 theo giờ thật mỗi khung hình,
+  cả ở khung xem trước (`isLiveInPreview`). Bỏ trạng thái tiết kiệm của app mẫu (đĩa viền, ẩn chấm giây) để chấm giây luôn chạy (user chọn).
+- Bố cục như layout mẫu: vùng thông báo trên cùng (hàng icon; bật nội dung thông báo thì thông báo mới nhất: icon đen trong vòng tròn màu, tiêu
+  đề 16sp, nội dung 14sp tối hơn 40%, tối đa 2 dòng), thời tiết (khối dùng chung) giữa đáy đĩa và vùng dưới, thẻ nhạc rồi dòng pin (mờ 0,8 khi
+  không sạc) ở dưới; vùng dưới giữ chỗ cho thẻ nhạc nên mặt số không nhảy. Thẻ nhạc như app mẫu: bo tròn hết, ảnh bìa tròn 55dp, tên bài 15sp
+  Medium, nghệ sĩ tối hơn, nút phát tròn 60dp riêng, đặc / viền theo kiểu mặt số; vuốt ngang để chuyển bài (TalkBack có hành động Bài trước /
+  Bài tiếp), tên mới trượt vào theo hướng vuốt; không có ảnh bìa thì ô tròn có nốt nhạc. Màn ngang (app mẫu dùng chung layout dọc nên mặt số
+  chỉ còn rất nhỏ): mặt số giữa màn to như màn dọc, không nhạc thì thông báo trái, thời tiết + pin phải, có nhạc thì thông báo, thời tiết, pin
+  trái, trình phát phải, đổi bằng mờ chéo.
+- Tuỳ chọn đủ như app mẫu: kiểu mặt số (đặc / viền), cỡ 60–110% (mặc định 80%), màu kim giờ, kim phút, chấm giây, mặt số, ngày; màu chủ đạo
+  tách thành màu thông báo, pin, nhạc, nền thẻ nhạc, mặc định đúng như app mẫu tính ra. Mặc định bắt mắt: kim giờ `Green` (#A6E3A1, màu nhấn
+  chưa chủ đề nào dùng; app mẫu trắng). Màu nào cũng tô được gradient (kim tô từ tâm ra đầu kim, đĩa và chấm giây theo khung của chúng).
+- Gợn sóng chỉ có ngày, thời tiết, pin, thông báo (kèm thông báo mới nhất, `hasNotificationContent = true`), nhạc: ghi nhớ, sự kiện, nét vẽ
+  không có chỗ đặt cân quanh mặt số tròn ở cả dọc lẫn ngang.
+- Ảnh bìa bài hát: `MediaStateManager` đọc ảnh bìa (album art → art → display icon), thu nhỏ còn cạnh dài 160px một lần cho mỗi ảnh gốc
+  (đổi trạng thái phát không tạo bitmap mới), `MediaPlayback.albumArt` / `MediaUiModel.albumArt` mặc định null nên trình phát cũ không đổi.
+- Font Google Sans Medium tĩnh (`google_sans_medium.ttf`, sinh từ font variable có sẵn) và họ `FontFamilyGoogleSansMedium` riêng (thêm Medium vào
+  `FontFamilyGoogleSansText` thì chữ pin của La bàn, Bán nguyệt đổi độ đậm); icon `music-notes` bản light.
+
+### Thay đổi
+
+- Chỉ thêm, không đổi chủ đề đang có: mục `RIPPLE` ở `AodThemeValue`, nhánh `when` ở `AodPortrait` / `AodLandscape` / `AodMediaControls`, màu
+  `Green`, `Ink`, `GreyCE`, `GreyAD`, `GreyB9`, `Grey7C`, chuỗi vi / en (`theme_ripple`, `theme_color_face`, `theme_color_media_background`, mẫu ngày);
+  dùng lại `AodTileStyleValue` (Đặc / Viền) và nhãn "Kiểu đồng hồ" có sẵn.
+- Bộ chọn màu: màu đang gần đen (độ sáng dưới 20%, vd mặt số, nền thẻ nhạc #121218 của Gợn sóng) thì chạm vòng màu đưa thanh độ sáng về tối đa;
+  trước đó vòng màu giữ độ sáng gần 0 nên chọn màu nào cũng ra gần đen như không chỉnh được (user báo khi test Gợn sóng).
+
 ## [Chưa phát hành] – 2026-10-20 – Chủ đề Dải màu
 
 Build được, unit test pass (thêm test chặn Dải màu có lại khối đã bỏ hay thiếu tuỳ chọn của app mẫu, test vị trí giờ trên vạch theo app mẫu,
