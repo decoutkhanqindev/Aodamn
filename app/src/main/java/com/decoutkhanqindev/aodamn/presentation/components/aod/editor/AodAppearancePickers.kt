@@ -216,14 +216,17 @@ fun ClockColorPicker(
                     .matchParentSize()
                     .pointerInput(controller) {
                         val thumbRadius = 28.dp.toPx()
-                        awaitEachGesture {
-                            val down = awaitFirstDown()
-                            // Màu đang gần đen (vd mặt số, nền thẻ nhạc #121218 của Gợn sóng) thì độ sáng của wheel gần 0: chọn màu nào trên wheel
-                            // cũng ra gần đen như không chỉnh được, nên chạm wheel lúc đó đưa độ sáng về tối đa.
+                        // Màu đang gần đen (vd mặt số, nền thẻ nhạc #121218 của Gợn sóng) thì độ sáng của wheel gần 0: chọn màu nào trên wheel cũng
+                        // ra gần đen như không chỉnh được, nên lúc thật sự chọn màu thì đưa độ sáng về tối đa (vuốt cuộn panel thì không đổi gì).
+                        val brightenIfDark = {
                             val hsv = FloatArray(3).also { android.graphics.Color.colorToHSV(currentColor.toArgb(), it) }
                             if (hsv[2] < 0.2f) controller.setBrightness(1f, fromUser = false)
+                        }
+                        awaitEachGesture {
+                            val down = awaitFirstDown()
                             if ((down.position - controller.selectedPoint.value).getDistance() <= thumbRadius) {
                                 down.consume()
+                                brightenIfDark()
                                 controller.selectByCoordinate(down.position.x, down.position.y, true)
                                 drag(down.id) { change ->
                                     change.consume()
@@ -233,6 +236,7 @@ fun ClockColorPicker(
                             } else {
                                 val up = waitForUpOrCancellation() ?: return@awaitEachGesture
                                 up.consume()
+                                brightenIfDark()
                                 controller.selectByCoordinate(up.position.x, up.position.y, true)
                                 currentOnColorChange(controller.selectedColor.value)
                             }
