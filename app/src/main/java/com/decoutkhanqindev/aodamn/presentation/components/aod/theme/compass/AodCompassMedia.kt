@@ -17,11 +17,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -29,10 +31,12 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import com.decoutkhanqindev.aodamn.R
+import com.decoutkhanqindev.aodamn.presentation.components.aod.block.aodTint
 import com.decoutkhanqindev.aodamn.presentation.components.onClick
 import com.decoutkhanqindev.aodamn.presentation.model.aod.info.MediaUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeConfig
@@ -50,6 +54,8 @@ fun AodCompassMedia(
     onIntent: (AodIntent) -> Unit,
 ) {
     val color = config[CompassThemeSpec.MediaColor]
+    val brush = config.brushOf(CompassThemeSpec.MediaColor)
+    val gradientBrush = config.gradientOf(CompassThemeSpec.MediaColor)?.toBrush()
     val textAlpha = animateFloatAsState(
         targetValue = if (media.isPlaying) 1f else CompassMetrics.PAUSED_ALPHA,
         animationSpec = tween(durationMillis = 400),
@@ -66,6 +72,7 @@ fun AodCompassMedia(
             contentDescription = stringResource(R.string.aod_media_previous),
             isEnabled = media.canSkipToPrevious,
             color = color,
+            gradient = gradientBrush,
             onClick = { onIntent(AodIntent.SkipToPreviousTrack) },
         )
 
@@ -93,7 +100,7 @@ fun AodCompassMedia(
             ) {
                 CompassMediaText(
                     text = title.uppercase(),
-                    color = color,
+                    brush = brush,
                     fontSize = CompassMetrics.TitleSize,
                     fontWeight = FontWeight.Bold,
                     iterations = 2,
@@ -102,7 +109,7 @@ fun AodCompassMedia(
                 artist?.let {
                     CompassMediaText(
                         text = artist.uppercase(),
-                        color = color,
+                        brush = brush,
                         fontSize = CompassMetrics.ArtistSize,
                         fontWeight = FontWeight.Normal,
                         iterations = 1,
@@ -119,6 +126,7 @@ fun AodCompassMedia(
             contentDescription = stringResource(R.string.aod_media_next),
             isEnabled = media.canSkipToNext,
             color = color,
+            gradient = gradientBrush,
             onClick = { onIntent(AodIntent.SkipToNextTrack) },
         )
     }
@@ -128,7 +136,7 @@ fun AodCompassMedia(
 @Composable
 private fun CompassMediaText(
     text: String,
-    color: Color,
+    brush: Brush,
     fontSize: TextUnit,
     fontWeight: FontWeight,
     iterations: Int,
@@ -137,7 +145,7 @@ private fun CompassMediaText(
     Text(
         text = text,
         modifier = modifier.basicMarquee(iterations = iterations),
-        color = color,
+        style = LocalTextStyle.current.merge(TextStyle(brush = brush)),
         fontSize = fontSize,
         fontWeight = fontWeight,
         fontFamily = CompassThemeSpec.Font,
@@ -153,6 +161,7 @@ private fun CompassMediaButton(
     contentDescription: String,
     isEnabled: Boolean,
     color: Color,
+    gradient: Brush?,
     onClick: () -> Unit,
 ) {
     Box(
@@ -164,7 +173,9 @@ private fun CompassMediaButton(
         Icon(
             painter = painterResource(iconRes),
             contentDescription = contentDescription,
-            modifier = Modifier.size(CompassMetrics.ButtonIconSize),
+            modifier = Modifier
+                .size(CompassMetrics.ButtonIconSize)
+                .aodTint(gradient.takeIf { isEnabled }),
             tint = if (isEnabled) color else Grey5A,
         )
     }

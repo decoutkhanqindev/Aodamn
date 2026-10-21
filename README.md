@@ -847,7 +847,9 @@ chọn theo các khối đang có dữ liệu, dùng chung cho mọi chủ đề
     tab Gradient; thử mọi kiểu tô số (đặc, viền, mờ dần xuống / lên: phần mờ phải mờ như bản một màu), trình phát. Chuỗi: cả 7 màu có
     tab Gradient; thử viên thuốc lúc đổi phút (chữ số vẫn khoét thủng), từng dòng của chuỗi (chấm, vạch nối, chữ, icon), trình phát. Vành:
     cả 5 màu có tab Gradient; thử từng kiểu vạch (vạch đổi màu theo chỗ quanh viền), số 12 / 3 / 6 / 9 (mỗi số một gradient), kim lúc quay
-    (gốc màu Đầu → đầu kim màu Cuối, bóng kim còn nguyên), trình phát. Panel đang mở, chạm vào khung xem trước (ngoài panel): panel
+    (gốc màu Đầu → đầu kim màu Cuối, bóng kim còn nguyên), trình phát. La bàn:
+    cả 7 màu có tab Gradient; thử kiểu có / không vòng giây (nhãn mỗi vòng một gradient, xoay theo giờ thật), vạch phút, đường chỉ, hai vòng
+    tròn giữa, thông báo mới nhất lúc chữ chạy, trình phát. Panel đang mở, chạm vào khung xem trước (ngoài panel): panel
     đóng (Tùy chỉnh và màn chủ đề lúc Sửa). Khung xem trước ở Tùy chỉnh, màn chủ đề, thẻ "Giao diện của bạn" và lưới chủ
     đề luôn hiện 08:30 hôm nay với dữ liệu mẫu cố định (pin 72%, nhạc dừng ở cùng một chỗ): để qua phút mới không có gì
     đổi; chỉ AOD thật chạy theo giờ.

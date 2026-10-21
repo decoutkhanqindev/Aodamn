@@ -4,6 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import com.decoutkhanqindev.aodamn.R
@@ -109,6 +110,19 @@ data class AodGradient(
 
     // Trải theo khung của chính phần được tô (mỗi chữ, mỗi icon), không theo cả màn.
     fun toBrush(): Brush = Brush.linearGradient(colors = colors, start = direction.start, end = direction.end)
+
+    // Như toBrush() nhưng theo khung cho sẵn, cho hình chỉ chiếm một phần vùng vẽ (vd vòng tròn giữa mặt số).
+    fun toBrush(bounds: Rect): Brush = Brush.linearGradient(
+        colors = colors,
+        start = Offset(bounds.pick(direction.start.x, isX = true), bounds.pick(direction.start.y, isX = false)),
+        end = Offset(bounds.pick(direction.end.x, isX = true), bounds.pick(direction.end.y, isX = false)),
+    )
+
+    private fun Rect.pick(value: Float, isX: Boolean): Float = when {
+        value.isInfinite() -> if (isX) right else bottom
+        isX -> left + value
+        else -> top + value
+    }
 
     companion object {
         const val STOP_COUNT = 3

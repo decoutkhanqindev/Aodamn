@@ -17,15 +17,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -34,6 +37,7 @@ import com.decoutkhanqindev.aodamn.R
 import com.decoutkhanqindev.aodamn.presentation.components.aod.AodPanelBlock
 import com.decoutkhanqindev.aodamn.presentation.components.aod.block.AodStatusLine
 import com.decoutkhanqindev.aodamn.presentation.components.aod.block.AodWeather
+import com.decoutkhanqindev.aodamn.presentation.components.aod.block.aodTint
 import com.decoutkhanqindev.aodamn.presentation.components.rememberFormatter
 import com.decoutkhanqindev.aodamn.presentation.components.rememberZonedDateTime
 import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.AodAppearanceUiModel
@@ -194,6 +198,7 @@ private fun CompassStatus(
     modifier: Modifier = Modifier,
 ) {
     val color = state.appearance.theme.config[CompassThemeSpec.StatusColor]
+    val brush = state.appearance.theme.config.gradientOf(CompassThemeSpec.StatusColor)?.toBrush()
     val latest = state.notifications.latest
 
     AodStatusLine(
@@ -202,6 +207,7 @@ private fun CompassStatus(
         notifications = state.notifications,
         color = color,
         glyphHeight = CompassMetrics.StatusGlyph,
+        brush = brush,
         fontFamily = CompassThemeSpec.Font,
         modifier = modifier,
     )
@@ -211,6 +217,7 @@ private fun CompassStatus(
             CompassLatest(
                 latest = latest,
                 color = color,
+                brush = brush,
                 modifier = Modifier
                     .padding(top = CompassMetrics.LatestGap)
                     .widthIn(max = maxWidth),
@@ -224,6 +231,7 @@ private fun CompassStatus(
 private fun CompassLatest(
     latest: NotificationContentUiModel,
     color: Color,
+    brush: Brush?,
     modifier: Modifier = Modifier,
 ) {
     val text = when {
@@ -239,7 +247,9 @@ private fun CompassLatest(
         Image(
             bitmap = remember(latest.icon) { latest.icon.asImageBitmap() },
             contentDescription = null,
-            modifier = Modifier.size(CompassMetrics.LatestIcon),
+            modifier = Modifier
+                .size(CompassMetrics.LatestIcon)
+                .aodTint(brush),
             colorFilter = ColorFilter.tint(color),
         )
 
@@ -247,7 +257,8 @@ private fun CompassLatest(
             text = text.uppercase(),
             modifier = Modifier
                 .padding(start = CompassMetrics.LatestIconGap)
-                .basicMarquee(iterations = 1),
+                .basicMarquee(iterations = 1)
+                .aodTint(brush),
             color = color,
             fontSize = CompassMetrics.LatestSize,
             fontFamily = CompassThemeSpec.Font,
@@ -267,7 +278,7 @@ private fun CompassDateRow(state: AodState) {
         AnimatedVisibility(visible = state.extras.isDateEnabled) {
             CompassDate(
                 nowMillis = state.nowMillis,
-                color = state.appearance.theme.config[CompassThemeSpec.DateColor],
+                brush = state.appearance.theme.config.brushOf(CompassThemeSpec.DateColor),
                 modifier = Modifier.padding(
                     end = if (isWeatherShown && state.weather != null) CompassMetrics.WeatherGap else 0.dp,
                 ),
@@ -287,7 +298,7 @@ private fun CompassDateRow(state: AodState) {
 @Composable
 private fun CompassDate(
     nowMillis: Long,
-    color: Color,
+    brush: Brush,
     modifier: Modifier = Modifier,
 ) {
     val date = rememberZonedDateTime(nowMillis).format(rememberFormatter(R.string.aod_compass_date_pattern)).uppercase()
@@ -295,7 +306,7 @@ private fun CompassDate(
     Text(
         text = date,
         modifier = modifier,
-        color = color,
+        style = LocalTextStyle.current.merge(TextStyle(brush = brush)),
         fontSize = CompassMetrics.DateSize,
         fontWeight = FontWeight.Bold,
         fontFamily = CompassThemeSpec.Font,

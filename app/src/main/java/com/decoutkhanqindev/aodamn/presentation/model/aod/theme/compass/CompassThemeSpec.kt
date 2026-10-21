@@ -46,17 +46,17 @@ object CompassThemeSpec : AodThemeSpec {
     )
 
     // Số giờ và đường chỉ hổ phách cho thẻ chủ đề bắt mắt; giờ rưỡi và giây xám như màu 2 của app mẫu, phút xám sáng như màu 1.
-    val HourColor = AodColorOption(key = "hour_color", labelRes = R.string.theme_color_hour, default = Amber)
-    val HalfHourColor = AodColorOption(key = "half_hour_color", labelRes = R.string.theme_color_half_hour, default = Grey9A)
-    val MinuteColor = AodColorOption(key = "minute_color", labelRes = R.string.theme_color_minute, default = GreyE0)
-    val SecondColor = AodColorOption(key = "second_color", labelRes = R.string.theme_color_second, default = Grey9A)
-    val DateColor = AodColorOption(key = "date_color", labelRes = R.string.theme_color_date, default = GreyE0)
+    val HourColor = AodColorOption(key = "hour_color", labelRes = R.string.theme_color_hour, default = Amber, isGradientAllowed = true)
+    val HalfHourColor = AodColorOption(key = "half_hour_color", labelRes = R.string.theme_color_half_hour, default = Grey9A, isGradientAllowed = true)
+    val MinuteColor = AodColorOption(key = "minute_color", labelRes = R.string.theme_color_minute, default = GreyE0, isGradientAllowed = true)
+    val SecondColor = AodColorOption(key = "second_color", labelRes = R.string.theme_color_second, default = Grey9A, isGradientAllowed = true)
+    val DateColor = AodColorOption(key = "date_color", labelRes = R.string.theme_color_date, default = GreyE0, isGradientAllowed = true)
 
     // Dòng pin · thông báo tối hơn ngày như app mẫu (màu điều khiển pha 30% đen).
-    val StatusColor = AodColorOption(key = "status_color", labelRes = R.string.theme_color_status, default = Grey9A)
+    val StatusColor = AodColorOption(key = "status_color", labelRes = R.string.theme_color_status, default = Grey9A, isGradientAllowed = true)
 
     // Tên bài, nghệ sĩ, các nút.
-    val MediaColor = AodColorOption(key = "media_color", labelRes = R.string.theme_color_media, default = GreyE0)
+    val MediaColor = AodColorOption(key = "media_color", labelRes = R.string.theme_color_media, default = GreyE0, isGradientAllowed = true)
 
     // Mỗi khối chủ đề tự vẽ (ownBlocks) có tab ở đây: Tùy chỉnh › Ngày / Pin / Thông báo / Nhạc dẫn sang màn chủ đề.
     override val tabs = persistentListOf(

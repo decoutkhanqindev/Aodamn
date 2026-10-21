@@ -119,6 +119,11 @@ dòng nào. Đã test trên máy.
     `LinearGradient` shader theo khung nét chữ của từng số và hướng đã chọn; kim (cả đoạn mảnh lẫn đoạn dày, vẫn có bóng) tô dọc từ tâm ra
     đầu kim; vạch tô theo cả mặt số nên đổi màu theo chỗ quanh viền; chấm tâm màu Đầu của kim, vòng nhấn màu Đầu của số. Ngày, trình
     phát như Tháp.
+  - La bàn: 7 màu (giờ, giờ rưỡi, phút, giây, ngày, dòng trạng thái, nhạc) bật gradient. Nhãn trên ba vòng là shader theo khung nét chữ
+    của từng nhãn, xoay cùng nhãn; vạch phút tô theo khung cả vòng nên đổi màu quanh vòng và xoay theo giờ; đường chỉ (màu giờ) tô dọc từ
+    chỗ bắt đầu ra mép mặt số; hai vòng tròn giữa (màu phút) theo khung vòng ngoài (`AodGradient.toBrush(bounds)` mới). Thông báo mới
+    nhất (icon, chữ chạy), ngày, trình phát tô gradient. Shader gradient cho chỗ vẽ bằng `Paint` gom vào `AodGradientShader.kt`
+    (`toShader`, `toLineShader`), Vành dùng lại.
   - Nét vẽ ở Tùy chỉnh bật gradient: ảnh nét vẽ phủ `Modifier.aodTint(style)` nên gradient ăn đúng theo nét, trải theo khung ảnh. Giờ cả
     8 khối dùng chung đều có tab Gradient.
 - Test `AodColorOptionTest`: màu cũ đọc như cũ, gradient lưu / đọc lại, về Một màu xoá khoá phụ, mặc định gradient, đặt lại, đổi hướng.

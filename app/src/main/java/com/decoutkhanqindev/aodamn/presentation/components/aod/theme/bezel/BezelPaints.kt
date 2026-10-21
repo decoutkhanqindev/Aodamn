@@ -1,15 +1,15 @@
 package com.decoutkhanqindev.aodamn.presentation.components.aod.theme.bezel
 
 import android.graphics.Canvas
-import android.graphics.LinearGradient
 import android.graphics.Paint
 import android.graphics.Rect
-import android.graphics.Shader
 import android.graphics.Typeface
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.toLineShader
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.toShader
 import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.AodGradient
 import com.decoutkhanqindev.aodamn.presentation.theme.BlackAlpha30
 
@@ -35,22 +35,7 @@ class BezelPaints(typeface: Typeface) {
         number.getTextBounds(text, 0, text.length, bounds)
         val x = center.x - bounds.exactCenterX()
         val y = center.y - bounds.exactCenterY()
-        number.shader = gradient?.let {
-            val left = x + bounds.left
-            val top = y + bounds.top
-            val right = x + bounds.right
-            val bottom = y + bounds.bottom
-            val direction = gradient.direction
-            LinearGradient(
-                if (direction.start.x.isInfinite()) right else left + direction.start.x,
-                if (direction.start.y.isInfinite()) bottom else top + direction.start.y,
-                if (direction.end.x.isInfinite()) right else left + direction.end.x,
-                if (direction.end.y.isInfinite()) bottom else top + direction.end.y,
-                gradient.colors.toArgbArray(),
-                null,
-                Shader.TileMode.CLAMP,
-            )
-        }
+        number.shader = gradient?.toShader(x + bounds.left, y + bounds.top, x + bounds.right, y + bounds.bottom)
         canvas.drawText(text, x, y, number)
     }
 
@@ -66,14 +51,8 @@ class BezelPaints(typeface: Typeface) {
     ) {
         hand.strokeWidth = width
         hand.color = colors.first().toArgb()
-        hand.shader = if (colors.size > 1) {
-            LinearGradient(from.x, from.y, to.x, to.y, colors.toArgbArray(), null, Shader.TileMode.CLAMP)
-        } else {
-            null
-        }
+        hand.shader = colors.toLineShader(from, to)
         hand.setShadowLayer(shadowRadius, 0f, 0f, shadowColor)
         canvas.drawLine(start.x, start.y, end.x, end.y, hand)
     }
-
-    private fun List<Color>.toArgbArray(): IntArray = IntArray(size) { index -> this[index].toArgb() }
 }

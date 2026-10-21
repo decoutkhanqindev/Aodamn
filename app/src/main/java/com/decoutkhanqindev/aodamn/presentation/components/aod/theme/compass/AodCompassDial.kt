@@ -15,7 +15,10 @@ import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.center
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -55,9 +58,13 @@ fun AodCompassDial(
     val hasSeconds = config[CompassThemeSpec.Style] == AodCompassStyleValue.SECONDS
     val sizePercent = config[CompassThemeSpec.Size]
     val hourColor = config[CompassThemeSpec.HourColor]
+    val hourGradient = config.gradientOf(CompassThemeSpec.HourColor)
     val halfHourColor = config[CompassThemeSpec.HalfHourColor]
+    val halfHourGradient = config.gradientOf(CompassThemeSpec.HalfHourColor)
     val minuteColor = config[CompassThemeSpec.MinuteColor]
+    val minuteGradient = config.gradientOf(CompassThemeSpec.MinuteColor)
     val secondColor = config[CompassThemeSpec.SecondColor]
+    val secondGradient = config.gradientOf(CompassThemeSpec.SecondColor)
     val description = rememberZonedDateTime(nowMillis).format(rememberTimeFormatter())
     val clockMillis = remember { mutableLongStateOf(System.currentTimeMillis()) }
     val secondsFraction = animateFloatAsState(
@@ -115,16 +122,19 @@ fun AodCompassDial(
                 val ringSize = ceil(unit * 2f).toInt().coerceAtLeast(1).let { side -> IntSize(side, side) }
                 val lineWidth = CompassMetrics.LineWidth.toPx()
                 val secondRing = obtainGraphicsLayer().apply {
-                    record(size = ringSize) { drawCompassSecondRing(paints, unit, secondColor) }
+                    record(size = ringSize) { drawCompassSecondRing(paints, unit, secondColor, secondGradient) }
                 }
                 val minuteRing = obtainGraphicsLayer().apply {
-                    record(size = ringSize) { drawCompassMinuteRing(paints, unit, minuteColor, lineWidth) }
+                    record(size = ringSize) { drawCompassMinuteRing(paints, unit, minuteColor, minuteGradient, lineWidth) }
                 }
                 val hourRing = obtainGraphicsLayer().apply {
-                    record(size = ringSize) { drawCompassHourRing(paints, unit, hourColor, halfHourColor) }
+                    record(size = ringSize) { drawCompassHourRing(paints, unit, hourColor, hourGradient, halfHourColor, halfHourGradient) }
                 }
                 val pointerEnd = Offset(center.x + unit, center.y)
                 val circleStroke = Stroke(width = CompassMetrics.CircleWidth.toPx())
+                // Hai vòng tròn giữa tô theo khung vòng ngoài; đường chỉ tô dọc theo chính nó (từ chỗ bắt đầu ra mép mặt số).
+                val outer = CompassMetrics.CIRCLE_OUTER * unit
+                val circleBrush = minuteGradient?.toBrush(Rect(center = center, radius = outer)) ?: SolidColor(minuteColor)
 
                 onDrawBehind {
                     val fraction = secondsFraction.value
@@ -133,17 +143,21 @@ fun AodCompassDial(
                     val headEnd = pointerStart.x + CompassMetrics.POINTER_HEAD * unit
                     val headSpread = CompassMetrics.POINTER_SPREAD * unit
 
-                    drawLine(hourColor, pointerStart, pointerEnd, strokeWidth = lineWidth, cap = StrokeCap.Round)
-                    drawLine(hourColor, pointerStart, Offset(headEnd, center.y - headSpread), strokeWidth = lineWidth, cap = StrokeCap.Round)
-                    drawLine(hourColor, pointerStart, Offset(headEnd, center.y + headSpread), strokeWidth = lineWidth, cap = StrokeCap.Round)
+                    val pointerBrush = hourGradient?.let { gradient ->
+                        Brush.linearGradient(colors = gradient.colors, start = pointerStart, end = pointerEnd)
+                    } ?: SolidColor(hourColor)
+
+                    drawLine(pointerBrush, pointerStart, pointerEnd, strokeWidth = lineWidth, cap = StrokeCap.Round)
+                    drawLine(pointerBrush, pointerStart, Offset(headEnd, center.y - headSpread), strokeWidth = lineWidth, cap = StrokeCap.Round)
+                    drawLine(pointerBrush, pointerStart, Offset(headEnd, center.y + headSpread), strokeWidth = lineWidth, cap = StrokeCap.Round)
                     if (fraction > 0f) {
                         secondRing.alpha = fraction
                         drawRing(secondRing, ringSize, time.seconds * 6f)
                     }
                     drawRing(minuteRing, ringSize, if (hasSeconds) time.minutes * 6f else minuteDegrees.value)
                     drawRing(hourRing, ringSize, if (hasSeconds) time.hours * 30f else hourDegrees.value)
-                    drawCircle(minuteColor, CompassMetrics.CIRCLE_OUTER * unit, alpha = CompassMetrics.CIRCLE_ALPHA, style = circleStroke)
-                    drawCircle(minuteColor, CompassMetrics.CIRCLE_INNER * unit, alpha = CompassMetrics.CIRCLE_ALPHA, style = circleStroke)
+                    drawCircle(circleBrush, outer, alpha = CompassMetrics.CIRCLE_ALPHA, style = circleStroke)
+                    drawCircle(circleBrush, CompassMetrics.CIRCLE_INNER * unit, alpha = CompassMetrics.CIRCLE_ALPHA, style = circleStroke)
                 }
             },
     )
