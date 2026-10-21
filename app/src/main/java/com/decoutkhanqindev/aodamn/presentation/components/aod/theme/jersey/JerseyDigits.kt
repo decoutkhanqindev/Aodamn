@@ -2,7 +2,6 @@ package com.decoutkhanqindev.aodamn.presentation.components.aod.theme.jersey
 
 import android.graphics.Matrix
 import android.graphics.Paint
-import android.graphics.Path as AndroidPath
 import android.graphics.RectF
 import android.graphics.Typeface
 import androidx.compose.animation.Crossfade
@@ -27,6 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import com.decoutkhanqindev.aodamn.presentation.theme.FontFamilyBigShouldersDisplay
 import kotlin.math.max
+import android.graphics.Path as AndroidPath
 
 // Một hàng chữ số: mỗi số một ô rộng cố định (JerseyMetrics.PITCH) nên hàng không đổi bề ngang theo giờ; số đổi thì mờ chéo trong ô.
 @Composable

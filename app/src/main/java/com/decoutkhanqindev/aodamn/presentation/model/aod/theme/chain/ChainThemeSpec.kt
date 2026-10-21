@@ -35,15 +35,15 @@ object ChainThemeSpec : AodThemeSpec {
         default = 100,
     )
     // Viên thuốc và trình phát mặc định san hô cho thẻ chủ đề bắt mắt, các dòng trong chuỗi giữ xám sáng.
-    val ClockColor = AodColorOption(key = "clock_color", labelRes = R.string.theme_color_clock, default = Coral)
-    val DateColor = AodColorOption(key = "date_color", labelRes = R.string.theme_color_date, default = GreyE0)
-    val BatteryColor = AodColorOption(key = "battery_color", labelRes = R.string.theme_color_battery, default = GreyE0)
-    val NotificationsColor = AodColorOption(key = "notifications_color", labelRes = R.string.theme_color_notifications, default = GreyE0)
-    val MemoColor = AodColorOption(key = "memo_color", labelRes = R.string.theme_color_memo, default = GreyE0)
-    val EventsColor = AodColorOption(key = "events_color", labelRes = R.string.theme_color_events, default = GreyE0)
+    val ClockColor = AodColorOption(key = "clock_color", labelRes = R.string.theme_color_clock, default = Coral, isGradientAllowed = true)
+    val DateColor = AodColorOption(key = "date_color", labelRes = R.string.theme_color_date, default = GreyE0, isGradientAllowed = true)
+    val BatteryColor = AodColorOption(key = "battery_color", labelRes = R.string.theme_color_battery, default = GreyE0, isGradientAllowed = true)
+    val NotificationsColor = AodColorOption(key = "notifications_color", labelRes = R.string.theme_color_notifications, default = GreyE0, isGradientAllowed = true)
+    val MemoColor = AodColorOption(key = "memo_color", labelRes = R.string.theme_color_memo, default = GreyE0, isGradientAllowed = true)
+    val EventsColor = AodColorOption(key = "events_color", labelRes = R.string.theme_color_events, default = GreyE0, isGradientAllowed = true)
 
     // Tên bài, nghệ sĩ, các nút và thanh tiến trình.
-    val MediaColor = AodColorOption(key = "media_color", labelRes = R.string.theme_color_media, default = Coral)
+    val MediaColor = AodColorOption(key = "media_color", labelRes = R.string.theme_color_media, default = Coral, isGradientAllowed = true)
 
     // Mỗi khối chủ đề tự vẽ (ownBlocks) có tab ở đây, theo thứ tự trong chuỗi: Tùy chỉnh › Ngày / Pin / Thông báo / Ghi nhớ / Sự kiện / Nhạc dẫn
     // sang màn chủ đề.

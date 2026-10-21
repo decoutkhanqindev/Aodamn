@@ -28,6 +28,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.asImageBitmap
@@ -44,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import com.decoutkhanqindev.aodamn.R
 import com.decoutkhanqindev.aodamn.presentation.components.aod.block.AodWeather
+import com.decoutkhanqindev.aodamn.presentation.components.aod.block.aodTint
 import com.decoutkhanqindev.aodamn.presentation.components.rememberFormatter
 import com.decoutkhanqindev.aodamn.presentation.components.rememberTimeFormatter
 import com.decoutkhanqindev.aodamn.presentation.components.rememberZonedDateTime
@@ -87,39 +89,46 @@ fun AodChainList(
 
     Column(modifier = modifier) {
         val dateColor = config[ChainThemeSpec.DateColor]
-        ChainRow(isVisible = isDateShown, isLast = last == 0, color = dateColor, dotCenter = titleCenter) {
-            ChainDate(state = state, color = dateColor, isWeatherShown = isWeatherShown)
+        val dateBrush = config.gradientOf(ChainThemeSpec.DateColor)?.toBrush()
+        ChainRow(isVisible = isDateShown, isLast = last == 0, color = dateColor, brush = dateBrush, dotCenter = titleCenter) {
+            ChainDate(state = state, color = dateColor, brush = dateBrush, isWeatherShown = isWeatherShown)
         }
 
         val batteryColor = config[ChainThemeSpec.BatteryColor]
-        ChainRow(isVisible = isBatteryShown, isLast = last == 1, color = batteryColor, dotCenter = titleCenter) {
-            ChainBattery(battery = battery, isFlashlightOn = state.isFlashlightOn, color = batteryColor)
+        val batteryBrush = config.gradientOf(ChainThemeSpec.BatteryColor)?.toBrush()
+        ChainRow(isVisible = isBatteryShown, isLast = last == 1, color = batteryColor, brush = batteryBrush, dotCenter = titleCenter) {
+            ChainBattery(battery = battery, isFlashlightOn = state.isFlashlightOn, color = batteryColor, brush = batteryBrush)
         }
 
         val notificationsColor = config[ChainThemeSpec.NotificationsColor]
+        val notificationsBrush = config.gradientOf(ChainThemeSpec.NotificationsColor)?.toBrush()
         ChainRow(
             isVisible = isNotificationsShown,
             isLast = last == 2,
             color = notificationsColor,
+            brush = notificationsBrush,
             dotCenter = if (state.notifications.latest != null) titleCenter else ChainMetrics.IconSize / 2,
         ) {
-            ChainNotifications(notifications = state.notifications, color = notificationsColor)
+            ChainNotifications(notifications = state.notifications, color = notificationsColor, brush = notificationsBrush)
         }
 
         val memoColor = config[ChainThemeSpec.MemoColor]
-        ChainRow(isVisible = isMemoShown, isLast = last == 3, color = memoColor, dotCenter = rememberIconRowDotCenter()) {
+        val memoBrush = config.gradientOf(ChainThemeSpec.MemoColor)?.toBrush()
+        ChainRow(isVisible = isMemoShown, isLast = last == 3, color = memoColor, brush = memoBrush, dotCenter = rememberIconRowDotCenter()) {
             ChainIconBlock(
                 iconRes = R.drawable.ic_note_pencil_fill,
                 title = stringResource(R.string.aod_memo_label),
                 lines = remember(state.extras.memo) { listOf(state.extras.memo.trim()) },
                 maxLines = 3,
                 color = memoColor,
+                brush = memoBrush,
             )
         }
 
         val eventsColor = config[ChainThemeSpec.EventsColor]
-        ChainRow(isVisible = isEventsShown, isLast = last == 4, color = eventsColor, dotCenter = rememberIconRowDotCenter()) {
-            ChainEvents(events = state.events, color = eventsColor)
+        val eventsBrush = config.gradientOf(ChainThemeSpec.EventsColor)?.toBrush()
+        ChainRow(isVisible = isEventsShown, isLast = last == 4, color = eventsColor, brush = eventsBrush, dotCenter = rememberIconRowDotCenter()) {
+            ChainEvents(events = state.events, color = eventsColor, brush = eventsBrush)
         }
     }
 }
@@ -131,13 +140,15 @@ fun AodState.hasChainMemo(): Boolean =
 fun AodState.hasChainEvents(): Boolean =
     AodComponentValue.EVENTS in appearance.theme.value.spec.components && events.isNotEmpty()
 
-// Một dòng của chuỗi: chấm ở giữa chữ hoa của tiêu đề (dotCenter tính từ đỉnh dòng), vạch từ dưới chấm tới chân dòng. Dòng hiện / ẩn, thành dòng
+// Một dòng của chuỗi: chấm ở giữa chữ hoa của tiêu đề (dotCenter tính từ đỉnh dòng), vạch từ dưới chấm tới chân dòng. Màu dòng là gradient
+// (brush) thì chấm và vạch tô theo khung dòng, chữ / icon theo khung của từng phần. Dòng hiện / ẩn, thành dòng
 // cuối hay thôi đều có animation (khoảng cách dưới dòng và vạch mờ dần).
 @Composable
 private fun ChainRow(
     isVisible: Boolean,
     isLast: Boolean,
     color: Color,
+    brush: Brush?,
     dotCenter: Dp,
     content: @Composable () -> Unit,
 ) {
@@ -155,17 +166,22 @@ private fun ChainRow(
                 .drawBehind {
                     val radius = ChainMetrics.Dot.toPx() / 2f
                     val center = Offset(radius, dotCenter.toPx())
-                    drawCircle(color = color, radius = radius, center = center)
+                    if (brush != null) {
+                        drawCircle(brush = brush, radius = radius, center = center)
+                    } else {
+                        drawCircle(color = color, radius = radius, center = center)
+                    }
 
                     val lineTop = center.y + radius + ChainMetrics.LineTop.toPx()
                     val lineWidth = ChainMetrics.Line.toPx()
                     if (lineAlpha > 0f && size.height > lineTop) {
-                        drawRect(
-                            color = color,
-                            topLeft = Offset(center.x - lineWidth / 2f, lineTop),
-                            size = Size(lineWidth, size.height - lineTop),
-                            alpha = lineAlpha,
-                        )
+                        val topLeft = Offset(center.x - lineWidth / 2f, lineTop)
+                        val lineSize = Size(lineWidth, size.height - lineTop)
+                        if (brush != null) {
+                            drawRect(brush = brush, topLeft = topLeft, size = lineSize, alpha = lineAlpha)
+                        } else {
+                            drawRect(color = color, topLeft = topLeft, size = lineSize, alpha = lineAlpha)
+                        }
                     }
                 }
                 .padding(start = ChainMetrics.RailWidth, bottom = gap),
@@ -180,6 +196,7 @@ private fun ChainRow(
 private fun ChainDate(
     state: AodState,
     color: Color,
+    brush: Brush?,
     isWeatherShown: Boolean,
 ) {
     val now = rememberZonedDateTime(state.nowMillis)
@@ -192,7 +209,7 @@ private fun ChainDate(
     Column {
         Row(verticalAlignment = Alignment.CenterVertically) {
             if (isDateEnabled) {
-                ChainTitle(text = now.format(dateFormatter), color = color, modifier = Modifier.weight(1f, fill = false))
+                ChainTitle(text = now.format(dateFormatter), color = color, brush = brush, modifier = Modifier.weight(1f, fill = false))
             }
 
             if (isWeatherShown) {
@@ -205,7 +222,7 @@ private fun ChainDate(
         }
 
         if (isDateEnabled) {
-            ChainSubtitle(text = weekday, color = color, modifier = Modifier.padding(top = ChainMetrics.SubtitleGap))
+            ChainSubtitle(text = weekday, color = color, brush = brush, modifier = Modifier.padding(top = ChainMetrics.SubtitleGap))
         }
     }
 }
@@ -216,11 +233,12 @@ private fun ChainBattery(
     battery: BatteryUiModel?,
     isFlashlightOn: Boolean,
     color: Color,
+    brush: Brush?,
 ) {
     Column {
         Row(verticalAlignment = Alignment.CenterVertically) {
             if (battery != null) {
-                ChainTitle(text = stringResource(R.string.aod_chain_battery, battery.percent), color = color)
+                ChainTitle(text = stringResource(R.string.aod_chain_battery, battery.percent), color = color, brush = brush)
             }
 
             if (isFlashlightOn) {
@@ -242,7 +260,7 @@ private fun ChainBattery(
                 else -> R.string.aod_chain_battery_idle
             }
 
-            ChainSubtitle(text = stringResource(state), color = color, modifier = Modifier.padding(top = ChainMetrics.SubtitleGap))
+            ChainSubtitle(text = stringResource(state), color = color, brush = brush, modifier = Modifier.padding(top = ChainMetrics.SubtitleGap))
         }
     }
 }
@@ -253,6 +271,7 @@ private fun ChainBattery(
 private fun ChainNotifications(
     notifications: AodNotificationsUiModel,
     color: Color,
+    brush: Brush?,
 ) {
     val latest = notifications.latest
 
@@ -262,13 +281,16 @@ private fun ChainNotifications(
                 Image(
                     bitmap = remember(latest.icon) { latest.icon.asImageBitmap() },
                     contentDescription = null,
-                    modifier = Modifier.size(ChainMetrics.IconSize),
+                    modifier = Modifier
+                        .size(ChainMetrics.IconSize)
+                        .aodTint(brush),
                     colorFilter = ColorFilter.tint(color),
                 )
 
                 ChainTitle(
                     text = if (latest.isHidden) stringResource(R.string.aod_notification_content_hidden) else latest.title,
                     color = color,
+                    brush = brush,
                     modifier = Modifier
                         .weight(1f, fill = false)
                         .padding(start = ChainMetrics.RowIconGap),
@@ -279,6 +301,7 @@ private fun ChainNotifications(
                 ChainSubtitle(
                     text = latest.text,
                     color = color,
+                    brush = brush,
                     maxLines = 2,
                     modifier = Modifier.padding(top = ChainMetrics.SubtitleGap),
                 )
@@ -294,14 +317,16 @@ private fun ChainNotifications(
                     Image(
                         bitmap = remember(icon.icon) { icon.icon.asImageBitmap() },
                         contentDescription = null,
-                        modifier = Modifier.size(ChainMetrics.IconSize),
+                        modifier = Modifier
+                            .size(ChainMetrics.IconSize)
+                            .aodTint(brush),
                         colorFilter = ColorFilter.tint(color),
                     )
                 }
             }
 
             if (notifications.overflowCount > 0) {
-                ChainSubtitle(text = stringResource(R.string.aod_notifications_overflow, notifications.overflowCount), color = color)
+                ChainSubtitle(text = stringResource(R.string.aod_notifications_overflow, notifications.overflowCount), color = color, brush = brush)
             }
         }
     }
@@ -312,6 +337,7 @@ private fun ChainNotifications(
 private fun ChainEvents(
     events: ImmutableList<CalendarEventUiModel>,
     color: Color,
+    brush: Brush?,
 ) {
     val timeFormatter = rememberTimeFormatter()
     val allDay = stringResource(R.string.aod_event_all_day)
@@ -332,6 +358,7 @@ private fun ChainEvents(
         lines = lines.drop(1),
         maxLines = 1,
         color = color,
+        brush = brush,
     )
 }
 
@@ -343,19 +370,23 @@ private fun ChainIconBlock(
     lines: List<String>,
     maxLines: Int,
     color: Color,
+    brush: Brush?,
 ) {
     Column {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
                 painter = painterResource(iconRes),
                 contentDescription = null,
-                modifier = Modifier.size(ChainMetrics.RowIconSize),
+                modifier = Modifier
+                    .size(ChainMetrics.RowIconSize)
+                    .aodTint(brush),
                 tint = color,
             )
 
             ChainTitle(
                 text = title,
                 color = color,
+                brush = brush,
                 modifier = Modifier
                     .weight(1f, fill = false)
                     .padding(start = ChainMetrics.RowIconGap),
@@ -366,6 +397,7 @@ private fun ChainIconBlock(
             ChainSubtitle(
                 text = line,
                 color = color,
+                brush = brush,
                 maxLines = maxLines,
                 modifier = Modifier.padding(top = if (index == 0) ChainMetrics.SubtitleGap else 0.dp),
             )
@@ -378,11 +410,12 @@ private fun ChainIconBlock(
 private fun ChainTitle(
     text: String,
     color: Color,
+    brush: Brush?,
     modifier: Modifier = Modifier,
 ) {
     Text(
         text = text.uppercase(),
-        modifier = modifier,
+        modifier = modifier.aodTint(brush),
         color = color,
         fontSize = ChainMetrics.TitleSize,
         fontFamily = ChainThemeSpec.TitleFont,
@@ -403,12 +436,15 @@ private fun ChainTitle(
 private fun ChainSubtitle(
     text: String,
     color: Color,
+    brush: Brush?,
     modifier: Modifier = Modifier,
     maxLines: Int = 1,
 ) {
     Text(
         text = text.uppercase(),
-        modifier = modifier.alpha(ChainMetrics.SUBTITLE_ALPHA),
+        modifier = modifier
+            .alpha(ChainMetrics.SUBTITLE_ALPHA)
+            .aodTint(brush),
         color = color,
         fontSize = ChainMetrics.SubtitleSize,
         fontFamily = ChainThemeSpec.Font,

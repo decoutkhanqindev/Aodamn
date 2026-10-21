@@ -51,6 +51,7 @@ fun AodChainClock(
     val text = hours + ":" + now.format(rememberFormatter(R.string.aod_minute_pattern))
     val description = now.format(rememberTimeFormatter())
     val color = config[ChainThemeSpec.ClockColor]
+    val brush = config.brushOf(ChainThemeSpec.ClockColor)
     val viewWidth = ChainMetrics.ClockWidth * (config[ChainThemeSpec.Size] / 100f)
     val viewHeight = viewWidth * ChainMetrics.CLOCK_ASPECT
     val density = LocalDensity.current
@@ -94,7 +95,7 @@ fun AodChainClock(
                 onDrawBehind {
                     val t = progress.value
                     drawRoundRect(
-                        color = color,
+                        brush = brush,
                         topLeft = Offset(0f, pillTop),
                         size = Size(size.width, pillHeight),
                         cornerRadius = CornerRadius(pillHeight / 2f),

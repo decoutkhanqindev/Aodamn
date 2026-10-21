@@ -11,11 +11,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -23,6 +25,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import com.decoutkhanqindev.aodamn.R
 import com.decoutkhanqindev.aodamn.presentation.components.aod.block.AodMediaProgress
+import com.decoutkhanqindev.aodamn.presentation.components.aod.block.aodTint
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.AodWaveTrack
 import com.decoutkhanqindev.aodamn.presentation.components.onClick
 import com.decoutkhanqindev.aodamn.presentation.model.aod.info.MediaProgressUiModel
@@ -48,6 +52,8 @@ fun AodChainMedia(
     onIntent: (AodIntent) -> Unit,
 ) {
     val color = config[ChainThemeSpec.MediaColor]
+    val brush = config.brushOf(ChainThemeSpec.MediaColor)
+    val gradientBrush = config.gradientOf(ChainThemeSpec.MediaColor)?.toBrush()
     val progress = media.progress
     val textAlpha = animateFloatAsState(
         targetValue = if (media.isPlaying) 1f else ChainMetrics.PAUSED_ALPHA,
@@ -63,6 +69,7 @@ fun AodChainMedia(
                 contentDescription = stringResource(R.string.aod_media_previous),
                 isEnabled = media.canSkipToPrevious,
                 color = color,
+                gradient = gradientBrush,
                 onClick = { onIntent(AodIntent.SkipToPreviousTrack) },
             )
 
@@ -82,7 +89,7 @@ fun AodChainMedia(
             ) {
                 Text(
                     text = media.title.uppercase(),
-                    color = color,
+                    style = LocalTextStyle.current.merge(TextStyle(brush = brush)),
                     fontSize = ChainMetrics.TitleSize,
                     fontFamily = ChainThemeSpec.TitleFont,
                     letterSpacing = ChainMetrics.MEDIA_TITLE_TRACKING.em,
@@ -97,7 +104,7 @@ fun AodChainMedia(
                         modifier = Modifier
                             .padding(top = ChainMetrics.ArtistGap)
                             .alpha(ChainMetrics.SUBTITLE_ALPHA),
-                        color = color,
+                        style = LocalTextStyle.current.merge(TextStyle(brush = brush)),
                         fontSize = ChainMetrics.SubtitleSize,
                         fontFamily = ChainThemeSpec.Font,
                         letterSpacing = ChainMetrics.MEDIA_ARTIST_TRACKING.em,
@@ -113,6 +120,7 @@ fun AodChainMedia(
                 contentDescription = stringResource(R.string.aod_media_next),
                 isEnabled = media.canSkipToNext,
                 color = color,
+                gradient = gradientBrush,
                 onClick = { onIntent(AodIntent.SkipToNextTrack) },
             )
         }
@@ -126,6 +134,7 @@ fun AodChainMedia(
                         wave = { 0f },
                         color = color,
                         trackColor = color.copy(alpha = color.alpha * ChainMetrics.TRACK_ALPHA),
+                        brush = brush,
                         height = ChainMetrics.TrackHeight,
                         strokeWidth = ChainMetrics.TrackHeight,
                         wavelength = 40.dp,
@@ -145,6 +154,7 @@ private fun ChainMediaButton(
     contentDescription: String,
     isEnabled: Boolean,
     color: Color,
+    gradient: Brush?,
     onClick: () -> Unit,
 ) {
     Box(
@@ -156,7 +166,9 @@ private fun ChainMediaButton(
         Icon(
             painter = painterResource(iconRes),
             contentDescription = contentDescription,
-            modifier = Modifier.size(ChainMetrics.ButtonIconSize),
+            modifier = Modifier
+                .size(ChainMetrics.ButtonIconSize)
+                .aodTint(gradient.takeIf { isEnabled }),
             tint = if (isEnabled) color else Grey5A,
         )
     }

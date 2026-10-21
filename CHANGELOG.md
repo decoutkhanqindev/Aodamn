@@ -112,6 +112,9 @@ dòng nào. Đã test trên máy.
   - Tháp: 5 màu (giờ, phút, ngày, nhạc, dòng trạng thái) bật gradient. Mỗi chữ số tô theo ô của số đó ở cả 4 kiểu tô (đặc, viền, mờ dần
     xuống / lên); kiểu mờ dần vẽ nét gradient rồi lấy độ mờ của dải fade làm mặt nạ (DstIn) trên lớp riêng nên mờ y như bản một màu; một
     màu thì vẽ như cũ. Ngày, tên bài, nghệ sĩ, nút lùi / tới (lúc bấm được) và thanh tiến trình tô gradient.
+  - Chuỗi: 7 màu (viên thuốc đồng hồ, ngày, pin, thông báo, ghi nhớ, sự kiện, nhạc) bật gradient. Viên thuốc tô theo khung viên, chữ số
+    vẫn khoét thủng (DstOut chỉ dùng độ trong); mỗi dòng của chuỗi: chấm và vạch nối theo khung dòng, tiêu đề, dòng phụ, icon theo khung
+    từng phần; trình phát như Tháp. Sửa thứ tự import của `JerseyDigits.kt` (alias `AndroidPath` về cuối như IDE).
 - Test `AodColorOptionTest`: màu cũ đọc như cũ, gradient lưu / đọc lại, về Một màu xoá khoá phụ, mặc định gradient, đặt lại, đổi hướng.
 
 ### Đổi

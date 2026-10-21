@@ -844,7 +844,8 @@ chọn theo các khối đang có dữ liệu, dùng chung cho mọi chủ đề
     trạng thái có tab Gradient; thử màn dọc và ngang, viên thuốc thứ, pin đang sạc (tia sét vẫn khoét đen) và pin yếu (vẫn đỏ). Viên nang: cả 5 màu
     có tab Gradient; thử viên đặc / viền, nút phát, thanh tiến trình, dòng trạng thái. Thẻ: cả 6 màu có tab
     Gradient; thử số đặc / viền, nền thẻ mờ / viền / không nền, ô AM/PM, trình phát. Tháp: cả 5 màu có
-    tab Gradient; thử mọi kiểu tô số (đặc, viền, mờ dần xuống / lên: phần mờ phải mờ như bản một màu), trình phát. Panel đang mở, chạm vào khung xem trước (ngoài panel): panel
+    tab Gradient; thử mọi kiểu tô số (đặc, viền, mờ dần xuống / lên: phần mờ phải mờ như bản một màu), trình phát. Chuỗi: cả 7 màu có
+    tab Gradient; thử viên thuốc lúc đổi phút (chữ số vẫn khoét thủng), từng dòng của chuỗi (chấm, vạch nối, chữ, icon), trình phát. Panel đang mở, chạm vào khung xem trước (ngoài panel): panel
     đóng (Tùy chỉnh và màn chủ đề lúc Sửa). Khung xem trước ở Tùy chỉnh, màn chủ đề, thẻ "Giao diện của bạn" và lưới chủ
     đề luôn hiện 08:30 hôm nay với dữ liệu mẫu cố định (pin 72%, nhạc dừng ở cùng một chỗ): để qua phút mới không có gì
     đổi; chỉ AOD thật chạy theo giờ.
