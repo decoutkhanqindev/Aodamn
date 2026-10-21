@@ -419,7 +419,8 @@ fun AodDrawing(
                 contentDescription = stringResource(R.string.aod_drawing),
                 modifier = Modifier
                     .padding(top = 12.dp)
-                    .size(120.dp * style.scale),
+                    .size(120.dp * style.scale)
+                    .aodTint(style),
                 colorFilter = ColorFilter.tint(style.color),
             )
         }

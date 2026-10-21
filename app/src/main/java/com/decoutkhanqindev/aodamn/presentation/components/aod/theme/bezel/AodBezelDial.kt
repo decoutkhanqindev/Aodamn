@@ -31,8 +31,10 @@ fun AodBezelDial(
     modifier: Modifier = Modifier,
 ) {
     val ticks = config[BezelThemeSpec.Ticks]
-    val handColor = config[BezelThemeSpec.HandColor]
+    val handBrush = config.brushOf(BezelThemeSpec.HandColor)
+    val handColors = config.colorsOf(BezelThemeSpec.HandColor)
     val numberColor = config[BezelThemeSpec.NumberColor]
+    val numberGradient = config.gradientOf(BezelThemeSpec.NumberColor)
     val now = rememberZonedDateTime(nowMillis)
     val description = now.format(rememberTimeFormatter())
     val minuteDegrees = rememberHandDegrees(degrees = now.minute * 6f)
@@ -45,13 +47,13 @@ fun AodBezelDial(
             .drawWithCache {
                 val face = BezelFace(size = size, ticks = ticks)
                 onDrawBehind {
-                    drawBezelFace(face = face, paints = paints, handColor = handColor, numberColor = numberColor)
+                    drawBezelFace(face = face, paints = paints, handBrush = handBrush, numberColor = numberColor, numberGradient = numberGradient)
                     drawBezelHands(
                         face = face,
                         paints = paints,
                         minuteDegrees = minuteDegrees.value,
                         hourDegrees = hourDegrees.value,
-                        handColor = handColor,
+                        handColors = handColors,
                         accentColor = numberColor,
                     )
                 }

@@ -3,6 +3,7 @@ package com.decoutkhanqindev.aodamn.presentation.components.aod.theme.bezel
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathFillType
@@ -11,6 +12,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
+import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.AodGradient
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.bezel.AodBezelTicksValue
 import com.decoutkhanqindev.aodamn.presentation.theme.Black
 import kotlin.math.cos
@@ -63,18 +65,27 @@ class BezelFace(size: Size, ticks: AodBezelTicksValue) {
     private fun inset(size: Size, x: Float, y: Float): Rect = Rect(left = x, top = y, right = size.width - x, bottom = size.height - y)
 }
 
-fun DrawScope.drawBezelFace(face: BezelFace, paints: BezelPaints, handColor: Color, numberColor: Color) {
+// Vạch tô bằng handBrush trải theo cả mặt số (gradient thì màu đổi theo chỗ của vạch quanh viền).
+fun DrawScope.drawBezelFace(
+    face: BezelFace,
+    paints: BezelPaints,
+    handBrush: Brush,
+    numberColor: Color,
+    numberGradient: AodGradient?,
+) {
     clipPath(face.minuteBand) {
-        face.majorTicks.forEach { (start, end) -> drawLine(handColor, start, end, strokeWidth = BezelMetrics.MAJOR_STROKE * face.unit) }
+        face.majorTicks.forEach { (start, end) -> drawLine(handBrush, start, end, strokeWidth = BezelMetrics.MAJOR_STROKE * face.unit) }
         face.minorTicks.forEach { (start, end) ->
-            drawLine(handColor, start, end, strokeWidth = BezelMetrics.MINOR_STROKE * face.unit, alpha = BezelMetrics.MINOR_ALPHA)
+            drawLine(handBrush, start, end, strokeWidth = BezelMetrics.MINOR_STROKE * face.unit, alpha = BezelMetrics.MINOR_ALPHA)
         }
     }
     clipPath(face.hourBand) {
-        face.longTicks.forEach { (start, end) -> drawLine(handColor, start, end, strokeWidth = BezelMetrics.MAJOR_STROKE * face.unit) }
+        face.longTicks.forEach { (start, end) -> drawLine(handBrush, start, end, strokeWidth = BezelMetrics.MAJOR_STROKE * face.unit) }
     }
     drawIntoCanvas { canvas ->
-        face.numbers.forEach { (text, center) -> paints.drawNumber(canvas.nativeCanvas, text, center, face.numberSize, numberColor) }
+        face.numbers.forEach { (text, center) ->
+            paints.drawNumber(canvas.nativeCanvas, text, center, face.numberSize, numberColor, numberGradient)
+        }
     }
 }
 
@@ -84,32 +95,37 @@ fun DrawScope.drawBezelHands(
     paints: BezelPaints,
     minuteDegrees: Float,
     hourDegrees: Float,
-    handColor: Color,
+    handColors: List<Color>,
     accentColor: Color,
 ) {
     val unit = face.unit
     val shadow = BezelMetrics.SHADOW_RADIUS * unit
     drawIntoCanvas { canvas ->
         listOf(minuteDegrees to BezelMetrics.MINUTE_LENGTH, hourDegrees to BezelMetrics.HOUR_LENGTH).forEach { (degrees, length) ->
+            val tip = face.point(degrees, length * unit)
             paints.drawHand(
                 canvas = canvas.nativeCanvas,
                 start = face.center,
                 end = face.point(degrees, BezelMetrics.HAND_NECK * unit),
                 width = BezelMetrics.HAND_THIN * unit,
                 shadowRadius = shadow,
-                color = handColor,
+                colors = handColors,
+                from = face.center,
+                to = tip,
             )
             paints.drawHand(
                 canvas = canvas.nativeCanvas,
                 start = face.point(degrees, BezelMetrics.HAND_START * unit),
-                end = face.point(degrees, length * unit),
+                end = tip,
                 width = BezelMetrics.HAND_THICK * unit,
                 shadowRadius = shadow,
-                color = handColor,
+                colors = handColors,
+                from = face.center,
+                to = tip,
             )
         }
     }
-    drawCircle(color = handColor, radius = BezelMetrics.PIN * unit, center = face.center)
+    drawCircle(color = handColors.first(), radius = BezelMetrics.PIN * unit, center = face.center)
     drawCircle(color = Black, radius = BezelMetrics.PIN_HOLE * unit, center = face.center)
     drawCircle(
         color = accentColor,

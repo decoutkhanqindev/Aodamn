@@ -115,6 +115,12 @@ dòng nào. Đã test trên máy.
   - Chuỗi: 7 màu (viên thuốc đồng hồ, ngày, pin, thông báo, ghi nhớ, sự kiện, nhạc) bật gradient. Viên thuốc tô theo khung viên, chữ số
     vẫn khoét thủng (DstOut chỉ dùng độ trong); mỗi dòng của chuỗi: chấm và vạch nối theo khung dòng, tiêu đề, dòng phụ, icon theo khung
     từng phần; trình phát như Tháp. Sửa thứ tự import của `JerseyDigits.kt` (alias `AndroidPath` về cuối như IDE).
+  - Vành: 5 màu (chữ số, kim & vạch, ngày, dòng trạng thái, nhạc) bật gradient. Số 12 / 3 / 6 / 9 vẽ bằng `Paint` nên gradient là
+    `LinearGradient` shader theo khung nét chữ của từng số và hướng đã chọn; kim (cả đoạn mảnh lẫn đoạn dày, vẫn có bóng) tô dọc từ tâm ra
+    đầu kim; vạch tô theo cả mặt số nên đổi màu theo chỗ quanh viền; chấm tâm màu Đầu của kim, vòng nhấn màu Đầu của số. Ngày, trình
+    phát như Tháp.
+  - Nét vẽ ở Tùy chỉnh bật gradient: ảnh nét vẽ phủ `Modifier.aodTint(style)` nên gradient ăn đúng theo nét, trải theo khung ảnh. Giờ cả
+    8 khối dùng chung đều có tab Gradient.
 - Test `AodColorOptionTest`: màu cũ đọc như cũ, gradient lưu / đọc lại, về Một màu xoá khoá phụ, mặc định gradient, đặt lại, đổi hướng.
 
 ### Đổi

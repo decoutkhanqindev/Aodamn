@@ -8,12 +8,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -128,7 +130,7 @@ private fun BezelDateRow(
         AnimatedVisibility(visible = state.extras.isDateEnabled) {
             BezelDate(
                 nowMillis = state.nowMillis,
-                color = config[BezelThemeSpec.DateColor],
+                brush = config.brushOf(BezelThemeSpec.DateColor),
                 modifier = Modifier.padding(end = if (isWeatherShown && state.weather != null) BezelMetrics.WeatherGap else 0.dp),
             )
         }
@@ -146,7 +148,7 @@ private fun BezelDateRow(
 @Composable
 private fun BezelDate(
     nowMillis: Long,
-    color: Color,
+    brush: Brush,
     modifier: Modifier = Modifier,
 ) {
     val now = rememberZonedDateTime(nowMillis)
@@ -154,22 +156,22 @@ private fun BezelDate(
     val day = now.format(rememberFormatter(R.string.aod_bezel_day_pattern))
 
     Row(modifier = modifier) {
-        BezelDateText(text = weekday, color = color)
+        BezelDateText(text = weekday, brush = brush)
 
-        BezelDateText(text = day, color = color, modifier = Modifier.padding(start = BezelMetrics.DateGap))
+        BezelDateText(text = day, brush = brush, modifier = Modifier.padding(start = BezelMetrics.DateGap))
     }
 }
 
 @Composable
 private fun BezelDateText(
     text: String,
-    color: Color,
+    brush: Brush,
     modifier: Modifier = Modifier,
 ) {
     Text(
         text = text,
         modifier = modifier,
-        color = color,
+        style = LocalTextStyle.current.merge(TextStyle(brush = brush)),
         fontSize = BezelMetrics.DateSize,
         fontWeight = FontWeight.Bold,
         fontFamily = BezelThemeSpec.Font,
@@ -188,6 +190,7 @@ private fun BezelStatus(
         isFlashlightOn = state.isFlashlightOn,
         notifications = state.notifications,
         color = state.appearance.theme.config[BezelThemeSpec.StatusColor],
+        brush = state.appearance.theme.config.gradientOf(BezelThemeSpec.StatusColor)?.toBrush(),
         glyphHeight = BezelMetrics.StatusGlyph,
         fontFamily = BezelThemeSpec.Font,
         modifier = modifier,

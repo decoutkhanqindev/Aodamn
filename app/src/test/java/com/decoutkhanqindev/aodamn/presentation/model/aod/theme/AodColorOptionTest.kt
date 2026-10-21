@@ -78,10 +78,9 @@ class AodColorOptionTest {
     }
 
     @Test
-    fun `shared blocks except drawing allow a gradient and carry it to their style`() {
+    fun `every shared block allows a gradient and carries it to its style`() {
         AodComponentValue.entries.forEach { component ->
-            val option = AodComponentSpec.optionsOf(component).color
-            assertEquals(component.name, component != AodComponentValue.DRAWING, option.isGradientAllowed)
+            assertTrue(component.name, AodComponentSpec.optionsOf(component).color.isGradientAllowed)
         }
 
         val date = AodComponentSpec.optionsOf(AodComponentValue.DATE).color

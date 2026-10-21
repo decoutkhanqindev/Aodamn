@@ -11,11 +11,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -23,6 +25,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -31,6 +34,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.aodamn.R
 import com.decoutkhanqindev.aodamn.presentation.components.aod.block.AodMediaProgress
+import com.decoutkhanqindev.aodamn.presentation.components.aod.block.aodTint
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.AodWaveTrack
 import com.decoutkhanqindev.aodamn.presentation.components.onClick
 import com.decoutkhanqindev.aodamn.presentation.model.aod.info.MediaProgressUiModel
@@ -49,6 +53,8 @@ fun AodBezelMedia(
     onIntent: (AodIntent) -> Unit,
 ) {
     val color = config[BezelThemeSpec.MediaColor]
+    val brush = config.brushOf(BezelThemeSpec.MediaColor)
+    val gradientBrush = config.gradientOf(BezelThemeSpec.MediaColor)?.toBrush()
     val progress = media.progress
     val textAlpha = animateFloatAsState(
         targetValue = if (media.isPlaying) 1f else BezelMetrics.PAUSED_ALPHA,
@@ -64,6 +70,7 @@ fun AodBezelMedia(
                 contentDescription = stringResource(R.string.aod_media_previous),
                 isEnabled = media.canSkipToPrevious,
                 color = color,
+                gradient = gradientBrush,
                 onClick = { onIntent(AodIntent.SkipToPreviousTrack) },
             )
 
@@ -81,12 +88,12 @@ fun AodBezelMedia(
                     },
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                BezelMediaText(text = media.title.uppercase(), color = color, fontSize = BezelMetrics.TitleSize)
+                BezelMediaText(text = media.title.uppercase(), brush = brush, fontSize = BezelMetrics.TitleSize)
 
                 media.artist?.let { artist ->
                     BezelMediaText(
                         text = artist.uppercase(),
-                        color = color,
+                        brush = brush,
                         fontSize = BezelMetrics.ArtistSize,
                         modifier = Modifier
                             .padding(top = BezelMetrics.ArtistGap)
@@ -100,6 +107,7 @@ fun AodBezelMedia(
                 contentDescription = stringResource(R.string.aod_media_next),
                 isEnabled = media.canSkipToNext,
                 color = color,
+                gradient = gradientBrush,
                 onClick = { onIntent(AodIntent.SkipToNextTrack) },
             )
         }
@@ -113,6 +121,7 @@ fun AodBezelMedia(
                         wave = { 0f },
                         color = color,
                         trackColor = color.copy(alpha = color.alpha * BezelMetrics.TRACK_ALPHA),
+                        brush = brush,
                         height = BezelMetrics.TrackHeight,
                         strokeWidth = BezelMetrics.TrackHeight,
                         wavelength = 40.dp,
@@ -128,14 +137,14 @@ fun AodBezelMedia(
 @Composable
 private fun BezelMediaText(
     text: String,
-    color: Color,
+    brush: Brush,
     fontSize: TextUnit,
     modifier: Modifier = Modifier,
 ) {
     Text(
         text = text,
         modifier = modifier,
-        color = color,
+        style = LocalTextStyle.current.merge(TextStyle(brush = brush)),
         fontSize = fontSize,
         fontWeight = FontWeight.Bold,
         fontFamily = BezelThemeSpec.Font,
@@ -152,6 +161,7 @@ private fun BezelMediaButton(
     contentDescription: String,
     isEnabled: Boolean,
     color: Color,
+    gradient: Brush?,
     onClick: () -> Unit,
 ) {
     Box(
@@ -163,7 +173,9 @@ private fun BezelMediaButton(
         Icon(
             painter = painterResource(iconRes),
             contentDescription = contentDescription,
-            modifier = Modifier.size(BezelMetrics.ButtonIconSize),
+            modifier = Modifier
+                .size(BezelMetrics.ButtonIconSize)
+                .aodTint(gradient.takeIf { isEnabled }),
             tint = if (isEnabled) color else Grey5A,
         )
     }

@@ -35,13 +35,13 @@ object BezelThemeSpec : AodThemeSpec {
     )
 
     // Số 12 / 3 / 6 / 9 (màu 1 của app mẫu); vòng ở tâm kim cùng màu.
-    val NumberColor = AodColorOption(key = "number_color", labelRes = R.string.theme_color_digits, default = Cyan)
-    val HandColor = AodColorOption(key = "hand_color", labelRes = R.string.theme_color_hands, default = GreyED)
-    val DateColor = AodColorOption(key = "date_color", labelRes = R.string.theme_color_date, default = GreyED)
-    val StatusColor = AodColorOption(key = "status_color", labelRes = R.string.theme_color_status, default = GreyED)
+    val NumberColor = AodColorOption(key = "number_color", labelRes = R.string.theme_color_digits, default = Cyan, isGradientAllowed = true)
+    val HandColor = AodColorOption(key = "hand_color", labelRes = R.string.theme_color_hands, default = GreyED, isGradientAllowed = true)
+    val DateColor = AodColorOption(key = "date_color", labelRes = R.string.theme_color_date, default = GreyED, isGradientAllowed = true)
+    val StatusColor = AodColorOption(key = "status_color", labelRes = R.string.theme_color_status, default = GreyED, isGradientAllowed = true)
 
     // Tên bài, nghệ sĩ, các nút và thanh tiến trình.
-    val MediaColor = AodColorOption(key = "media_color", labelRes = R.string.theme_color_media, default = GreyED)
+    val MediaColor = AodColorOption(key = "media_color", labelRes = R.string.theme_color_media, default = GreyED, isGradientAllowed = true)
 
     // Mỗi khối chủ đề tự vẽ (ownBlocks) có tab ở đây: Tùy chỉnh › Ngày / Pin / Thông báo / Nhạc dẫn sang màn chủ đề.
     override val tabs = persistentListOf(

@@ -80,12 +80,12 @@ object AodComponentSpec : AodOptionSpec {
             step = 10,
             default = 100,
         )
-        // Nét vẽ tô bằng ảnh đã vẽ nên chỉ một màu; các khối còn lại tô gradient lên chữ / icon (Modifier.aodTint).
+        // Gradient tô lên chữ / icon / nét vẽ của khối (Modifier.aodTint).
         val color = AodColorOption(
             key = "${component.key}_color",
             labelRes = R.string.opt_clock_color,
             default = GreyB4,
-            isGradientAllowed = component != AodComponentValue.DRAWING,
+            isGradientAllowed = true,
         )
         val tab = AodThemeTab(
             iconRes = component.iconRes,

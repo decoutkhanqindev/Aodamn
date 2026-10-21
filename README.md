@@ -835,8 +835,8 @@ chọn theo các khối đang có dữ liệu, dùng chung cho mọi chủ đề
     công tắc "Một màu | Gradient" ở đầu: sang Gradient hiện 12 bộ có sẵn (2 × 6), thanh 3 chấm Đầu / Giữa / Cuối (chạm chấm để chọn),
     4 hướng + Đảo chiều và bảng màu của chấm đang chọn; chọn bộ rồi chỉnh tiếp được; quay lại Một màu lấy màu Đầu, sang Gradient lại thì
     về đúng gradient vừa dùng. Mỗi lần đổi gradient là một bước hoàn tác; đặt lại tab xoá cả gradient. Chip phần tô đang là gradient hiện
-    3 chấm chồng nhau. Ở Tùy chỉnh, 7 khối ngày, pin, thời tiết, sự kiện, ghi nhớ, thông báo, nhạc có tab Gradient (nét vẽ chỉ một màu):
-    chọn gradient rồi xem khung xem trước và AOD thật, mỗi dòng chữ, icon, chấm tô gradient riêng theo khung của nó (thử 4 hướng, Đảo
+    3 chấm chồng nhau. Ở Tùy chỉnh, cả 8 khối ngày, pin, thời tiết, sự kiện, ghi nhớ, thông báo, nhạc, nét vẽ có tab Gradient:
+    chọn gradient rồi xem khung xem trước và AOD thật, mỗi dòng chữ, icon, chấm, nét vẽ tô gradient riêng theo khung của nó (thử 4 hướng, Đảo
     chiều), nút nhạc tắt vẫn xám, thanh nhạc tô gradient phần đã phát; pin đang sạc / yếu thì phần đầy giữ màu xanh / đỏ, chỉ số phần
     trăm tô gradient. Chủ đề Cổ điển (màn chủ đề và tab Đồng hồ lúc onboarding): màu giờ / phút có tab Gradient; thử 4 mặt: mặt số
     và xếp chồng tô gradient lên chữ số, mặt kim tô dọc theo từng kim và mốc giờ chính (gốc màu Đầu, đầu kim màu Cuối). Sỏi: cả 6 màu có tab
@@ -845,7 +845,9 @@ chọn theo các khối đang có dữ liệu, dùng chung cho mọi chủ đề
     có tab Gradient; thử viên đặc / viền, nút phát, thanh tiến trình, dòng trạng thái. Thẻ: cả 6 màu có tab
     Gradient; thử số đặc / viền, nền thẻ mờ / viền / không nền, ô AM/PM, trình phát. Tháp: cả 5 màu có
     tab Gradient; thử mọi kiểu tô số (đặc, viền, mờ dần xuống / lên: phần mờ phải mờ như bản một màu), trình phát. Chuỗi: cả 7 màu có
-    tab Gradient; thử viên thuốc lúc đổi phút (chữ số vẫn khoét thủng), từng dòng của chuỗi (chấm, vạch nối, chữ, icon), trình phát. Panel đang mở, chạm vào khung xem trước (ngoài panel): panel
+    tab Gradient; thử viên thuốc lúc đổi phút (chữ số vẫn khoét thủng), từng dòng của chuỗi (chấm, vạch nối, chữ, icon), trình phát. Vành:
+    cả 5 màu có tab Gradient; thử từng kiểu vạch (vạch đổi màu theo chỗ quanh viền), số 12 / 3 / 6 / 9 (mỗi số một gradient), kim lúc quay
+    (gốc màu Đầu → đầu kim màu Cuối, bóng kim còn nguyên), trình phát. Panel đang mở, chạm vào khung xem trước (ngoài panel): panel
     đóng (Tùy chỉnh và màn chủ đề lúc Sửa). Khung xem trước ở Tùy chỉnh, màn chủ đề, thẻ "Giao diện của bạn" và lưới chủ
     đề luôn hiện 08:30 hôm nay với dữ liệu mẫu cố định (pin 72%, nhạc dừng ở cùng một chỗ): để qua phút mới không có gì
     đổi; chỉ AOD thật chạy theo giờ.
