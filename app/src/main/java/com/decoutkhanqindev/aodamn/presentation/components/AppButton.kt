@@ -107,7 +107,7 @@ fun AppTextButton(
     )
 }
 
-// isCompact: bản thấp 40dp, chữ nhỏ cho thanh trên của màn sửa (Tùy chỉnh, màn chủ đề) để chừa chỗ cho AOD xem trước.
+// isCompact: bản thấp 44dp, chữ nhỏ cho thanh trên của màn sửa (Tùy chỉnh, màn chủ đề) để chừa chỗ cho AOD xem trước.
 @Composable
 private fun AppButtonBox(
     text: String,
@@ -121,7 +121,7 @@ private fun AppButtonBox(
 ) {
     Row(
         modifier = modifier
-            .heightIn(min = if (isCompact) 40.dp else 48.dp)
+            .heightIn(min = if (isCompact) 44.dp else 48.dp)
             .clip(RoundedCornerShape24dp)
             .background(containerColor)
             .then(if (isEnabled) Modifier.onClick(shape = RoundedCornerShape24dp, action = onClick) else Modifier)

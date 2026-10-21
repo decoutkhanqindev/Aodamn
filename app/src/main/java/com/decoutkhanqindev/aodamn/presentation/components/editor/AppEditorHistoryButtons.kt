@@ -34,6 +34,7 @@ fun AppEditorHistoryButtons(
             Icon(
                 painter = painterResource(R.drawable.ic_arrow_u_up_left),
                 contentDescription = stringResource(R.string.customize_undo),
+                modifier = Modifier.size(26.dp),
             )
         }
 
@@ -41,6 +42,7 @@ fun AppEditorHistoryButtons(
             Icon(
                 painter = painterResource(R.drawable.ic_arrow_u_up_right),
                 contentDescription = stringResource(R.string.customize_redo),
+                modifier = Modifier.size(26.dp),
             )
         }
 
@@ -48,6 +50,7 @@ fun AppEditorHistoryButtons(
             Icon(
                 painter = painterResource(R.drawable.ic_arrow_counter_clockwise),
                 contentDescription = stringResource(R.string.customize_reset),
+                modifier = Modifier.size(26.dp),
             )
         }
     }

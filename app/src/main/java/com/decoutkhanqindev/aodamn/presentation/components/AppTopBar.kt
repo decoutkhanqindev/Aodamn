@@ -1,6 +1,7 @@
 package com.decoutkhanqindev.aodamn.presentation.components
 
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -14,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.aodamn.R
 import com.decoutkhanqindev.aodamn.presentation.theme.GreyED
 import com.decoutkhanqindev.aodamn.presentation.theme.Theme
@@ -49,6 +51,7 @@ fun AppTopBar(
                 Icon(
                     painter = painterResource(R.drawable.ic_arrow_left),
                     contentDescription = stringResource(R.string.action_back),
+                    modifier = Modifier.size(26.dp),
                 )
             }
         }
@@ -67,6 +70,7 @@ fun AppTopBar(
             navigationIcon = navigationIcon,
             actions = actions,
             colors = colors,
+            expandedHeight = 68.dp,
         )
     } else {
         TopAppBar(
@@ -75,6 +79,7 @@ fun AppTopBar(
             navigationIcon = navigationIcon,
             actions = actions,
             colors = colors,
+            expandedHeight = 68.dp,
         )
     }
 }

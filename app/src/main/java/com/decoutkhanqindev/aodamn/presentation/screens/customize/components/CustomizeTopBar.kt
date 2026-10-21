@@ -51,6 +51,7 @@ fun CustomizeTopBar(
                 Icon(
                     painter = painterResource(R.drawable.ic_question),
                     contentDescription = stringResource(R.string.customize_show_guide),
+                    modifier = Modifier.size(26.dp),
                 )
             }
 

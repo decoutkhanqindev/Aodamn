@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -155,6 +156,7 @@ private fun MainTopBar(
                 Icon(
                     painter = painterResource(R.drawable.ic_crown_simple),
                     contentDescription = stringResource(R.string.iap_title),
+                    modifier = Modifier.size(26.dp),
                 )
             }
 
@@ -162,9 +164,11 @@ private fun MainTopBar(
                 Icon(
                     painter = painterResource(R.drawable.ic_share_network),
                     contentDescription = stringResource(R.string.share_app),
+                    modifier = Modifier.size(26.dp),
                 )
             }
         },
+        expandedHeight = 68.dp,
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = Color.Transparent,
             titleContentColor = GreyED,
@@ -173,7 +177,7 @@ private fun MainTopBar(
     )
 }
 
-// Thanh tab thấp 56dp cùng kiểu thanh tab của Tùy chỉnh (AppEditorTab): chỉ icon, tab đang chọn icon đặc và có tên.
+// Thanh tab thấp 64dp cùng kiểu thanh tab của Tùy chỉnh (AppEditorTab): chỉ icon, tab đang chọn icon đặc và có tên.
 @Composable
 private fun MainNavigationBar(
     selectedTab: MainTabValue,
@@ -182,7 +186,7 @@ private fun MainNavigationBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(56.dp)
+            .height(64.dp)
             .background(Neutral12)
             .selectableGroup(),
         verticalAlignment = Alignment.CenterVertically,

@@ -83,7 +83,7 @@ fun CustomizeTabBar(
                     if (index > 0) {
                         VerticalDivider(
                             modifier = Modifier
-                                .height(20.dp)
+                                .height(24.dp)
                                 .padding(horizontal = 4.dp),
                             color = NeutralVariant30,
                         )

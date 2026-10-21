@@ -36,11 +36,11 @@ import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.aodamn.R
 import com.decoutkhanqindev.aodamn.presentation.components.onClick
 import com.decoutkhanqindev.aodamn.presentation.theme.Grey9A
-import com.decoutkhanqindev.aodamn.presentation.theme.LabelLarge
 import com.decoutkhanqindev.aodamn.presentation.theme.Mint
 import com.decoutkhanqindev.aodamn.presentation.theme.MintAlpha12
-import com.decoutkhanqindev.aodamn.presentation.theme.RoundedCornerShape12dp
+import com.decoutkhanqindev.aodamn.presentation.theme.RoundedCornerShape16dp
 import com.decoutkhanqindev.aodamn.presentation.theme.Theme
+import com.decoutkhanqindev.aodamn.presentation.theme.TitleMedium
 
 // Một tab của thanh tab thấp (Tùy chỉnh, sửa chủ đề, thanh tab Main): chỉ có icon để thanh không che AOD xem trước, tab đang chọn nền mint
 // nhạt, icon đặc (như thanh tab Main) và hiện thêm tên để biết đang ở đâu. TalkBack luôn đọc tên.
@@ -64,25 +64,25 @@ fun AppEditorTab(
 
     Row(
         modifier = modifier
-            .height(40.dp)
-            .widthIn(min = 44.dp)
-            .onClick(shape = RoundedCornerShape12dp, action = onClick)
+            .height(48.dp)
+            .widthIn(min = 48.dp)
+            .onClick(shape = RoundedCornerShape16dp, action = onClick)
             .drawBehind {
-                drawRoundRect(color = containerColor, cornerRadius = CornerRadius(12.dp.toPx()))
+                drawRoundRect(color = containerColor, cornerRadius = CornerRadius(16.dp.toPx()))
             }
             .semantics {
                 role = Role.Tab
                 selected = isSelected
                 contentDescription = label
             }
-            .padding(horizontal = 12.dp),
+            .padding(horizontal = 14.dp),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
             painter = painterResource(if (isSelected) selectedIconRes else iconRes),
             contentDescription = null,
-            modifier = Modifier.size(20.dp),
+            modifier = Modifier.size(24.dp),
             tint = contentColor,
         )
 
@@ -94,12 +94,12 @@ fun AppEditorTab(
             Text(
                 text = label,
                 modifier = Modifier
-                    .padding(start = 6.dp)
+                    .padding(start = 8.dp)
                     .clearAndSetSemantics { },
                 color = contentColor,
                 fontWeight = FontWeight.Medium,
                 maxLines = 1,
-                style = LabelLarge,
+                style = TitleMedium,
             )
         }
     }
