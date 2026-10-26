@@ -1,7 +1,10 @@
 package com.decoutkhanqindev.aodamn.presentation.components.aod.theme.chain
 
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodWavePlayerStyle
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.chain.ChainThemeSpec
 
 object ChainMetrics {
     val ClockWidth = 100.dp
@@ -52,4 +55,22 @@ object ChainMetrics {
     val ProgressGap = 15.dp
     const val TRACK_ALPHA = 0.3f
     const val PAUSED_ALPHA = 0.6f
+
+    val WavePlayer = AodWavePlayerStyle(
+        width = PlayerWidth,
+        titleFont = ChainThemeSpec.TitleFont,
+        artistFont = ChainThemeSpec.Font,
+        titleSize = TitleSize,
+        artistSize = SubtitleSize,
+        artistGap = ArtistGap,
+        artistAlpha = SUBTITLE_ALPHA,
+        buttonSize = ButtonSize,
+        buttonIconSize = ButtonIconSize,
+        pausedAlpha = PAUSED_ALPHA,
+        trackHeight = TrackHeight,
+        trackAlpha = TRACK_ALPHA,
+        progressGap = ProgressGap,
+        titleSpacing = MEDIA_TITLE_TRACKING.em,
+        artistSpacing = MEDIA_ARTIST_TRACKING.em,
+    )
 }

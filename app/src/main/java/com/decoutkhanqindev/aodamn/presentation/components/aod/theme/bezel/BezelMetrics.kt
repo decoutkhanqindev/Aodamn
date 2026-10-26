@@ -1,7 +1,10 @@
 package com.decoutkhanqindev.aodamn.presentation.components.aod.theme.bezel
 
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodWavePlayerStyle
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.bezel.BezelThemeSpec
 
 object BezelMetrics {
     const val OUTER_X = 0.06f
@@ -57,4 +60,21 @@ object BezelMetrics {
     const val ARTIST_ALPHA = 0.7f
     const val PAUSED_ALPHA = 0.6f
     const val TRACK_ALPHA = 0.3f
+
+    val WavePlayer = AodWavePlayerStyle(
+        width = ZoneWidth,
+        titleFont = BezelThemeSpec.Font,
+        artistFont = BezelThemeSpec.Font,
+        titleSize = TitleSize,
+        artistSize = ArtistSize,
+        artistGap = ArtistGap,
+        artistAlpha = ARTIST_ALPHA,
+        buttonSize = ButtonSize,
+        buttonIconSize = ButtonIconSize,
+        pausedAlpha = PAUSED_ALPHA,
+        trackHeight = TrackHeight,
+        trackAlpha = TRACK_ALPHA,
+        progressGap = ProgressGap,
+        textWeight = FontWeight.Bold,
+    )
 }

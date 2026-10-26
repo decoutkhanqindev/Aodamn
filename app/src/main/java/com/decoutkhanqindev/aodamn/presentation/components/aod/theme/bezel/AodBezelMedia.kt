@@ -1,48 +1,13 @@
 package com.decoutkhanqindev.aodamn.presentation.components.aod.theme.bezel
 
-import androidx.annotation.DrawableRes
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalTextStyle
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.onClick
-import androidx.compose.ui.semantics.role
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.dp
-import com.decoutkhanqindev.aodamn.R
-import com.decoutkhanqindev.aodamn.presentation.components.aod.block.AodMediaProgress
-import com.decoutkhanqindev.aodamn.presentation.components.aod.block.aodTint
-import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.AodWaveTrack
-import com.decoutkhanqindev.aodamn.presentation.components.onClick
+import com.decoutkhanqindev.aodamn.presentation.components.aod.block.AodWavePlayer
 import com.decoutkhanqindev.aodamn.presentation.model.aod.info.MediaProgressUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.info.MediaUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeConfig
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.bezel.BezelThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodIntent
-import com.decoutkhanqindev.aodamn.presentation.theme.Grey5A
 
 @Composable
 fun AodBezelMedia(
@@ -50,132 +15,14 @@ fun AodBezelMedia(
     config: AodThemeConfig,
     onIntent: (AodIntent) -> Unit,
 ) {
-    val color = config[BezelThemeSpec.MediaColor]
-    val brush = config.brushOf(BezelThemeSpec.MediaColor)
-    val gradientBrush = config.gradientOf(BezelThemeSpec.MediaColor)?.toBrush()
-    val progress = media.progress
-    val textAlpha = animateFloatAsState(
-        targetValue = if (media.isPlaying) 1f else BezelMetrics.PAUSED_ALPHA,
-        animationSpec = tween(durationMillis = 400),
-        label = "BezelTrackAlpha",
+    AodWavePlayer(
+        media = media,
+        style = BezelMetrics.WavePlayer,
+        color = config[BezelThemeSpec.MediaColor],
+        gradient = config.gradientOf(BezelThemeSpec.MediaColor)?.toBrush(),
+        brush = config.brushOf(BezelThemeSpec.MediaColor),
+        onIntent = onIntent,
     )
-    val playLabel = stringResource(if (media.isPlaying) R.string.aod_media_pause else R.string.aod_media_play)
-
-    Column(modifier = Modifier.width(BezelMetrics.ZoneWidth)) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            BezelMediaButton(
-                iconRes = R.drawable.ic_skip_back_fill,
-                contentDescription = stringResource(R.string.aod_media_previous),
-                isEnabled = media.canSkipToPrevious,
-                color = color,
-                gradient = gradientBrush,
-                onClick = { onIntent(AodIntent.SkipToPreviousTrack) },
-            )
-
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .alpha(textAlpha.value)
-                    .onClick(ripple = false) { onIntent(AodIntent.PlayPauseMedia) }
-                    .semantics {
-                        role = Role.Button
-                        onClick(label = playLabel) {
-                            onIntent(AodIntent.PlayPauseMedia)
-                            true
-                        }
-                    },
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                BezelMediaText(text = media.title.uppercase(), brush = brush, fontSize = BezelMetrics.TitleSize)
-
-                media.artist?.let { artist ->
-                    BezelMediaText(
-                        text = artist.uppercase(),
-                        brush = brush,
-                        fontSize = BezelMetrics.ArtistSize,
-                        modifier = Modifier
-                            .padding(top = BezelMetrics.ArtistGap)
-                            .alpha(BezelMetrics.ARTIST_ALPHA),
-                    )
-                }
-            }
-
-            BezelMediaButton(
-                iconRes = R.drawable.ic_skip_forward_fill,
-                contentDescription = stringResource(R.string.aod_media_next),
-                isEnabled = media.canSkipToNext,
-                color = color,
-                gradient = gradientBrush,
-                onClick = { onIntent(AodIntent.SkipToNextTrack) },
-            )
-        }
-
-        if (progress != null) {
-            AodMediaProgress(
-                progress = progress,
-                track = { fraction ->
-                    AodWaveTrack(
-                        fraction = fraction,
-                        wave = { 0f },
-                        color = color,
-                        trackColor = color.copy(alpha = color.alpha * BezelMetrics.TRACK_ALPHA),
-                        brush = brush,
-                        height = BezelMetrics.TrackHeight,
-                        strokeWidth = BezelMetrics.TrackHeight,
-                        wavelength = 40.dp,
-                        gap = 0.dp,
-                    )
-                },
-                modifier = Modifier.padding(top = BezelMetrics.ProgressGap),
-            )
-        }
-    }
-}
-
-@Composable
-private fun BezelMediaText(
-    text: String,
-    brush: Brush,
-    fontSize: TextUnit,
-    modifier: Modifier = Modifier,
-) {
-    Text(
-        text = text,
-        modifier = modifier,
-        style = LocalTextStyle.current.merge(TextStyle(brush = brush)),
-        fontSize = fontSize,
-        fontWeight = FontWeight.Bold,
-        fontFamily = BezelThemeSpec.Font,
-        textAlign = TextAlign.Center,
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis,
-    )
-}
-
-@Composable
-private fun BezelMediaButton(
-    @DrawableRes iconRes: Int,
-    contentDescription: String,
-    isEnabled: Boolean,
-    color: Color,
-    gradient: Brush?,
-    onClick: () -> Unit,
-) {
-    Box(
-        modifier = Modifier
-            .size(BezelMetrics.ButtonSize)
-            .then(if (isEnabled) Modifier.onClick(shape = CircleShape, ripple = false, action = onClick) else Modifier),
-        contentAlignment = Alignment.Center,
-    ) {
-        Icon(
-            painter = painterResource(iconRes),
-            contentDescription = contentDescription,
-            modifier = Modifier
-                .size(BezelMetrics.ButtonIconSize)
-                .aodTint(gradient.takeIf { isEnabled }),
-            tint = if (isEnabled) color else Grey5A,
-        )
-    }
 }
 
 @Preview(widthDp = 393)

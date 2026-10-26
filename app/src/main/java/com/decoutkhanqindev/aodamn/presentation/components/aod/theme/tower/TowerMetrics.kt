@@ -2,6 +2,10 @@ package com.decoutkhanqindev.aodamn.presentation.components.aod.theme.tower
 
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
+import androidx.compose.ui.unit.sp
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodWavePlayerStyle
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.tower.TowerThemeSpec
 
 object TowerMetrics {
     const val SHORT_SIDE_RATIO = 0.96f
@@ -45,4 +49,26 @@ object TowerMetrics {
 
     fun landscapeUnit(width: Dp, height: Dp, scale: Float): Dp =
         minOf(maxOf(width, height) * LANDSCAPE_LONG_SIDE_RATIO, minOf(width, height)) * SHORT_SIDE_RATIO * scale
+
+    val WavePlayer = AodWavePlayerStyle(
+        width = 393.dp,
+        titleFont = TowerThemeSpec.Font,
+        artistFont = TowerThemeSpec.Font,
+        titleSize = 13.sp,
+        artistSize = 11.5.sp,
+        artistGap = 8.dp,
+        artistAlpha = 0.8f,
+        buttonSize = 40.dp,
+        buttonIconSize = 14.dp,
+        pausedAlpha = 0.6f,
+        trackHeight = 3.dp,
+        trackAlpha = 0.3f,
+        progressGap = 28.dp,
+        titleSpacing = 0.38.em,
+        artistSpacing = 0.38.em,
+        isUppercase = false,
+        buttonOuterGap = 20.dp,
+        buttonInnerGap = 10.dp,
+        progressInset = 30.dp,
+    )
 }
