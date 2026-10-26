@@ -38,6 +38,9 @@ val GreyAD = Color(0xFFADB5BD)
 val GreyB9 = Color(0xFFB9BEC4)
 val Grey7C = Color(0xFF7C7F83)
 
+// TODO(coum-face): màu mới của chủ đề
+// TODO(big-overlap): màu mới của chủ đề
+
 // Màu có sẵn của bảng chọn màu (ColorSwatchValue): màu đặc trưng của các app quen thuộc, xếp theo sắc độ.
 val YoutubeRed = Color(0xFFFF0033)
 val SoundcloudOrange = Color(0xFFFF5500)

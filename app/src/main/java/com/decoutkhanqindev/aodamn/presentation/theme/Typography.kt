@@ -102,6 +102,9 @@ val FontFamilyJosefinSans = FontFamily(
     Font(R.font.josefin_sans_bold, FontWeight.Bold),
 )
 
+// TODO(coum-face): họ font mới của chủ đề
+// TODO(big-overlap): họ font mới của chủ đề
+
 // Type scale mặc định của Material 3 (kèm lineHeightStyle, platformStyle của nó), chỉ đổi font sang Plus Jakarta Sans; BodyLarge là bản riêng của app.
 private val MaterialTypeScale = androidx.compose.material3.Typography()
 

@@ -2338,6 +2338,10 @@ ripple = [
 ]
 
 
+# TODO(coum-face): mục mock của chủ đề (hàm vẽ + danh sách khung)
+# TODO(big-overlap): mục mock của chủ đề (hàm vẽ + danh sách khung)
+
+
 for name, summary, defs, frames in [
     ("w_classic", "Bảy bố cục ngang của chủ đề Cổ điển theo các khối đang bật", classic_defs, classic),
     ("w_jersey", "Bố cục ngang của chủ đề Số áo: ngày, bốn chữ số một hàng, dòng pin", jersey_defs, jersey),
@@ -2351,6 +2355,8 @@ for name, summary, defs, frames in [
     ("w_half", "Chủ đề Bán nguyệt (Half Concentric): màu, bốn khung dọc và ba bố cục ngang", HC_DEFS, half),
     ("w_gradient_line", "Chủ đề Dải màu (Gradient Line Clock): màu vạch, bốn khung dọc và bốn khung ngang", "", gradient_line),
     ("w_ripple", "Chủ đề Gợn sóng (Android 12): kiểu và màu, bốn khung dọc và bốn khung ngang", "", ripple),
+    # TODO(coum-face): dòng ("w_…", …) của chủ đề
+    # TODO(big-overlap): dòng ("w_…", …) của chủ đề
 ]:
     code = widget(summary, defs, frames)
     OUT.mkdir(parents=True, exist_ok=True)

@@ -1022,6 +1022,8 @@ chọn theo các khối đang có dữ liệu, dùng chung cho mọi chủ đề
     nào cũng có tab Gradient (kim tô từ tâm ra đầu kim). Tùy chỉnh khi đang dùng Gợn sóng: không có tab Ghi chú, Sự kiện, Nét vẽ.
     Xoay ngang: mặt số giữa màn to như màn dọc; không nhạc: thông báo trái, thời tiết + pin phải; phát nhạc: thông báo, thời tiết,
     pin trái, trình phát phải, đổi bằng mờ chéo. Trên máy Xiaomi: chữ là Google Sans. Các chủ đề khác không đổi gì.
+<!-- TODO(coum-face): bước test trên máy của chủ đề (25p / 25q) -->
+<!-- TODO(big-overlap): bước test trên máy của chủ đề (25p / 25q) -->
 25f. Overlay mới (không còn hộp thoại / nút Material): mọi sheet có thanh kéo dải màu mint → xanh → tím; mép trên màn
     hình không có viền sáng khi sheet hiện. Đặt lại (tab AOD › Chủ đề, Tùy chỉnh, màn chủ đề): sheet có hình điện thoại với huy hiệu mũi tên xoay, nút
     "Đặt lại" mint, Hủy bằng chữ. Màn chủ đề đang sửa, Back khi còn thay đổi: "Lưu trước khi thoát?" với Lưu rồi thoát (lưu,

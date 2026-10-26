@@ -41,6 +41,8 @@ FONTS = {
     "josefin_sans": ([100, 300, 400, 600, 700], {}),
     # Bản Google Fonts nặng 5 MB vì nhiều hệ chữ: tools/fonts/variable giữ bản đã cắt còn Latin + tiếng Việt (fontTools subset, giữ mọi trục).
     "google_sans": ([400, 500, 700], {"GRAD": 0, "opsz": 18}),
+    # TODO(coum-face): họ font mới của chủ đề
+    # TODO(big-overlap): họ font mới của chủ đề
 }
 
 # họ font chỉ có bản tĩnh -> độ đậm có sẵn (file <họ font>_<độ đậm>.ttf ở tools/fonts/static)

@@ -15,6 +15,8 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.halfmoon.HalfMoo
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.jersey.JerseyThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.pebble.PebbleThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.ripple.RippleThemeSpec
+// TODO(coum-face): import spec
+// TODO(big-overlap): import spec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.tower.TowerThemeSpec
 
 // Các chủ đề AOD. id lưu trong DataStore nên không đổi; thêm chủ đề = một mục ở đây + đặc tả AodThemeSpec + phần vẽ ở
@@ -36,7 +38,10 @@ enum class AodThemeValue(
     COMPASS(id = "compass", nameRes = R.string.theme_compass, spec = CompassThemeSpec),
     HALF_MOON(id = "half_moon", nameRes = R.string.theme_half_moon, spec = HalfMoonThemeSpec),
     GRADIENT_LINE(id = "gradient_line", nameRes = R.string.theme_gradient_line, spec = GradientLineThemeSpec),
-    RIPPLE(id = "ripple", nameRes = R.string.theme_ripple, spec = RippleThemeSpec);
+    RIPPLE(id = "ripple", nameRes = R.string.theme_ripple, spec = RippleThemeSpec),
+    // TODO(coum-face): mục chủ đề
+    // TODO(big-overlap): mục chủ đề
+    ;
 
     companion object {
         val DEFAULT = CLASSIC

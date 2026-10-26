@@ -7,6 +7,9 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+<!-- TODO(coum-face): mục CHANGELOG của chủ đề -->
+<!-- TODO(big-overlap): mục CHANGELOG của chủ đề -->
+
 ## [Chưa phát hành] – 2026-10-21 – Chủ đề Gợn sóng
 
 Build được, unit test pass (thêm test chặn Gợn sóng có lại khối đã bỏ hay thiếu tuỳ chọn của app mẫu; test nội dung thông báo và chạy theo

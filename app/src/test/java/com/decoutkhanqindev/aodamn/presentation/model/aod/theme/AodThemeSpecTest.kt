@@ -9,6 +9,8 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.gradientline.Gra
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.halfmoon.HalfMoonThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.pebble.AodTileStyleValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.ripple.RippleThemeSpec
+// TODO(coum-face): import spec
+// TODO(big-overlap): import spec
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -37,15 +39,22 @@ class AodThemeSpecTest {
         }
     }
 
-    // Chủ đề mới thêm khối tự vẽ / bật lại nội dung thông báo không được đổi hành vi chủ đề cũ: chỉ Chuỗi tự vẽ ghi nhớ, sự kiện; chỉ Chuỗi, La
-    // bàn, Bán nguyệt, Dải màu và Gợn sóng hiện nội dung thông báo dù tự vẽ dòng trạng thái (tự vẽ thông báo mới nhất như app mẫu); các chủ đề
-    // khác giữ như trước (nội dung thông báo chỉ khi không tự vẽ dòng trạng thái).
+    // Chủ đề mới thêm khối tự vẽ / bật lại nội dung thông báo không được đổi hành vi chủ đề cũ: chỉ Chuỗi tự vẽ ghi nhớ, sự kiện; chỉ Chuỗi và
+    // các chủ đề trong drawsLatest hiện nội dung thông báo dù tự vẽ dòng trạng thái (tự vẽ thông báo mới nhất như app mẫu); các chủ đề khác
+    // giữ như trước (nội dung thông báo chỉ khi không tự vẽ dòng trạng thái).
     @Test
-    fun `only chain owns memo and events and only chain, compass, half moon, gradient line and ripple keep notification content with their status line`() {
+    fun `only chain owns memo and events and only themes drawing their latest alert keep notification content with their status line`() {
         AodThemeValue.entries.forEach { theme ->
             val isChain = theme == AodThemeValue.CHAIN
             val drawsLatest = isChain ||
-                theme in setOf(AodThemeValue.COMPASS, AodThemeValue.HALF_MOON, AodThemeValue.GRADIENT_LINE, AodThemeValue.RIPPLE)
+                theme in setOf(
+                    AodThemeValue.COMPASS,
+                    AodThemeValue.HALF_MOON,
+                    AodThemeValue.GRADIENT_LINE,
+                    AodThemeValue.RIPPLE,
+                    // TODO(coum-face): thêm nếu chủ đề tự vẽ thông báo mới nhất
+                    // TODO(big-overlap): thêm nếu chủ đề tự vẽ thông báo mới nhất
+                )
             assertEquals("${theme.id}: ghi nhớ", isChain, AodBlockValue.MEMO in theme.spec.ownBlocks)
             assertEquals("${theme.id}: sự kiện", isChain, AodBlockValue.EVENTS in theme.spec.ownBlocks)
             assertEquals(
@@ -195,12 +204,20 @@ class AodThemeSpecTest {
         )
     }
 
-    // Khung xem trước dùng giờ mẫu; chỉ chủ đề có chuyển động theo giờ thật như app mẫu (La bàn, Bán nguyệt, chấm giây của Gợn sóng) chạy theo giờ
-    // thật cả ở xem trước,
-    // chủ đề cũ không đổi.
+    // TODO(coum-face): test riêng của chủ đề
+    // TODO(big-overlap): test riêng của chủ đề
+
+    // Khung xem trước dùng giờ mẫu; chỉ chủ đề có chuyển động theo giờ thật như app mẫu (liveThemes: La bàn, Bán nguyệt, chấm giây của Gợn
+    // sóng…) chạy theo giờ thật cả ở xem trước, chủ đề cũ không đổi.
     @Test
-    fun `only compass, half moon and ripple run in real time in previews`() {
-        val liveThemes = setOf(AodThemeValue.COMPASS, AodThemeValue.HALF_MOON, AodThemeValue.RIPPLE)
+    fun `only themes with real time motion run in real time in previews`() {
+        val liveThemes = setOf(
+            AodThemeValue.COMPASS,
+            AodThemeValue.HALF_MOON,
+            AodThemeValue.RIPPLE,
+            // TODO(coum-face): thêm nếu chủ đề chạy theo giờ thật ở xem trước
+            // TODO(big-overlap): thêm nếu chủ đề chạy theo giờ thật ở xem trước
+        )
         AodThemeValue.entries.forEach { theme ->
             assertEquals("${theme.id}: xem trước theo giờ thật", theme in liveThemes, theme.spec.isLiveInPreview)
             val preview = AodState(appearance = AodAppearanceUiModel(theme = AodThemeUiModel(value = theme)), isPreview = true)
