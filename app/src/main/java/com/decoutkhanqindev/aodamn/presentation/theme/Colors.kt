@@ -40,6 +40,8 @@ val Grey7C = Color(0xFF7C7F83)
 
 // TODO(coum-face): màu mới của chủ đề
 // TODO(big-overlap): màu mới của chủ đề
+// Chồng số: màu nhấn đào, màu gốc của chữ số trong BigPixel2Clock của app mẫu (chưa chủ đề nào dùng).
+val Peach = Color(0xFFFFD1B6)
 
 // Màu có sẵn của bảng chọn màu (ColorSwatchValue): màu đặc trưng của các app quen thuộc, xếp theo sắc độ.
 val YoutubeRed = Color(0xFFFF0033)

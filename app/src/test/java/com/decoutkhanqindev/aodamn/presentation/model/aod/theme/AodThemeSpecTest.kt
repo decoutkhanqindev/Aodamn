@@ -13,6 +13,10 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.ripple.RippleThe
 import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.AodGradientDirection
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.tick.TickThemeSpec
 // TODO(big-overlap): import spec
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.bigoverlap.AodBigOverlapStyleValue
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.bigoverlap.BigOverlapThemeSpec
+import com.decoutkhanqindev.aodamn.presentation.theme.GreyCE
+import com.decoutkhanqindev.aodamn.presentation.theme.Peach
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -57,6 +61,7 @@ class AodThemeSpecTest {
                     // TODO(coum-face): thêm nếu chủ đề tự vẽ thông báo mới nhất
                     AodThemeValue.TICK,
                     // TODO(big-overlap): thêm nếu chủ đề tự vẽ thông báo mới nhất
+                    AodThemeValue.BIG_OVERLAP,
                 )
             assertEquals("${theme.id}: ghi nhớ", isChain, AodBlockValue.MEMO in theme.spec.ownBlocks)
             assertEquals("${theme.id}: sự kiện", isChain, AodBlockValue.EVENTS in theme.spec.ownBlocks)
@@ -242,6 +247,48 @@ class AodThemeSpecTest {
         )
     }
     // TODO(big-overlap): test riêng của chủ đề
+
+    // Chồng số: ngày, pin + thông báo (có thông báo mới nhất), thời tiết, nhạc; ghi nhớ, sự kiện, nét vẽ không có chỗ đặt cân quanh khối số. Giữ
+    // đủ Clock Style 1–4, Clock Size 50–100 và Color 1–4 của app mẫu (mặc định chéo: số 1 của giờ và số 2 của phút cùng màu); màu chủ đạo tách
+    // thành ngày, thông báo, pin, nhạc.
+    @Test
+    fun `big overlap only has the blocks that fit around its digits and keeps every reference option`() {
+        val spec = AodThemeValue.BIG_OVERLAP.spec
+        assertEquals(
+            setOf(
+                AodComponentValue.DATE,
+                AodComponentValue.BATTERY,
+                AodComponentValue.WEATHER,
+                AodComponentValue.NOTIFICATIONS,
+                AodComponentValue.MEDIA,
+            ),
+            spec.components,
+        )
+        assertEquals(true, spec.hasNotificationContent)
+        assertEquals(AodBigOverlapStyleValue.entries, BigOverlapThemeSpec.Style.entries)
+        assertEquals(AodBigOverlapStyleValue.FILLED_ROUND, BigOverlapThemeSpec.Style.default)
+        assertEquals(50..100, BigOverlapThemeSpec.Size.range)
+        assertEquals(85, BigOverlapThemeSpec.Size.default)
+        assertEquals(Peach, BigOverlapThemeSpec.HourFirstColor.default)
+        assertEquals(GreyCE, BigOverlapThemeSpec.HourSecondColor.default)
+        assertEquals(BigOverlapThemeSpec.HourSecondColor.default, BigOverlapThemeSpec.MinuteFirstColor.default)
+        assertEquals(BigOverlapThemeSpec.HourFirstColor.default, BigOverlapThemeSpec.MinuteSecondColor.default)
+        assertEquals(
+            listOf(
+                BigOverlapThemeSpec.Style,
+                BigOverlapThemeSpec.Size,
+                BigOverlapThemeSpec.HourFirstColor,
+                BigOverlapThemeSpec.HourSecondColor,
+                BigOverlapThemeSpec.MinuteFirstColor,
+                BigOverlapThemeSpec.MinuteSecondColor,
+                BigOverlapThemeSpec.DateColor,
+                BigOverlapThemeSpec.NotificationsColor,
+                BigOverlapThemeSpec.BatteryColor,
+                BigOverlapThemeSpec.MediaColor,
+            ),
+            spec.options,
+        )
+    }
 
     // Khung xem trước dùng giờ mẫu; chỉ chủ đề có chuyển động theo giờ thật như app mẫu (liveThemes: La bàn, Bán nguyệt, chấm giây của Gợn
     // sóng…) chạy theo giờ thật cả ở xem trước, chủ đề cũ không đổi.

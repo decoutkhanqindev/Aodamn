@@ -42,6 +42,48 @@ thật ở khung xem trước cho phép Nhịp giây), `tools/check-rules.sh` ra
 - Chỉ thêm, không đổi chủ đề đang có: mục `TICK` ở `AodThemeValue`, nhánh `when` ở `AodPortrait` / `AodLandscape` / `AodMediaControls`, chuỗi
   `theme_tick`, `theme_color_ring` và mẫu định dạng `aod_tick_*`, test ở `AodThemeSpecTest`; không thêm màu, font, icon.
 <!-- TODO(big-overlap): mục CHANGELOG của chủ đề -->
+## [Chưa phát hành] – 2026-10-26 – Chủ đề Chồng số
+
+Build được, unit test pass (thêm test chặn Chồng số có lại khối đã bỏ hay thiếu tuỳ chọn của app mẫu, kiểm màu mặc định chéo; test nội dung
+thông báo cho phép Chồng số), `tools/check-rules.sh` ra 0 vi phạm (38 rule), thư mục các chủ đề cũ không đổi dòng nào. Chưa test trên máy.
+
+### Thêm
+
+- Chủ đề Chồng số (Big Overlap Clock của Muviz Edge, số đo lấy từ `BigPixel2Clock`, `Mar23Screen` và layout `mar23_screen_layout` dọc / ngang
+  dịch ngược; mock duyệt trước khi code): bốn chữ số Google Sans Flex cỡ 0,5 × cạnh ngắn vùng đồng hồ × cỡ xếp lưới 2 × 2 quanh tâm, cột trái căn
+  trái, cột phải căn phải trong ô rộng bằng số 0; hai cột lấn qua tâm 0,17 bề rộng số 0, giờ / phút lấn 0,04 chiều cao số 0 (kiểu viền 0,2 /
+  0,06). Vẽ lần lượt giờ chục, giờ đơn vị, phút chục, phút đơn vị, số nào cũng bị khoét theo hình các số vẽ sau: kiểu đặc có nét đen 0,07 cỡ chữ
+  quanh số (khe đen giữa hai số), kiểu viền nét màu mảnh hơn 2,5 lần, ruột trong. Bốn kiểu như app mẫu: đặc, viền, đặc bo tròn, viền bo tròn
+  (trục ROND). Nâng cấp: đổi đặc ↔ viền chạy 500ms như app mẫu và độ lấn trượt theo (app mẫu nhảy), đổi bo tròn mờ chéo (app mẫu nhảy), hình các
+  số vẽ sau gộp bằng `Path.op` trước khi khoét (app mẫu `addPath` nên lỗ của số này trùng thân số kia thì không khoét). Bỏ trạng thái tiết kiệm của
+  app mẫu (tự sang kiểu viền) vì AOD không có trạng thái đó (user duyệt).
+- Số 4 của Google Sans Flex là một đường viền tự cắt (thanh ngang chồng lên thân, lỗ tam giác do đường vòng ngược): tô thì đúng nhưng vẽ nét lộ cả
+  cạnh bên trong (user thấy ở mock), nên mỗi chữ số gộp phần chồng bằng `Path.op` trước khi vẽ nét / khoét; các số khác không đổi hình.
+- Bố cục như layout mẫu: vùng trên cao tối thiểu 130dp có ngày "EEE, d MMM" 20sp (thời tiết cuối dòng ngày), cách 18dp hàng icon thông báo 18dp,
+  thông báo mới nhất (icon + một dòng tiêu đề, nội dung tối hơn 30%, chạy chữ, trượt xuống từ trên như app mẫu; app mẫu hiện thế chỗ hàng icon
+  vài giây, bên mình nằm dưới hàng icon khi bật nội dung thông báo, user duyệt), căn trái lề 40dp; khối số giữa phần còn lại theo trọng số 0,08 /
+  0,8 / 0,12; trình phát rồi dòng pin 14sp (mờ 0,8 khi không sạc) ở đáy. Trình phát như app mẫu: tên bài 16sp / nghệ sĩ 14sp tối hơn 30% bên
+  trái, nút phát / dừng 40dp và nút tới 35dp (không có nút lùi), thanh tiến trình 1,5dp; nhạc bật / tắt thì khối số trượt. Màn ngang (app mẫu
+  thu khối số vào cột trái, nửa phải trống khi không nhạc): khối số giữa màn cỡ như màn dọc, ngày (thời tiết ngay sau ngày) + thông báo bên
+  trái, trình phát + dòng pin bên phải, đổi bằng mờ chéo; bỏ vạch ngăn giữa thông báo và trình phát của layout ngang mẫu (user duyệt).
+- Tuỳ chọn đủ như app mẫu: kiểu đồng hồ (4 kiểu), cỡ 50–100% (mặc định 85%), Color 1–4 thành màu Giờ · số 1 / số 2, Phút · số 1 / số 2; màu
+  chủ đạo tách thành màu ngày, thông báo, pin, nhạc (user duyệt). Mặc định bắt mắt như thẻ ở lưới của app mẫu: đặc bo tròn, màu chéo `Peach`
+  (#FFD1B6, màu gốc của `BigPixel2Clock`, màu nhấn chưa chủ đề nào dùng) và `GreyCE`. Màu nào cũng tô được gradient (mỗi số theo khung của nó).
+- Chồng số chỉ có ngày, thời tiết, pin, thông báo (kèm thông báo mới nhất, `hasNotificationContent = true`), nhạc: ghi nhớ, sự kiện làm khối
+  thông tin trên cao gấp đôi, đẩy khối số xuống; nét vẽ không có chỗ quanh khối số ở cả dọc lẫn ngang.
+- Font Google Sans Flex (Google Fonts, OFL, `licenses/GoogleSansFlex-OFL.txt`): file nguồn cắt còn Latin + tiếng Việt, ghim opsz 18, slnt 0
+  (`tools/fonts/variable/google_sans_flex_variable.ttf`, 534 KB); hai file tĩnh wght 1000, wdth 108 (font mẫu còn đậm hơn bản Google Fonts đậm
+  nhất), ROND 0 / 100 (`google_sans_flex_extrablack.ttf`, `google_sans_flex_rounded_extrablack.ttf`), họ `FontFamilyGoogleSansFlex` /
+  `FontFamilyGoogleSansFlexRounded`. Mock của chủ đề ở `tools/mockups/aod_landscape_mockups.py` (gộp phần chồng của chữ số cần
+  `pip install skia-pathops`).
+
+### Thay đổi
+
+- Chỉ thêm, không đổi chủ đề đang có (đặt dưới các dòng `TODO(big-overlap)`): mục `BIG_OVERLAP` ở `AodThemeValue`, nhánh `when` ở `AodPortrait` /
+  `AodLandscape` / `AodMediaControls`, màu `Peach`, hai họ font, chuỗi vi / en (`theme_big_overlap`, `theme_color_hour_digit_1/2`,
+  `theme_color_minute_digit_1/2`, `big_overlap_style_filled_round` / `_outline_round`), hai dòng font ở `make_static_fonts.py`; dùng lại nhãn
+  Đặc / Viền, "Kiểu đồng hồ", mẫu ngày `aod_date_pattern` có sẵn.
+
 
 ## [Chưa phát hành] – 2026-10-21 – Chủ đề Gợn sóng
 

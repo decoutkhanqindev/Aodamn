@@ -72,6 +72,7 @@
     <!-- TODO(coum-face): tên chủ đề -->
     <string name="theme_tick">Tick</string>
     <!-- TODO(big-overlap): tên chủ đề -->
+    <string name="theme_big_overlap">Overlap</string>
     <string name="theme_in_use">In use</string>
     <string name="theme_edit">Edit</string>
     <string name="theme_saved">Theme saved</string>
@@ -122,6 +123,12 @@
     <!-- TODO(coum-face): nhãn màu / tuỳ chọn -->
     <string name="theme_color_ring">Ring</string>
     <!-- TODO(big-overlap): nhãn màu / tuỳ chọn -->
+    <string name="theme_color_hour_digit_1">Hour digit 1</string>
+    <string name="theme_color_hour_digit_2">Hour digit 2</string>
+    <string name="theme_color_minute_digit_1">Minute digit 1</string>
+    <string name="theme_color_minute_digit_2">Minute digit 2</string>
+    <string name="big_overlap_style_filled_round">Rounded filled</string>
+    <string name="big_overlap_style_outline_round">Rounded outline</string>
     <string name="theme_opt_digit_style">Digit style</string>
     <string name="theme_opt_card_background">Card background</string>
     <string name="card_background_tinted">Tinted</string>

@@ -104,6 +104,14 @@ val FontFamilyJosefinSans = FontFamily(
 
 // TODO(coum-face): họ font mới của chủ đề
 // TODO(big-overlap): họ font mới của chủ đề
+// Bốn chữ số của Chồng số: Google Sans Flex như app mẫu, độ đậm 1000 (font mẫu còn đậm hơn bản Google Fonts đậm nhất). Góc vuông / bo tròn là hai
+// file tĩnh ghim trục ROND 0 / 100 nên là hai họ; chỉ vẽ chữ số.
+val FontFamilyGoogleSansFlex = FontFamily(
+    Font(R.font.google_sans_flex_extrablack, FontWeight(1000)),
+)
+val FontFamilyGoogleSansFlexRounded = FontFamily(
+    Font(R.font.google_sans_flex_rounded_extrablack, FontWeight(1000)),
+)
 
 // Type scale mặc định của Material 3 (kèm lineHeightStyle, platformStyle của nó), chỉ đổi font sang Plus Jakarta Sans; BodyLarge là bản riêng của app.
 private val MaterialTypeScale = androidx.compose.material3.Typography()
