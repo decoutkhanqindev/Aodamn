@@ -26,6 +26,7 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import timber.log.Timber
+import java.lang.ref.WeakReference
 import java.util.concurrent.atomic.AtomicBoolean
 
 class AdsManager : KoinComponent, Application.ActivityLifecycleCallbacks, Tag {
@@ -55,7 +56,7 @@ class AdsManager : KoinComponent, Application.ActivityLifecycleCallbacks, Tag {
     var isAdShowing: Boolean = false
         internal set
 
-    private var currentActivity: Activity? = null
+    private var currentActivity: WeakReference<Activity>? = null
 
     val interSplash: InterstitialAdUnit by lazy {
         InterstitialAdUnit(floors = listOf(BuildConfig.INTER_SPLASH_ALL_ID to "inter_splash_all"))
@@ -127,7 +128,7 @@ class AdsManager : KoinComponent, Application.ActivityLifecycleCallbacks, Tag {
             params,
             {
                 UserMessagingPlatform.loadAndShowConsentFormIfRequired(
-                    currentActivity ?: activity
+                    currentActivity?.get() ?: activity
                 ) { formError ->
                     formError?.let {
                         Timber.tag(tag).w("Consent form: ${it.errorCode} ${it.message}")
@@ -178,15 +179,15 @@ class AdsManager : KoinComponent, Application.ActivityLifecycleCallbacks, Tag {
     }
 
     override fun onActivityResumed(activity: Activity) {
-        currentActivity = activity
+        currentActivity = WeakReference(activity)
     }
 
     override fun onActivityPaused(activity: Activity) {
-        if (currentActivity == activity) currentActivity = null
+        if (currentActivity?.get() === activity) currentActivity = null
     }
 
     override fun onActivityDestroyed(activity: Activity) {
-        if (currentActivity == activity) currentActivity = null
+        if (currentActivity?.get() === activity) currentActivity = null
     }
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) = Unit
