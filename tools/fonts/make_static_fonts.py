@@ -28,9 +28,10 @@ OUT = ROOT / "app/src/main/res/font"
 
 NAMES = {
     100: "thin", 200: "extralight", 300: "light", 400: "regular", 500: "medium", 600: "semibold", 700: "bold", 800: "extrabold", 900: "black",
+    1000: "extrablack",
 }
 
-# họ font -> (độ đậm cần dùng, trục đặt cố định ngoài wght)
+# họ font -> (độ đậm cần dùng, trục đặt cố định ngoài wght[, họ font của file nguồn khi hai họ cắt từ cùng một font variable])
 FONTS = {
     "plus_jakarta_sans": ([200, 300, 400, 500, 600, 700, 800], {}),
     "fraunces": ([100, 300, 400, 600, 700], {"SOFT": 100}),
@@ -55,10 +56,10 @@ STATIC_FONTS = {
 
 def main(families):
     OUT.mkdir(parents=True, exist_ok=True)
-    for family, (weights, pinned) in FONTS.items():
+    for family, (weights, pinned, *source_family) in FONTS.items():
         if families and family not in families:
             continue
-        source = SOURCE / f"{family}_variable.ttf"
+        source = SOURCE / f"{source_family[0] if source_family else family}_variable.ttf"
         for weight in weights:
             font = TTFont(source)
             axes = {axis.axisTag: axis for axis in font["fvar"].axes}
