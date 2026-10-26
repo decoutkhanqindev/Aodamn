@@ -47,6 +47,7 @@ import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.halfmoon.Ao
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.ripple.AodRippleMedia
 // TODO(coum-face): import trình phát
 // TODO(big-overlap): import trình phát
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.bigoverlap.AodBigOverlapMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.capsule.AodCapsuleMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.card.AodCardMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.chain.AodChainMedia
@@ -97,6 +98,7 @@ fun AodMediaControls(
                 AodThemeValue.RIPPLE -> AodRippleMedia(media = target, config = theme.config, onIntent = onIntent)
                 // TODO(coum-face): nhánh trình phát
                 // TODO(big-overlap): nhánh trình phát
+                AodThemeValue.BIG_OVERLAP -> AodBigOverlapMedia(media = target, config = theme.config, onIntent = onIntent)
             }
         }
     }

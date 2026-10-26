@@ -2340,6 +2340,278 @@ ripple = [
 
 # TODO(coum-face): mục mock của chủ đề (hàm vẽ + danh sách khung)
 # TODO(big-overlap): mục mock của chủ đề (hàm vẽ + danh sách khung)
+# ================================================================== CHỒNG SỐ (Big Overlap Clock của Muviz Edge; số đo lấy từ layout mar23_screen_layout dọc / ngang
+# và BigPixel2Clock trong APK, không từ ảnh chụp). Bốn chữ số Google Sans Flex (wght 1000, wdth 108; ROND 0 hoặc 100) cỡ 0,5 × cạnh ngắn vùng đồng hồ ×
+# cỡ (app mẫu × 1,2 ở màn ngang), lưới 2 × 2 quanh tâm: cột trái căn trái, cột phải căn phải trong ô rộng bằng số 0, hai cột lấn qua tâm 0,17 bề rộng số 0
+# (viền 0,2), giờ trên, phút dưới lấn qua tâm 0,04 chiều cao số 0 (viền 0,06). Vẽ lần lượt giờ chục, giờ đơn vị, phút chục, phút đơn vị, số nào cũng bị
+# khoét theo hình các số vẽ sau (số sau nằm trên). Đặc: nét đen 0,07 cỡ chữ quanh số (nửa ngoài thành khe đen giữa hai số) rồi tô màu; viền: nét
+# màu 0,028 cỡ chữ, ruột trong. Màn dọc như layout mẫu: ngày 20 sp + icon thông báo 18 dp căn trái trên (vùng cao tối thiểu 130 dp, lề 40 dp), đồng
+# hồ giữa phần còn lại (0,08 / 0,8 / 0,12), trình phát (tên 16 sp / nghệ sĩ 14 sp, phát 40 dp, tới 35 dp, thanh 1,5 dp) và dòng pin 14 sp lề 40 dp ở
+# đáy. Màn ngang bên mình tự dựng: đồng hồ giữa màn (chữ số cỡ như màn dọc), ngày + thông báo bên trái, trình phát + pin bên phải.
+class BoFont:
+    """Một bản tĩnh của Google Sans Flex (như make_static_fonts.py sinh): đường viền chữ số theo đơn vị font, khung nét chữ từng số.
+    Số 4 của Google Sans Flex là một đường viền tự cắt (thanh ngang chồng lên thân, lỗ tam giác do đường vòng ngược): tô thì đúng nhưng vẽ nét
+    (kiểu viền, khe đen của kiểu đặc) thì lộ cả các cạnh bên trong, nên gộp phần chồng trước như app làm bằng Path.op (cần pip install
+    skia-pathops)."""
+
+    def __init__(self, rond, key):
+        from fontTools.ttLib.removeOverlaps import removeOverlaps
+
+        font = instancer.instantiateVariableFont(TTFont(ROOT / "tools/fonts/variable/google_sans_flex_variable.ttf"),
+                                                 {"wght": 1000, "wdth": 108, "ROND": rond}, inplace=False)
+        removeOverlaps(font, [font.getBestCmap()[ord(ch)] for ch in "0123456789"])
+        glyphs, cmap = font.getGlyphSet(), font.getBestCmap()
+        self.key, self.upm, self.bounds, self.paths = key, font["head"].unitsPerEm, {}, {}
+        for ch in "0123456789":
+            bp, sp = BoundsPen(glyphs), SVGPathPen(glyphs, ntos=lambda v: f"{v:.0f}")
+            glyphs[cmap[ord(ch)]].draw(bp)
+            glyphs[cmap[ord(ch)]].draw(sp)
+            self.bounds[ch], self.paths[ch] = bp.bounds, sp.getCommands()
+
+
+BO_SHARP, BO_ROUND = BoFont(0, "s"), BoFont(100, "r")
+BO_USED = set()
+BO_STYLES = {"filled": (False, False), "outline": (True, False), "filled_round": (False, True), "outline_round": (True, True)}
+BO_FONTS = ('<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400&display=swap">'
+            '<style>.cpr{font-family:"Google Sans";font-weight:400}</style>')
+BO_PEACH = "#FFD1B6"  # màu nhấn đề xuất: đào, màu gốc của BigPixel2Clock, chưa chủ đề nào dùng
+BO_GREY = "#CED4DA"  # GreyCE có sẵn (gần #CFD8DC của app mẫu)
+BO_COLORS = {"digits": (BO_PEACH, BO_GREY, BO_GREY, BO_PEACH), "date": BO_GREY, "noti": BO_GREY, "media": BO_GREY, "battery": BO_GREY,
+             "weather": G}
+BO_REF = {**BO_COLORS, "digits": ("#CFD8DC", "#D7CCC8", "#D7CCC8", "#CFD8DC"), "date": "#CFD8DC", "noti": "#CFD8DC", "media": "#CFD8DC",
+          "battery": "#CFD8DC"}
+BO_MIX = {**BO_COLORS, "digits": ("url(#boGrad)", "#80DEEA", "#C3A6FF", BO_PEACH)}
+BO_GRAD = ('<defs><linearGradient id="boGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFCC70"/>'
+           '<stop offset=".5" stop-color="#C850C0"/><stop offset="1" stop-color="#4158D0"/></linearGradient></defs>')
+BO_GS = CP_REG.font
+BO_ASC = BO_GS["hhea"].ascent / BO_GS["head"].unitsPerEm
+BO_DESC = -BO_GS["hhea"].descent / BO_GS["head"].unitsPerEm
+BO_DATE = "Th 2, 26 thg 10"
+
+
+def bo_line(size):
+    return (BO_ASC + BO_DESC) * size
+
+
+def bo_dark(c, k):
+    r, g, b = (int(c[i:i + 2], 16) for i in (1, 3, 5))
+    return "#%02X%02X%02X" % tuple(int(v * (1 - k)) for v in (r, g, b))
+
+
+def bo_metrics(size, style):
+    """Bề rộng / cao số 0 (khung nét chữ) và độ lấn qua tâm theo kiểu."""
+    outline, rounded = BO_STYLES[style]
+    font = BO_ROUND if rounded else BO_SHARP
+    x0, y0, x1, y1 = font.bounds["0"]
+    k = size / font.upm
+    w0, h0 = (x1 - x0) * k, (y1 - y0) * k
+    return font, k, w0, h0, (0.2 if outline else 0.17) * w0, (0.06 if outline else 0.04) * h0
+
+
+def bo_clock(cx, cy, size, style="filled_round", digits=None, text="1008"):
+    """Như BigPixel2Clock.onDraw: vị trí theo getTextBounds của từng số, vẽ theo thứ tự nên số sau che số trước (trên nền đen giống khoét)."""
+    outline = BO_STYLES[style][0]
+    font, k, w0, h0, over_x, over_y = bo_metrics(size, style)
+    digits = digits or BO_COLORS["digits"]
+    stroke = 0.07 * size  # 0,035 × cạnh ngắn × cỡ, mà cỡ chữ = 0,5 × cạnh ngắn × cỡ
+    s = ""
+    for i, ch in enumerate(text):
+        bx0, by0, bx1, by1 = font.bounds[ch]
+        left, top, right, bottom = bx0 * k, -by1 * k, bx1 * k, -by0 * k
+        shift = over_x - (w0 - (right - left))
+        x = cx - (left + right) + shift if i % 2 == 0 else cx - shift
+        y = cy + over_y if i < 2 else cy - (top + bottom) - over_y
+        BO_USED.add(font.key + ch)
+        paint = (f'fill="#000" stroke="{digits[i]}" stroke-width="{f(stroke / 2.5 / k)}"' if outline
+                 else f'fill="{digits[i]}" stroke="#000" stroke-width="{f(stroke / k)}" paint-order="stroke"')
+        s += f'<use href="#bo{font.key}{ch}" transform="translate({f(x)} {f(y)}) scale({k:.5f} {-k:.5f})" {paint}/>'
+    return s
+
+
+def bo_defs():
+    return "".join(f'<path id="bo{key}" d="{(BO_ROUND if key[0] == "r" else BO_SHARP).paths[key[1]]}"/>' for key in sorted(BO_USED))
+
+
+def bo_weather(right, cy, size, color):
+    k = size / 14
+    w = 26 * k + CP_REG.width("24°", size)
+    x = right - w
+    return cloud(x - 1, cy + 6 * k, .62 * k, color, 1.6) + CP_REG.text(x + 26 * k, cy + .35 * size, "24°", size, color)
+
+
+def bo_icons(x, cy, n, color):
+    shapes = icon_shapes(color)
+    return "".join(shapes[i % 3](x + i * 28, cy - 9, 18) for i in range(n))
+
+
+def bo_latest(x, cy, w, color, title="Mai", text="Tối nay đi ăn nhé, nhớ mang ô"):
+    """Thông báo mới nhất như notify_lt: icon 18 dp, cách 7 dp, một dòng 16 sp (tiêu đề, nội dung mờ hơn sau đó)."""
+    tx = x + 25
+    tw = w - 25 - CP_REG.width(title + "  ", 16)
+    return (icon_shapes(color)[0](x, cy - 9, 18) + CP_REG.text(tx, cy + .35 * 16, title, 16, color)
+            + CP_REG.text(tx + CP_REG.width(title + "  ", 16), cy + .35 * 16, CP_REG.fit(text, 16, tw), 16, bo_dark(color, .3)))
+
+
+def bo_info(x, w, colors, date=True, weather=False, n=3, latest=False, size=20, inline=False):
+    """Khối thông tin căn trái (cao, hàm vẽ theo đỉnh): ngày (thời tiết cuối dòng ngày ở màn dọc, ngay sau ngày cách 14 dp ở màn ngang), cách 18 dp
+    hàng icon, cách 10 dp thông báo mới nhất."""
+    parts = []
+    if date or weather:
+        lh = bo_line(size)
+
+        def head(top):
+            s = CP_REG.text(x, top + BO_ASC * size, BO_DATE, size, colors["date"]) if date else ""
+            right = x + w if date and not inline else x + 26 * size / 14 + CP_REG.width("24°", size)
+            if date and inline:
+                right += CP_REG.width(BO_DATE, size) + 14
+            return s + (bo_weather(right, top + lh / 2, size, colors["weather"]) if weather else "")
+        parts.append((lh, head))
+    if n:
+        parts.append((18, lambda top: bo_icons(x, top + 9, n, colors["noti"])))
+    if latest:
+        lh = bo_line(16)
+        parts.append((lh, lambda top: bo_latest(x, top + lh / 2, w, colors["noti"])))
+    gaps = [18 if i == 1 and (date or weather) else 10 for i in range(len(parts))]
+    h = sum(p[0] for p in parts) + sum(gaps[1:])
+
+    def draw(top):
+        s = ""
+        for i, (ph, fn) in enumerate(parts):
+            top += gaps[i] if i else 0
+            s += fn(top)
+            top += ph
+        return s
+    return h, draw
+
+
+def bo_player(x, top, w, color, paused=False, title="That Cool Song", artist="It's Artist"):
+    """media_widget_lt: tên 16 sp / nghệ sĩ 14 sp (tối hơn 30%) bên trái, nút phát 40 dp (icon 20, lề 10 / 10) + tới 35 dp (icon 15); thanh 1,5 dp
+    cách 15 dp, nền thanh cùng màu mờ. Trả về (cao, hình)."""
+    lt, la = bo_line(16), bo_line(14)
+    col_h = lt + 4 + la
+    row_h = max(col_h, 40)
+    tw = w - 95
+    ty, cy = top + (row_h - col_h) / 2, top + row_h / 2
+    s = (CP_REG.text(x, ty + BO_ASC * 16, CP_REG.fit(title, 16, tw), 16, color)
+         + CP_REG.text(x, ty + lt + 4 + BO_ASC * 14, artist, 14, bo_dark(color, .3)))
+    px, nx = x + tw + 30, x + tw + 77.5
+    if paused:
+        s += f'<path d="M{f(px - 6)},{f(cy - 8)} L{f(px + 9)},{f(cy)} L{f(px - 6)},{f(cy + 8)} Z" fill="{color}"/>'
+    else:
+        s += (f'<rect x="{f(px - 6)}" y="{f(cy - 8)}" width="4" height="16" rx="1" fill="{color}"/>'
+              f'<rect x="{f(px + 2)}" y="{f(cy - 8)}" width="4" height="16" rx="1" fill="{color}"/>')
+    s += (f'<path d="M{f(nx - 6)},{f(cy - 6)} L{f(nx + 4)},{f(cy)} L{f(nx - 6)},{f(cy + 6)} Z" fill="{color}"/>'
+          f'<rect x="{f(nx + 4.5)}" y="{f(cy - 6)}" width="2" height="12" rx="1" fill="{color}"/>')
+    by = top + row_h + 15
+    s += (f'<rect x="{f(x)}" y="{f(by)}" width="{f(w)}" height="1.5" fill="{color}" fill-opacity=".3"/>'
+          f'<rect x="{f(x)}" y="{f(by)}" width="{f(w * .2)}" height="1.5" fill="{color}"/>')
+    return row_h + 16.5, s
+
+
+def bo_battery(cx, cy, color, charging=False, size=14):
+    g = size
+    t = "72%"
+    w = 0.522 * g + 0.717 * g + CP_REG.width(t, size)
+    x = cx - w / 2
+    return (f'<g opacity="{1 if charging else .8}">{bz_battery(x, cy - g / 2, g, color, charging)}'
+            f'{CP_REG.text(x + 1.239 * g, cy + 0.35 * size, t, size, color)}</g>')
+
+
+def bo_portrait(hh=10, mm=8, style="filled_round", size=.85, colors=BO_COLORS, date=True, weather=False, n=3, latest=False, media=False,
+                paused=False, charging=False):
+    """Màn dọc như layout mẫu: khối thông tin dồn đáy vùng trên cao tối thiểu 130 dp; trình phát (khi có) và dòng pin ở đáy; đồng hồ giữa phần còn
+    lại theo trọng số 0,08 / 0,8 / 0,12 (nhạc bật / tắt thì đồng hồ trượt lên / xuống)."""
+    ih, info = bo_info(40, PW - 80, colors, date, weather, n, latest)
+    top = max(130.0, ih)
+    s = info(top - ih)
+    ph, player = bo_player(40, 0, PW - 80, colors["media"], paused) if media else (0, "")
+    rem = PH - top - ph - (80 + bo_line(14))
+    y0, ch = top + .08 * rem, .8 * rem
+    s += bo_clock(PW / 2, y0 + ch / 2, .5 * min(PW, ch) * size, style, colors["digits"], f"{hh:02d}{mm:02d}")
+    if media:
+        s += f'<g transform="translate(0 {f(top + rem)})">{player}</g>'
+    return s + bo_battery(PW / 2, PH - 40 - bo_line(14) / 2, colors["battery"], charging)
+
+
+def bo_landscape(hh=10, mm=8, style="filled_round", size=.85, colors=BO_COLORS, weather=False, n=3, latest=False, media=False, paused=False,
+                 charging=False):
+    """Màn ngang: đồng hồ giữa màn, cỡ chữ 0,5 × cao màn × cỡ, bằng màn dọc (app mẫu nhân 1,2 vì đồng hồ chỉ có cột trái thấp; đây có cả chiều
+    cao màn); như màn dọc chia trên / dưới, bên trái là ngày + thông báo (căn trái, lề 40 dp), bên phải là trình phát + dòng pin, giữa chiều cao."""
+    sz = .5 * H * size
+    s = bo_clock(W / 2, CY, sz, style, colors["digits"], f"{hh:02d}{mm:02d}")
+    _, _, w0, _, over_x, _ = bo_metrics(sz, style)
+    half = w0 - over_x
+    gap = 36
+    lw = W / 2 - half - gap - 40
+    ih, info = bo_info(40, lw, colors, True, weather, n, latest, 18, True)
+    s += info(CY - ih / 2)
+    rx = W / 2 + half + gap
+    rw = W - 40 - rx
+    if not media:
+        return s + bo_battery(rx + rw / 2, CY, colors["battery"], charging)
+    ph, player = bo_player(rx, 0, rw, colors["media"], paused)
+    bh = bo_line(14)
+    top = CY - (ph + 24 + bh) / 2
+    return s + f'<g transform="translate(0 {f(top)})">{player}</g>' + bo_battery(rx + rw / 2, top + ph + 24 + bh / 2, colors["battery"], charging)
+
+
+def bo_reference_landscape():
+    """App mẫu ở màn ngang (layout-land): cột trái 0,45 bề ngang (ngày 18 sp đệm 30, đồng hồ, pin 13 sp đệm 30), cột phải 0,45 đệm 40 dồn đáy (icon
+    thông báo, vạch 1 px màu thông báo tối 50%, trình phát)."""
+    c = BO_REF
+    x0, x1 = .05 * W, .5 * W
+    cx = (x0 + x1) / 2
+    d_h, b_h = 60 + bo_line(18), 60 + bo_line(13)
+    s = CP_REG.text(cx, 30 + BO_ASC * 18, BO_DATE, 18, c["date"], "middle")
+    ch = H - d_h - b_h
+    s += bo_clock(cx, d_h + ch / 2, .5 * min(x1 - x0, ch) * .85 * 1.2, "filled", c["digits"])
+    s += bo_battery(cx, H - 30 - bo_line(13) / 2, c["battery"], size=13)
+    rx, rw = x1 + 40, .45 * W - 80
+    ph, player = bo_player(rx, 0, rw, c["media"])
+    top = H - 40 - ph
+    s += f'<g transform="translate(0 {f(top)})">{player}</g>'
+    s += f'<rect x="{f(rx)}" y="{f(top - 30)}" width="{f(rw)}" height=".4" fill="{bo_dark(c["noti"], .5)}"/>'
+    return s + bo_icons(rx, top - 50 - 9, 3, c["noti"])
+
+
+def bo_strip():
+    k, s = 0.4, ""
+    for i, (label, kw) in enumerate((("Mặc định: Đặc bo tròn, đào + xám", {}),
+                                      ("Đặc (góc vuông), màu app mẫu", {"style": "filled", "colors": BO_REF, "hh": 7, "mm": 21}),
+                                      ("Viền bo tròn", {"style": "outline_round", "hh": 4, "mm": 38}),
+                                      ("Viền, bốn màu + gradient", {"style": "outline", "colors": BO_MIX, "hh": 21, "mm": 47, "size": 1.0}))):
+        x = 36 + i * 212
+        s += (f'<g transform="translate({x} 14) scale({k})"><clipPath id="boc{i}"><rect width="{PW}" height="{PH}" rx="34"/></clipPath>'
+              f'<rect width="{PW}" height="{PH}" rx="34" fill="#000" stroke="#333" stroke-width="2"/><g clip-path="url(#boc{i})">')
+        s += bo_portrait(**kw) + "</g></g>" + txt(x + PW * k / 2, 14 + PH * k + 22, label, 13, DM, 400, "middle")
+    return (f'<p style="font-size:13px;color:var(--text-secondary);margin:1.25rem 0 6px">Bốn kiểu đồng hồ của app mẫu và màu (màu nào cũng có '
+            f'thể là gradient)</p><svg viewBox="0 0 {W} 400" width="100%" role="img" aria-label="Kiểu và màu" '
+            f'style="display:block;font-family:\'Plus Jakarta Sans\',sans-serif" fill="{G}">{BO_GRAD}'
+            f'<rect width="{W}" height="400" rx="20" fill="#111"/>{s}</svg>')
+
+
+big_overlap = [
+    BO_FONTS,
+    bo_strip(),
+    '<div style="font-size:0">',
+    frame_portrait("D1 · Dọc, mặc định 10:08 (cũng là thẻ ở lưới chủ đề): ngày + icon thông báo trên trái, pin dưới",
+                   bo_portrait()),
+    frame_portrait("D2 · Dọc, 08:30, thời tiết cuối dòng ngày, thông báo mới nhất, đang phát nhạc (đồng hồ trượt lên nhường chỗ)",
+                   bo_portrait(8, 30, weather=True, latest=True, n=2, media=True)),
+    frame_portrait("D3 · Dọc, 21:47 (24 giờ), Viền bo tròn, cỡ 100%, đang sạc, nhạc đang dừng",
+                   bo_portrait(21, 47, "outline_round", 1.0, charging=True, media=True, paused=True, n=1)),
+    frame_portrait("D4 · Dọc, 05:59, Đặc góc vuông, bốn màu riêng (giờ chục gradient), tắt ngày",
+                   f'{BO_GRAD}' + bo_portrait(5, 59, "filled", colors=BO_MIX, date=False, n=0)),
+    '</div>',
+    frame("N1 · Ngang, không nhạc: ngày + thời tiết + thông báo trái, pin phải; đồng hồ giữa màn", bo_landscape(weather=True)),
+    frame("N2 · Ngang, 08:30, đang phát nhạc, thông báo mới nhất: trình phát + pin phải",
+          bo_landscape(8, 30, weather=True, latest=True, n=2, media=True)),
+    frame("N3 · Ngang, 21:47, Viền bo tròn, đang sạc, nhạc đang dừng",
+          bo_landscape(21, 47, "outline_round", charging=True, media=True, paused=True, n=1)),
+    frame("N4 · Để so: layout ngang của app mẫu (đồng hồ nhỏ trong cột trái, thông báo + trình phát dồn đáy cột phải)",
+          bo_reference_landscape()),
+]
+big_overlap_defs = bo_defs()
 
 
 for name, summary, defs, frames in [
@@ -2357,6 +2629,7 @@ for name, summary, defs, frames in [
     ("w_ripple", "Chủ đề Gợn sóng (Android 12): kiểu và màu, bốn khung dọc và bốn khung ngang", "", ripple),
     # TODO(coum-face): dòng ("w_…", …) của chủ đề
     # TODO(big-overlap): dòng ("w_…", …) của chủ đề
+    ("w_big_overlap", "Chủ đề Chồng số (Big Overlap Clock): bốn kiểu và màu, bốn khung dọc và bốn khung ngang", big_overlap_defs, big_overlap),
 ]:
     code = widget(summary, defs, frames)
     OUT.mkdir(parents=True, exist_ok=True)

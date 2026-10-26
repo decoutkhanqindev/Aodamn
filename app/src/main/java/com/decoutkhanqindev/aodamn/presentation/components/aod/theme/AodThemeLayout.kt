@@ -30,6 +30,8 @@ import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.ripple.AodR
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.ripple.AodRipplePortrait
 // TODO(coum-face): import bố cục dọc / ngang
 // TODO(big-overlap): import bố cục dọc / ngang
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.bigoverlap.AodBigOverlapLandscape
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.bigoverlap.AodBigOverlapPortrait
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.tower.AodTowerLandscape
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.tower.AodTowerPortrait
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeValue
@@ -71,6 +73,7 @@ fun AodPortrait(
         AodThemeValue.RIPPLE -> AodRipplePortrait(state = state, onIntent = onIntent)
         // TODO(coum-face): nhánh màn dọc
         // TODO(big-overlap): nhánh màn dọc
+        AodThemeValue.BIG_OVERLAP -> AodBigOverlapPortrait(state = state, onIntent = onIntent)
     }
 }
 
@@ -80,6 +83,7 @@ fun AodPortrait(
 // giữ mặt số giữa màn (AodRippleLandscape).
 // TODO(coum-face): một câu về bố cục ngang
 // TODO(big-overlap): một câu về bố cục ngang
+// Chồng số giữ khối số giữa màn cỡ như màn dọc, thông tin trái, nhạc + pin phải (AodBigOverlapLandscape).
 @Composable
 fun AodLandscape(
     state: AodState,
@@ -100,6 +104,7 @@ fun AodLandscape(
         AodThemeValue.RIPPLE -> AodRippleLandscape(state = state, onIntent = onIntent)
         // TODO(coum-face): nhánh màn ngang
         // TODO(big-overlap): nhánh màn ngang
+        AodThemeValue.BIG_OVERLAP -> AodBigOverlapLandscape(state = state, onIntent = onIntent)
     }
 }
 

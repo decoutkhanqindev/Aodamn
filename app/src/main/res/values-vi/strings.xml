@@ -64,6 +64,7 @@
     <string name="theme_ripple">Gợn sóng</string>
     <!-- TODO(coum-face): tên chủ đề -->
     <!-- TODO(big-overlap): tên chủ đề -->
+    <string name="theme_big_overlap">Chồng số</string>
     <string name="aod_jersey_date_first_pattern">dd</string>
     <string name="aod_jersey_date_second_pattern">MM</string>
     <string name="aod_bezel_weekday_pattern">EEEE</string>
@@ -116,6 +117,12 @@
     <string name="theme_color_media_background">Nền thẻ nhạc</string>
     <!-- TODO(coum-face): nhãn màu / tuỳ chọn -->
     <!-- TODO(big-overlap): nhãn màu / tuỳ chọn -->
+    <string name="theme_color_hour_digit_1">Giờ · số 1</string>
+    <string name="theme_color_hour_digit_2">Giờ · số 2</string>
+    <string name="theme_color_minute_digit_1">Phút · số 1</string>
+    <string name="theme_color_minute_digit_2">Phút · số 2</string>
+    <string name="big_overlap_style_filled_round">Đặc bo tròn</string>
+    <string name="big_overlap_style_outline_round">Viền bo tròn</string>
     <string name="theme_opt_digit_style">Kiểu số</string>
     <string name="theme_opt_card_background">Nền thẻ</string>
     <string name="card_background_tinted">Nền mờ</string>

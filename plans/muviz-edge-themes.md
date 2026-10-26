@@ -76,7 +76,7 @@ text view chung) hoặc font dùng trong code; "chữ (font layout)" nghĩa là 
 | 20 | Dec22 | Half Concentric ⭐ | Hour Color, Minute Color, Ring Color, Dash Color, Date Color, Controls Color | – | HalfConcentricClock | – | **Bán nguyệt** (`HALF_MOON`) |
 | 21 | Jan23 | Moon Phase ⭐ | Clock Color, Date Color, Clock Size, Character Color, Character Size, Peek, Rotation, Glow Color, Particle Color, Controls Color | – | MoonSpace, StarField | – | chưa có |
 | 22 | Feb23 | Vertical Text | Text, Spacing, Text Size, Text Style, Text Color, Notification Color, Controls Color | – | chữ: 12 font (abril, bebas, monoton, rye…) | ô nhập chữ | chưa có |
-| 23 | Mar23 | Big Overlap Clock | Clock Style, Clock Size, Color 1, Color 2, Theme Color | Color 3, Color 4, Date, Notification, Controls, Battery Status | BigPixel2Clock | – | chưa có |
+| 23 | Mar23 | Big Overlap Clock | Clock Style, Clock Size, Color 1, Color 2, Theme Color | Color 3, Color 4, Date, Notification, Controls, Battery Status | BigPixel2Clock | – | **Chồng số** (`BIG_OVERLAP`) |
 | 24 | Apr23 | Android 14 Analog Clock | Text Style, Clock Style, Clock Size, Color 1, Color 2, Theme Color | Color 3, Date, Notification, Controls, Battery Status | PilotBold2Tick, PixelAnalogClock | – | chưa có |
 | 25 | May23 | Ambitio Face ⭐ | Clock Style, Clock Size, Color 1, Color 2, Controls Color | – | AmbitioClock | – | **La bàn** (`COMPASS`) |
 | 26 | Jun23 | iOS Lockscreen | Clock Style, Clock Size, Clock Color, Theme Color | Date, Notification, Controls, Battery Status | chữ: 5 font iOS | font độc quyền | chưa có |
@@ -154,8 +154,13 @@ mỗi phút (`AodViewModel`), nên phần chạy theo giây của app mẫu ph�
   theo **giây**, số giây trong chấm tròn ở mép phải, tối dần trên / dưới; màu vòng có thể là gradient. Nét đặc trưng là giây.
 - **39 · Nothing Wide** (`NothingWideClock`): khung chữ nhật bo góc sát mép, 60 vạch là tia cắt trong dải (như Vành), kim có
   bóng, kim giây đỏ: gần như cùng cấu trúc với Vành, không làm tiếp ngay.
-- **23 · Big Overlap** (`BigPixel2Clock`): bốn chữ số lớn lưới 2×2 (giờ trên, phút dưới) chồng mép lên nhau, mỗi số một màu, kiểu
-  viền / đặc và bo tròn; Google Sans Flex trục `ROND` (phải sinh bản tĩnh ghim trục).
+- ~~**23 · Big Overlap**~~ (`BigPixel2Clock`, đã làm thành Chồng số 2026-10-26): bốn chữ số Google Sans Flex cỡ 0,5 cạnh ngắn × cỡ lưới
+  2 × 2 (giờ trên, phút dưới), cột trái căn trái / cột phải căn phải trong ô rộng bằng số 0, lấn qua tâm 0,17 bề rộng / 0,04 chiều cao số 0
+  (viền 0,2 / 0,06); số sau khoét số trước (clip DIFFERENCE theo hình số), kiểu đặc nét đen 0,07 cỡ chữ quanh số, kiểu viền nét màu mảnh hơn
+  2,5 lần; 4 kiểu đặc / viền × trục `ROND` 0 / 100, đổi đặc ↔ viền chạy 500ms; trạng thái tiết kiệm tự sang viền (bỏ, user duyệt). Màu
+  Color 1–4 chéo (Color 3 theo 2, Color 4 theo 1). Font mẫu là bản cắt riêng đậm hơn cả wght 1000 của Google Fonts: dùng wght 1000, wdth 108;
+  số 4 của bản Google Fonts là đường viền tự cắt nên gộp phần chồng trước khi vẽ nét. Layout dọc: ngày 20sp + icon thông báo căn trái trên,
+  khối số giữa (0,08 / 0,8 / 0,12), trình phát (phát / tới, thanh 1,5dp) + pin 14sp dưới; layout ngang mẫu: khối số nhỏ ở cột trái.
 - **43 · MIUI Doodle** ⭐ (`Nov24Screen`): giờ, phút, thứ, tháng, ngày là **ảnh vẽ tay** (24 + 60 + 7 + 12 + 31 hình), không phải
   font; không được lấy ảnh của app mẫu, phải tự vẽ cả bộ, nên để sau.
 

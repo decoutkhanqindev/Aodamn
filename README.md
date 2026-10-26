@@ -1024,6 +1024,19 @@ chọn theo các khối đang có dữ liệu, dùng chung cho mọi chủ đề
     pin trái, trình phát phải, đổi bằng mờ chéo. Trên máy Xiaomi: chữ là Google Sans. Các chủ đề khác không đổi gì.
 <!-- TODO(coum-face): bước test trên máy của chủ đề (25p / 25q) -->
 <!-- TODO(big-overlap): bước test trên máy của chủ đề (25p / 25q) -->
+25q. Chủ đề Chồng số: tab AOD › Chủ đề › Chồng số: thẻ ở lưới là "08 30" bốn chữ số to bo tròn xếp 2 × 2 chồng mép lên nhau, số 1
+    của giờ và số 2 của phút màu đào, hai số kia xám, giữa các số có khe đen; số sau đè lên số trước (phút đè giờ, cột phải đè cột
+    trái). Áp dụng rồi khóa máy: ngày "Th 2, 26 thg 10" căn trái ở trên, dưới là hàng icon thông báo; bật nội dung thông báo thì
+    thêm một dòng icon + tiêu đề + nội dung tối hơn (dài thì chạy chữ), thông báo mới trượt xuống từ trên; bật thời tiết thì nằm
+    cuối dòng ngày; đáy là pin (mờ hơn khi không sạc, rõ khi đang sạc). Số 4 kiểu viền là một nét viền liền quanh chữ (không có nét
+    thừa cắt qua thanh ngang). Phát nhạc: tên bài / nghệ sĩ bên trái, nút phát / dừng và nút tới bên phải, thanh tiến trình mảnh bên
+    dưới; khối số trượt lên nhường chỗ. Sửa: tab Đồng hồ (Kiểu đồng hồ Đặc / Viền / Đặc bo tròn / Viền bo tròn: đổi đặc ↔ viền thì
+    nét và độ chồng chuyển mượt nửa giây, đổi bo tròn thì mờ chéo; kiểu viền ruột trong, đặt ảnh nền thì thấy ảnh qua ruột số; Cỡ
+    50–100%; màu Giờ · số 1, Giờ · số 2, Phút · số 1, Phút · số 2), Ngày, Pin & thông báo (màu thông báo, màu pin), Nhạc; màu nào
+    cũng có tab Gradient (mỗi số tô theo khung của chính nó). Tùy chỉnh khi đang dùng Chồng số: không có tab Ghi chú, Sự kiện, Nét
+    vẽ. Đổi định dạng 12 / 24 giờ của máy: giờ đổi theo (12 giờ có số 0 đầu, vd "09"). Xoay ngang: khối số giữa màn to như màn dọc,
+    ngày (thời tiết ngay sau ngày) + thông báo bên trái, pin bên phải; phát nhạc thì trình phát trên dòng pin, đổi bằng mờ chéo. Trên
+    máy Xiaomi: chữ số vẫn là Google Sans Flex, chữ là Google Sans. Các chủ đề khác không đổi gì.
 25f. Overlay mới (không còn hộp thoại / nút Material): mọi sheet có thanh kéo dải màu mint → xanh → tím; mép trên màn
     hình không có viền sáng khi sheet hiện. Đặt lại (tab AOD › Chủ đề, Tùy chỉnh, màn chủ đề): sheet có hình điện thoại với huy hiệu mũi tên xoay, nút
     "Đặt lại" mint, Hủy bằng chữ. Màn chủ đề đang sửa, Back khi còn thay đổi: "Lưu trước khi thoát?" với Lưu rồi thoát (lưu,

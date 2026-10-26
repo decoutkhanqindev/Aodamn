@@ -17,6 +17,7 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.pebble.PebbleThe
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.ripple.RippleThemeSpec
 // TODO(coum-face): import spec
 // TODO(big-overlap): import spec
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.bigoverlap.BigOverlapThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.tower.TowerThemeSpec
 
 // Các chủ đề AOD. id lưu trong DataStore nên không đổi; thêm chủ đề = một mục ở đây + đặc tả AodThemeSpec + phần vẽ ở
@@ -41,6 +42,7 @@ enum class AodThemeValue(
     RIPPLE(id = "ripple", nameRes = R.string.theme_ripple, spec = RippleThemeSpec),
     // TODO(coum-face): mục chủ đề
     // TODO(big-overlap): mục chủ đề
+    BIG_OVERLAP(id = "big_overlap", nameRes = R.string.theme_big_overlap, spec = BigOverlapThemeSpec),
     ;
 
     companion object {
