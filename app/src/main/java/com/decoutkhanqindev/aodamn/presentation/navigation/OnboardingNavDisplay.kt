@@ -33,15 +33,11 @@ import com.decoutkhanqindev.aodamn.presentation.theme.Neutral12
 import com.decoutkhanqindev.aodamn.utils.navigateBack
 import org.koin.compose.koinInject
 
-// Onboarding lần đầu (Ngôn ngữ → Tùy chỉnh → Quyền) trong back stack riêng, banner chung ở đáy nằm ngoài NavDisplay nên chuyển màn
-// không tải lại banner. Màn trong đây không tự chừa thanh điều hướng (đã tiêu thụ, chỗ banner chừa); rời onboarding (vào Main, màn chủ đề)
-// đi bằng back stack gốc.
 @Composable
 fun OnboardingNavDisplay(backStack: NavBackStack<NavKey>) {
     val onboardingBackStack = rememberNavBackStack(LanguageDestination(isFirstOpen = true))
     val adsManager: AdsManager = koinInject()
     var isBannerHidden by remember { mutableStateOf(false) }
-    // Tùy chỉnh có thanh tab nền Neutral12 sát banner và nền đen sau khung xem trước (lộ ra khi nhấn giữ xem AOD, banner trượt xuống).
     val isCustomize = onboardingBackStack.lastOrNull() is CustomizeDestination
     val slotColor by animateColorAsState(
         targetValue = if (isCustomize) Neutral12 else Color.Transparent,

@@ -42,11 +42,6 @@ import com.decoutkhanqindev.aodamn.presentation.theme.Black
 import kotlin.math.ceil
 import kotlin.math.min
 
-// Nửa mặt số Bán nguyệt sát mép trái vùng được cho, giữa chiều cao. Chạy theo giờ thật (isLive: AOD thật, và khung xem trước vì Bán nguyệt bật
-// isLiveInPreview) mỗi khung hình như app mẫu: vòng giây quay một vòng mỗi phút, vòng phút trôi liên tục, số đứng thẳng chạy theo vòng. Luôn ở
-// trạng thái thức của app mẫu (viền viên phút kéo tới mép mặt số, số giây rõ): user bỏ trạng thái nghỉ để vòng giây luôn hiện.
-// Hai vòng vạch vẽ một lần vào GraphicsLayer (chỉ vẽ lại khi đổi cỡ / màu) rồi chỉ xoay; số và viên đặt lại mỗi khung hình trong pha vẽ nên
-// không recompose.
 @Composable
 fun AodHalfMoonDial(
     nowMillis: Long,
@@ -175,7 +170,6 @@ fun AodHalfMoonDial(
                     val ringRight = center.x + radius - HalfMoonMetrics.RING_WIDTH_PX / 2f
                     val ringTopLeft = Offset(ringLeft, center.y - halfHeight)
                     val ringSizePx = Size(ringRight - ringLeft, halfHeight * 2f)
-                    // Viền viên phút chỉ chiếm một phần vùng vẽ nên gradient theo khung của chính viên.
                     drawRoundRect(
                         brush = ringGradient?.toBrush(Rect(ringTopLeft, ringSizePx)) ?: SolidColor(ringColor),
                         topLeft = ringTopLeft,
@@ -197,7 +191,6 @@ fun rememberHalfMoonPaints(): HalfMoonPaints {
     return remember(typeface) { HalfMoonPaints(typeface) }
 }
 
-// Vòng vạch xoay cùng chiều kim đồng hồ đúng bằng phần đã trôi qua: vạch của giá trị hiện tại luôn nằm ngang bên phải tâm.
 private fun DrawScope.drawRing(ring: GraphicsLayer, ringSize: IntSize, pivot: Offset, degrees: Float) {
     rotate(degrees = degrees, pivot = pivot) {
         translate(left = pivot.x - ringSize.width / 2f, top = pivot.y - ringSize.height / 2f) {

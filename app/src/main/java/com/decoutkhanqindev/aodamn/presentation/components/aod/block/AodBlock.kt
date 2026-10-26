@@ -11,8 +11,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.decoutkhanqindev.aodamn.presentation.theme.GreyB4
 
-// Khối nhiều dòng trên AOD (thông báo mới nhất, sự kiện, ghi nhớ, nhạc): không viền, không nền để màn ít sáng. Cùng bề ngang để các khối
-// xếp chồng thẳng hàng; cỡ chữ của khối đổi trong khối chứ không đổi bề ngang, để cỡ lớn không tràn màn hình.
 @Composable
 fun AodBlock(
     modifier: Modifier = Modifier,

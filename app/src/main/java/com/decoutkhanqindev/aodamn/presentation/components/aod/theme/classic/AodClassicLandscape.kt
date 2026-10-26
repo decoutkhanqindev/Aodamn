@@ -12,8 +12,6 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.info.BatteryUiModel
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodIntent
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
 
-// Màn ngang của Cổ điển: bố cục chung theo các khối đang hiện (AodLandscapeLayout), hero là đồng hồ + ngày + icon thông báo và pin. Khối
-// bật / tắt hay nhạc phát / dừng thì đổi bố cục bằng mờ chéo.
 @Composable
 fun AodClassicLandscape(
     state: AodState,

@@ -21,7 +21,6 @@ import com.decoutkhanqindev.aodamn.presentation.theme.White
 import com.decoutkhanqindev.aodamn.presentation.theme.YoutubeRed
 import com.decoutkhanqindev.aodamn.presentation.theme.ZaloBlue
 
-// Màu có sẵn phía trên vòng màu, 2 hàng × 8 ô theo đúng thứ tự khai báo; chọn ô chỉ ghi màu ARGB như kéo vòng màu nên không lưu mã riêng.
 @Immutable
 enum class ColorSwatchValue(
     val color: Color,

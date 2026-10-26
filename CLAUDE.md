@@ -55,8 +55,8 @@ bắt buộc (compiler không chặn hộ):
   `di`). Hạ tầng app-shell (ngôn ngữ, cờ lần đầu mở, mạng, thiết bị, ads) đi qua **Manager**, inject
   thẳng nơi dùng, không bọc UseCase / Repository. Qua biên layer phải map: DTO → domain (mapper ở
   `data`) → UiModel (`toUiModel()` ở `presentation/model/<tính năng>/`).
-- Runtime AOD (`presentation/aod/`, `data/device/`) mã hoá hành vi phụ thuộc ROM: đọc comment "tại
-  sao" ngay tại code và README › Các quyết định thiết kế trước khi sửa.
+- Runtime AOD (`presentation/aod/`, `data/device/`) mã hoá hành vi phụ thuộc ROM: đọc README › Các
+  quyết định thiết kế và lịch sử commit của file trước khi sửa.
 - Chủ đề AOD (`model/aod/theme/`): một chủ đề = mục `AodThemeValue` (id lưu, không đổi) + `AodThemeSpec`
   (tab và thuộc tính `AodThemeOption`: lựa chọn / màu / khoảng số / bật tắt, giá trị Int trong
   `AodThemeConfig`; khối tự vẽ `ownBlocks`; khối dùng chung có hiện `components`) ở `model/aod/theme/<chủ đề>/` +
@@ -78,7 +78,7 @@ bắt buộc (compiler không chặn hộ):
   Chủ đề mới: số đo lấy từ dịch ngược app mẫu (không xin user ảnh chụp); bám sát app mẫu: đọc code vẽ + layout trước khi mô tả / đề
   xuất, giữ đủ mọi tuỳ chọn, chi tiết và chuyển động (vd kiểu có / không vòng giây, vòng giây xoay theo giờ thật, không bỏ vì AOD đếm theo
   phút); không tự bỏ / gộp tuỳ chọn hay tính năng của app mẫu: mock liệt kê từng tuỳ chọn của app mẫu là giữ / đổi / bỏ, đổi hay bỏ phải
-  nêu lý do và hỏi user (ghi ở comment / CHANGELOG không tính); chỗ làm xịn hơn được thì cứ làm và nêu trong mock; mock dọc + ngang để
+  nêu lý do và hỏi user (ghi ở CHANGELOG không tính); chỗ làm xịn hơn được thì cứ làm và nêu trong mock; mock dọc + ngang để
   user duyệt rồi mới code; thêm
   các khối dùng chung thật sự hợp bố cục (điểm khác đối thủ), không nhồi khối / tuỳ chọn chỉ vì app hỗ trợ, khối không hợp thì bỏ khỏi `components` và nêu
   lý do trong mock; khối đặt trong bố cục đặc trưng thì trông như dòng của chủ đề (không được thì chủ đề tự vẽ, vd ghi nhớ / sự kiện của
@@ -298,8 +298,8 @@ qua `AppBottomAdSlot` đặt dưới thanh (slot tự chừa thanh điều hư�
   theo môi trường → `local.properties` (gitignore) → `signingConfigs` / `buildConfigField`.
 - Class cần log implement `Tag` → `Timber.tag(tag).e(throwable.stackTraceToString())`; composable
   đọc `LocalTag.current`. Không `Log.*` / `println`.
-- Không comment mô tả "làm gì"; UI không comment. Chỉ giữ 1 dòng **tại sao** cho invariant không
-  hiển nhiên và `// TODO:`.
+- **Không viết comment** (`//`, `/* */`, KDoc) trong Kotlin / Gradle, chỉ thêm khi user yêu cầu; ngoại lệ duy nhất
+  `// TODO:`. Lý do / ngữ cảnh ghi ở commit message, CHANGELOG, README.
 - Test: fake tại biên interface Repository, không mock UseCase / class final. Ưu tiên UseCase,
   ViewModel (Intent → State / Effect), mapper.
 

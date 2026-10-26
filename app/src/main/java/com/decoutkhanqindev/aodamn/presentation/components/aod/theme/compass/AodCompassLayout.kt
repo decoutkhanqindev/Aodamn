@@ -51,9 +51,6 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.component.AodCom
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodIntent
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
 
-// La bàn, màn dọc (mock đã duyệt): mặt số giữa màn như layout mẫu; ngày (+ thời tiết) giữa vùng trên mặt số; dòng pin · thông báo, thông báo
-// mới nhất và trình phát xếp dọc giữa vùng dưới mặt số (nhóm tự căn giữa lại khi thêm / bớt dòng). Trình phát rộng bằng màn trừ 40dp mỗi bên
-// như layout mẫu.
 @Composable
 fun AodCompassPortrait(
     state: AodState,
@@ -94,9 +91,6 @@ fun AodCompassPortrait(
     }
 }
 
-// La bàn, màn ngang (mock đã duyệt): mặt số giữa màn (cạnh = cạnh ngắn × cỡ như app mẫu), hai nhóm giữa hai vùng bên, giữa chiều cao. Không nhạc:
-// ngày (+ thời tiết) trái, pin · thông báo phải; có nhạc: ngày, pin · thông báo xếp dọc bên trái, trình phát bên phải. Nhạc phát / dừng thì đổi
-// bằng mờ chéo.
 @Composable
 fun AodCompassLandscape(
     state: AodState,
@@ -175,7 +169,6 @@ private fun CompassBand(
     }
 }
 
-// Ngày, cách 15dp dòng pin · thông báo, cách 12dp thông báo mới nhất; dòng nào không có thì không chiếm chỗ (cả khoảng cách).
 @Composable
 private fun CompassInfo(
     state: AodState,
@@ -190,7 +183,6 @@ private fun CompassInfo(
     )
 }
 
-// Thứ tự trong cột: dòng pin rồi thông báo mới nhất (Column của nơi gọi xếp dọc).
 @Composable
 private fun CompassStatus(
     state: AodState,
@@ -226,7 +218,6 @@ private fun CompassStatus(
     }
 }
 
-// Thông báo mới nhất như notify_lt của app mẫu: icon 16dp, chữ in hoa một dòng chạy chữ (marquee một lần) khi dài.
 @Composable
 private fun CompassLatest(
     latest: NotificationContentUiModel,
@@ -268,7 +259,6 @@ private fun CompassLatest(
     }
 }
 
-// Ngày in hoa giãn chữ như layout mẫu ("dd MMMM yyyy"); thời tiết cạnh ngày, kiểu chỉnh ở Tùy chỉnh như các chủ đề khác.
 @Composable
 private fun CompassDateRow(state: AodState) {
     val isWeatherShown = AodComponentValue.WEATHER in state.appearance.theme.value.spec.components
@@ -316,7 +306,6 @@ private fun CompassDate(
     )
 }
 
-// Trình phát của chủ đề (AodCompassMedia qua AodMediaControls) trong khung rộng cố định; không có nhạc thì không chiếm chỗ (cả khoảng cách).
 @Composable
 private fun CompassPlayer(
     state: AodState,

@@ -31,7 +31,7 @@ Sửa tới khi ổn rồi mới hiện.
 - `show_widget` một lần với nội dung `w_<chủ đề>.html` (không gửi file HTML, user xem trong chat).
 - Kèm text, theo thứ tự:
   1. Tên tiếng Việt + tiếng Anh đề xuất (en ngắn, vd "Tick", "Overlap").
-  2. Màu nhấn mặc định: một màu chưa chủ đề nào dùng. Xem màu đã dùng ở comment trong `theme/Colors.kt` và `default =` của
+  2. Màu nhấn mặc định: một màu chưa chủ đề nào dùng. Xem màu đã dùng ở `theme/Colors.kt` và `default =` của
      mọi `*ThemeSpec.kt`; nêu màu đã chọn và vì sao (màu thẻ ở lưới của app mẫu nếu chưa bị dùng).
   3. Bảng tuỳ chọn giữ / đổi / bỏ / nâng cấp (từ read-reference.md).
   4. Khối dùng chung: từng khối (ngày, pin, thông báo + thông báo mới nhất, thời tiết, sự kiện, ghi nhớ, nét vẽ, nhạc) là có hay

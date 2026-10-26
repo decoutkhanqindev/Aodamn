@@ -37,7 +37,6 @@ class LanguageViewModel(
         }
     }
 
-    // Ngôn ngữ của máy lên đầu rồi tới English; lần đầu mở app thì chọn sẵn ngôn ngữ của máy (chưa có bản dịch thì English) để chỉ cần bấm Xong.
     private fun loadLanguages() {
         val deviceLanguage = LanguageValue.fromCode(languageManager.deviceLanguageCode())
             .takeIf { language -> language in LanguageValue.TRANSLATED }
@@ -77,7 +76,6 @@ class LanguageViewModel(
         }
     }
 
-    // Lần đầu mở app: chọn xong ngôn ngữ là xong onboarding, thoát ở các bước sau thì lần sau vào thẳng màn chính (thiếu quyền thì nhắc bằng sheet).
     private fun confirmLanguage() {
         val language = state.value.selectedLanguage ?: return
         dataStoreManager.saveSelectedLangCode(language.code)

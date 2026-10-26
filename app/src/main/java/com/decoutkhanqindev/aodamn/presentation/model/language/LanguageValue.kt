@@ -84,7 +84,6 @@ enum class LanguageValue(
     companion object {
         val DEFAULT = ENGLISH
 
-        // Chỉ các ngôn ngữ đã có res/values-<qualifier>/strings.xml; thêm bản dịch thì thêm vào đây.
         val TRANSLATED: ImmutableList<LanguageValue> = persistentListOf(ENGLISH, VIETNAMESE)
 
         fun fromCode(code: String?): LanguageValue =

@@ -138,7 +138,6 @@ fun AodTabDesignCard(
     }
 }
 
-// Số khối đang bật và nền đang dùng, vd "7 khối · ảnh nền Sao".
 @Composable
 private fun designSummary(
     design: CustomizeDraftUiModel,
@@ -158,8 +157,6 @@ private fun designSummary(
     return stringResource(R.string.aod_tab_design_summary, blocks, background)
 }
 
-// Icon của từng khối như ở thanh tab Tùy chỉnh; không đủ chỗ cho mọi khối thì ô cuối là "+N". Dòng tóm tắt đã có số khối nên TalkBack bỏ
-// qua hàng này.
 @Composable
 private fun DesignBlockIcons(
     tabs: ImmutableList<CustomizeTabValue>,

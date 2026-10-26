@@ -30,7 +30,6 @@ fun NavBackStack<NavKey>.navigateTo(destination: NavKey, preserveState: Boolean 
     }
 }
 
-// NavDisplay crash khi back stack rỗng, nên không bao giờ pop màn cuối cùng (bấm back liên tiếp cũng không sao).
 fun NavBackStack<NavKey>.navigateBack() {
     Timber.tag(NAV_TAG).d("navigateBack, from=${map { it::class.simpleName }}")
     if (size > 1) removeLastOrNull()

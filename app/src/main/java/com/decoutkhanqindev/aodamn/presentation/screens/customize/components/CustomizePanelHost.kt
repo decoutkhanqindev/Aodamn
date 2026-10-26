@@ -46,8 +46,6 @@ fun CustomizePanelHost(
     }
 }
 
-// Đặt lại kiểu riêng của tab đang mở: khối dùng chung (kiểu, font, cỡ, màu) hay khối Clock lúc onboarding. Tab không có kiểu (nền,
-// hiệu ứng...) hay khối do chủ đề đang dùng tự vẽ thì không có nút.
 @Composable
 private fun StyleResetAction(
     tab: CustomizeTabValue,

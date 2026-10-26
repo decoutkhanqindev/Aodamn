@@ -42,8 +42,6 @@ fun DataStoreManager.observeAodNotificationOptions(): Flow<AodNotificationOption
     )
 }
 
-// Chủ đề không có nhạc thì không theo dõi phiên nhạc; chủ đề không hiện nội dung thông báo (AodThemeSpec.hasNotificationContent: tự vẽ dòng
-// trạng thái chỉ có icon) thì không cần nội dung thông báo.
 fun AodNotificationOptionsUiModel.shownIn(spec: AodThemeSpec): AodNotificationOptionsUiModel = copy(
     isContentEnabled = isContentEnabled && spec.hasNotificationContent,
     isMediaControlsEnabled = isMediaControlsEnabled && AodComponentValue.MEDIA in spec.components,

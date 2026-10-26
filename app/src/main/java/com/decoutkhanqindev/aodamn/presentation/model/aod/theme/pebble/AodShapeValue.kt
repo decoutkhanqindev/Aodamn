@@ -12,7 +12,6 @@ import kotlin.math.max
 import kotlin.math.pow
 import kotlin.math.sin
 
-// Hình khối của chủ đề Sỏi. Mỗi hình là hàm bán kính quanh tâm r(góc), nên đổi giữa hai hình (animation) chỉ là nội suy bán kính.
 @Immutable
 enum class AodShapeValue(
     override val code: Int,
@@ -27,7 +26,6 @@ enum class AodShapeValue(
     FLOWER(code = 6, labelRes = R.string.shape_flower),
     STAR(code = 7, labelRes = R.string.shape_star);
 
-    // POINTS bán kính tại các góc đều, đi theo chiều kim đồng hồ từ hướng 3 giờ, chuẩn hoá để hình vừa khít ô vuông [-1, 1].
     val radii: FloatArray by lazy { buildRadii() }
 
     companion object {
@@ -48,7 +46,6 @@ private fun AodShapeValue.radiusAt(angle: Double): Double = when (this) {
     AodShapeValue.STAR -> 1 + 0.18 * cos(5 * (angle + PI / 2))
 }
 
-// Làm mềm góc nhọn (lục giác, cánh sao) bằng trung bình Gauss của bán kính quanh mỗi góc.
 private val AodShapeValue.smoothDegrees: Int
     get() = when (this) {
         AodShapeValue.HEXAGON -> 40

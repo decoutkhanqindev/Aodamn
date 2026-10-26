@@ -57,7 +57,6 @@ fun ThemeEditorContent(
 ) {
     val preview = rememberAodPreview(draft = state.preview)
 
-    // Nhấn giữ khung xem trước: ẩn thanh trên, panel, thanh tab và banner để xem AOD toàn màn hình, thả tay thì hiện lại.
     var isPeeking by remember { mutableStateOf(false) }
 
     Box(
@@ -67,7 +66,6 @@ fun ThemeEditorContent(
     ) {
         AodPreviewFrame(state = preview, isLandscape = state.isLandscapePreview)
 
-        // Chạm vào khung xem trước: đang xem thì vào sửa, đang sửa mà panel mở thì đóng panel; nhấn giữ thì xem toàn màn hình.
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -159,7 +157,6 @@ fun ThemeEditorContent(
                 }
             }
 
-            // Banner cả lúc xem (chưa Sửa): không có thanh tab bên trên thì nền trong suốt.
             AppBottomAdSlot(
                 isHidden = isPeeking,
                 background = if (state.isEditing) Neutral12 else Color.Transparent,
@@ -195,7 +192,6 @@ fun ThemeEditorContent(
         onDismiss = { onIntent(ThemeEditorIntent.History.DismissResetConfirm) },
     )
 
-    // Thoát sửa khi còn thay đổi: việc nên làm là lưu (nút chính), bỏ thay đổi là nút đỏ nhạt, ở lại sửa bằng chữ.
     AppSheet(
         isVisible = state.history.isDiscardConfirmVisible,
         onDismissRequest = { onIntent(ThemeEditorIntent.Edit.DismissDiscard) },

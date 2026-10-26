@@ -496,7 +496,7 @@ chủ đề mới không cần màn riêng; chỉ tách màn khi chủ đề c�
      chọn, chi tiết và chuyển động của app mẫu, không bỏ bớt vì AOD chỉ cập nhật mỗi phút (La bàn: kiểu có / không vòng giây như
      Clock Style 1 / 2, ba vòng xoay theo giờ thật mỗi khung hình, mặt số tự chạy đồng hồ trong pha vẽ). Không tự bỏ / gộp tuỳ
      chọn hay tính năng của app mẫu: lập danh sách mọi tuỳ chọn (`Z()` / `V()`, `catalog.json`) và hành vi của chủ đề, mock nêu
-     từng mục là giữ / đổi / bỏ, đổi hay bỏ phải có lý do và user đồng ý (ghi ở comment / CHANGELOG không tính). Khung xem trước
+     từng mục là giữ / đổi / bỏ, đổi hay bỏ phải có lý do và user đồng ý (ghi ở CHANGELOG không tính). Khung xem trước
      dùng giờ mẫu; chủ đề có chuyển động theo giờ thật như app mẫu bật `AodThemeSpec.isLiveInPreview` (mặt số đọc
      `AodState.isClockLive`) để chạy theo giờ thật ở màn chủ đề, Tùy chỉnh; thẻ thu nhỏ ở tab AOD luôn đứng yên (`isStill`). Chỗ nào làm
      xịn hơn app mẫu được thì cứ làm và nêu trong mock (La bàn: màu riêng từng vòng, chữ trình phát mờ khi dừng nhạc, mỗi vòng
@@ -544,7 +544,7 @@ chủ đề mới không cần màn riêng; chỉ tách màn khi chủ đề c�
    làm như dưới đây. Chép ảnh mẫu vào `reference/theme_N/` ngay (thư mục không đưa lên git; thư mục Downloads của user có
    thể bị xoá), rồi đo trên ảnh bằng script (PIL + numpy): tách từng chữ số / khối bằng hình chiếu của pixel sáng, ra toạ độ, bề rộng,
    độ dày nét, màu (màu phổ biến nhất của vùng nét). Quy mọi số đo về một kích thước chính R (vd chiều cao hàng số) và để
-   thành hằng số trong một `object XxxMetrics` kèm comment "đo trên ảnh mẫu WxH". So lại với code bằng cách đo ảnh chụp
+   thành hằng số trong một `object XxxMetrics` (nguồn đo ghi ở commit message). So lại với code bằng cách đo ảnh chụp
    trên máy bằng cùng script: lần Số áo đầu lệch tới 40% (chữ ngày) mà chỉ nhìn bằng mắt không thấy. Ảnh cắt từ transcript:
    ảnh đã đọc nằm nhúng trong `~/.claude/projects/<dự án>/<phiên>.jsonl` (base64) nếu cần lấy lại.
 3. Model `presentation/model/aod/theme/<chủ đề>/`: `XxxThemeSpec : AodThemeSpec` (tabs, `ownBlocks`, `components`, font cố

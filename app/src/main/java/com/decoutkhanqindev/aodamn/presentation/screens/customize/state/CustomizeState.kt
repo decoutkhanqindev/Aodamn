@@ -20,7 +20,6 @@ data class CustomizeState(
     val effects: CustomizeEffectsState = CustomizeEffectsState(),
     val guideStep: CustomizeGuideStepValue? = null,
     val permissionRequest: PermissionValue? = null,
-    // Áp dụng khi còn thiếu quyền bắt buộc: sheet liệt kê các quyền đó, cấp đủ thì tự áp dụng, đóng sheet thì không áp dụng.
     val requiredPermissions: ImmutableList<PermissionUiModel> = persistentListOf(),
     val isApplyPermissionSheetVisible: Boolean = false,
     val isApplying: Boolean = false,

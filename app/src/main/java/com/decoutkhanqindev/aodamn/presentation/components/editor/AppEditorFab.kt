@@ -28,7 +28,6 @@ import com.decoutkhanqindev.aodamn.presentation.theme.Neutral12
 import com.decoutkhanqindev.aodamn.presentation.theme.NeutralVariant30
 import com.decoutkhanqindev.aodamn.presentation.theme.Theme
 
-// Nút tròn nổi trên khung xem trước của màn sửa (xoay khung, hướng dẫn): không chiếm chỗ của thanh trên hay thanh tab. isActive: icon mint.
 @Composable
 fun AppEditorFab(
     @DrawableRes iconRes: Int,

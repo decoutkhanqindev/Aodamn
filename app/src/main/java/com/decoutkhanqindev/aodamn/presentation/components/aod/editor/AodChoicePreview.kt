@@ -51,9 +51,6 @@ import com.decoutkhanqindev.aodamn.presentation.theme.GreyED
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 
-// Ảnh xem trước của một lựa chọn ở danh sách tùy chọn (font, mặt đồng hồ, kiểu từng khối), vẽ bằng chính composable của AOD với dữ liệu
-// mẫu. Ảnh đứng yên ở font / màu / cỡ mặc định của khối: đổi font, màu khi chỉnh chỉ hiện ở khung xem trước AOD. Lựa chọn không có ảnh xem
-// trước (kiểu khối đặc / viền, hiệu ứng...) thì null, danh sách dùng chip chữ.
 fun aodChoicePreview(entry: AodThemeChoice): (@Composable () -> Unit)? = when (entry) {
     is ClockFontValue -> {
         { FontPreview(font = entry) }
@@ -128,10 +125,8 @@ fun aodChoicePreview(entry: AodThemeChoice): (@Composable () -> Unit)? = when (e
     else -> null
 }
 
-// Font / màu / cỡ mặc định của khối; ảnh xem trước tự thu nhỏ cho vừa ô.
 private fun defaultStyle(component: AodComponentValue): AodComponentStyle = AodComponentsUiModel().styleOf(component)
 
-// Vẽ nội dung ở cỡ thật rồi thu theo scale cho vừa ô xem trước 112 × 64dp.
 @Composable
 private fun ScaledPreview(
     scale: Float,

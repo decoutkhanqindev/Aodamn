@@ -16,31 +16,20 @@ import com.decoutkhanqindev.aodamn.presentation.theme.Red
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentSetOf
 
-// Chủ đề Bán nguyệt (Half Concentric của Muviz Edge, plans/muviz-edge-themes.md): nửa mặt số sát mép trái, vòng giây ngoài và vòng phút trong
-// xoay theo giờ thật để giá trị hiện tại chỉ sang phải, giờ lớn và phút trong viên viền; cột ngày, thứ, dòng pin · thông báo trên trục bên phải,
-// trình phát dưới mặt số. Ghi nhớ, sự kiện, nét vẽ không có chỗ đặt cân quanh nửa mặt số (mock đã duyệt).
-// Đủ 6 màu của app mẫu: giờ, phút, viền viên phút (Ring Color), vạch + số hai vòng (Dash Color), ngày; màu điều khiển tách thành dòng pin và nhạc
-// theo phần như các chủ đề khác (user duyệt).
 object HalfMoonThemeSpec : AodThemeSpec {
-    // App mẫu dùng Product Sans Regular (số, dòng pin, nghệ sĩ) / Bold (ngày, tên bài): Google Sans cùng thiết kế.
     val Font: FontFamily = FontFamilyGoogleSansText
 
-    // Viền viên phút đỏ cho thẻ chủ đề bắt mắt (màu nhấn chưa chủ đề nào dùng); còn lại như app mẫu: số trắng, vạch xám #757575.
     val HourColor = AodColorOption(key = "hour_color", labelRes = R.string.theme_color_hour, default = GreyED, isGradientAllowed = true)
     val MinuteColor = AodColorOption(key = "minute_color", labelRes = R.string.theme_color_minute, default = GreyED, isGradientAllowed = true)
     val RingColor = AodColorOption(key = "ring_color", labelRes = R.string.theme_color_minute_ring, default = Red, isGradientAllowed = true)
     val DialColor = AodColorOption(key = "dial_color", labelRes = R.string.theme_color_dial, default = Grey6E, isGradientAllowed = true)
 
-    // Thứ đủ màu, dòng ngày tối hơn 30% như app mẫu.
     val DateColor = AodColorOption(key = "date_color", labelRes = R.string.theme_color_date, default = GreyED, isGradientAllowed = true)
 
-    // Dòng pin · thông báo tối hơn như app mẫu (màu điều khiển pha 30% đen).
     val StatusColor = AodColorOption(key = "status_color", labelRes = R.string.theme_color_status, default = Grey9A, isGradientAllowed = true)
 
-    // Tên bài, nghệ sĩ, các nút.
     val MediaColor = AodColorOption(key = "media_color", labelRes = R.string.theme_color_media, default = GreyE0, isGradientAllowed = true)
 
-    // Mỗi khối chủ đề tự vẽ (ownBlocks) có tab ở đây: Tùy chỉnh › Ngày / Pin / Thông báo / Nhạc dẫn sang màn chủ đề.
     override val tabs = persistentListOf(
         AodThemeTab(
             iconRes = R.drawable.ic_clock,
@@ -77,9 +66,7 @@ object HalfMoonThemeSpec : AodThemeSpec {
         AodComponentValue.MEDIA,
     )
 
-    // App mẫu hiện thông báo mới (icon + chữ) ở dòng pin: chủ đề tự vẽ dòng thông báo mới nhất dưới dòng pin.
     override val hasNotificationContent = true
 
-    // App mẫu xoay hai vòng theo giờ thật cả ở màn sửa / xem trước.
     override val isLiveInPreview = true
 }

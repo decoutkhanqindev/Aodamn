@@ -31,8 +31,6 @@ import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
-// Cụm trên của màn dọc giãn trên - dưới (Cổ điển, Sỏi), dưới đồng hồ: ngày, thời tiết một dòng riêng giữa bề ngang, sự kiện, ghi nhớ, nét vẽ.
-// Khối chủ đề không có (AodThemeSpec.components) thì không vẽ dù đang bật.
 @Composable
 fun AodTopDetails(
     state: AodState,
@@ -51,7 +49,6 @@ fun AodTopDetails(
     }
 }
 
-// Cụm đáy của màn dọc giãn trên - dưới (Cổ điển, Sỏi): nhạc, rồi icon thông báo, thông báo mới nhất và pin sát đáy.
 @Composable
 fun AodBottomDetails(
     state: AodState,
@@ -64,7 +61,6 @@ fun AodBottomDetails(
             AodPanelBlock(block = AodPanelBlockValue.MEDIA, state = state, onIntent = onIntent)
         }
 
-        // Chủ đề tự vẽ dòng trạng thái (AodBlockValue.STATUS) thì pin, đèn pin, icon thông báo nằm trong bố cục của chủ đề.
         if (AodBlockValue.STATUS !in spec.ownBlocks) {
             if (AodComponentValue.NOTIFICATIONS in spec.components) {
                 AodNotificationIconsBlock(state = state)
@@ -79,7 +75,6 @@ fun AodBottomDetails(
     }
 }
 
-// Phần dưới đồng hồ của bố cục ngang: ngày (thời tiết cạnh ngày khi không có sự kiện), rồi icon thông báo và pin chung một dòng.
 @Composable
 fun AodHeroDetails(
     state: AodState,
@@ -98,7 +93,6 @@ fun AodHeroDetails(
                     AodNotificationIconsBlock(state = state)
                 }
 
-                // Khoảng cách chỉ khi có icon, để pin đứng một mình vẫn đúng giữa.
                 if (AodComponentValue.BATTERY in spec.components) {
                     Box(modifier = Modifier.padding(start = if (hasIcons) 16.dp else 0.dp)) {
                         AodBatteryBlock(state = state)
@@ -109,7 +103,6 @@ fun AodHeroDetails(
     }
 }
 
-// Một khối dùng chung theo kiểu, font, cỡ, màu user chọn ở Tùy chỉnh; khối tự ẩn khi không có dữ liệu.
 @Composable
 fun AodPanelBlock(
     block: AodPanelBlockValue,
@@ -158,7 +151,6 @@ fun AodPanelBlock(
     }
 }
 
-// Ngày dùng chung (chủ đề tự vẽ ngày thì không vẽ lại) và thời tiết cạnh ngày.
 @Composable
 private fun AodDateAndWeather(
     state: AodState,
@@ -212,7 +204,6 @@ private fun AodBatteryBlock(state: AodState) {
     )
 }
 
-// Khối dùng chung chủ đề có (AodThemeSpec.components), theo thứ tự màn dọc; chủ đề tự vẽ dòng trạng thái thì không có thông báo mới nhất.
 fun AodThemeSpec.panelBlocks(): ImmutableList<AodPanelBlockValue> =
     AodPanelBlockValue.entries
         .filter { block ->
@@ -220,8 +211,6 @@ fun AodThemeSpec.panelBlocks(): ImmutableList<AodPanelBlockValue> =
         }
         .toImmutableList()
 
-// Màn dọc giãn trên - dưới (AodPortraitSpread): thời tiết, sự kiện, ghi nhớ, nét vẽ ở cụm trên dưới ngày; thông báo mới nhất và nhạc ở cụm đáy
-// trên dòng trạng thái.
 fun AodThemeSpec.topPanelBlocks(): ImmutableList<AodPanelBlockValue> =
     panelBlocks().filter { block -> !block.isAtPortraitBottom() }.toImmutableList()
 
@@ -231,7 +220,6 @@ fun AodThemeSpec.bottomPanelBlocks(): ImmutableList<AodPanelBlockValue> =
 private fun AodPanelBlockValue.isAtPortraitBottom(): Boolean =
     this == AodPanelBlockValue.NOTIFICATION || this == AodPanelBlockValue.MEDIA
 
-// Khối dùng chung đang có dữ liệu để hiện (cùng điều kiện với AodPanelBlock), theo thứ tự màn dọc.
 fun AodState.shownPanelBlocks(): ImmutableList<AodPanelBlockValue> =
     appearance.theme.value.spec.panelBlocks()
         .filter { block ->

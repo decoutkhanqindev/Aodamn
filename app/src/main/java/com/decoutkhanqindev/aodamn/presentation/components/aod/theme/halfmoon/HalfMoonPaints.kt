@@ -18,8 +18,6 @@ import kotlin.math.cos
 import kotlin.math.roundToInt
 import kotlin.math.sin
 
-// Bút vẽ chữ số của Bán nguyệt bằng Paint của Android: căn giữa theo nét chữ (getTextBounds + exactCenter) như app mẫu, chữ đứng thẳng. Typeface
-// là file TTF tĩnh Google Sans Regular: Paint không đặt trục độ đậm nào (máy Xiaomi thay font khi có trục).
 @Stable
 class HalfMoonPaints(typeface: Typeface) {
     private val text = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -34,7 +32,6 @@ class HalfMoonPaints(typeface: Typeface) {
         return bounds.height().toFloat()
     }
 
-    // Màu gradient là shader theo khung nét chữ của chính nhãn đó.
     fun drawLabel(
         scope: DrawScope,
         label: String,
@@ -57,15 +54,11 @@ class HalfMoonPaints(typeface: Typeface) {
     }
 }
 
-// Góc theo app mẫu: điểm ở góc θ là (sin θ, cos θ) · d tính từ tâm, θ = 90° là bên phải; giá trị v nằm ở θ = 90 − 6·(giờ hiện tại) + 6·v nên
-// giá trị hiện tại luôn chỉ sang phải.
 fun halfMoonPoint(center: Offset, degrees: Float, radius: Float): Offset {
     val radians = Math.toRadians(degrees.toDouble())
     return Offset(center.x + sin(radians).toFloat() * radius, center.y + cos(radians).toFloat() * radius)
 }
 
-// 60 vạch ở giá trị 0 quanh tâm vùng vẽ (vạch mỗi 5 đơn vị dài hơn); mặt số xoay cả vòng vạch theo giờ thật. brush trải theo cả vòng nên
-// gradient đổi màu theo chỗ của vạch và xoay cùng vòng.
 fun DrawScope.drawHalfMoonTicks(radius: Float, major: Float, minor: Float, end: Float, brush: Brush, width: Float) {
     for (index in 0 until 60) {
         val degrees = 90f + 6f * index
@@ -80,7 +73,6 @@ fun DrawScope.drawHalfMoonTicks(radius: Float, major: Float, minor: Float, end: 
     }
 }
 
-// Số 00–55 đứng thẳng quanh tâm, mỗi khung hình đặt lại theo giá trị hiện tại (value có phần lẻ nên số trôi liên tục).
 fun DrawScope.drawHalfMoonLabels(
     paints: HalfMoonPaints,
     center: Offset,

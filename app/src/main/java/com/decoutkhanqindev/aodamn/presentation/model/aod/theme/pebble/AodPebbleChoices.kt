@@ -5,8 +5,6 @@ import androidx.compose.runtime.Immutable
 import com.decoutkhanqindev.aodamn.R
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeChoice
 
-// Các danh sách lựa chọn riêng của chủ đề Sỏi (ngoài hình khối và font).
-
 @Immutable
 enum class AodTileStyleValue(
     override val code: Int,
@@ -25,7 +23,6 @@ enum class AodDateStyleValue(
     PLAIN(code = 1, labelRes = R.string.date_style_plain),
 }
 
-// Animation khi số đổi (mỗi phút): chỉ chạy lúc đổi số nên AOD không vẽ lại liên tục.
 @Immutable
 enum class AodTransitionValue(
     override val code: Int,
@@ -37,7 +34,6 @@ enum class AodTransitionValue(
     PULSE(code = 3, labelRes = R.string.transition_pulse),
 }
 
-// Thanh tiến trình nhạc: gợn sóng lúc đang phát (dừng thì duỗi thẳng), luôn thẳng, hoặc ẩn.
 @Immutable
 enum class AodProgressStyleValue(
     override val code: Int,

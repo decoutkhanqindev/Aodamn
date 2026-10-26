@@ -209,7 +209,6 @@ class SettingsViewModel(
         }
     }
 
-    // Trạng thái quyền đổi ở app Cài đặt chứ không phải ở đây, nên đọc lại mỗi lần màn hình resume.
     private fun refreshPermissions() {
         updateState { copy(permissions = permissionManager.aodPermissions()) }
     }
@@ -263,7 +262,6 @@ class SettingsViewModel(
         viewModelScope.launch { sendEffect(effect) }
     }
 
-    // Đã cho phép thì start lại service để nó đăng lại thông báo; bị từ chối thì mở trang cài đặt thông báo (sau 2 lần từ chối hệ thống không hiện hộp thoại nữa).
     private fun onNotificationPermissionResult(isGranted: Boolean) {
         refreshPermissions()
         viewModelScope.launch {
@@ -274,14 +272,11 @@ class SettingsViewModel(
         }
     }
 
-    // Lịch / vị trí hỏi từ danh sách quyền chỉ để cấp, bật "Sự kiện hôm nay" / "Thời tiết" ở màn Customize. Bị từ chối thì mở
-    // Thông tin ứng dụng, vì từ chối hai lần thì hệ thống không hỏi nữa.
     private fun onRuntimePermissionResult(permission: PermissionValue, isGranted: Boolean) {
         refreshPermissions()
         if (!isGranted) viewModelScope.launch { sendEffect(SettingsEffect.Permission.OpenAppSettings(permission)) }
     }
 
-    // Gom mọi nhóm cài đặt vào một lần cập nhật: màn hình chỉ hết loading khi tất cả đã đọc xong.
     private data class Settings(
         val options: AodOptionsUiModel,
         val appearance: AodAppearanceUiModel,

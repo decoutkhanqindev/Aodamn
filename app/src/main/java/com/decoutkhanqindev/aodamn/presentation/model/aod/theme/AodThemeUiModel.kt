@@ -20,8 +20,6 @@ data class AodThemeUiModel(
     val config: AodThemeConfig = AodThemeConfig(),
 )
 
-// Cấu hình mọi chủ đề lưu chung một chuỗi "id:khoá=giá trị,khoá=giá trị;id:..." (id và khoá chỉ có chữ thường, số, gạch dưới),
-// tự mã hoá để kotlinx-serialization chỉ nằm ở data/network/api. Phần hỏng thì bỏ qua, thuộc tính đó về mặc định.
 private fun decodeThemeConfigs(raw: String?): Map<String, Map<String, Int>> =
     raw.orEmpty().split(';').mapNotNull { entry ->
         val id = entry.substringBefore(':', missingDelimiterValue = "").takeIf { it.isNotBlank() } ?: return@mapNotNull null
@@ -33,7 +31,6 @@ private fun encodeThemeConfigs(configs: Map<String, Map<String, Int>>): String =
         id + ":" + values.toAodConfigString()
     }
 
-// Chủ đề Cổ điển chưa lưu lần nào thì dựng từ mặt / font / màu / cỡ đồng hồ đã chọn ở bản trước khi có chủ đề.
 private fun legacyClassicConfig(face: Int?, font: Int?, color: Int?, sizePercent: Int?): AodThemeConfig = AodThemeConfig()
     .with(ClassicThemeSpec.Face, ClockFaceValue.fromCode(face))
     .with(ClassicThemeSpec.Font, ClockFontValue.fromCode(font))

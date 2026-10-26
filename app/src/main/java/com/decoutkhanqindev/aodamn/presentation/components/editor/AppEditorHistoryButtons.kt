@@ -14,8 +14,6 @@ import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.aodamn.R
 import com.decoutkhanqindev.aodamn.presentation.theme.Theme
 
-// Hoàn tác, làm lại, đặt lại ở thanh trên của màn sửa (Tùy chỉnh, màn chủ đề), cạnh nút quay lại. Nút 40dp để thanh trên của
-// onboarding (thêm hướng dẫn, Bỏ qua, Áp dụng) vẫn vừa màn 393dp.
 @Composable
 fun AppEditorHistoryButtons(
     canUndo: Boolean,

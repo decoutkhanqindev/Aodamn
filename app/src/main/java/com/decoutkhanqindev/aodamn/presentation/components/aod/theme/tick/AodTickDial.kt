@@ -56,9 +56,6 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sin
 
-// Mặt Nhịp giây phủ vùng được cho: vòng 60 vạch trôi theo chiều kim 6°/giây (gradient đứng yên theo màn nên vạch đổi màu khi trôi qua), chìm dần ở
-// trên / dưới, chấm số giây ở mép phải, giờ + ngày giữa vòng; below (thời tiết) treo dưới ngày, không đẩy cụm giờ. Chạy theo giờ thật mỗi khung
-// hình (isLive: AOD thật, và khung xem trước vì Nhịp giây bật isLiveInPreview) như app mẫu; giờ / ngày đổi mỗi phút theo cùng đồng hồ đó.
 @Composable
 fun AodTickDial(
     nowMillis: Long,
@@ -104,8 +101,6 @@ fun AodTickDial(
     }
 }
 
-// Vòng vẽ trên lớp riêng để hai vùng chìm (DstOut) và lỗ của chấm giây (Clear) chỉ xoá vạch, không phủ đen lên ảnh nền như app mẫu. Mỗi khung hình
-// chỉ vẽ lại (secondsMillis đọc trong pha vẽ), không recompose.
 @Composable
 private fun TickRing(
     secondsMillis: () -> Long,
@@ -182,7 +177,6 @@ private fun TickRing(
     )
 }
 
-// Đen đặc tới 0,65 bán kính rồi trong dần tới mép như RadialGradient của app mẫu.
 private fun fadeBrush(center: Offset, radius: Float): Brush = Brush.radialGradient(
     TickMetrics.FADE_SOLID to Black,
     1f to Color.Transparent,
@@ -190,7 +184,6 @@ private fun fadeBrush(center: Offset, radius: Float): Brush = Brush.radialGradie
     radius = radius,
 )
 
-// Giờ rồi ngày (in hoa giãn chữ) căn giữa vùng như LinearLayout giữa màn của app mẫu: tắt ngày thì giờ về giữa. below treo dưới cụm.
 @Composable
 private fun TickFace(
     unit: Dp,
@@ -253,8 +246,6 @@ private fun TickFace(
     }
 }
 
-// Bút số giây bằng Paint của Android (vẽ mỗi khung hình, căn theo nét chữ như getTextBounds của app mẫu); Typeface là file TTF tĩnh Google Sans
-// Regular, không đặt trục độ đậm (máy Xiaomi thay font khi có trục).
 @Composable
 private fun rememberTickSecondPaint(): Paint {
     val typeface = LocalFontFamilyResolver.current

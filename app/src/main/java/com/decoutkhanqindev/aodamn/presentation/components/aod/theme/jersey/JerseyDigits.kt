@@ -28,7 +28,6 @@ import com.decoutkhanqindev.aodamn.presentation.theme.FontFamilyBigShouldersDisp
 import kotlin.math.max
 import android.graphics.Path as AndroidPath
 
-// Một hàng chữ số: mỗi số một ô rộng cố định (JerseyMetrics.PITCH) nên hàng không đổi bề ngang theo giờ; số đổi thì mờ chéo trong ô.
 @Composable
 fun JerseyDigitRow(
     text: String,
@@ -80,9 +79,6 @@ fun rememberJerseyGlyphs(): JerseyGlyphs {
     return remember(typeface) { JerseyGlyphs(typeface) }
 }
 
-// Đường viền 10 chữ số lấy một lần từ font (Paint.getTextPath, gốc ở đường chân chữ, y hướng xuống). Lúc vẽ, đường viền được kéo cao (co ngang
-// theo CONDENSE) cho nét ngoài vừa chiều cao ô rồi mới vẽ nét, nên nét dày đều chứ không dày ngang mỏng dọc như khi phóng cả chữ đã vẽ.
-// Số 1 tự vẽ (cờ vuông như ảnh mẫu). Mỗi số nằm giữa ô.
 @Stable
 class JerseyGlyphs(typeface: Typeface) {
     private val outlines: Map<Char, AndroidPath>
@@ -98,7 +94,6 @@ class JerseyGlyphs(typeface: Typeface) {
             AndroidPath().also { path -> paint.getTextPath(digit.toString(), 0, 1, 0f, 0f, path) }
         }
         bounds = outlines.mapValues { (_, path) -> RectF().also { path.computeBounds(it, true) } }
-        // Số 1 phẳng cả đỉnh lẫn chân nên cao đúng bằng chiều cao chữ (số tròn tràn ra khoảng 1%).
         capHeight = bounds.getValue('1').height()
     }
 
@@ -117,7 +112,6 @@ class JerseyGlyphs(typeface: Typeface) {
         return AndroidPath(source).apply { transform(matrix) }.asComposePath()
     }
 
-    // Nét ngoài (kể cả bề dày nét) là hình chữ nhật ONE_WIDTH × cao ô trừ góc dưới trái; đường vẽ lùi vào trong nửa nét.
     private fun oneOutline(size: Size, stroke: Float): Path {
         val height = size.height
         val width = JerseyMetrics.ONE_WIDTH * height

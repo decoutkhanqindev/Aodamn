@@ -29,8 +29,6 @@ import com.decoutkhanqindev.aodamn.presentation.components.rememberFormatter
 import com.decoutkhanqindev.aodamn.presentation.components.rememberZonedDateTime
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.jersey.JerseyThemeSpec
 
-// Ngày màn dọc: ba dòng "tháng / ngày" (thứ tự theo ngôn ngữ), dưới là viên thuốc chứa thứ in hoa xoay dọc. Cột rộng cố định bằng viên thuốc;
-// cỡ chữ, nét và khoảng cách theo chiều cao hàng số (JerseyMetrics).
 @Composable
 fun JerseyDateVertical(
     nowMillis: Long,
@@ -68,8 +66,6 @@ fun JerseyDateVertical(
     }
 }
 
-// Ngày màn ngang: chính ngày màn dọc xoay nằm ngang nhưng chữ đứng thẳng, "tháng / ngày" rồi viên thuốc chứa thứ, cùng cỡ chữ và nét theo
-// unit (R của màn dọc).
 @Composable
 fun JerseyDateHorizontal(
     nowMillis: Long,
@@ -104,8 +100,6 @@ fun JerseyDateHorizontal(
     }
 }
 
-// Viên thuốc viền chứa thứ in hoa, bề dày (ngang của viên dọc, cao của viên ngang) do nơi gọi đặt, dài theo chữ + đệm hai đầu. Khung dòng
-// của chữ bằng cỡ chữ (chỉ vừa chữ in hoa) để viên thuốc ôm sát như ảnh mẫu.
 @Composable
 private fun JerseyWeekdayPill(
     text: String,
@@ -166,7 +160,6 @@ private fun JerseyText(
     )
 }
 
-// Xoay chữ 90° theo chiều kim đồng hồ (đọc từ trên xuống) và đổi chỗ rộng / cao để khung bao đúng chữ đã xoay.
 private fun Modifier.verticalText(): Modifier = layout { measurable, _ ->
     val placeable = measurable.measure(Constraints())
     layout(width = placeable.height, height = placeable.width) {

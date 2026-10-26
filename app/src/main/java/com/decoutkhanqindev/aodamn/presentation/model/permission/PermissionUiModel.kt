@@ -19,7 +19,6 @@ data class PermissionUiModel(
         }
 }
 
-// Mọi quyền app dùng, quyền bắt buộc đứng trước; hai quyền riêng của Xiaomi chỉ có trên máy Xiaomi. Trạng thái đổi ở app Cài đặt nên mỗi lần cần thì đọc lại.
 fun PermissionManager.aodPermissions(): ImmutableList<PermissionUiModel> = buildList {
     add(PermissionUiModel(PermissionValue.OVERLAY, canDrawOverlays()))
     if (isXiaomi) {
@@ -37,8 +36,6 @@ fun PermissionManager.aodPermissions(): ImmutableList<PermissionUiModel> = build
     add(PermissionUiModel(PermissionValue.LOCATION, hasCoarseLocationPermission()))
 }.toImmutableList()
 
-// Điều kiện để tự kéo app về sau khi user cấp quyền ở app Cài đặt. Quyền không đọc được (op của Xiaomi bị đánh số lại) coi như không chặn,
-// cùng cách với hasRequiredPermissions.
 fun PermissionManager.isGranted(permission: PermissionValue): Boolean = when (permission) {
     PermissionValue.OVERLAY -> canDrawOverlays()
     PermissionValue.MIUI_LOCK_SCREEN -> isMiuiShowWhenLockedAllowed() != false
@@ -52,10 +49,8 @@ fun PermissionManager.isGranted(permission: PermissionValue): Boolean = when (pe
 fun PermissionManager.requiredAodPermissions(): ImmutableList<PermissionUiModel> =
     aodPermissions().filter { it.permission.isRequired }.toImmutableList()
 
-// Quyền không đọc được trạng thái (op của Xiaomi bị đánh số lại theo bản HyperOS) thì không chặn, để user không kẹt mãi ở màn quyền.
 val List<PermissionUiModel>.hasRequiredPermissions: Boolean
     get() = none { it.permission.isRequired && it.isGranted == false }
 
-// Quyền đầu tiên chắc chắn còn thiếu, để nút "Cấp quyền tiếp theo" mở đúng nó (quyền không đọc được trạng thái không chặn, như trên).
 fun List<PermissionUiModel>.nextPermission(): PermissionValue? =
     firstOrNull { permission -> permission.isGranted == false }?.permission

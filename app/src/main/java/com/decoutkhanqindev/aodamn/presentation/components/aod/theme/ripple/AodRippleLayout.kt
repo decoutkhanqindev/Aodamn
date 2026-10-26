@@ -51,8 +51,6 @@ import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodIntent
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
 import com.decoutkhanqindev.aodamn.presentation.theme.Black
 
-// Gợn sóng, màn dọc như layout mẫu: vùng thông báo trên cùng (hàng icon, thông báo mới nhất), mặt số giữa phần còn lại, thời tiết giữa đáy mặt số và
-// vùng dưới, vùng dưới giữ chỗ cho trình phát (mặt số không nhảy khi nhạc bật / tắt) rồi dòng pin cách đáy 30dp.
 @Composable
 fun AodRipplePortrait(
     state: AodState,
@@ -107,9 +105,6 @@ fun AodRipplePortrait(
     }
 }
 
-// Gợn sóng, màn ngang (mock đã duyệt; app mẫu dùng chung layout dọc nên mặt số chỉ còn rất nhỏ): mặt số giữa màn to như màn dọc, hai vùng bên chia
-// thông tin như màn dọc chia trên / dưới. Không nhạc: thông báo trái, thời tiết + pin phải; có nhạc: thông báo, thời tiết, pin trái, trình phát
-// phải; đổi bằng mờ chéo.
 @Composable
 fun AodRippleLandscape(
     state: AodState,
@@ -168,11 +163,9 @@ private fun RippleDial(state: AodState) {
     )
 }
 
-// Mép ngoài đĩa (kể cả gợn) tính từ tâm vùng mặt số.
 private fun rippleFaceReach(state: AodState, side: Dp): Dp =
     side / 2 * (state.appearance.theme.config[RippleThemeSpec.Size] / 100f) * RippleMetrics.FACE_RADIUS * (1f + RippleMetrics.WAVE_DEPTH)
 
-// Hàng icon thông báo, cách 12dp thông báo mới nhất; dòng nào không có thì không chiếm chỗ.
 @Composable
 private fun RippleNotifications(
     state: AodState,
@@ -207,8 +200,6 @@ private fun RippleNotifications(
     }
 }
 
-// Thông báo mới nhất như notification_lt của app mẫu: icon đen trong vòng tròn tô màu thông báo, tiêu đề 16sp, nội dung 14sp tối hơn (tối đa 2
-// dòng).
 @Composable
 private fun RippleLatest(
     latest: NotificationContentUiModel,
@@ -263,7 +254,6 @@ private fun RippleLatest(
     }
 }
 
-// Thời tiết (khối dùng chung) một dòng; tắt thì không chiếm chỗ.
 @Composable
 private fun RippleWeather(
     state: AodState,
@@ -283,7 +273,6 @@ private fun RippleWeather(
     }
 }
 
-// Dòng pin như bottom_tv của app mẫu: mờ 0,8 khi không sạc, rõ hẳn khi đang sạc; đèn pin đang bật thì icon cạnh pin.
 @Composable
 private fun RippleBattery(
     state: AodState,
@@ -308,7 +297,6 @@ private fun RippleBattery(
     )
 }
 
-// Trình phát của chủ đề (AodRippleMedia qua AodMediaControls); không có nhạc thì trống, chỗ vẫn giữ ở màn dọc.
 @Composable
 private fun RipplePlayer(
     state: AodState,

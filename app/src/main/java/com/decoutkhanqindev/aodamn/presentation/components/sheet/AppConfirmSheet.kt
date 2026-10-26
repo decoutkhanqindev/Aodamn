@@ -11,7 +11,6 @@ import com.decoutkhanqindev.aodamn.R
 import com.decoutkhanqindev.aodamn.presentation.components.AppPrimaryButton
 import com.decoutkhanqindev.aodamn.presentation.components.AppTextButton
 
-// Xác nhận một việc (đặt lại...): hình minh hoạ với huy hiệu cùng icon nút xác nhận, nút xác nhận mint ở trên, Hủy bằng chữ ở dưới.
 @Composable
 fun AppConfirmSheet(
     isVisible: Boolean,

@@ -38,7 +38,6 @@ import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import timber.log.Timber
 
-// Mở AodActivity lúc màn hình còn tắt (nên nó che màn hình khoá trước khi màn hình sáng); foreground service là thứ giữ được receiver SCREEN_OFF mà không cần quyền đặc biệt.
 class AodService : Service(), Tag {
 
     private val dataStoreManager: DataStoreManager by inject()
@@ -78,7 +77,6 @@ class AodService : Service(), Tag {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        // Thông báo đăng lúc chưa được phép thì bị ẩn: đăng lại mỗi lần start để nó hiện ngay khi user cho phép.
         startInForeground()
         return START_STICKY
     }
@@ -99,11 +97,8 @@ class AodService : Service(), Tag {
         val isSleepRequested = session.consumeSleepRequest()
         session.finish()
         when {
-            // AOD đã chuyển sang đen và màn hình hết giờ chờ theo chủ ý: giữ tắt.
             isSleepRequested -> if (!wasCovered) armRaiseToWake()
-            // Trong túi, ROM có thể tự tắt màn hình: không bao giờ bật lên ở đó.
             wasCovered -> Unit
-            // AOD giữ màn hình sáng nên lần tắt này là nút nguồn (app không bắt được phím): về màn hình khoá như AOD thật.
             wasShowing -> screenStateManager.wakeUp(holdMillis = WAKE_HOLD_MILLIS)
             shouldEnter() -> launchAod()
         }
@@ -113,7 +108,6 @@ class AodService : Service(), Tag {
         session.clearSleepRequest()
         if (!session.isShowing) return
 
-        // Không có PIN/hình vẽ thì không có keyguard để mở: USER_PRESENT đến ngay sau lần bật màn hình của chính app, lần đó không được đóng AOD.
         val isJustShown =
             SystemClock.elapsedRealtime() - session.shownAt < USER_PRESENT_GRACE_MILLIS
         if (isJustShown && !screenStateManager.isDeviceSecure) return
@@ -123,9 +117,7 @@ class AodService : Service(), Tag {
 
     private fun shouldEnter(): Boolean {
         if (dataStoreManager.isAodEnabled.value != true) return false
-        // SCREEN_OFF đến trễ: nút nguồn có thể đã bật lại màn hình, lúc đó user muốn màn hình khoá chứ không phải AOD.
         if (screenStateManager.isInteractive) return false
-        // Đang có chuông, cuộc gọi hoặc báo thức: AOD sẽ bị mở đè lên màn hình đó.
         if (audioStateManager.isBusyNow()) return false
 
         return dataStoreManager.currentAodRules().allows(
@@ -136,7 +128,6 @@ class AodService : Service(), Tag {
         )
     }
 
-    // Mở Activity từ nền được là nhờ user đã cấp "Hiển thị trên ứng dụng khác".
     private fun launchAod() {
         val intent = Intent(this, AodActivity::class.java).addFlags(
             Intent.FLAG_ACTIVITY_NEW_TASK or
@@ -156,7 +147,6 @@ class AodService : Service(), Tag {
         }
     }
 
-    // Đồng hồ đã tối theo chủ ý (hết giờ, sai quy tắc) rồi màn hình tắt: nhấc máy lên thì hiện lại nếu quy tắc vẫn cho. Tối vì bị che thì không chờ, để đi bộ không làm sáng màn hình trong túi.
     private fun armRaiseToWake() {
         val isEnabled = dataStoreManager.isAodRaiseToWakeEnabled.value
             ?: DataStoreManager.DEFAULT_IS_AOD_RAISE_TO_WAKE_ENABLED
@@ -171,7 +161,6 @@ class AodService : Service(), Tag {
         if (session.isShowing && screenStateManager.isInteractive) {
             dataStoreManager.saveAodLastWake(WakeResultValue.OK.code)
         } else {
-            // Bị chặn thì không có Activity; trên Xiaomi thiếu "Hiển thị trên màn hình khoá" thì nó nằm sau màn hình khoá và màn hình vẫn tắt: đóng đi để nó không hiện ra sau lần mở khoá kế tiếp.
             dataStoreManager.saveAodLastWake(WakeResultValue.FAILED.code)
             session.finish()
         }
@@ -220,7 +209,6 @@ class AodService : Service(), Tag {
         private const val WAKE_HOLD_MILLIS = 1_000L
         private const val USER_PRESENT_GRACE_MILLIS = 1_500L
 
-        // Android 12+ cấm start foreground service từ nền; boot, cập nhật app và màn hình của app được miễn, ô Cài đặt nhanh từ Android 15 thì không (false: nơi gọi tự xử lý).
         fun start(context: Context): Boolean = try {
             context.startForegroundService(Intent(context, AodService::class.java))
             true

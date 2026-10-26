@@ -69,7 +69,6 @@ fun SplashScreen(backStack: NavBackStack<NavKey>) {
 
     BackHandler { }
 
-    // Chỉ tải banner khi đã có kết quả consent (MainActivity chờ có mạng mới hỏi): tải trước đó thì AdUnit báo lỗi và banner không hiện.
     SplashContent(
         bannerAd = { if (isConsentGathered) BannerAdView(adUnit = { adsManager.bannerSplash }) },
     )

@@ -46,9 +46,6 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.gradientline.Gra
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
 import kotlin.math.roundToInt
 
-// Vạch gradient + giờ + dòng ngày của Dải màu trong vùng được cho. isVertical: màn dọc (vạch dọc giữa vùng, như app mẫu), màn ngang (vạch
-// ngang, mock đã duyệt). Giờ vẽ trên vạch, căn theo nét chữ như app mẫu; dòng ngày (+ thời tiết) là composable đặt theo giờ. Vị trí theo phút
-// trong ngày (hoặc vị trí ghim) nên chỉ đổi mỗi phút như nhịp của AOD.
 @Composable
 fun AodGradientLineClock(
     state: AodState,
@@ -171,7 +168,6 @@ fun AodGradientLineClock(
     }
 }
 
-// Ngày "EEEE, dd MMM" mờ 78% như app mẫu, thời tiết (khối dùng chung) cạnh ngày; tắt cả hai thì dòng rỗng, vạch chỉ khoét quanh giờ.
 @Composable
 private fun GradientLineDateRow(
     state: AodState,

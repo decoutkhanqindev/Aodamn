@@ -23,7 +23,6 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.component.AodCom
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.component.AodDateLayoutValue
 import com.decoutkhanqindev.aodamn.presentation.theme.GreyB4
 
-// Dòng ngày dưới đồng hồ (chủ đề không tự vẽ ngày), font / cỡ / màu theo khối ngày; mỗi kiểu một bố cục, không viền.
 @Composable
 fun AodDate(
     nowMillis: Long,
@@ -36,7 +35,6 @@ fun AodDate(
     val scale = style.scale
 
     when (layout) {
-        // THỨ BẢY • 11 tháng 10
         AodDateLayoutValue.SPACED -> Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = weekday.uppercase(),
@@ -65,7 +63,6 @@ fun AodDate(
             )
         }
 
-        // Thứ Bảy, 11 tháng 10
         AodDateLayoutValue.SENTENCE -> Text(
             text = now.format(rememberFormatter(R.string.aod_date_full_pattern)),
             modifier = modifier.aodTint(style),
@@ -74,7 +71,6 @@ fun AodDate(
             fontFamily = style.fontFamily,
         )
 
-        // Tờ lịch: thứ nhỏ, số ngày lớn, tháng nhỏ
         AodDateLayoutValue.CALENDAR -> Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
                 text = weekday.uppercase(),
@@ -106,7 +102,6 @@ fun AodDate(
             )
         }
 
-        // Số ngày lớn bên trái, thứ và tháng năm bên phải
         AodDateLayoutValue.SPLIT -> Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = now.format(rememberFormatter(R.string.aod_date_number_pattern)),
@@ -137,7 +132,6 @@ fun AodDate(
             }
         }
 
-        // T7 · 11.10.2026
         AodDateLayoutValue.NUMERIC -> Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = now.format(rememberFormatter(R.string.aod_date_weekday_short_pattern)).uppercase(),

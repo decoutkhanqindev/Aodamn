@@ -48,8 +48,6 @@ import timber.log.Timber
 import java.time.LocalTime
 import kotlin.math.abs
 
-// Chọn giờ bằng bánh xe (giờ, phút, thêm SA / CH khi máy dùng định dạng 12 giờ) thay cho đồng hồ chọn giờ của Material: cuộn rồi tự
-// dừng đúng một số, số giữa to và sáng trong dải mint, chạm số bên cạnh để cuộn tới. Giờ và phút cuộn vòng.
 @Composable
 fun AppTimeWheel(
     initialTime: LocalTime,
@@ -83,7 +81,6 @@ fun AppTimeWheel(
             if (is24Hour) {
                 AppWheel(count = 24, initialIndex = hour, label = { "%02d".format(it) }, onIndexChange = { hour = it; publish() })
             } else {
-                // 12 giờ: vị trí 0 là "12", giờ thật giữ buổi đang chọn.
                 AppWheel(
                     count = 12,
                     initialIndex = hour % 12,
@@ -128,7 +125,6 @@ private fun AppWheel(
     val tag = LocalTag.current
     val scope = rememberCoroutineScope()
     val currentOnIndexChange by rememberUpdatedState(onIndexChange)
-    // Cuộn vòng: danh sách dài nhiều vòng, bắt đầu ở giữa nên cuộn hướng nào cũng không hết.
     val total = if (isLooping) count * 400 else count
     val state = rememberLazyListState(initialFirstVisibleItemIndex = if (isLooping) count * 200 + initialIndex else initialIndex)
     val centered by remember { derivedStateOf { state.centeredIndex() } }
@@ -184,7 +180,6 @@ private fun AppWheel(
     }
 }
 
-// Mục nằm gần giữa khung nhất (có cả phần đệm hai đầu nên mục đầu / cuối cũng vào được giữa).
 private fun LazyListState.centeredIndex(): Int {
     val info = layoutInfo
     val center = (info.viewportStartOffset + info.viewportEndOffset) / 2

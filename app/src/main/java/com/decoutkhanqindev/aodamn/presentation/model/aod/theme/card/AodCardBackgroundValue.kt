@@ -5,7 +5,6 @@ import androidx.compose.runtime.Immutable
 import com.decoutkhanqindev.aodamn.R
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeChoice
 
-// Nền của thẻ sau đồng hồ (chủ đề Thẻ): màu giờ pha nhạt, chỉ nét viền, hoặc không có thẻ.
 @Immutable
 enum class AodCardBackgroundValue(
     override val code: Int,

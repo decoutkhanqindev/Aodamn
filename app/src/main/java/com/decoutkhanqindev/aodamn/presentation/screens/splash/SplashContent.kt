@@ -155,8 +155,6 @@ private fun SplashLoading(progress: () -> Float) {
     }
 }
 
-// Chỉ phần trăm recompose, và chỉ khi sang số mới (100 lần trong 5 giây), không theo từng khung hình của thanh. Số dùng tnum để không
-// xô chữ khi đổi.
 @Composable
 private fun SplashLoadingPercent(progress: () -> Float) {
     val currentProgress by rememberUpdatedState(progress)
@@ -172,8 +170,6 @@ private fun SplashLoadingPercent(progress: () -> Float) {
     )
 }
 
-// Thang 0..1000 thay cho phần trăm để thanh chạy mượt từng khung hình, không nhảy theo nấc 1%. Dừng ở 99%, không bao giờ 100%: splash
-// còn chờ đồng ý quảng cáo / tải quảng cáo nên chưa xong thật, thanh đầy mà chưa chuyển màn trông như treo.
 private const val LOADING_PROGRESS_MAX = 1000
 private const val LOADING_PROGRESS_CAP = 990
 

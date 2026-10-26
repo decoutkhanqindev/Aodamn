@@ -28,9 +28,6 @@ import kotlinx.collections.immutable.toImmutableMap
 import java.time.LocalDate
 import java.time.ZoneId
 
-// Dữ liệu mẫu cho phần cần dữ liệu thật trên khung xem trước (thông báo, sự kiện, nhạc, ghi nhớ); chữ lấy từ strings.xml ở Compose.
-// Khung xem trước ngoài AOD thật (Tùy chỉnh, màn chủ đề, tab AOD) không chạy theo giờ: mọi giá trị là mẫu cố định, giờ là 08:30 hôm
-// nay như icon app.
 @Immutable
 data class CustomizePreviewSamples(
     val notificationTitle: String,
@@ -55,7 +52,6 @@ data class CustomizePreviewSamples(
         private const val MEDIA_DURATION_MILLIS = 210_000L
         private const val MEDIA_POSITION_MILLIS = 130_000L
 
-        // Thao tác và phím âm lượng của AOD tắt hết để không chặn thao tác của màn tùy chỉnh.
         private val PreviewInteraction = AodInteractionUiModel(
             actions = AodGestureValue.entries.associateWith { AodActionValue.NONE }
                 .toImmutableMap(),
@@ -66,7 +62,6 @@ data class CustomizePreviewSamples(
         private fun previewMillis(): Long =
             LocalDate.now().atTime(PREVIEW_HOUR, PREVIEW_MINUTE).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
 
-        // Hình đơn giản màu trắng: AOD tự tô lại theo màu chữ như icon thông báo thật.
         private fun sampleIcons(): ImmutableList<Bitmap> = IconShape.entries.map { shape ->
             createBitmap(ICON_SIZE, ICON_SIZE).applyCanvas {
                 val paint =
@@ -112,8 +107,6 @@ data class CustomizePreviewSamples(
             interaction = PreviewInteraction,
             isPreview = true,
             isStill = isStill,
-            // Tab kiểu khối đang mở (shownComponent): khối đó luôn hiện bằng dữ liệu mẫu dù đang tắt, thiếu quyền hay chưa có nội dung,
-            // để đổi font / cỡ / màu là thấy ngay. Xem trước riêng chủ đề tự vẽ ghi nhớ (Chuỗi) cũng có ghi nhớ mẫu.
             extras = extras.copy(
                 memo = if (extras.memo.isBlank() && (shownComponent == AodComponentValue.MEMO || isThemePreviewMemo())) {
                     samples.memo

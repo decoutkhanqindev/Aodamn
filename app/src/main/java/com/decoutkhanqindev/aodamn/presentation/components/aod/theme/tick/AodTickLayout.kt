@@ -49,9 +49,6 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.tick.TickThemeSp
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodIntent
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
 
-// Nhịp giây, màn dọc (mock đã duyệt): vòng phủ màn như CoumTick của app mẫu, giờ + ngày (+ thời tiết) giữa vòng; hàng icon thông báo và thông báo
-// mới nhất ở trên, trình phát và dòng pin ở dưới, cùng cách mép 70dp như khối dưới của layout mẫu (app mẫu dồn hết xuống dưới; chia hai phía cho cân
-// quanh vòng, user duyệt).
 @Composable
 fun AodTickPortrait(
     state: AodState,
@@ -87,8 +84,6 @@ fun AodTickPortrait(
     }
 }
 
-// Nhịp giây, màn ngang (mock đã duyệt; app mẫu dùng chung layout dọc nên vòng tính theo bề ngang chỉ còn hai cung lớn sát mép): vòng giữa màn cỡ
-// như màn dọc, hai vùng bên đối xứng: thông báo trái, dòng pin phải, có nhạc thì trình phát ngay trên dòng pin.
 @Composable
 fun AodTickLandscape(
     state: AodState,
@@ -134,7 +129,6 @@ private fun TickDial(state: AodState) {
     )
 }
 
-// Hàng icon thông báo rồi thông báo mới nhất cách 12dp; dòng nào không có thì không chiếm chỗ.
 @Composable
 private fun TickNotifications(
     state: AodState,
@@ -177,8 +171,6 @@ private fun TickNotifications(
     }
 }
 
-// Thông báo mới nhất như notify_lt của app mẫu: icon 17dp, chữ in hoa giãn chữ một dòng, dài thì chạy chữ một lần; thông báo mới trượt xuống từ trên
-// như move_in_from_top.
 @Composable
 private fun TickLatest(
     latest: NotificationContentUiModel,
@@ -225,7 +217,6 @@ private fun TickLatest(
     }
 }
 
-// Thời tiết (khối dùng chung) một dòng dưới ngày; tắt thì không chiếm chỗ.
 @Composable
 private fun TickWeather(state: AodState) {
     val components = state.appearance.components
@@ -239,7 +230,6 @@ private fun TickWeather(state: AodState) {
     }
 }
 
-// Dòng pin như battery_lt của app mẫu (icon 15dp, chữ 14sp); đèn pin đang bật thì icon cạnh pin.
 @Composable
 private fun TickBattery(state: AodState) {
     val config = state.appearance.theme.config
@@ -255,7 +245,6 @@ private fun TickBattery(state: AodState) {
     )
 }
 
-// Trình phát của chủ đề (AodTickMedia qua AodMediaControls), cách dòng pin 16dp; không có nhạc thì không chiếm chỗ (cả khoảng cách).
 @Composable
 private fun TickPlayer(
     state: AodState,

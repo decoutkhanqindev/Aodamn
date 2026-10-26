@@ -49,10 +49,6 @@ import com.decoutkhanqindev.aodamn.presentation.theme.Grey8A
 import com.decoutkhanqindev.aodamn.presentation.theme.GreyB4
 import com.decoutkhanqindev.aodamn.presentation.theme.GreyED
 
-// Trình phát của chủ đề Sỏi: nút phát nằm trong khối hình màu nhạc (xoay khi phát / dừng; icon đen trên màu sáng, trắng trên màu tối),
-// thanh tiến trình gợn sóng lúc đang phát.
-// Vị trí bài nội suy mỗi giây và chỉ đọc trong AppSlider (pha vẽ) nên AOD không recompose theo tiến trình; sóng đứng yên, chỉ biên độ
-// đổi lúc phát / dừng để AOD không vẽ lại liên tục.
 @Composable
 fun AodPebbleMedia(
     media: MediaUiModel,

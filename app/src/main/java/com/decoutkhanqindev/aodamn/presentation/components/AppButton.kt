@@ -41,7 +41,6 @@ import com.decoutkhanqindev.aodamn.presentation.theme.RedLight
 import com.decoutkhanqindev.aodamn.presentation.theme.RoundedCornerShape24dp
 import com.decoutkhanqindev.aodamn.presentation.theme.TitleMedium
 
-// Việc chính của màn / sheet (việc app muốn user làm): nền mint đặc, chữ đen, to, nằm trên cùng. Tắt thì xám.
 @Composable
 fun AppPrimaryButton(
     text: String,
@@ -66,7 +65,6 @@ fun AppPrimaryButton(
     )
 }
 
-// Việc làm mất dữ liệu (bỏ thay đổi...): nền đỏ nhạt, không nổi bằng nút chính để user không bấm nhầm.
 @Composable
 fun AppDangerButton(
     text: String,
@@ -84,7 +82,6 @@ fun AppDangerButton(
     )
 }
 
-// Lựa chọn phụ (Hủy, Để sau, Tiếp tục sửa): chỉ có chữ.
 @Composable
 fun AppTextButton(
     text: String,
@@ -107,7 +104,6 @@ fun AppTextButton(
     )
 }
 
-// isCompact: bản thấp 44dp, chữ nhỏ cho thanh trên của màn sửa (Tùy chỉnh, màn chủ đề) để chừa chỗ cho AOD xem trước.
 @Composable
 private fun AppButtonBox(
     text: String,

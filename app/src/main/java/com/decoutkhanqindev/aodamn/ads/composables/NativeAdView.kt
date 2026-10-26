@@ -209,7 +209,6 @@ private data class NativeAdColors(
     val ctaText: Color,
 )
 
-// mutate() bắt buộc: drawable inflate từ XML dùng chung constant state, không mutate sẽ đổi màu mọi instance khác.
 private fun applyNativeAdColors(
     view: NativeAdView,
     colors: NativeAdColors,

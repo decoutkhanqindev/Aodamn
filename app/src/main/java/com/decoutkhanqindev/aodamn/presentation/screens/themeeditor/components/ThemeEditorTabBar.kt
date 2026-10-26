@@ -22,7 +22,6 @@ import com.decoutkhanqindev.aodamn.presentation.theme.Neutral12
 import com.decoutkhanqindev.aodamn.presentation.theme.Theme
 import kotlinx.collections.immutable.ImmutableList
 
-// Tab lấy từ AodThemeSpec.tabs của chủ đề; ít tab thì nằm giữa, nhiều thì cuộn ngang. Chạm tab đang mở thì đóng tấm chỉnh.
 @Composable
 fun ThemeEditorTabBar(
     tabs: ImmutableList<AodThemeTab>,

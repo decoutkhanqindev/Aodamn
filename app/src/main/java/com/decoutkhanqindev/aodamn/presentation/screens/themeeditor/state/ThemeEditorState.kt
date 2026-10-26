@@ -14,8 +14,6 @@ import com.decoutkhanqindev.aodamn.presentation.model.permission.PermissionUiMod
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
-// Một màn cho mọi chủ đề: xem trước (Sửa / Áp dụng, đang dùng thì Tùy chỉnh) rồi sửa (tab theo AodThemeSpec.tabs, Lưu). Khung xem
-// trước chỉ riêng chủ đề (đồng hồ, ngày, khối chủ đề tự vẽ), không có nền, thông báo, pin... của user: AOD đầy đủ chỉ ở Tùy chỉnh.
 @Immutable
 data class ThemeEditorState(
     val theme: AodThemeValue = AodThemeValue.DEFAULT,
@@ -28,7 +26,6 @@ data class ThemeEditorState(
     val history: ThemeEditorHistoryState = ThemeEditorHistoryState(),
     val isApplying: Boolean = false,
     val isLandscapePreview: Boolean = false,
-    // Áp dụng khi còn thiếu quyền bắt buộc: sheet liệt kê các quyền đó, cấp đủ thì tự áp dụng, đóng sheet thì không áp dụng.
     val requiredPermissions: ImmutableList<PermissionUiModel> = persistentListOf(),
     val isPermissionSheetVisible: Boolean = false,
 ) {
@@ -38,7 +35,6 @@ data class ThemeEditorState(
     val hasChanges: Boolean
         get() = !theme.spec.isSame(config, savedConfig)
 
-    // Chủ đề không có tab cho khối đó (vd Cổ điển không tự vẽ khối nào) thì giữ chế độ xem.
     fun focusedOn(block: AodBlockValue?): ThemeEditorState {
         val tab = theme.spec.tabOf(block) ?: return this
         return copy(isEditing = true, selectedTab = tab)

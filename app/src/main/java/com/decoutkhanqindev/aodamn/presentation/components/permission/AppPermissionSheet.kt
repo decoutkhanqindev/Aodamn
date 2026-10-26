@@ -17,8 +17,6 @@ import com.decoutkhanqindev.aodamn.presentation.model.permission.nextPermission
 import com.decoutkhanqindev.aodamn.presentation.theme.Black
 import kotlinx.collections.immutable.ImmutableList
 
-// Sheet xin quyền (tab AOD, áp dụng ở Tùy chỉnh / màn chủ đề, mục cần quyền ở Tùy chỉnh): hình điện thoại với khiên, các quyền theo thứ tự
-// và nút "Cấp quyền tiếp theo" mở đúng quyền còn thiếu kế tiếp, để user chỉ việc bấm một nút cho tới khi đủ. Một quyền thì nút là "Cho phép".
 @Composable
 fun AppPermissionSheet(
     isVisible: Boolean,

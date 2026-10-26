@@ -10,8 +10,6 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.asComposePath
 import android.graphics.Path as AndroidPath
 
-// Đường viền chữ số của Tháp lấy từ font (Paint.getTextPath) rồi kéo cao, co ngang theo TowerMetrics.CONDENSE trước khi tô hay vẽ nét, nên kiểu
-// viền có nét dày đều chứ không dày ngang mỏng dọc như khi nén cả chữ đã vẽ (cách làm như CardGlyphs của Thẻ, độ nén khác).
 @Stable
 class TowerGlyphs(typeface: Typeface) {
     private val digits: Map<Char, AndroidPath>
@@ -28,7 +26,6 @@ class TowerGlyphs(typeface: Typeface) {
         digitBox = bounds(digits.getValue('0'))
     }
 
-    // Chữ số cao đúng size.height (số 0 chạm đỉnh và chân ô), căn giữa ô theo bề ngang.
     fun digit(digit: Char, size: Size): Path {
         val source = digits[digit] ?: return Path()
         val box = bounds(source)

@@ -19,12 +19,9 @@ data class AodTabState(
     val activeTheme: AodThemeValue
         get() = design.appearance.clock.theme.value
 
-    // Onboarding có màn quyền riêng nhưng user bỏ qua màn Customize thì vào thẳng Main; thiếu quyền bắt buộc thì nhắc bằng bottom sheet.
     private val isMissingRequiredPermissions: Boolean
         get() = !isLoading && permission.requiredPermissions.isNotEmpty() && !permission.requiredPermissions.hasRequiredPermissions
 
-    // Đóng sheet (hay bỏ qua màn quyền) thì nó không tự hiện lại tới lần mở app sau (ViewModel tạo mới) hay lần bật AOD;
-    // trong lúc đó dòng cảnh báo dưới công tắc mở lại được sheet.
     val isPermissionSheetVisible: Boolean
         get() = isMissingRequiredPermissions && !permission.isSheetDismissed
 

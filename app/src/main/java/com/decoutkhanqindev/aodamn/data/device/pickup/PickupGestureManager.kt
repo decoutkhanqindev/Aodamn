@@ -17,7 +17,6 @@ class PickupGestureManager(
 ) : Tag {
     private val sensorManager = app.getSystemService(SensorManager::class.java)
 
-    // Cảm biến "nhấc máy" chuẩn của Android (hệ thống dùng cho "Nhấc lên để kiểm tra"): wake-up, one-shot, chạy trên chip cảm biến nên chờ lúc màn hình tắt gần như không tốn pin. Kiểu này bị ẩn trong SDK nên tìm theo tên; máy không có thì không hỗ trợ.
     private val pickupSensor: Sensor? =
         sensorManager.getSensorList(Sensor.TYPE_ALL).firstOrNull { sensor ->
             sensor.stringType == PICK_UP_GESTURE_TYPE &&
@@ -28,7 +27,6 @@ class PickupGestureManager(
     val isSupported: Boolean
         get() = pickupSensor != null
 
-    // Phát một lần khi nhấc máy; huỷ collect thì huỷ chờ. Không có cảm biến thì kết thúc ngay, không phát gì.
     val pickups: Flow<Unit> = callbackFlow {
         val sensor = pickupSensor
         val listener = object : TriggerEventListener() {

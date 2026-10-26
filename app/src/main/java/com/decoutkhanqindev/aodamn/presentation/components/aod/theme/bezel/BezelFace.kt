@@ -20,8 +20,6 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sin
 
-// Hình học mặt số Vành cho một kích thước, tính một lần trong drawWithCache. Vạch là tia từ tâm cắt trong dải giữa khung ngoài và khung trong (lệch
-// chẵn lẻ), nên dọc mép màn hình vạch dài ngắn theo góc như app mẫu. Màn ngang là cùng mặt số trải ngang: cặp số trên cạnh ngắn đổi thành 12 / 6.
 class BezelFace(size: Size, ticks: AodBezelTicksValue) {
     val center = Offset(size.width / 2f, size.height / 2f)
     val unit = min(size.width, size.height) / 2f
@@ -38,7 +36,6 @@ class BezelFace(size: Size, ticks: AodBezelTicksValue) {
         emptyList()
     }
 
-    // Không có vạch giờ dài chỗ có số trên cạnh ngắn (3 / 9 ở màn dọc, 12 / 6 ở màn ngang).
     val longTicks = rays(
         (1..12).filter { hour -> if (isLandscape) hour != 6 && hour != 12 else hour != 3 && hour != 9 }.map { hour -> hour * 30f },
     )
@@ -65,7 +62,6 @@ class BezelFace(size: Size, ticks: AodBezelTicksValue) {
     private fun inset(size: Size, x: Float, y: Float): Rect = Rect(left = x, top = y, right = size.width - x, bottom = size.height - y)
 }
 
-// Vạch tô bằng handBrush trải theo cả mặt số (gradient thì màu đổi theo chỗ của vạch quanh viền).
 fun DrawScope.drawBezelFace(
     face: BezelFace,
     paints: BezelPaints,
@@ -89,7 +85,6 @@ fun DrawScope.drawBezelFace(
     }
 }
 
-// Kim phút rồi kim giờ (đoạn mảnh từ tâm, đoạn dày phía ngoài), rồi chấm tâm màu kim có lỗ đen và vòng màu nhấn.
 fun DrawScope.drawBezelHands(
     face: BezelFace,
     paints: BezelPaints,

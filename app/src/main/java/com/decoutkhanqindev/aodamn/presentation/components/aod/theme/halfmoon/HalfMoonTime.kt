@@ -2,8 +2,6 @@ package com.decoutkhanqindev.aodamn.presentation.components.aod.theme.halfmoon
 
 import java.util.TimeZone
 
-// Giờ địa phương (múi giờ của máy, có giờ mùa hè) như setTime của HalfConcentricClock: giây có phần nghìn giây, phút có phần giây nên hai vòng
-// trôi liên tục; giờ / phút hiện hai chữ số ("HH" hoặc "hh" theo cài đặt 24 giờ của máy, "mm").
 class HalfMoonTime(epochMillis: Long) {
     private val dayMillis = Math.floorMod(epochMillis + TimeZone.getDefault().getOffset(epochMillis), DAY_MILLIS)
     private val hourOfDay = (dayMillis / HOUR_MILLIS).toInt()
@@ -19,7 +17,6 @@ class HalfMoonTime(epochMillis: Long) {
         private const val HOUR_MILLIS = 60 * MINUTE_MILLIS
         private const val DAY_MILLIS = 24 * HOUR_MILLIS
 
-        // Nhãn 00, 05 … 55 trên hai vòng.
         val Labels: List<String> = (0 until 60 step 5).map { value -> value.toString().padStart(2, '0') }
     }
 }

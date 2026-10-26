@@ -13,9 +13,6 @@ import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.toShader
 import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.AodGradient
 import com.decoutkhanqindev.aodamn.presentation.theme.BlackAlpha30
 
-// Bút vẽ của Vành bằng Paint của Android: số căn giữa theo nét chữ (getTextBounds) như app mẫu, và kim có bóng mờ (setShadowLayer, Compose chưa
-// có bóng cho nét). Typeface là file TTF tĩnh của Zalando Sans Expanded: Paint không đặt trục độ đậm nào (máy Xiaomi thay font khi có trục).
-// Màu gradient là shader: số tô theo khung nét chữ của chính số đó theo hướng đã chọn, kim tô dọc theo kim (from → to) như Cổ điển.
 @Stable
 class BezelPaints(typeface: Typeface) {
     private val number = Paint(Paint.ANTI_ALIAS_FLAG).apply {

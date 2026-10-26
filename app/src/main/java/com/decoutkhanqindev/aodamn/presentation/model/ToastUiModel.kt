@@ -4,7 +4,6 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarVisuals
 import androidx.compose.runtime.Immutable
 
-// Một toast của app (AppToastHost): hàng đợi và thời gian hiện dùng SnackbarHostState, phần vẽ là của app. isError: viền đỏ, icon cảnh báo.
 @Immutable
 data class ToastUiModel(
     override val message: String,

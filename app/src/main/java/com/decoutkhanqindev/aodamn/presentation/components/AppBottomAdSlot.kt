@@ -17,9 +17,6 @@ import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.aodamn.presentation.theme.Neutral12
 import com.decoutkhanqindev.aodamn.presentation.theme.Neutral17
 
-// Chỗ banner ở đáy màn, dưới thanh tab / thanh dưới, gồm cả khoảng thanh điều hướng của hệ thống (thanh bên trên không tự chừa nữa).
-// isHidden: trượt xuống khỏi màn hình (nhấn giữ xem AOD toàn màn hình) nhưng vẫn ở trong composition để banner không bị huỷ rồi tải lại.
-// background: cùng màu thanh bên trên để khoảng thanh điều hướng liền màu; không có thanh bên trên thì trong suốt.
 @Composable
 fun AppBottomAdSlot(
     modifier: Modifier = Modifier,

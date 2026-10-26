@@ -20,7 +20,6 @@ data class AodInteractionUiModel(
         actions[gesture] ?: AodActionValue.fromCode(gesture.defaultActionCode)
 }
 
-// Mỗi thao tác một key riêng trong DataStore: bảng ánh xạ đặt ở đây để màn cài đặt và AOD dùng chung.
 fun DataStoreManager.gestureActionCode(gesture: AodGestureValue): StateFlow<Int?> = when (gesture) {
     AodGestureValue.DOUBLE_TAP -> aodDoubleTapAction
     AodGestureValue.SWIPE_UP -> aodSwipeUpAction

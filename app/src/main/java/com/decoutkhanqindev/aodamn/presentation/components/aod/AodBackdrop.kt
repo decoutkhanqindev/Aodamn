@@ -39,9 +39,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.WallpaperValue
 
-// Ảnh nền (có sẵn hay ảnh từ máy) gắn với chiều dọc tự nhiên của máy như hình nền điện thoại: màn hình xoay ngang (AOD ngang, khung xem trước
-// xoay) thì nền không xoay theo mà xoay ngược rotationZ trong khung đúng cỡ màn dọc, nên vẫn đứng như lúc cầm dọc; chỉ đồng hồ và các khối đổi
-// sang bố cục ngang. rotationZ null: theo góc xoay thật của màn hình (AOD); khung xem trước / bản thu nhỏ truyền góc cố định.
 @Composable
 fun AodBackdrop(
     rotationZ: Float?,
@@ -67,12 +64,6 @@ fun AodBackdrop(
     }
 }
 
-// Góc xoay ngược với màn hình: Surface.ROTATION_90 là nội dung đã xoay 90° theo chiều kim đồng hồ so với máy, nên nền xoay -90° để đứng yên.
-// Góc phải khớp với cửa sổ đang vẽ: lúc DisplayListener báo đổi, cửa sổ chưa nhận hướng mới và Display của cửa sổ (view.display, theo cấu hình
-// của Activity) vẫn trả góc cũ, đọc lúc đó là trễ một nhịp (xoay ngang thì nền xoay theo, xoay về dọc thì nền vẫn ngang). Nên đọc lại cả khi
-// cửa sổ đổi hướng (isLandscape) lẫn khi màn hình báo đổi (lật ngang 180° không đổi kích thước; đọc thêm một lần sau 500 ms phòng khi máy báo
-// trước lúc cửa sổ xoay xong), và chỉ lấy góc thật của màn hình (Display của app, không theo cấu hình Activity) khi nó khớp hướng cửa sổ; chưa
-// khớp (đang chuyển, hay vừa mở AOD ngang mà màn hình chưa xoay) thì lấy góc theo cấu hình của cửa sổ.
 @Composable
 private fun rememberDisplayCounterRotation(isLandscape: Boolean): Float {
     val view = LocalView.current

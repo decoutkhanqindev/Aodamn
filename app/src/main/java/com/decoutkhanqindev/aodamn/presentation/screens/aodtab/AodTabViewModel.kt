@@ -20,8 +20,6 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-// isPermissionSkipped: user bấm Bỏ qua ở màn quyền onboarding thì sheet quyền bắt đầu ở trạng thái đã đóng, chỉ hiện lại khi bật AOD
-// hay chạm dòng cảnh báo; Áp dụng ở Tùy chỉnh / màn chủ đề vẫn đòi quyền như thường.
 class AodTabViewModel(
     isPermissionSkipped: Boolean,
     private val dataStoreManager: DataStoreManager,
@@ -71,8 +69,6 @@ class AodTabViewModel(
         }
     }
 
-    // Giao diện đổi ở màn Customize và màn chủ đề, quyền đổi ở app Cài đặt (mục cần quyền chỉ hiện khi có quyền), nên đọc lại mỗi lần
-    // màn hình resume.
     private fun refreshDesign() {
         designJob?.cancel()
         designJob = viewModelScope.launch {
@@ -81,8 +77,6 @@ class AodTabViewModel(
         }
     }
 
-    // Đặt lại về chủ đề mặc định: chỉ đổi chủ đề đang dùng, kiểu đã lưu của từng chủ đề giữ nguyên. Chờ ghi xong rồi đọc lại thẻ
-    // "Giao diện của bạn" và chủ đề đang dùng.
     private fun resetTheme() {
         updateState { copy(isThemeResetConfirmVisible = false) }
         viewModelScope.launch {
@@ -92,7 +86,6 @@ class AodTabViewModel(
         }
     }
 
-    // Trạng thái quyền đổi ở app Cài đặt chứ không phải ở đây, nên đọc lại mỗi lần màn hình resume.
     private fun refreshPermissions() {
         updateState { copy(permission = permission.copy(requiredPermissions = permissionManager.requiredAodPermissions())) }
     }
@@ -101,8 +94,6 @@ class AodTabViewModel(
         updateState { copy(permission = permission.copy(isSheetDismissed = false)) }
     }
 
-    // Bật AOD là lúc cần quyền: còn thiếu quyền bắt buộc thì sheet nhắc quyền hiện lại dù trước đó đã bị đóng. Áp dụng giao diện ở
-    // Tùy chỉnh / màn chủ đề thì chính màn đó đòi đủ quyền bắt buộc trước khi ghi.
     private fun toggleAod(isEnabled: Boolean) {
         if (isEnabled) showPermissionSheet()
         dataStoreManager.saveIsAodEnabled(isEnabled)
@@ -131,7 +122,6 @@ class AodTabViewModel(
         viewModelScope.launch { sendEffect(effect) }
     }
 
-    // Đã cho phép thì start lại service để nó đăng lại thông báo; bị từ chối thì mở trang cài đặt thông báo (sau 2 lần từ chối hệ thống không hiện hộp thoại nữa).
     private fun onNotificationPermissionResult(isGranted: Boolean) {
         refreshPermissions()
         viewModelScope.launch {

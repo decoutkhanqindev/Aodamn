@@ -16,15 +16,9 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.collections.immutable.toImmutableList
 
-// Chủ đề Viên nang: giờ:phút chữ rất đậm nằm trong một viên nang (đặc hoặc viền), ngày in hoa đậm ngay dưới, trình phát nhạc riêng (nút phát
-// tròn đặc, thanh tiến trình dày tách đôi), pin + icon thông báo chung một dòng dưới cùng. Các khối dùng chung khác (thời tiết, sự kiện, ghi
-// nhớ, nét vẽ) nằm giữa ngày và nhạc, kiểu / font / cỡ / màu chỉnh ở Tùy chỉnh như Cổ điển; thông báo mới nhất không có (dòng trạng thái chỉ có
-// icon). App mẫu có kiểu viên, hai màu, cỡ; thêm màu ngày, màu nhạc như Sỏi và màu dòng pin + thông báo.
 object CapsuleThemeSpec : AodThemeSpec {
-    // Font cố định của chủ đề: chữ số ExtraBold, ngày Bold, trình phát và dòng trạng thái.
     val Font: FontFamily = FontFamilyPlusJakartaSans
 
-    // Đặc: viên tô màu viên pha nhạt (xám tối như ảnh mẫu); viền: nét màu viên. Mặc định viền xanh chanh như thẻ chủ đề trong lưới của app mẫu.
     val Style = AodChoiceOption(
         key = "capsule_style",
         labelRes = R.string.theme_opt_tile_style,
@@ -42,11 +36,9 @@ object CapsuleThemeSpec : AodThemeSpec {
     val CapsuleColor = AodColorOption(key = "capsule_color", labelRes = R.string.theme_color_capsule, default = Lime, isGradientAllowed = true)
     val DateColor = AodColorOption(key = "date_color", labelRes = R.string.theme_color_date, default = GreyED, isGradientAllowed = true)
 
-    // Tên bài, nút phát và phần đã nghe của thanh tiến trình; nghệ sĩ, nút lùi / tới giữ xám.
     val MediaColor = AodColorOption(key = "media_color", labelRes = R.string.theme_color_media, default = Lime, isGradientAllowed = true)
     val StatusColor = AodColorOption(key = "status_color", labelRes = R.string.theme_color_status, default = GreyED, isGradientAllowed = true)
 
-    // Mỗi khối chủ đề tự vẽ (ownBlocks) có tab ở đây: Tùy chỉnh › Ngày / Pin / Thông báo / Nhạc dẫn sang màn chủ đề.
     override val tabs = persistentListOf(
         AodThemeTab(
             iconRes = R.drawable.ic_clock,

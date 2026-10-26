@@ -27,7 +27,6 @@ class AmbientLightManager(
     val isAvailable: Boolean
         get() = lightSensor != null
 
-    // Hết người collect thì huỷ đăng ký cảm biến ngay và về null, để lần AOD sau không đọc độ sáng cũ.
     val lux: StateFlow<Float?> = callbackFlow<Float?> {
         val listener = object : SensorEventListener {
             override fun onSensorChanged(event: SensorEvent) {

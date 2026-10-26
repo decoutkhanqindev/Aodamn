@@ -35,7 +35,6 @@ class NetworkManager(
                 trySend(networkCapabilities.hasInternetAccess())
             }
 
-            // activeNetwork lúc này vẫn trả về network đang mất (còn VALIDATED) → phải gửi false thẳng.
             override fun onLost(network: Network) {
                 trySend(false)
             }

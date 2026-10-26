@@ -48,8 +48,6 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.pebble.AodTileSt
 import com.decoutkhanqindev.aodamn.presentation.theme.FontFamilyBigShouldersDisplay
 import kotlin.math.max
 
-// Đồng hồ Thẻ: số giờ cao R bên trái, cột phải gồm phút cao 0,5 R (ngang đỉnh số giờ) trên ô AM/PM kéo tới chân số giờ, cả cụm trong thẻ bo
-// góc. Mỗi chữ số căn giữa một ô rộng cố định nên giờ nào thẻ cũng như nhau; số đổi thì mờ chéo trong ô.
 @Composable
 fun AodCardClock(
     nowMillis: Long,
@@ -76,7 +74,6 @@ fun AodCardClock(
     val minuteBrush = config.brushOf(CardThemeSpec.MinuteColor)
     val cardBrush = config.brushOf(CardThemeSpec.CardColor)
 
-    // Giờ luôn đọc trái sang phải: ngôn ngữ RTL không được đảo thứ tự chữ số hay đưa cột phút sang trái.
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
         Box(
             modifier = modifier
@@ -187,8 +184,6 @@ private fun CardDigit(
     )
 }
 
-// Ô AM / PM (24 giờ: chữ của app mẫu): tô màu phút pha nhạt, kiểu viền là nét mảnh; chữ luôn tô đặc như app mẫu. Màu phút là gradient thì
-// ô và chữ tô theo khung ô; mỗi chữ số tô theo ô của số đó, nền thẻ theo khung thẻ.
 @Composable
 private fun CardTag(
     text: String,
@@ -235,7 +230,6 @@ private fun CardTag(
     }
 }
 
-// Ngày dưới thẻ: thứ • ngày tháng in hoa đậm, chiều cao dòng bằng cỡ chữ để khoảng cách tới thẻ đúng như app mẫu.
 @Composable
 fun CardDate(
     nowMillis: Long,

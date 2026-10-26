@@ -35,7 +35,6 @@ fun AppTopBar(
     )
 }
 
-// isTitleCentered = false: tiêu đề sát nút quay lại và chiếm phần còn lại của thanh (thanh trên của màn sửa đặt nút hoàn tác ở đó).
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppTopBar(

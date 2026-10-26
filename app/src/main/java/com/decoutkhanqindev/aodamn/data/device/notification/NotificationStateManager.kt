@@ -31,11 +31,9 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import kotlin.math.roundToInt
 
-// App không tự đăng ký nhận thông báo được: chỉ listener do hệ thống bind (khi user đã cấp "Truy cập thông báo") nhận, nên listener đẩy dữ liệu vào đây.
 class NotificationStateManager(
     private val app: Application,
 ) : Tag {
-    // Một luồng nền xử lý lần lượt từng callback: giữ đúng thứ tự, và nạp icon từ resource của app khác không chặn main thread.
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default.limitedParallelism(1))
     private val iconSizePx = (ICON_SIZE_DP * app.resources.displayMetrics.density).roundToInt()
     private val iconCache = HashMap<String, Bitmap>()
@@ -44,11 +42,9 @@ class NotificationStateManager(
         app.getSystemService(DevicePolicyManager::class.java)
     private var shownKeys = emptySet<String>()
 
-    // Nóng sẵn vì listener được bind suốt khi đã có quyền: khung đầu tiên của AOD đọc giá trị hiện tại là đủ. Mới nhất trước.
     private val _notifications = MutableStateFlow<List<ActiveNotification>>(emptyList())
     val notifications: StateFlow<List<ActiveNotification>> = _notifications.asStateFlow()
 
-    // Sự kiện, không phải state: mỗi thông báo mới chỉ báo một lần; không ai collect (AOD không hiện) thì bỏ.
     private val _alerts = MutableSharedFlow<ActiveNotification>(
         extraBufferCapacity = ALERT_BUFFER_SIZE,
         onBufferOverflow = BufferOverflow.DROP_OLDEST,
@@ -74,7 +70,6 @@ class NotificationStateManager(
         update(active = active, rankingMap = rankingMap, posted = null)
     }
 
-    // Mất quyền hoặc bị huỷ bind: không còn biết thông báo nào đang có.
     fun onListenerDisconnected() {
         scope.launch {
             shownKeys = emptySet()
@@ -138,7 +133,6 @@ class NotificationStateManager(
         }
     }
 
-    // Như màn hình chờ của hệ thống: bỏ thông báo thường trực, tóm tắt nhóm, im lặng, bị Không làm phiền ẩn khỏi màn hình chờ, của chính app, và thông báo nhạc (đã có điều khiển nhạc).
     private fun StatusBarNotification.isShownOnAmbient(ranking: Ranking): Boolean =
         packageName != app.packageName &&
                 !isOngoing &&
@@ -148,14 +142,12 @@ class NotificationStateManager(
                 ranking.importance >= NotificationManager.IMPORTANCE_DEFAULT &&
                 ranking.suppressedVisualEffects and NotificationManager.Policy.SUPPRESSED_EFFECT_AMBIENT == 0
 
-    // App hoặc user đã ẩn thông báo này trên màn hình khoá (VISIBILITY_SECRET; tuỳ chỉnh theo kênh chỉ đọc được từ Android 12), hoặc app đang bị tạm ngưng.
     private fun StatusBarNotification.isVisibleOnLockScreen(ranking: Ranking): Boolean =
         notification.visibility != Notification.VISIBILITY_SECRET &&
                 (Build.VERSION.SDK_INT < Build.VERSION_CODES.S ||
                         ranking.lockscreenVisibilityOverride != Notification.VISIBILITY_SECRET) &&
                 !ranking.isSuspended
 
-    // Đọc lại mỗi lần cập nhật vì user đổi cài đặt màn hình khoá lúc nào cũng được. Quản lý thiết bị cấm hiện nội dung thì coi như tắt "nội dung nhạy cảm".
     private fun readLockScreenPolicy(): LockScreenPolicy {
         val disabledFeatures = devicePolicyManager?.getKeyguardDisabledFeatures(null) ?: 0
         val isRedactionForced =
@@ -169,7 +161,6 @@ class NotificationStateManager(
         )
     }
 
-    // Hai cài đặt này không có hằng số public nhưng app vẫn đọc được; chưa đặt = mặc định của hệ thống (bật). ROM chặn đọc thì coi như tắt cho kín đáo.
     private fun isLockScreenSettingOn(name: String): Boolean =
         try {
             Settings.Secure.getInt(app.contentResolver, name, SETTING_ON) != SETTING_OFF
@@ -178,7 +169,6 @@ class NotificationStateManager(
             false
         }
 
-    // Như màn hình khoá của hệ thống: tắt hiện thông báo thì che hết; máy có khoá bảo mật thì che thông báo VISIBILITY_PRIVATE khi tắt "nội dung nhạy cảm", và che kênh user đặt "ẩn nội dung" (đọc được từ Android 12). Bị che thì dùng bản công khai app tự soạn, không có thì null.
     private fun StatusBarNotification.lockScreenContent(
         ranking: Ranking,
         policy: LockScreenPolicy
@@ -193,7 +183,6 @@ class NotificationStateManager(
         return source?.content()
     }
 
-    // Tiêu đề và một dòng nội dung như thông báo thu gọn; app chỉ đặt chữ dài (BigTextStyle) thì lấy chữ đó.
     private fun Notification.content(): NotificationContent = NotificationContent(
         title = extras.getCharSequence(Notification.EXTRA_TITLE)?.toString()?.trim().orEmpty(),
         text = (extras.getCharSequence(Notification.EXTRA_TEXT) ?: extras.getCharSequence(
@@ -204,7 +193,6 @@ class NotificationStateManager(
             .orEmpty(),
     )
 
-    // Thông báo mới, hoặc cập nhật không đặt "chỉ báo một lần" (vd tin nhắn mới trong cùng cuộc trò chuyện); bị Không làm phiền chặn thì không báo.
     private fun StatusBarNotification.isAlerting(rankingMap: RankingMap, isNew: Boolean): Boolean {
         val ranking = Ranking()
         return rankingMap.getRanking(key, ranking) &&
@@ -212,7 +200,6 @@ class NotificationStateManager(
                 (isNew || notification.flags and Notification.FLAG_ONLY_ALERT_ONCE == 0)
     }
 
-    // Thông báo nhạc mới nhất, cách trình phát nhạc trên màn hình khoá của hệ thống chọn phiên nhạc.
     private fun List<StatusBarNotification>.latestMediaSessionToken(rankingMap: RankingMap): MediaSession.Token? {
         val ranking = Ranking()
         return filter { sbn ->
@@ -244,7 +231,6 @@ class NotificationStateManager(
         )
     }
 
-    // Nạp sẵn ở đây để AOD vẽ ngay khung đầu tiên; cache theo (package, resource) vì app thường đăng lại cùng thông báo với cùng icon.
     private fun StatusBarNotification.loadSmallIcon(): Bitmap? {
         val icon = notification.smallIcon ?: return null
         val cacheKey = if (icon.type == Icon.TYPE_RESOURCE) {
@@ -271,7 +257,6 @@ class NotificationStateManager(
         private const val SETTING_OFF = 0
     }
 
-    // Màn hình khoá của hệ thống đang cho hiện tới đâu.
     private class LockScreenPolicy(
         val isContentShown: Boolean,
         val isSecure: Boolean,

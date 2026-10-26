@@ -13,7 +13,6 @@ import com.decoutkhanqindev.aodamn.presentation.theme.FontFamilyJetBrainsMono
 import com.decoutkhanqindev.aodamn.presentation.theme.FontFamilyJosefinSans
 import com.decoutkhanqindev.aodamn.presentation.theme.FontFamilyPlusJakartaSans
 
-// Font đóng gói sẵn trong app nên AOD không cần mạng lúc hiện. Mã 0–3 giữ từ bản dùng font hệ thống để máy cũ không mất lựa chọn.
 @Immutable
 enum class ClockFontValue(
     override val code: Int,

@@ -44,9 +44,6 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.tower.TowerTheme
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodIntent
 import com.decoutkhanqindev.aodamn.presentation.theme.Grey5A
 
-// Trình phát của Tháp theo layout app mẫu: lùi · tên bài 13sp / nghệ sĩ 11,5sp (80%) giãn chữ 0,38 em ở giữa · tới, mỗi nút ô 40dp cách mép
-// 20dp; thanh tiến trình mảnh cách 30dp, lùi vào 30dp hai bên. Không có nút phát: chạm tên bài để phát / dừng như app mẫu, đang dừng thì tên bài
-// mờ đi. Rộng bằng màn 393dp, cột hẹp hơn (màn ngang) thì hẹp theo.
 @Composable
 fun AodTowerMedia(
     media: MediaUiModel,
@@ -155,7 +152,6 @@ fun AodTowerMedia(
     }
 }
 
-// Nút lùi / tới: ô chạm 40dp, icon 14dp như app mẫu (ô 40dp đệm 14dp); không lùi / tới được thì xám.
 @Composable
 private fun TowerMediaButton(
     @DrawableRes iconRes: Int,

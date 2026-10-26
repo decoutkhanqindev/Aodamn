@@ -6,7 +6,6 @@ import androidx.compose.runtime.Immutable
 import com.decoutkhanqindev.aodamn.R
 import com.decoutkhanqindev.aodamn.data.local.datastore.DataStoreManager
 
-// Mặc định giữ cách chạy trước đây: chạm 2 lần và phím back về màn hình khoá; phím âm lượng không gán thì vẫn chỉnh âm lượng.
 @Immutable
 enum class AodGestureValue(
     @param:StringRes val labelRes: Int,

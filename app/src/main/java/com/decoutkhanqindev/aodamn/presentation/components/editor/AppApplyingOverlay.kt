@@ -38,8 +38,6 @@ import com.decoutkhanqindev.aodamn.presentation.theme.EdgeGlowGradient
 import com.decoutkhanqindev.aodamn.presentation.theme.GreyED
 import com.decoutkhanqindev.aodamn.presentation.theme.Neutral17
 
-// Lớp phủ chặn chạm lúc đang ghi (Áp dụng ở Tùy chỉnh, Lưu / Áp dụng ở màn chủ đề): animation viền sáng của icon app và một vệt sáng chạy
-// qua lại trên thanh mảnh thay vòng xoay Material; Back do màn tự chặn.
 @Composable
 fun AppApplyingOverlay(
     text: String,

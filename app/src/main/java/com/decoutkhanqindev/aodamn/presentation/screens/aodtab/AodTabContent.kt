@@ -63,7 +63,6 @@ fun AodTabContent(
             enter = fadeIn(),
             exit = fadeOut(),
         ) {
-            // Cả tab là một lưới 3 cột (lưới chủ đề lazy không lồng được trong verticalScroll): phần đầu chiếm cả hàng, mỗi chủ đề một ô.
             LazyVerticalGrid(
                 columns = GridCells.Fixed(3),
                 modifier = Modifier.fillMaxSize(),

@@ -53,10 +53,6 @@ import com.decoutkhanqindev.aodamn.presentation.theme.GreyED
 import com.decoutkhanqindev.aodamn.presentation.theme.Mint
 import com.decoutkhanqindev.aodamn.presentation.theme.Red
 
-// Dòng trạng thái của chủ đề tự vẽ pin + thông báo (AodBlockValue.STATUS: Số áo, Viên nang): pin (icon pin dọc, đang sạc thì có tia sét) ·
-// icon các app đang có thông báo, chung một dòng. Đèn pin đang bật thì icon Mint cạnh pin. Mọi kích thước theo glyphHeight (chiều cao icon pin,
-// tỉ lệ đo trên ảnh mẫu Số áo); gapScale thu khoảng cách cho chủ đề có dòng chặt hơn (Viên nang). Không có gì để hiện thì không chiếm chỗ.
-// brush khác null (màu dòng trạng thái là gradient) thì pin, chữ, chấm, icon tô gradient theo khung của từng phần; pin yếu vẫn đỏ.
 @Composable
 fun AodStatusLine(
     battery: BatteryUiModel?,
@@ -170,8 +166,6 @@ fun AodStatusLine(
     }
 }
 
-// Chữ của dòng trạng thái: chiều cao dòng đúng bằng cỡ chữ (font cao tự nhiên 1,26 lần cỡ chữ, nếu không chốt thì dòng cao hơn icon và bị cắt khi hàng
-// bị khống chế chiều cao); số căn giữa theo dòng, nét chữ tràn ra ngoài khung dòng không bị cắt.
 @Composable
 private fun StatusText(
     text: String,
@@ -202,8 +196,6 @@ private fun StatusText(
     )
 }
 
-// Pin dọc: viền và mức pin tô từ dưới lên (pin yếu tô đỏ); đang sạc thì tô đầy với tia sét khoét đen như ảnh mẫu. Kích thước do nơi gọi đặt,
-// nét và bo góc theo bề rộng.
 @Composable
 private fun AodBatteryGlyph(
     battery: BatteryUiModel,
@@ -271,7 +263,6 @@ private fun AodBatteryGlyph(
     )
 }
 
-// Tia sét trong thân pin, toạ độ theo tỉ lệ bề ngang / chiều cao thân pin.
 private val BoltPoints = listOf(
     0.62f to 0.12f,
     0.22f to 0.56f,

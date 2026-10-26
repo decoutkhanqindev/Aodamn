@@ -19,15 +19,12 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.collections.immutable.toImmutableList
 
-// Chủ đề Sỏi: giờ và phút mỗi số một khối hình mềm (8 hình, đặc hoặc viền), dòng ngày ngay dưới, số đổi có animation; trình phát
-// nhạc riêng (nút phát trong khối hình, thanh tiến trình gợn sóng). Khối, chữ số, ngày và nhạc mỗi phần một màu.
 object PebbleThemeSpec : AodThemeSpec {
     val HourShape = shapeOption(key = "hour_shape", default = AodShapeValue.COOKIE)
     val HourStyle = styleOption(key = "hour_style", default = AodTileStyleValue.FILLED)
     val MinuteShape = shapeOption(key = "minute_shape", default = AodShapeValue.FLOWER)
     val MinuteStyle = styleOption(key = "minute_style", default = AodTileStyleValue.OUTLINE)
 
-    // Font cố định của chủ đề (không cho chọn): chữ số, ngày và trình phát. Khoá "font" đã lưu ở bản cũ bị bỏ qua.
     val Font: FontFamily = FontFamilyPlusJakartaSans
     val Size = AodRangeOption(
         key = "size",
@@ -38,8 +35,6 @@ object PebbleThemeSpec : AodThemeSpec {
     )
     val Stacked = AodToggleOption(key = "stacked", labelRes = R.string.theme_opt_stacked, default = false)
 
-    // Màu từng phần: số trên khối đặc mặc định đen như khoét lỗ, trên khối viền cùng màu khối. Mặc định hai tông tím + hồng (giờ tím, phút
-    // và nhạc hồng, ngày lavender) cho thẻ chủ đề bắt mắt.
     val HourTileColor = AodColorOption(
         key = "hour_tile_color",
         labelRes = R.string.theme_color_hour_tile,
@@ -86,7 +81,6 @@ object PebbleThemeSpec : AodThemeSpec {
         default = AodProgressStyleValue.WAVE,
     )
 
-    // Mỗi tab một phần của chủ đề như khối ở Tùy chỉnh: kiểu rồi màu của chính phần đó (không gom màu vào một tab riêng).
     override val tabs = persistentListOf(
         AodThemeTab(
             iconRes = R.drawable.ic_clock,

@@ -29,7 +29,6 @@ fun rememberAodPreview(
     }
 }
 
-// Dữ liệu mẫu cố định (chữ lấy theo ngôn ngữ đang dùng, giờ 08:30) cho khung xem trước AOD và ảnh xem trước kiểu từng khối.
 @Composable
 fun rememberAodPreviewSamples(): CustomizePreviewSamples {
     val notificationTitle = stringResource(R.string.customize_sample_notification_title)

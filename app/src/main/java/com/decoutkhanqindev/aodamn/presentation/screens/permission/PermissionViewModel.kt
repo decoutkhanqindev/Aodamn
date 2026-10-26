@@ -37,12 +37,10 @@ class PermissionViewModel(
         }
     }
 
-    // Quyền được cấp ở app Cài đặt chứ không phải ở đây, nên đọc lại mỗi lần màn hình resume.
     private fun refreshPermissions() {
         updateState { copy(permissions = permissionManager.requiredAodPermissions()) }
     }
 
-    // Màn này chỉ có quyền bắt buộc: "Hiển thị trên ứng dụng khác", thông báo và hai quyền riêng của Xiaomi.
     private fun openPermissionSettings(permission: PermissionValue) {
         val effect = when (permission) {
             PermissionValue.OVERLAY -> PermissionEffect.OpenOverlaySettings
@@ -61,7 +59,6 @@ class PermissionViewModel(
         viewModelScope.launch { sendEffect(effect) }
     }
 
-    // Đã cho phép thì start lại service để nó đăng lại thông báo; bị từ chối thì mở trang cài đặt thông báo (sau 2 lần từ chối hệ thống không hiện hộp thoại nữa).
     private fun onNotificationPermissionResult(isGranted: Boolean) {
         refreshPermissions()
         viewModelScope.launch {
@@ -75,7 +72,6 @@ class PermissionViewModel(
         }
     }
 
-    // Đọc lại quyền ngay lúc bấm (quyền có thể vừa bị tắt mà màn chưa kịp đọc lại); onboarding đã xong từ lúc vào màn này.
     private fun confirmPermissions() {
         val permissions = permissionManager.requiredAodPermissions()
         updateState { copy(permissions = permissions) }

@@ -37,7 +37,6 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeConfig
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.classic.ClassicThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.theme.Grey6E
 
-// Hình thu nhỏ một mặt đồng hồ Cổ điển ở danh sách chọn mặt: màu / font mặc định (không theo màu, font đang chỉnh), giờ mẫu cố định 08:30.
 @Composable
 fun AodClassicFacePreview(face: ClockFaceValue) {
     val nowMillis = rememberAodPreviewSamples().nowMillis
@@ -74,7 +73,6 @@ fun AodClassicFacePreview(face: ClockFaceValue) {
     }
 }
 
-// Chủ đề Cổ điển: 4 mặt đồng hồ (số, số xếp chồng, kim, kim tối giản), giờ và phút màu riêng.
 @Composable
 fun AodClassicClock(
     nowMillis: Long,
@@ -134,8 +132,6 @@ private fun AodDigitalClock(
     val timeFormatter = rememberTimeFormatter()
     val time = now.format(timeFormatter)
 
-    // Phần trước dấu ':' là giờ, từ dấu ':' trở đi là phút (kèm AM / PM); định dạng giờ không có ':' thì cả chuỗi theo màu giờ. Gradient
-    // của span trải theo cả dòng giờ nên giờ và phút cùng gradient thì liền một dải.
     val colon = time.indexOf(':')
     val text = remember(time, hourBrush, minuteBrush) {
         buildAnnotatedString {
@@ -246,8 +242,6 @@ private fun AodAnalogClock(
     }
 }
 
-// Kim và mốc giờ tô gradient dọc theo chính nó (gốc = màu Đầu, đầu kim = màu Cuối), không theo hướng của gradient: kim xoay nên hướng cố
-// định sẽ làm kim đổi màu theo giờ.
 private fun DrawScope.drawGradientLine(
     colors: List<Color>,
     start: Offset,

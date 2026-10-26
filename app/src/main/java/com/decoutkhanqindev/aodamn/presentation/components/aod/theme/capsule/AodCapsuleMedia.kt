@@ -44,8 +44,6 @@ import com.decoutkhanqindev.aodamn.presentation.theme.Black
 import com.decoutkhanqindev.aodamn.presentation.theme.Grey3A
 import com.decoutkhanqindev.aodamn.presentation.theme.GreyB4
 
-// Trình phát của Viên nang như ảnh mẫu: tên bài (màu nhạc) / nghệ sĩ bên trái, lùi · nút phát tròn đặc màu nhạc (icon đen) · tới bên phải, thanh
-// tiến trình dày tách đôi (phần đã nghe màu nhạc, một khe nhỏ, phần còn lại xám). Rộng 315dp như ảnh mẫu, cột hẹp hơn (màn ngang) thì hẹp theo.
 @Composable
 fun AodCapsuleMedia(
     media: MediaUiModel,
@@ -122,7 +120,6 @@ fun AodCapsuleMedia(
     }
 }
 
-// Nút phát tròn đặc 35dp trong vùng chạm 44dp.
 @Composable
 private fun CapsulePlayButton(
     isPlaying: Boolean,
@@ -154,7 +151,6 @@ private fun CapsulePlayButton(
     }
 }
 
-// Thanh dày 6dp: phần đã nghe và phần còn lại là hai đoạn bo tròn cách nhau một khe 5dp.
 @Composable
 private fun CapsuleProgressTrack(
     fraction: () -> Float,

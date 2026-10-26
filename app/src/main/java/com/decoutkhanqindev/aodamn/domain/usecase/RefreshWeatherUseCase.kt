@@ -4,7 +4,6 @@ import com.decoutkhanqindev.aodamn.domain.repository.WeatherRepository
 import com.decoutkhanqindev.aodamn.utils.suspendRunCatching
 import kotlinx.coroutines.flow.first
 
-// Thời tiết hiện tại chỉ đổi theo từng chục phút: bản đã lưu còn mới thì không gọi mạng và không bật định vị lại.
 class RefreshWeatherUseCase(private val repository: WeatherRepository) {
     suspend operator fun invoke(nowMillis: Long, isForced: Boolean = false): Result<Unit> =
         suspendRunCatching {

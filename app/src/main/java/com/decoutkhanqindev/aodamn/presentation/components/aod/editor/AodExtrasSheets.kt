@@ -85,7 +85,6 @@ import com.decoutkhanqindev.aodamn.presentation.theme.RoundedCornerShape12dp
 import com.decoutkhanqindev.aodamn.presentation.theme.RoundedCornerShape16dp
 import com.decoutkhanqindev.aodamn.presentation.theme.White
 
-// Sửa ghi nhớ: ô nhập nền đen viền mint, số ký tự ở góc, vài gợi ý nhanh (chạm là điền), Lưu / Hủy.
 @Composable
 fun MemoEditorSheet(
     isVisible: Boolean,
@@ -183,7 +182,6 @@ fun MemoEditorSheet(
     }
 }
 
-// Vẽ nhanh: khung vuông nền đen, Hoàn tác nét / Xóa hết, Lưu hình / Hủy. Sheet không kéo được để nét vẽ dọc không kéo sheet xuống.
 @Composable
 fun DrawingPadSheet(
     isVisible: Boolean,

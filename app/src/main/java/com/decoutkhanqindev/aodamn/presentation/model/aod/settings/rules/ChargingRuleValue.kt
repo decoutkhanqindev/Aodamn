@@ -15,7 +15,6 @@ enum class ChargingRuleValue(
     PLUGGED(code = 1, labelRes = R.string.charging_rule_plugged, iconRes = R.drawable.ic_battery_charging),
     ON_BATTERY(code = 2, labelRes = R.string.charging_rule_on_battery, iconRes = R.drawable.ic_battery_full);
 
-    // Không đọc được trạng thái cắm nguồn (null) thì không chặn AOD.
     fun allows(isPlugged: Boolean?): Boolean = when (this) {
         ALWAYS -> true
         PLUGGED -> isPlugged != false

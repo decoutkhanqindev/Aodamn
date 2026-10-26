@@ -109,7 +109,6 @@ class DataStoreManager(
     val isAodNotificationContentEnabled: StateFlow<Boolean?> =
         isAodNotificationContentEnabledKey.asStateFlow(default = DEFAULT_IS_AOD_NOTIFICATION_CONTENT_ENABLED)
 
-    // Mặt / font / màu / cỡ đồng hồ của bản trước khi có chủ đề: chỉ đọc, làm cấu hình ban đầu cho chủ đề Cổ điển.
     private val aodClockFaceKey: Preferences.Key<Int> = intPreferencesKey(AOD_CLOCK_FACE_KEY)
     val aodClockFace: StateFlow<Int?> =
         aodClockFaceKey.asStateFlow(default = DEFAULT_AOD_CLOCK_FACE)
@@ -131,7 +130,6 @@ class DataStoreManager(
     val aodThemeId: StateFlow<String?> =
         aodThemeIdKey.asStateFlow(default = DEFAULT_AOD_THEME_ID)
 
-    // Cấu hình mọi chủ đề trong một chuỗi; cách mã hoá nằm ở presentation (model/aod/theme/AodThemeUiModel.kt).
     private val aodThemeConfigsKey: Preferences.Key<String> =
         stringPreferencesKey(AOD_THEME_CONFIGS_KEY)
     val aodThemeConfigs: StateFlow<String?> =
@@ -313,7 +311,6 @@ class DataStoreManager(
 
     fun saveAodThemeId(value: String): Job = edit { prefs -> prefs[aodThemeIdKey] = value }
 
-    // Đọc - sửa - ghi trong cùng một lần edit của DataStore để hai lần lưu gần nhau không đè mất cấu hình của nhau.
     fun updateAodThemeConfigs(transform: (String) -> String): Job =
         edit { prefs ->
             prefs[aodThemeConfigsKey] =
@@ -392,7 +389,6 @@ class DataStoreManager(
         edit { prefs -> prefs[isAodWeatherFahrenheitKey] = value }
     }
 
-    // Một lần tải thời tiết ghi cả 4 giá trị trong cùng một lần edit: không bao giờ đọc được bản nửa cũ nửa mới.
     fun saveWeather(temperatureCelsius: Double, code: Int, isDay: Boolean, updatedAtMillis: Long) {
         edit { prefs ->
             prefs[weatherTemperatureCelsiusKey] = temperatureCelsius
@@ -419,7 +415,6 @@ class DataStoreManager(
                 initialValue = null,
             )
 
-    // Trả Job để nơi cần (màn chủ đề hiện màn đang áp dụng) chờ ghi xong; ghi vẫn chạy trên scope của manager nên rời màn không huỷ.
     private fun edit(transform: (MutablePreferences) -> Unit): Job =
         scope.launch {
             withContextCatching(

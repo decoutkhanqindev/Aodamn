@@ -27,7 +27,6 @@ class ScreenStateManager(
     private val powerManager = app.getSystemService(PowerManager::class.java)
     private val keyguardManager = app.getSystemService(KeyguardManager::class.java)
 
-    // Sự kiện, không phải state: StateFlow sẽ gộp mất một lần tắt rồi bật lại ngay. SCREEN_OFF chỉ tới receiver đăng ký lúc chạy.
     val events: SharedFlow<String> = callbackFlow {
         val receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
@@ -53,12 +52,12 @@ class ScreenStateManager(
 
     val isDeviceSecure: Boolean get() = keyguardManager.isDeviceSecure
 
-    @Suppress("DEPRECATION") // SCREEN_BRIGHT_WAKE_LOCK: không có Activity thì không còn cách nào khác để bật màn hình
+    @Suppress("DEPRECATION")
     fun wakeUp(holdMillis: Long) {
         powerManager.newWakeLock(
             PowerManager.SCREEN_BRIGHT_WAKE_LOCK or
                     PowerManager.ACQUIRE_CAUSES_WAKEUP or
-                    PowerManager.ON_AFTER_RELEASE, // sau đó màn hình khoá tự tắt theo thời gian chờ như thường
+                    PowerManager.ON_AFTER_RELEASE,
             WAKE_LOCK_TAG,
         ).acquire(holdMillis)
     }

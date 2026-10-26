@@ -5,8 +5,6 @@ import androidx.compose.runtime.Immutable
 import com.decoutkhanqindev.aodamn.R
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeChoice
 
-// Hai kiểu của La bàn theo thứ tự app mẫu (Ambitio Face, Clock Style 1–2): có vòng giây chạy theo giờ thật (đường chỉ từ tâm) hoặc không vòng giây
-// (đường chỉ lùi ra 0,28u, mặt số đổi theo từng phút).
 @Immutable
 enum class AodCompassStyleValue(
     override val code: Int,

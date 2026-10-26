@@ -9,8 +9,6 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.asComposePath
 import android.graphics.Path as AndroidPath
 
-// Đường viền chữ số và dấu hai chấm của Chuỗi lấy từ font (Paint.getTextPath), để khoét giờ khỏi viên thuốc như Aug23Clock của app mẫu
-// (clipPath DIFFERENCE). Mỗi ký tự một đường riêng để số không đổi giữ nguyên chỗ khi phút đổi (cách làm như TowerGlyphs của Tháp).
 @Stable
 class ChainGlyphs(typeface: Typeface) {
     private val glyphs: Map<Char, AndroidPath>
@@ -29,7 +27,6 @@ class ChainGlyphs(typeface: Typeface) {
         digitBox = bounds(glyphs.getValue('0'))
     }
 
-    // Từng ký tự đã đặt chỗ: chữ số cao digitHeight, đỉnh chữ số ở y = 0, mép trái nét chữ đầu tiên ở x = 0, giãn chữ tracking (px).
     fun layout(text: String, digitHeight: Float, tracking: Float): List<ChainGlyph> {
         val scale = digitHeight / digitBox.height()
         val inkLeft = text.firstOrNull()?.let { first -> glyphs[first]?.let { path -> bounds(path).left } } ?: 0f
@@ -59,7 +56,6 @@ class ChainGlyphs(typeface: Typeface) {
     }
 }
 
-// Một ký tự của giờ: left là chỗ đặt (để biết ký tự có giữ nguyên chỗ khi giờ đổi không).
 @Stable
 class ChainGlyph(
     val char: Char,

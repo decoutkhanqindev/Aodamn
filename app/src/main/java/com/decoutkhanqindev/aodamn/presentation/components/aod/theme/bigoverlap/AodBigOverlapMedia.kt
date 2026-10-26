@@ -40,8 +40,6 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.bigoverlap.BigOv
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodIntent
 import com.decoutkhanqindev.aodamn.presentation.theme.Grey5A
 
-// Trình phát của Chồng số như media_widget_lt của app mẫu: tên bài / nghệ sĩ tối hơn bên trái, nút phát / dừng rồi nút tới bên phải (không có nút
-// lùi), thanh tiến trình mảnh bên dưới. Đổi bài thì tên trượt lên từ dưới như app mẫu; tên dài thì chạy chữ. Rộng theo khung của bố cục.
 @Composable
 fun AodBigOverlapMedia(
     media: MediaUiModel,
@@ -123,7 +121,6 @@ fun AodBigOverlapMedia(
     }
 }
 
-// Tên bài / nghệ sĩ một dòng giãn 0,02em, dài thì chạy chữ (2 / 1 lần như marqueeRepeatLimit của app mẫu).
 @Composable
 private fun BigOverlapMediaText(
     text: String,
@@ -145,7 +142,6 @@ private fun BigOverlapMediaText(
     )
 }
 
-// Nút phát / tới: icon đặc giữa ô bấm; không tới được thì xám.
 @Composable
 private fun BigOverlapMediaButton(
     @DrawableRes iconRes: Int,

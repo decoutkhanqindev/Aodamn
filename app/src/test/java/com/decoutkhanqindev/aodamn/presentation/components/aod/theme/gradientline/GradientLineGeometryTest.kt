@@ -3,7 +3,6 @@ package com.decoutkhanqindev.aodamn.presentation.components.aod.theme.gradientli
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-// Vị trí trên vạch theo Sep23Clock của app mẫu: giờ chạy từ th tới hết vạch trừ 2th, vạch khoét 1,1th trước / 2th sau, ngày cách 1,2th.
 class GradientLineGeometryTest {
     private val th = 20f
 
@@ -28,7 +27,6 @@ class GradientLineGeometryTest {
         assertEquals(center + 1.1f * th, shape.cut.bottom, DELTA)
     }
 
-    // Thời tiết kiểu hai dòng làm dòng ngày cao hơn ngày của app mẫu: dòng lùi xuống, chỗ khoét và chỗ chừa cuối vạch dài theo.
     @Test
     fun `vertical makes room for a tall date row`() {
         val shape = vertical(fraction = 1f, rowHeight = 2f * th)
@@ -60,7 +58,6 @@ class GradientLineGeometryTest {
         fraction = fraction,
     )
 
-    // Giờ rộng 80, dòng ngày rộng 120: giờ + ngày không ra khỏi vùng.
     private fun horizontal(fraction: Float) = GradientLineGeometry.horizontal(
         width = WIDTH,
         height = HEIGHT,

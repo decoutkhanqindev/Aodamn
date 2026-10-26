@@ -6,8 +6,6 @@ import java.util.TimeZone
 import kotlin.math.cos
 import kotlin.math.sin
 
-// Góc kim theo giờ địa phương như setTime của Android12Clock2: giây có phần nghìn giây, phút có phần giây, giờ có phần phút nên kim và chấm
-// giây trôi liên tục. Góc tính theo chiều kim đồng hồ từ 12 giờ.
 class RippleTime(epochMillis: Long) {
     private val dayMillis = Math.floorMod(epochMillis + TimeZone.getDefault().getOffset(epochMillis), DAY_MILLIS)
     private val seconds = dayMillis % MINUTE_MILLIS / 1000f
@@ -26,14 +24,11 @@ class RippleTime(epochMillis: Long) {
     }
 }
 
-// Điểm cách tâm radius theo góc degrees (chiều kim đồng hồ từ 12 giờ).
 fun ripplePoint(center: Offset, degrees: Float, radius: Float): Offset {
     val radians = Math.toRadians(degrees.toDouble())
     return Offset(center.x + sin(radians).toFloat() * radius, center.y - cos(radians).toFloat() * radius)
 }
 
-// Viền 12 gợn như Android12ClockBg2: đi từ 12 giờ, mỗi 15° một đường cong bậc hai, điểm điều khiển ở giữa đoạn, lần lượt ra ngoài / vào trong
-// WAVE_DEPTH bán kính.
 fun rippleFacePath(center: Offset, radius: Float): Path = Path().apply {
     val start = ripplePoint(center, 0f, radius)
     moveTo(start.x, start.y)

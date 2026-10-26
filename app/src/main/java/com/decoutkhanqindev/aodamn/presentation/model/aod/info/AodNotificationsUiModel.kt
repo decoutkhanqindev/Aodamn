@@ -27,7 +27,6 @@ data class NotificationIconUiModel(
     val icon: Bitmap,
 )
 
-// Thông báo mới nhất có chữ để hiện; isHidden = màn hình khoá của hệ thống đang che nội dung của nó.
 @Immutable
 data class NotificationContentUiModel(
     val key: String,
@@ -37,7 +36,6 @@ data class NotificationContentUiModel(
     val isHidden: Boolean,
 )
 
-// Một icon cho mỗi app như thanh trạng thái; danh sách đã xếp mới nhất trước nên app có thông báo mới nhất đứng đầu.
 fun List<ActiveNotification>.toAodNotificationsUiModel(options: AodNotificationOptionsUiModel): AodNotificationsUiModel {
     val latestPerApp =
         if (options.isIconsEnabled) distinctBy { notification -> notification.packageName } else emptyList()
@@ -56,7 +54,6 @@ fun List<ActiveNotification>.toAodNotificationsUiModel(options: AodNotificationO
     )
 }
 
-// Không có tiêu đề thì đưa nội dung lên dòng tiêu đề; thông báo không có chữ nào thì bỏ qua để lấy thông báo kế tiếp.
 private fun ActiveNotification.toContentUiModel(): NotificationContentUiModel? {
     val shownContent = content
         ?: return NotificationContentUiModel(
@@ -76,7 +73,6 @@ private fun ActiveNotification.toContentUiModel(): NotificationContentUiModel? {
     )
 }
 
-// Màu của app làm viền sáng; app không đặt màu, hoặc màu quá tối gần như không thấy trên nền đen, thì dùng màu mặc định (null).
 fun ActiveNotification.glowColorArgb(): Int? =
     color.takeIf { it != Notification.COLOR_DEFAULT && Color.luminance(it) >= MIN_GLOW_LUMINANCE }
 

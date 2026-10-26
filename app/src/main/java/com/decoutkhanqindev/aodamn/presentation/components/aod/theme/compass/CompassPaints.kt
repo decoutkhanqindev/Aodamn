@@ -18,9 +18,6 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.AodGradient
 import kotlin.math.cos
 import kotlin.math.sin
 
-// Bút vẽ số trên các vòng của La bàn bằng Paint của Android: căn giữa theo nét chữ (getTextBounds) và xoay quanh tâm nhãn như app mẫu. Typeface là
-// file TTF tĩnh Krona One: Paint không đặt trục độ đậm nào (máy Xiaomi thay font khi có trục). Màu gradient là shader theo khung nét chữ của nhãn,
-// xoay cùng nhãn nên mỗi nhãn đọc theo cùng một hướng gradient.
 @Stable
 class CompassPaints(typeface: Typeface) {
     private val text = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -52,8 +49,6 @@ class CompassPaints(typeface: Typeface) {
     }
 }
 
-// Các vòng vẽ ở thời điểm 0 giờ 0 phút 0 giây quanh tâm vùng vẽ; mặt số xoay cả vòng theo giờ thật (xoay cứng nên vị trí và hướng chữ cùng đổi).
-// Góc theo app mẫu: điểm ở góc θ là (sin θ, cos θ) · r tính từ tâm (θ = 90° là đường chỉ bên phải), chữ xoay 90 − θ nên đọc theo bán kính ra ngoài.
 fun DrawScope.drawCompassHourRing(
     paints: CompassPaints,
     unit: Float,
@@ -75,7 +70,6 @@ fun DrawScope.drawCompassHourRing(
     }
 }
 
-// Vạch phút tô theo khung cả vòng nên gradient đổi màu theo chỗ quanh vòng và xoay cùng vòng.
 fun DrawScope.drawCompassMinuteRing(paints: CompassPaints, unit: Float, color: Color, gradient: AodGradient?, tickWidth: Float) {
     val tickBrush = gradient?.toBrush() ?: SolidColor(color)
     for (index in 0 until 24) {
@@ -104,7 +98,6 @@ fun DrawScope.drawCompassSecondRing(paints: CompassPaints, unit: Float, color: C
     }
 }
 
-// Nhãn 00, 05 … 55 ở vị trí chẵn (cách nhau 30°).
 private fun minuteLabel(index: Int): String = (index * 5 / 2).toString().padStart(2, '0')
 
 private fun DrawScope.ringPoint(degrees: Float, radius: Float): Offset {

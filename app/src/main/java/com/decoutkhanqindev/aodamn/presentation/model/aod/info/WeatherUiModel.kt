@@ -16,7 +16,6 @@ data class WeatherUiModel(
     val iconRes: Int
         get() = if (isDay) condition.dayIconRes else condition.nightIconRes
 
-    // Bản đã lưu cũ hơn MAX_AGE_MILLIS (mất quyền vị trí, mất mạng lâu) thì không hiện, để khỏi hiện thời tiết sai.
     fun isFreshAt(nowMillis: Long): Boolean = nowMillis - updatedAtMillis < MAX_AGE_MILLIS
 
     companion object {

@@ -50,8 +50,6 @@ import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import timber.log.Timber
 
-// Trong OnboardingNavDisplay: backStack là back stack onboarding (sang màn quyền, quay lại), rootBackStack là back stack gốc (vào Main, màn
-// chủ đề); banner do OnboardingNavDisplay đặt, onPeekingChange báo nhấn giữ xem AOD để nó giấu banner.
 @Composable
 fun CustomizeScreen(
     backStack: NavBackStack<NavKey>,
@@ -149,8 +147,6 @@ fun CustomizeScreen(
 
                     is CustomizeEffect.Navigation.NavigateBack -> backStack.navigateBack()
 
-                    // Màn chủ đề đã nằm ngay dưới thì quay lại nó thay vì mở chồng thêm một màn; cần mở một tab thì thay nó bằng màn mới
-                    // mở sẵn tab đó (màn cũ đang ở chế độ xem vì chỉ chế độ xem mới có nút Tùy chỉnh, không mất gì).
                     is CustomizeEffect.Navigation.NavigateToThemeEditor -> {
                         val destination = ThemeEditorDestination(effect.themeId, focusBlock = effect.focusBlock)
                         if (rootBackStack.any { key -> key is ThemeEditorDestination }) {

@@ -75,7 +75,6 @@ class AodViewModel(
     private val notificationOptions =
         dataStoreManager.currentAodNotificationOptions().shownIn(state.value.appearance.theme.value.spec)
 
-    // Tối vì bị che (khác với hết giờ, pin yếu, ngoài quy tắc): chỉ trường hợp này mới sáng lại khi lấy máy ra.
     private var isDarkUntilUncovered = false
     private var isCovered = false
     private var isPlugged = batteryStateManager.readIsPlugged()
@@ -89,7 +88,6 @@ class AodViewModel(
         observeBattery()
         observePlugged()
         observeAudio()
-        // StateFlow nóng và viewModelScope chạy ngay trên main thread: icon và nhạc đã vào state trước khung đầu tiên.
         if (notificationOptions.isIconsEnabled || notificationOptions.isContentEnabled) observeNotifications()
         if (notificationOptions.isEdgeGlowEnabled) observeAlerts()
         if (notificationOptions.isMediaControlsEnabled) observeMedia()
@@ -110,7 +108,6 @@ class AodViewModel(
 
     override fun onIntent(intent: AodIntent) {
         Timber.tag(tag).d("onIntent: $intent")
-        // Trong túi, vải cọ lên màn hình hay phím bị đè không được mở màn hình khoá, bật đèn pin hay bấm nút nhạc.
         if (proximityManager.isNear.value) return
         when (intent) {
             is AodIntent.PerformGesture -> performGesture(intent.gesture)
@@ -164,7 +161,6 @@ class AodViewModel(
         }
     }
 
-    // Màn hình cuộc gọi, báo thức mở lên trên thì noHistory cũng đóng AOD; đóng ngay khi có dấu hiệu chỉ làm việc đó sớm hơn.
     private fun observeAudio() {
         viewModelScope.launch {
             audioStateManager.isBusy
@@ -195,7 +191,6 @@ class AodViewModel(
         }
     }
 
-    // Đang tối thì không sáng viền: màn hình đen đang chờ giờ chờ của máy tắt.
     private fun observeAlerts() {
         viewModelScope.launch {
             notificationStateManager.alerts.collectCatching(
@@ -223,7 +218,6 @@ class AodViewModel(
         }
     }
 
-    // Phòng tối thì giảm về mức thấp nhất. Ngưỡng tối và sáng lệch nhau, mức mới phải giữ LIGHT_SETTLE_MILLIS mới đổi: bóng tay hay đèn chớp không làm màn hình nhấp nháy.
     private fun observeAmbientLight() {
         viewModelScope.launch {
             ambientLightManager.lux
@@ -247,7 +241,6 @@ class AodViewModel(
         }
     }
 
-    // Giải mã ảnh nền tốn vài chục ms: đồng hồ hiện trước, ảnh nền hiện dần sau, không chặn khung đầu tiên. Đang dùng ảnh có sẵn thì không đọc file.
     private fun loadBackground() {
         if (state.value.wallpaper != null) return
         viewModelScope.launch {
@@ -281,7 +274,6 @@ class AodViewModel(
         }
     }
 
-    // Bản đã lưu hiện ngay, bản mới tải ngầm lúc AOD hiện (app đang ở tiền cảnh nên được dùng vị trí); lỗi thì giữ bản cũ.
     private fun refreshWeather() {
         val nowMillis = System.currentTimeMillis()
         nextWeatherRefreshMillis = nowMillis + WEATHER_RETRY_MILLIS
@@ -291,13 +283,11 @@ class AodViewModel(
         }
     }
 
-    // AOD có thể hiện liền nhiều giờ (đồng hồ đêm lúc sạc): thử tải lại mỗi WEATHER_RETRY_MILLIS (UseCase chỉ gọi mạng khi bản đã lưu đủ cũ), bản quá cũ thì rời đồng hồ.
     private fun updateWeather(nowMillis: Long) {
         if (nowMillis >= nextWeatherRefreshMillis) refreshWeather()
         updateState { copy(weather = weather?.takeIf { it.isFreshAt(nowMillis) }) }
     }
 
-    // Đọc lại mỗi EVENTS_RELOAD_MILLIS để có sự kiện mới thêm; giữa hai lần đọc, sự kiện đã kết thúc rời đồng hồ ở tick mỗi phút.
     private fun loadEvents() {
         val nowMillis = System.currentTimeMillis()
         nextEventsReloadMillis = nowMillis + EVENTS_RELOAD_MILLIS
@@ -338,7 +328,6 @@ class AodViewModel(
         }
     }
 
-    // Phải bị che liên tục COVER_DELAY_MILLIS (trong túi, úp mặt); bàn tay lướt qua ngắn hơn nên bị bỏ qua.
     private fun observeProximity() {
         viewModelScope.launch {
             proximityManager.isNear.collectLatestCatching(
@@ -395,7 +384,6 @@ class AodViewModel(
         checkRules()
     }
 
-    // Hết khung giờ, rút / cắm sạc trái quy tắc hoặc pin yếu khi đồng hồ đang hiện: chuyển đen như khi hết giờ.
     private fun checkRules() {
         val battery = state.value.battery
         val isAllowed = rules.allows(
@@ -415,7 +403,6 @@ class AodViewModel(
         updateState { copy(isDark = true, isGlowing = false) }
     }
 
-    // Lấy máy khỏi túi trước khi màn hình hết giờ chờ: hiện lại đồng hồ.
     private fun lightUpAgain() {
         if (!state.value.isDark || !isDarkUntilUncovered) return
         isDarkUntilUncovered = false
@@ -436,7 +423,6 @@ class AodViewModel(
         private const val EVENTS_RELOAD_MILLIS = 15 * 60_000L
         private const val WEATHER_RETRY_MILLIS = 10 * 60_000L
 
-        // Pin đọc đồng bộ từ broadcast sticky để khung đầu tiên đã có dòng pin, bố cục không bị nhảy; giao diện đồng hồ cũng có ngay từ khung đầu.
         private fun initialState(
             dataStoreManager: DataStoreManager,
             batteryStateManager: BatteryStateManager,

@@ -21,7 +21,6 @@ import com.decoutkhanqindev.aodamn.presentation.theme.Neutral12
 import com.decoutkhanqindev.aodamn.presentation.theme.Red
 import com.decoutkhanqindev.aodamn.presentation.theme.RoundedCornerShape24dp
 
-// Mất mạng: hộp giữa màn hình không đóng được (AppNavDisplay tự bỏ khi có mạng lại), hình điện thoại xám với huy hiệu wifi gạch.
 @Composable
 fun AppNoInternetDialog(onOpenSettings: () -> Unit) {
     Dialog(

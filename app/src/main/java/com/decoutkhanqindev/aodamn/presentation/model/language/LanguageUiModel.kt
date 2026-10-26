@@ -11,7 +11,6 @@ data class LanguageUiModel(
     val label: String get() = "${language.flag}  $displayName"
 }
 
-// Tên ngôn ngữ viết bằng chính ngôn ngữ đó, để ai cũng tìm ra ngôn ngữ của mình dù app đang hiện ngôn ngữ nào.
 fun LanguageValue.toUiModel(languageManager: LanguageManager): LanguageUiModel =
     LanguageUiModel(
         language = this,

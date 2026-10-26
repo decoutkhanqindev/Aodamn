@@ -17,24 +17,16 @@ import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toImmutableSet
 
-// Chủ đề Tháp (Long HyperOS của Muviz Edge, plans/muviz-edge-themes.md): bốn chữ số rất cao và hẹp một hàng sát đỉnh màn hình (mặc định chỉ nét
-// viền), ngày in hoa giãn chữ dưới số; trình phát riêng (lùi · tên bài giãn chữ · tới, chạm tên bài để phát / dừng) và pin + icon thông báo
-// chung một dòng neo dưới. Thời tiết, sự kiện, ghi nhớ nằm trên trình phát, kiểu chỉnh ở Tùy chỉnh như Cổ điển; không có nét vẽ (khối lớn
-// tranh chỗ với hàng số cao) và thông báo mới nhất (dòng trạng thái chỉ có icon). App mẫu có kiểu số, cỡ, màu giờ, phút, ngày, điều khiển;
-// màu điều khiển tách thành màu nhạc và màu dòng pin như các chủ đề khác.
 object TowerThemeSpec : AodThemeSpec {
-    // Font cố định của ngày, trình phát và dòng trạng thái; chữ số là Big Shoulders Display Black nén ngang (TowerGlyphs).
     val Font: FontFamily = FontFamilyPlusJakartaSans
 
     val Style = AodChoiceOption(
         key = "digit_style",
         labelRes = R.string.theme_opt_digit_style,
         entries = AodTowerStyleValue.entries.toImmutableList(),
-        // Mặc định nhạt dần xuống: hàng số cao trông nổi bật nhất trên thẻ chủ đề.
         default = AodTowerStyleValue.FADE_DOWN,
     )
 
-    // Dải cỡ như app mẫu (80–110%).
     val Size = AodRangeOption(
         key = "size",
         labelRes = R.string.opt_size_value,
@@ -46,11 +38,9 @@ object TowerThemeSpec : AodThemeSpec {
     val MinuteColor = AodColorOption(key = "minute_color", labelRes = R.string.theme_color_minute, default = Lavender, isGradientAllowed = true)
     val DateColor = AodColorOption(key = "date_color", labelRes = R.string.theme_color_date, default = GreyED, isGradientAllowed = true)
 
-    // Tên bài, nghệ sĩ, các nút và thanh tiến trình.
     val MediaColor = AodColorOption(key = "media_color", labelRes = R.string.theme_color_media, default = GreyED, isGradientAllowed = true)
     val StatusColor = AodColorOption(key = "status_color", labelRes = R.string.theme_color_status, default = GreyED, isGradientAllowed = true)
 
-    // Mỗi khối chủ đề tự vẽ (ownBlocks) có tab ở đây: Tùy chỉnh › Ngày / Pin / Thông báo / Nhạc dẫn sang màn chủ đề.
     override val tabs = persistentListOf(
         AodThemeTab(
             iconRes = R.drawable.ic_clock,

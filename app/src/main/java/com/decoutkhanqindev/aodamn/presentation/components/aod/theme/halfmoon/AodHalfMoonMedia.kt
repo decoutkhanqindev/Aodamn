@@ -44,9 +44,6 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.halfmoon.HalfMoo
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodIntent
 import com.decoutkhanqindev.aodamn.presentation.theme.Grey5A
 
-// Trình phát của Bán nguyệt như media_widget_lt của app mẫu: lùi · tên bài in hoa / nghệ sĩ mờ · tới, chữ giãn 0,25em, không có nút phát (chạm
-// tên để phát / dừng, đang dừng thì chữ mờ đi) và không thanh tiến trình. Đổi bài thì tên trượt lên từ dưới như app mẫu; tên dài thì chạy chữ.
-// Rộng theo khung của bố cục (màn dọc: màn trừ 40dp mỗi bên; màn ngang: 360dp).
 @Composable
 fun AodHalfMoonMedia(
     media: MediaUiModel,
@@ -132,7 +129,6 @@ fun AodHalfMoonMedia(
     }
 }
 
-// Tên bài / nghệ sĩ một dòng, dài thì chạy chữ (2 / 1 lần như marqueeRepeatLimit của app mẫu).
 @Composable
 private fun HalfMoonMediaText(
     text: String,
@@ -154,7 +150,6 @@ private fun HalfMoonMediaText(
     )
 }
 
-// Nút lùi / tới: ô 40dp, icon đặc 12dp; không lùi / tới được thì xám.
 @Composable
 private fun HalfMoonMediaButton(
     @DrawableRes iconRes: Int,

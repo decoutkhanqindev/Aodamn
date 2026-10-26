@@ -7,7 +7,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.decoutkhanqindev.aodamn.R
 import com.decoutkhanqindev.aodamn.presentation.theme.Theme
 
-// Nút nổi của màn sửa: đổi khung xem trước AOD giữa dọc và ngang (AodPreviewFrame); đang xem ngang thì icon tô Mint.
 @Composable
 fun AppPreviewOrientationButton(
     isLandscape: Boolean,

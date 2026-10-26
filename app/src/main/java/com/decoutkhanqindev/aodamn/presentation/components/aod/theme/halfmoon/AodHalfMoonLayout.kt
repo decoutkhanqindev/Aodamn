@@ -55,9 +55,6 @@ import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
 import com.decoutkhanqindev.aodamn.presentation.theme.Black
 import kotlinx.collections.immutable.toImmutableList
 
-// Bán nguyệt, màn dọc (mock đã duyệt): nửa mặt số sát mép trái giữa chiều cao như layout mẫu; cột ngày, thứ, thời tiết, dòng pin · thông báo,
-// thông báo mới nhất giữa nửa phải trên trục số đang chỉ (user chốt dòng pin dưới ngày); trình phát giữa vùng dưới mặt số, rộng bằng màn trừ
-// 40dp mỗi bên như layout mẫu.
 @Composable
 fun AodHalfMoonPortrait(
     state: AodState,
@@ -99,8 +96,6 @@ fun AodHalfMoonPortrait(
     }
 }
 
-// Bán nguyệt, màn ngang (mock đã duyệt): nửa mặt số sát mép trái, r = 0,65 cạnh ngắn; cột như màn dọc (ngày, thứ 14 / 15sp như layout ngang
-// mẫu) giữa vùng còn lại, có nhạc thì cột và trình phát thành một khối giữa chiều cao (trình phát ở đáy thì nửa trên trống).
 @Composable
 fun AodHalfMoonLandscape(
     state: AodState,
@@ -156,8 +151,6 @@ private fun HalfMoonDial(
     )
 }
 
-// Ngày, thứ, cách 8dp thời tiết, cách 12dp dòng pin · thông báo, cách 12dp thông báo mới nhất; dòng nào không có thì không chiếm chỗ (cả khoảng
-// cách), cột tự căn giữa lại.
 @Composable
 private fun HalfMoonColumn(
     state: AodState,
@@ -221,8 +214,6 @@ private fun HalfMoonColumn(
     }
 }
 
-// Ngày "dd MMM yyyy" tối hơn 30% rồi thứ "EEEE", in hoa Bold giãn chữ như date_tv / day_tv của layout mẫu; gradient thì từng màu của dòng ngày
-// cũng tối hơn 30%.
 @Composable
 private fun HalfMoonDate(
     nowMillis: Long,
@@ -274,7 +265,6 @@ private fun HalfMoonDateText(
     )
 }
 
-// Thông báo mới nhất như notify_lt của app mẫu: icon 17dp, chữ in hoa một dòng chạy chữ (marquee một lần) khi dài.
 @Composable
 private fun HalfMoonLatest(
     latest: NotificationContentUiModel,
@@ -316,7 +306,6 @@ private fun HalfMoonLatest(
     }
 }
 
-// Trình phát của chủ đề (AodHalfMoonMedia qua AodMediaControls) trong khung rộng cố định; không có nhạc thì không chiếm chỗ (cả khoảng cách).
 @Composable
 private fun HalfMoonPlayer(
     state: AodState,

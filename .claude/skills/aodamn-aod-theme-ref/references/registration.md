@@ -9,10 +9,10 @@ cũng phải có. `scripts/check_theme.sh` đếm tên ở các chỗ này.
 | File | Thêm |
 |---|---|
 | `model/aod/theme/AodThemeValue.kt` | import spec + mục enum cuối (id chữ thường, không đổi về sau; `;` ở mục cuối) |
-| `components/aod/theme/AodThemeLayout.kt` | import, nhánh `AodPortrait`, nhánh `AodLandscape`, tên vào câu comment của cả hai hàm |
+| `components/aod/theme/AodThemeLayout.kt` | import, nhánh `AodPortrait`, nhánh `AodLandscape` |
 | `components/aod/block/AodMediaControls.kt` | import + nhánh trình phát (chủ đề tự vẽ nhạc) |
 | `app/src/test/.../AodThemeSpecTest.kt` | import, `drawsLatest` / `liveThemes` nếu đúng, test riêng |
-| `theme/Colors.kt`, `theme/Typography.kt` | màu nhấn / họ font mới, kèm comment một dòng "<Chủ đề>: …" |
+| `theme/Colors.kt`, `theme/Typography.kt` | màu nhấn / họ font mới |
 | `res/values/strings.xml`, `res/values-vi/strings.xml` | `theme_<id>`, nhãn màu / tuỳ chọn mới; mẫu định dạng `translatable="false"` chỉ ở `values/` |
 | `tools/icons/icons.txt` | icon mới (dòng `light:` / `fill:` riêng), chạy `import_phosphor.py` |
 | `tools/fonts/make_static_fonts.py` | mục `FONTS` + comment lý do |

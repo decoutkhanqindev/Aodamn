@@ -45,8 +45,6 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.tower.TowerTheme
 import com.decoutkhanqindev.aodamn.presentation.theme.FontFamilyBigShouldersDisplay
 import kotlin.math.max
 
-// Đồng hồ Tháp: giờ và phút một hàng, bốn chữ số cao R rất hẹp. Mỗi chữ số căn giữa một ô rộng cố định nên giờ nào hàng số cũng rộng như nhau;
-// số đổi thì mờ chéo trong ô. Kiểu số chọn cách tô riêng cho cặp giờ và cặp phút (đặc, viền, viền nhạt dần).
 @Composable
 fun AodTowerClock(
     nowMillis: Long,
@@ -61,7 +59,6 @@ fun AodTowerClock(
     val description = now.format(rememberTimeFormatter())
     val style = config[TowerThemeSpec.Style]
 
-    // Giờ luôn đọc trái sang phải: ngôn ngữ RTL không được đảo thứ tự chữ số.
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
         Box(
             modifier = modifier
@@ -124,8 +121,6 @@ private fun TowerDigit(
 ) {
     val isFade = paint == AodTowerPaintValue.FADE_DOWN || paint == AodTowerPaintValue.FADE_UP
 
-    // Màu gradient (null = một màu, vẽ như cũ) tô theo ô của từng số. Kiểu mờ dần thì vẽ nét gradient rồi lấy độ mờ của dải fade làm mặt nạ
-    // (DstIn) trên lớp riêng, nên cùng một độ mờ như bản một màu.
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -178,7 +173,6 @@ private fun TowerDigit(
     )
 }
 
-// Ngày dưới hàng số: thứ / ngày tháng in hoa, giãn chữ rộng như app mẫu; chiều cao dòng bằng cỡ chữ để khoảng cách tới hàng số đúng số đo.
 @Composable
 fun TowerDate(
     nowMillis: Long,

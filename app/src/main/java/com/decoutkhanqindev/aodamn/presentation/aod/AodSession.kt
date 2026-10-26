@@ -4,14 +4,12 @@ import android.os.SystemClock
 import com.decoutkhanqindev.aodamn.data.device.proximity.ProximityManager
 import java.lang.ref.WeakReference
 
-// Chỉ AodService và AodActivity dùng, luôn trên main thread, nên field thường là đủ.
 class AodSession(
     private val proximityManager: ProximityManager,
 ) {
     private var current: WeakReference<AodActivity>? = null
     private var isSleepRequested = false
 
-    // Để phân biệt lần bật màn hình của chính app với một lần mở khoá thật.
     var shownAt: Long = 0L
         private set
 
@@ -35,7 +33,6 @@ class AodSession(
         current = null
     }
 
-    // Lần tắt màn hình kế tiếp là chủ ý (hết giờ, trong túi, pin yếu): không được mở lại AOD.
     fun requestSleep() {
         isSleepRequested = true
     }

@@ -10,7 +10,6 @@ import com.decoutkhanqindev.aodamn.utils.openNotificationListenerSettings
 import org.koin.android.ext.android.inject
 import timber.log.Timber
 
-// Hệ thống chỉ bind listener này khi user đã cấp "Truy cập thông báo"; callback chạy trên main thread và chỉ chuyển dữ liệu sang NotificationStateManager.
 class AodNotificationListener : NotificationListenerService(), Tag {
 
     private val notificationStateManager: NotificationStateManager by inject()
@@ -42,7 +41,6 @@ class AodNotificationListener : NotificationListenerService(), Tag {
         notificationStateManager.onNotificationsChanged(active, rankingMap)
     }
 
-    // Đọc đúng lúc listener vừa bị huỷ bind thì hệ thống ném SecurityException: bỏ qua lần cập nhật đó.
     private fun readActiveNotifications(): List<StatusBarNotification>? = try {
         activeNotifications.orEmpty().toList()
     } catch (e: SecurityException) {

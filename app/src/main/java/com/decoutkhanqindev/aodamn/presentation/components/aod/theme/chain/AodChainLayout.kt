@@ -30,8 +30,6 @@ import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodIntent
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
 import com.decoutkhanqindev.aodamn.presentation.theme.Grey3A
 
-// Chuỗi, màn dọc như layout app mẫu: khoảng trống TOP_RATIO chiều cao màn hình → viên thuốc đồng hồ sát lề trái → chuỗi dòng (ngày, pin, thông
-// báo, ghi nhớ, sự kiện); trình phát neo đáy.
 @Composable
 fun AodChainPortrait(
     state: AodState,
@@ -78,9 +76,6 @@ fun AodChainPortrait(
     }
 }
 
-// Chuỗi, màn ngang (mock đã duyệt): cụm đồng hồ + chuỗi ngày, pin, thông báo; ghi nhớ, sự kiện là chuỗi riêng ở cột sau; nhạc ở cột cuối. Thứ
-// tự cột trái sang phải: Chuỗi → ghi nhớ, sự kiện → nhạc, không dùng cột thông tin chung của AodLandscapeLayout để giữ dạng chuỗi như màn dọc.
-// Khối bật / tắt hay nhạc phát / dừng thì đổi bố cục bằng mờ chéo.
 @Composable
 fun AodChainLandscape(
     state: AodState,
@@ -133,7 +128,6 @@ private fun ChainHero(
     }
 }
 
-// Ba cột nối tiếp ngăn bằng vạch mảnh như AodSplitRow; cột cuối (nhạc) chỉ lấy chỗ còn lại.
 @Composable
 private fun ChainThreeColumns(
     start: @Composable () -> Unit,

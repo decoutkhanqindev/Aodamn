@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.filterNotNull
 import timber.log.Timber
 import kotlin.math.roundToInt
 
-// Bản thời tiết gần nhất lưu trong DataStore: AOD có số liệu ngay cả khi mất mạng hay chưa định vị xong.
 class WeatherRepositoryImpl(
     private val openMeteoApiService: OpenMeteoApiService,
     private val deviceLocationManager: DeviceLocationManager,
@@ -39,7 +38,6 @@ class WeatherRepositoryImpl(
         }
     }
 
-    // Lỗi (chưa định vị được, mất mạng, API lỗi) thì giữ bản đã lưu; hàm suspend của Retrofit tự chạy ngoài main thread nên không đổi dispatcher.
     override suspend fun refreshWeather(): Unit = withContextCatching(
         block = {
             val coordinates = checkNotNull(deviceLocationManager.currentCoarseLocation()) {
@@ -60,7 +58,6 @@ class WeatherRepositoryImpl(
         catch = { e -> Timber.tag(tag).w("Could not refresh the weather: ${e.message}") },
     )
 
-    // Làm tròn 2 chữ số thập phân (khoảng 1 km) trước khi gửi: đủ cho thời tiết, không gửi vị trí chính xác ra ngoài.
     private fun Double.roundedCoordinate(): Double =
         (this * COORDINATE_SCALE).roundToInt() / COORDINATE_SCALE
 

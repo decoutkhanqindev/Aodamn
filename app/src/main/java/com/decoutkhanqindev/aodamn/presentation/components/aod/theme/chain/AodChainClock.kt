@@ -37,8 +37,6 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.chain.ChainTheme
 import com.decoutkhanqindev.aodamn.presentation.theme.FontFamilyAnton
 import kotlin.math.roundToInt
 
-// Đồng hồ Chuỗi như Aug23Clock của app mẫu: viên thuốc tô màu, giờ "HH:mm" (12 giờ thì "hh:mm") khoét rỗng nên thấy nền / ảnh nền qua chữ số.
-// Viên thuốc rộng theo chữ nên co giãn khi giờ đổi; ký tự đổi thì mờ chéo, ký tự giữ nguyên chỗ thì giữ nguyên.
 @Composable
 fun AodChainClock(
     nowMillis: Long,
@@ -60,7 +58,6 @@ fun AodChainClock(
     val padX = with(density) { (viewWidth * ChainMetrics.PAD_X).toPx() }
     val padY = with(density) { (viewWidth * ChainMetrics.PAD).toPx() }
 
-    // (giờ cũ, giờ mới) đang mờ chéo; progress 1 là đã xong.
     var change by remember { mutableStateOf(text to text) }
     val progress = remember { Animatable(1f) }
     val from = remember(glyphs, change.first, digitHeight, tracking) { glyphs.layout(change.first, digitHeight, tracking) }
@@ -84,7 +81,6 @@ fun AodChainClock(
                 val placeable = measurable.measure(Constraints.fixed(width, height))
                 layout(width, height) { placeable.place(0, 0) }
             }
-            // Khoét chữ số bằng DstOut cần lớp riêng, nếu không sẽ khoét luôn nền AOD phía dưới.
             .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
             .drawWithCache {
                 val pillHeight = digitHeight + 2f * padY

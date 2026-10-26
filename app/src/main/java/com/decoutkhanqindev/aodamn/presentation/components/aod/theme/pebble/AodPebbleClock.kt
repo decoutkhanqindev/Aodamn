@@ -60,9 +60,6 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.pebble.AodTileSt
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.pebble.AodTransitionValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.pebble.PebbleThemeSpec
 
-// Chủ đề Sỏi: giờ và phút mỗi số một khối hình mềm, dòng ngày ngay dưới. Animation chỉ chạy lúc số đổi; giá trị animation đọc ở
-// pha vẽ (graphicsLayer, drawWithCache) nên không recompose từng khung hình. tileSize là cỡ khối lúc Cỡ 100% (màn ngang to hơn màn dọc),
-// xếp chồng chỉ dùng cho màn dọc.
 @Composable
 fun AodPebbleClock(
     nowMillis: Long,
@@ -95,7 +92,6 @@ fun AodPebbleClock(
     }
 }
 
-// Khối giờ hoặc phút theo cấu hình chủ đề; chữ số theo tỉ lệ khối như bản dọc (50sp trong khối 112dp) nên khối to nhỏ thế nào cũng vừa.
 @Composable
 fun PebbleTimeTile(
     nowMillis: Long,
@@ -141,7 +137,6 @@ private fun PebbleTile(
 ) {
     val currentTransition by rememberUpdatedState(transition)
     val pulse = remember { Animatable(0f) }
-    // Số đang hiện, giữ ngoài snapshot: lần chạy đầu của effect (mở AOD) không phải lúc số đổi nên không nảy.
     val shownText = remember { arrayOf(text) }
 
     LaunchedEffect(text) {
@@ -243,7 +238,6 @@ private fun digitTransition(transition: AodTransitionValue): ContentTransform = 
                     fadeOut(animationSpec = tween(durationMillis = 300)))
 }
 
-// Dòng ngày của Sỏi: kiểu và màu theo chủ đề, cỡ theo tuỳ chọn Cỡ.
 @Composable
 fun PebbleDate(
     nowMillis: Long,

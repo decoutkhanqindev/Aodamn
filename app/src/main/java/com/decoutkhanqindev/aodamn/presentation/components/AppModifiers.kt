@@ -104,8 +104,6 @@ fun Modifier.onClick(
         )
 }
 
-// Nhấn giữ: action khi giữ đủ lâu (kèm rung nhẹ), onRelease khi thả tay hay bị huỷ sau lúc đã giữ, chạm nhanh thì onClick (nếu có).
-// Vd khung xem trước ở màn sửa: giữ để xem toàn màn hình, thả tay thì hiện lại các thanh.
 @Composable
 fun Modifier.onLongClick(
     onRelease: () -> Unit = {},

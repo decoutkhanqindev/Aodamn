@@ -66,7 +66,6 @@ import com.decoutkhanqindev.aodamn.presentation.theme.Grey5A
 import com.decoutkhanqindev.aodamn.presentation.theme.GreyB4
 import kotlinx.coroutines.delay
 
-// Chủ đề có trình phát riêng thì rẽ nhánh ở đây (như AodPortrait / AodLandscape), còn lại dùng trình phát chung.
 @Composable
 fun AodMediaControls(
     media: MediaUiModel?,
@@ -102,8 +101,6 @@ fun AodMediaControls(
     }
 }
 
-// Phiên nhạc chỉ báo vị trí lúc phát / dừng / tua nên nội suy mỗi giây; vị trí chỉ đọc trong AppSlider (pha vẽ) nên AOD không
-// recompose theo tiến trình. track vẽ thanh theo chủ đề.
 @Composable
 fun AodMediaProgress(
     progress: MediaProgressUiModel,
@@ -156,7 +153,6 @@ fun AodMediaButton(
     )
 }
 
-// Trình phát chung, không viền, font / cỡ / màu theo khối nhạc; mỗi kiểu một bố cục.
 @Composable
 private fun AodClassicMedia(
     media: MediaUiModel,
@@ -167,7 +163,6 @@ private fun AodClassicMedia(
     val progress = media.progress
 
     when (layout) {
-        // Tên bài bên trái, 3 nút bên phải, thanh tiến trình bên dưới
         AodMediaLayoutValue.ROW -> AodBlock(modifier = Modifier.padding(top = 20.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 TrackInfo(
@@ -184,7 +179,6 @@ private fun AodClassicMedia(
             if (progress != null) MediaProgress(progress = progress, style = style)
         }
 
-        // Tên bài căn giữa, nút ở giữa bên dưới, thanh tiến trình dưới cùng
         AodMediaLayoutValue.CENTER -> AodBlock(modifier = Modifier.padding(top = 20.dp)) {
             TrackInfo(
                 media = media,
@@ -205,7 +199,6 @@ private fun AodClassicMedia(
             if (progress != null) MediaProgress(progress = progress, style = style)
         }
 
-        // Một dòng: nút phát, tên bài · nghệ sĩ, bài tiếp theo; không thanh tiến trình
         AodMediaLayoutValue.COMPACT -> Row(
             modifier = Modifier
                 .padding(top = 16.dp)

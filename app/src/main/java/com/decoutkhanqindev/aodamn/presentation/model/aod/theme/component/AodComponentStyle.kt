@@ -27,8 +27,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 
-// Các khối dùng chung trên AOD mà user chỉnh font, cỡ, màu riêng từng khối ở Tùy chỉnh. ownBlock: khối chủ đề có thể tự vẽ thay bản
-// mặc định; chủ đề đang dùng tự vẽ khối đó thì kiểu do chủ đề quyết định (chỉnh ở màn chủ đề), kiểu ở đây không áp dụng.
 @Immutable
 enum class AodComponentValue(
     val key: String,
@@ -47,8 +45,6 @@ enum class AodComponentValue(
     DRAWING("drawing", R.drawable.ic_paint_brush, R.string.customize_tab_drawing, hasFont = false),
 }
 
-// Thuộc tính của từng khối: kiểu hiển thị (trừ nét vẽ), font (trừ nét vẽ), cỡ và màu; khoá
-// "<khối>_layout", "<khối>_font", "<khối>_size", "<khối>_color" trong cùng một AodThemeConfig.
 object AodComponentSpec : AodOptionSpec {
     val DateLayout = layoutOption(AodComponentValue.DATE, AodDateLayoutValue.entries, AodDateLayoutValue.SPACED)
     val BatteryLayout = layoutOption(AodComponentValue.BATTERY, AodBatteryLayoutValue.entries, AodBatteryLayoutValue.ICON)
@@ -80,7 +76,6 @@ object AodComponentSpec : AodOptionSpec {
             step = 10,
             default = 100,
         )
-        // Gradient tô lên chữ / icon / nét vẽ của khối (Modifier.aodTint).
         val color = AodColorOption(
             key = "${component.key}_color",
             labelRes = R.string.opt_clock_color,

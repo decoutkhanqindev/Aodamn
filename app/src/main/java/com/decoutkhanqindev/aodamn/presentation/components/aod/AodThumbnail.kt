@@ -21,8 +21,6 @@ import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
 import com.decoutkhanqindev.aodamn.presentation.theme.NeutralVariant30
 import com.decoutkhanqindev.aodamn.presentation.theme.RoundedCornerShape8dp
 
-// AOD thu nhỏ: vẽ AodContent ở đúng cỡ màn hình rồi thu theo chiều cao nên giống hệt AOD khi bật; lớp phủ trên cùng chặn chạm để
-// click rơi về khung bọc ngoài.
 @Composable
 fun AodThumbnail(
     state: AodState,

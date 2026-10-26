@@ -37,8 +37,6 @@ import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodIntent
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
 import kotlin.math.roundToInt
 
-// Vành, màn dọc (mock đã duyệt): mặt số phủ màn; thứ + ngày (+ thời tiết) và dòng pin · thông báo ngay dưới giữa vùng từ số 12 tới đầu kim
-// phút, trình phát gọn giữa vùng từ đầu kim tới số 6, nên kim không bao giờ đè lên chữ. Nhạc phát / dừng thì trình phát hiện / ẩn có animation.
 @Composable
 fun AodBezelPortrait(
     state: AodState,
@@ -73,9 +71,6 @@ fun AodBezelPortrait(
     }
 }
 
-// Vành, màn ngang (mock đã duyệt): mặt số luôn phủ màn như app mẫu, hai nhóm giữa chiều cao, nhóm trái từ 0,25 bề ngang, nhóm phải thẳng phải ở 0,75.
-// Không nhạc: pin · thông báo trái, ngày phải như app mẫu; có nhạc: ngày + pin xếp dọc bên trái, trình phát bên phải. Nhạc phát / dừng thì đổi
-// bằng mờ chéo.
 @Composable
 fun AodBezelLandscape(
     state: AodState,
@@ -113,7 +108,6 @@ fun AodBezelLandscape(
     }
 }
 
-// Thứ + số ngày cùng màu ngày (chỉnh được cả hai ở tab Ngày); thời tiết cạnh ngày, kiểu chỉnh ở Tùy chỉnh như các chủ đề khác.
 @Composable
 private fun BezelDateRow(
     state: AodState,
@@ -197,7 +191,6 @@ private fun BezelStatus(
     )
 }
 
-// Đặt khối theo điểm neo trong cả vùng: x là mép trái (anchor 0), giữa (0,5) hay mép phải (1) của khối, centerY là giữa khối theo chiều dọc.
 private fun Modifier.anchorAt(x: Dp, centerY: Dp, anchor: Float): Modifier = layout { measurable, constraints ->
     val placeable = measurable.measure(constraints.copy(minWidth = 0, minHeight = 0))
     layout(width = constraints.maxWidth, height = constraints.maxHeight) {

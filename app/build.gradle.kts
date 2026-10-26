@@ -18,7 +18,6 @@ android {
     defaultConfig {
         applicationId = "com.decoutkhanqindev.aodamn"
         minSdk = 30
-        // Các thay đổi hành vi tới Android 17 có ảnh hưởng tới app được liệt kê ở README › targetSdk 37 — rà lại trước khi nâng.
         targetSdk = 37
         versionCode = 1
         versionName = "v1.0.0"
@@ -158,7 +157,6 @@ android {
         generateLocaleConfig = true
     }
 
-    // Đổi ngôn ngữ trong app → AAB phải chứa đủ mọi ngôn ngữ (Play không tải thêm split ngôn ngữ khác ngôn ngữ máy).
     bundle {
         language {
             enableSplit = false
@@ -184,68 +182,51 @@ dependencies {
     implementation(composeBom)
     androidTestImplementation(composeBom)
 
-    // Core Android dependencies
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
 
-    // Arch Components
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
 
-    // Compose
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
-    // Tooling
     debugImplementation(libs.androidx.compose.ui.tooling)
-    // Instrumented tests
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
-    // Local tests: jUnit, coroutines, Android runner
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
 
-    // Instrumented tests: jUnit rules and runners
     androidTestImplementation(libs.androidx.test.core)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.androidx.test.espresso.core)
 
-    // Navigation
     implementation(libs.androidx.navigation3.ui)
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.lifecycle.viewmodel.navigation3)
 
-    // Coroutines
     implementation(libs.kotlinx.coroutines.android)
 
-    // Koin
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
 
-    // Timber
     implementation(libs.timber)
 
-    // Immutable Collections
     implementation(libs.kotlinx.collections.immutable)
 
-    // Lottie
     implementation(libs.lottie.compose)
 
-    // Color picker
     implementation(libs.colorpicker.compose)
 
-    // Preferences DataStore
     implementation(libs.androidx.datastore.preferences)
 
-    // Ads (AdMob + UMP consent; ConstraintLayout cho layout XML của NativeAdView)
     implementation(libs.play.services.ads)
     implementation(libs.user.messaging.platform)
     implementation(libs.androidx.constraintlayout)
 
-    // Network (Retrofit + kotlinx-serialization, gọi API thời tiết Open-Meteo)
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.kotlinx.serialization)
     implementation(libs.kotlinx.serialization.json)

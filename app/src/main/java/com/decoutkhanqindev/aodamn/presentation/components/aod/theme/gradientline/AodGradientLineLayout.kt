@@ -43,8 +43,6 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.gradientline.Gra
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodIntent
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
 
-// Dải màu, màn dọc như layout mẫu: lề 40dp hai bên, 60dp trên / dưới; trình phát trên cùng (cách vạch 30dp), vạch chiếm phần còn lại, khối dưới
-// (thông báo mới nhất, dòng pin · thông báo) neo đáy. Trình phát hiện / ẩn thì vạch co giãn theo, giờ trượt theo.
 @Composable
 fun AodGradientLinePortrait(
     state: AodState,
@@ -79,8 +77,6 @@ fun AodGradientLinePortrait(
     }
 }
 
-// Dải màu, màn ngang (mock đã duyệt; app mẫu dùng chung layout dọc nên vạch ngắn, giờ nhỏ): vạch nằm ngang hết bề rộng trừ lề 40dp, giờ trượt từ
-// trái sang phải; trình phát giữa phía trên, khối dưới giữa phía dưới, cùng trục giữa như màn dọc.
 @Composable
 fun AodGradientLineLandscape(
     state: AodState,
@@ -113,7 +109,6 @@ fun AodGradientLineLandscape(
     }
 }
 
-// Trình phát của chủ đề (AodGradientLineMedia qua AodMediaControls); không có nhạc thì không chiếm chỗ (cả khoảng cách tới vạch).
 @Composable
 private fun GradientLinePlayer(
     state: AodState,
@@ -131,7 +126,6 @@ private fun GradientLinePlayer(
     }
 }
 
-// Thông báo mới nhất (cách 10dp) trên dòng pin · thông báo; dòng nào không có thì không chiếm chỗ.
 @Composable
 private fun GradientLineDetails(
     state: AodState,
@@ -157,8 +151,6 @@ private fun GradientLineDetails(
     }
 }
 
-// Dòng pin · icon thông báo như dòng trạng thái của các chủ đề khác, nhưng hai màu như app mẫu: pin (chữ mờ 0,9 như battery_status) theo màu pin,
-// chấm ngăn và icon theo màu thông báo. Khoảng cách, chấm theo tỉ lệ của AodStatusLine.
 @Composable
 private fun GradientLineStatus(state: AodState) {
     val config = state.appearance.theme.config
@@ -203,7 +195,6 @@ private fun GradientLineStatus(state: AodState) {
     }
 }
 
-// Thông báo mới nhất như notify_lt của app mẫu: icon 20dp, cách 10dp, chữ 16sp một dòng chạy chữ (một lần) khi dài.
 @Composable
 private fun GradientLineLatest(
     latest: NotificationContentUiModel,

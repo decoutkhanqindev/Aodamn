@@ -26,12 +26,10 @@ class MediaStateManager(
     private val app: Application,
     notificationStateManager: NotificationStateManager,
 ) : Tag {
-    // Main thread: callback của MediaController và lệnh điều khiển từ màn AOD cùng chạy ở đây nên không cần khoá.
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private val mainHandler = Handler(Looper.getMainLooper())
     private var controller: MediaController? = null
 
-    // Ảnh bìa thu nhỏ giữ theo ảnh gốc của metadata: đổi trạng thái phát không tạo bitmap mới, AOD không vẽ lại trình phát vô cớ.
     private var artSource: Bitmap? = null
     private var art: Bitmap? = null
 
@@ -43,7 +41,6 @@ class MediaStateManager(
         override fun onSessionDestroyed() = attach(token = null)
     }
 
-    // Phiên nhạc lấy từ thông báo nhạc mới nhất (token không cần quyền riêng); nóng theo token nên AOD đọc giá trị hiện tại cho khung đầu tiên.
     private val _playback = MutableStateFlow<MediaPlayback?>(null)
     val playback: StateFlow<MediaPlayback?> = _playback.asStateFlow()
 
@@ -81,7 +78,6 @@ class MediaStateManager(
         _playback.value = controller?.toMediaPlayback()
     }
 
-    // Tên bài theo thứ tự ưu tiên như trình phát của hệ thống; không có tên bài thì không hiện.
     private fun MediaController.toMediaPlayback(): MediaPlayback? {
         val metadata = metadata ?: return null
         val title = metadata.getString(MediaMetadata.METADATA_KEY_DISPLAY_TITLE)
@@ -101,7 +97,6 @@ class MediaStateManager(
         )
     }
 
-    // Ảnh bìa gốc có thể tới 1000 px trở lên mà AOD chỉ vẽ cỡ 55dp: thu nhỏ một lần cho mỗi ảnh gốc.
     private fun MediaMetadata.toAlbumArt(): Bitmap? {
         val source = getBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART)
             ?: getBitmap(MediaMetadata.METADATA_KEY_ART)
@@ -122,8 +117,6 @@ class MediaStateManager(
         return art
     }
 
-    // Radio, livestream không có độ dài, app chưa báo vị trí thì không có tiến trình. Vài app để lastPositionUpdateTime = 0:
-    // lấy lúc nhận trạng thái làm mốc, nếu không nội suy từ 0 làm thanh nhảy hết ngay.
     private fun PlaybackState.toMediaProgress(durationMillis: Long): MediaProgress? {
         if (durationMillis <= 0L || position < 0L) return null
         return MediaProgress(
@@ -137,7 +130,6 @@ class MediaStateManager(
     companion object {
         const val ART_SIZE_PX = 160
 
-        // Đang tải, tua hay chuyển bài cũng tính là đang phát (nút hiện Tạm dừng), như trình phát của hệ thống.
         private val PLAYING_STATES = setOf(
             PlaybackState.STATE_PLAYING,
             PlaybackState.STATE_BUFFERING,

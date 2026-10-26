@@ -43,8 +43,6 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.chain.ChainTheme
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodIntent
 import com.decoutkhanqindev.aodamn.presentation.theme.Grey5A
 
-// Trình phát của Chuỗi theo layout app mẫu: lùi 35dp · tên bài in hoa đậm / nghệ sĩ mờ ở giữa · tới 35dp, thanh tiến trình 1,5dp bên dưới. Không có
-// nút phát: chạm tên bài để phát / dừng như app mẫu, đang dừng thì chữ mờ đi. Rộng 313dp (màn 393dp trừ đệm 40dp hai bên), cột hẹp hơn thì hẹp theo.
 @Composable
 fun AodChainMedia(
     media: MediaUiModel,
@@ -147,7 +145,6 @@ fun AodChainMedia(
     }
 }
 
-// Nút lùi / tới: ô 35dp, icon 15dp như app mẫu (ô 35dp đệm 10dp); không lùi / tới được thì xám.
 @Composable
 private fun ChainMediaButton(
     @DrawableRes iconRes: Int,

@@ -21,7 +21,6 @@ class DeviceLocationManager(
 ) : Tag {
     private val locationManager = app.getSystemService(LocationManager::class.java)
 
-    // Vị trí gần đúng (Wi-Fi, mạng di động) đủ cho thời tiết, nhanh và ít tốn pin hơn GPS; chưa có bản mới thì dùng vị trí đã biết gần nhất. Không có quyền hoặc tắt định vị thì null.
     suspend fun currentCoarseLocation(): Coordinates? {
         if (app.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return null
@@ -41,7 +40,6 @@ class DeviceLocationManager(
         )
     }
 
-    // Nơi gọi đã kiểm quyền vị trí.
     @SuppressLint("MissingPermission")
     private suspend fun requestCurrentLocation(): Location? {
         val provider = preferredProvider() ?: return null
@@ -58,13 +56,11 @@ class DeviceLocationManager(
         }
     }
 
-    // Nơi gọi đã kiểm quyền vị trí.
     @SuppressLint("MissingPermission")
     private fun lastKnownLocation(): Location? = locationManager.getProviders(true)
         .mapNotNull { provider -> locationManager.getLastKnownLocation(provider) }
         .maxByOrNull { location -> location.time }
 
-    // Fused (có Google Play services) gộp Wi-Fi và mạng di động; không có thì dùng nhà cung cấp mạng. Quyền gần đúng không dùng được GPS.
     private fun preferredProvider(): String? = when {
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
                 locationManager.isProviderEnabled(LocationManager.FUSED_PROVIDER) -> LocationManager.FUSED_PROVIDER

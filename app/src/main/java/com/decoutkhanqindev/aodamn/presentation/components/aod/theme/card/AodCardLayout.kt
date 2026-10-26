@@ -32,9 +32,6 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.component.AodCom
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodIntent
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
 
-// Thẻ, màn dọc giãn trên - dưới (AodSpreadMetrics, mock đã duyệt): thẻ → ngày → các khối thêm (thời tiết, sự kiện, ghi nhớ, nét vẽ) ở trên;
-// thông báo mới nhất, nhạc rồi pin + icon thông báo neo đáy. Kích thước theo R (CardMetrics); nhiều khối thì R nhỏ lại cho hai cụm vừa phần
-// giữa TOP_RATIO và BOTTOM_RATIO.
 @Composable
 fun AodCardPortrait(
     state: AodState,
@@ -62,8 +59,6 @@ fun AodCardPortrait(
     }
 }
 
-// Thẻ, màn ngang: bố cục chung theo các khối đang hiện (AodLandscapeLayout), hero là thẻ + ngày (thời tiết cạnh ngày khi không có sự kiện) +
-// dòng pin; thẻ thu còn 0,9 như app mẫu và không cao quá màn hình. Khối bật / tắt hay nhạc phát / dừng thì đổi bố cục bằng mờ chéo.
 @Composable
 fun AodCardLandscape(
     state: AodState,
@@ -94,9 +89,6 @@ fun AodCardLandscape(
     }
 }
 
-// Đo khối thêm và cụm đáy trước để biết R (unitFor), rồi xếp thẻ + ngày → khối thêm từ trên, khối cụm đáy → dòng trạng thái thẳng đáy
-// (AodSpreadMetrics), mỗi phần giữa bề ngang. Khối đổi cỡ có animation nên thẻ co giãn theo chứ không nhảy; phần nào không có thì bỏ luôn
-// khoảng cách cạnh nó.
 @Composable
 private fun CardSpread(
     extras: @Composable () -> Unit,

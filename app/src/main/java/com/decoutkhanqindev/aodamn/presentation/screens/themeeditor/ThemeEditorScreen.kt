@@ -73,7 +73,6 @@ fun ThemeEditorScreen(
                         toastState.currentSnackbarData?.dismiss()
                         toastState.showSnackbar(ToastUiModel(resources.getString(effect.messageRes), effect.isError))
                     }
-                    // Tùy chỉnh đã nằm ngay dưới thì quay lại nó thay vì mở chồng thêm một màn.
                     is ThemeEditorEffect.NavigateToCustomize ->
                         if (backStack.any { key -> key is CustomizeDestination }) {
                             backStack.navigateBack()
@@ -105,7 +104,6 @@ fun ThemeEditorScreen(
         onPauseOrDispose { }
     }
 
-    // Đang sửa thì Back thoát chế độ sửa (hỏi trước nếu còn thay đổi chưa lưu), không rời màn.
     BackHandler {
         viewModel.onIntent(ThemeEditorIntent.NavigateBack)
     }

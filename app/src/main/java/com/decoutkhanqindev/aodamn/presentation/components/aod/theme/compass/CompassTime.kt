@@ -2,8 +2,6 @@ package com.decoutkhanqindev.aodamn.presentation.components.aod.theme.compass
 
 import java.util.TimeZone
 
-// Giờ địa phương (múi giờ của máy, có giờ mùa hè) tách thành giây / phút / giờ có phần lẻ như AmbitioClock của app mẫu: giây có phần nghìn giây,
-// phút có phần giây, giờ 12 tiếng có phần phút, nên ba vòng trôi liên tục chứ không nhảy từng nấc.
 class CompassTime(epochMillis: Long) {
     private val dayMillis = Math.floorMod(epochMillis + TimeZone.getDefault().getOffset(epochMillis), DAY_MILLIS)
 
@@ -17,7 +15,6 @@ class CompassTime(epochMillis: Long) {
         private const val HALF_DAY_MILLIS = 12 * HOUR_MILLIS
         private const val DAY_MILLIS = 24 * HOUR_MILLIS
 
-        // Kiểu không vòng giây đổi mặt số đúng đầu mỗi phút như app mẫu (múi giờ lệch theo phút chẵn nên đầu phút giờ máy = đầu phút UTC).
         fun millisToNextMinute(epochMillis: Long): Long = MINUTE_MILLIS - Math.floorMod(epochMillis, MINUTE_MILLIS)
     }
 }

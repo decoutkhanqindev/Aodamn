@@ -13,7 +13,6 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-// Gradient lưu bằng khoá phụ cạnh khoá màu cũ: màu đã lưu trước khi có gradient phải đọc ra đúng như cũ, đặt lại phải xoá cả khoá phụ.
 class AodColorOptionTest {
 
     private val solid = AodColorOption(key = "digit_color", labelRes = R.string.opt_clock_color, default = Color.Red, isGradientAllowed = true)

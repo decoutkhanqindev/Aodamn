@@ -26,7 +26,7 @@ Lệnh `rea` hoặc tool MCP `mcp__rea__*` dùng khi cần bằng chứng cho m�
 ## Số đo
 
 - Quy mọi số đo về một đơn vị gốc (vd `u` = nửa cạnh ngắn màn, hoặc chiều cao hàng số) và ghi tỉ lệ, không ghi dp cố định:
-  sau thành hằng trong `object <Chủ đề>Metrics` kèm comment nguồn ("oct23_screen_layout", "CoumTick.onDraw").
+  sau thành hằng trong `object <Chủ đề>Metrics` (nguồn như "oct23_screen_layout", "CoumTick.onDraw" ghi ở commit message, không comment).
 - Font: tìm font của app mẫu trong APK, đo chữ số bằng PIL (cao / em, rộng / cao, độ dày nét). Chỉ đo, không lấy file. Lấy
   bản Google Fonts cùng họ theo CLAUDE.md › Font; font mẫu đậm hơn bản đậm nhất của Google Fonts thì lấy độ đậm cao nhất
   (Chồng số: wght 1000) và ghi là đổi trong bảng.

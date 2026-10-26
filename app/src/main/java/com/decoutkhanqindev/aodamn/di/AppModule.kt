@@ -60,7 +60,6 @@ val managerModule = module {
 }
 
 val networkModule = module {
-    // Open-Meteo trả nhiều trường hơn app dùng: bỏ qua trường lạ thay vì lỗi khi đọc.
     single { Json { ignoreUnknownKeys = true } }
     single {
         Retrofit.Builder()

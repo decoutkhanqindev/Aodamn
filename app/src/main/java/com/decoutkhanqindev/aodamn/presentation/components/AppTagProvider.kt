@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
 
-// Giống interface Tag của lớp thường nhưng cho composable: `Timber.tag(LocalTag.current)`.
 val LocalTag = staticCompositionLocalOf { "App" }
 
 @Composable

@@ -10,7 +10,6 @@ import kotlinx.collections.immutable.persistentListOf
 data class PermissionState(
     val permissions: ImmutableList<PermissionUiModel> = persistentListOf(),
 ) {
-    // Chỉ khoá nút khi chắc chắn còn thiếu quyền; quyền không đọc được trạng thái vẫn cho đi tiếp.
     val isConfirmEnabled: Boolean
         get() = permissions.isNotEmpty() && permissions.hasRequiredPermissions
 }

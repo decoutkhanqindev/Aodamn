@@ -44,7 +44,6 @@ suspend inline fun <T> Flow<T>.collectCatching(
     catch(e)
 }
 
-// Giá trị mới huỷ khối action đang chạy (huỷ đó nằm trong collectLatest, không tới catch); lỗi thật của upstream hay action thì tới catch.
 suspend inline fun <T> Flow<T>.collectLatestCatching(
     crossinline block: suspend (T) -> Unit,
     crossinline catch: (Exception) -> Unit,

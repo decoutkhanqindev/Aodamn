@@ -6,8 +6,6 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 
-// Khối dùng chung chiếm chỗ riêng trên AOD (ngoài đồng hồ, ngày, pin, icon thông báo), theo thứ tự màn dọc; NOTIFICATION là thông báo mới
-// nhất (icon thông báo đi cùng pin).
 @Immutable
 enum class AodPanelBlockValue(val component: AodComponentValue) {
     WEATHER(AodComponentValue.WEATHER),
@@ -18,9 +16,6 @@ enum class AodPanelBlockValue(val component: AodComponentValue) {
     MEDIA(AodComponentValue.MEDIA),
 }
 
-// Bố cục màn ngang theo các khối đang hiện, dùng chung cho mọi chủ đề (README › Thêm chủ đề mới › Bố cục ngang): thời tiết đứng cạnh ngày
-// trừ khi có sự kiện (lúc đó là đầu cột lịch trình); info là cột thông tin (lịch trình, thông báo mới nhất, ghi nhớ); nét vẽ và nhạc là
-// khối lớn, mỗi khối một chỗ riêng.
 @Immutable
 data class AodLandscapePlan(
     val isWeatherBesideDate: Boolean = false,
@@ -28,14 +23,12 @@ data class AodLandscapePlan(
     val hasDrawing: Boolean = false,
     val hasMedia: Boolean = false,
 ) {
-    // Chỉ đồng hồ, ngày, pin, icon thông báo (và thời tiết cạnh ngày): cả cụm giữa màn hình.
     val isEmpty: Boolean
         get() = info.isEmpty() && !hasDrawing && !hasMedia
 
     val isMediaOnly: Boolean
         get() = hasMedia && info.isEmpty() && !hasDrawing
 
-    // Nhạc cùng nhóm khác: đủ khối cho ba cột (thông tin hoặc nét vẽ | đồng hồ | nhạc).
     val hasMediaWithOthers: Boolean
         get() = hasMedia && (info.isNotEmpty() || hasDrawing)
 

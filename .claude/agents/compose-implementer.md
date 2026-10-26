@@ -51,7 +51,7 @@ animation polish, token discipline, and adherence to project patterns — never 
 - **Interaction.** `Modifier.onClick` from `components/AppModifiers.kt`; `Modifier.selectable` /
   `Modifier.toggleable` with a `Role` for radio / switch rows; never raw `Modifier.clickable`.
 - **Text and comments.** All text in `res/values/strings.xml` with a Vietnamese copy in
-  `values-vi/`; UI code has no comments; other code gets one-line Vietnamese "why" comments.
+  `values-vi/`; no comments anywhere unless the user asks (only `// TODO:` allowed).
 - **Compose files declare no top-level `val` / `const val` / helper classes** (CLAUDE.md › Compose và theme); the one exception is a shared `LocalXxx` CompositionLocal in `presentation/components/` (`LocalTag`: `val tag = LocalTag.current`, then `Timber.tag(tag)`).
 - **Dependencies and manifest permissions** need the user's approval before they are added (
   CLAUDE.md hard rules).

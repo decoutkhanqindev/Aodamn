@@ -35,7 +35,6 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.component.AodCom
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.component.AodNotificationsLayoutValue
 import com.decoutkhanqindev.aodamn.presentation.theme.Black
 
-// Icon của các app đang có thông báo, font / cỡ / màu theo khối thông báo; mỗi kiểu một bố cục.
 @Composable
 fun AodNotificationIcons(
     notifications: AodNotificationsUiModel,
@@ -83,7 +82,6 @@ fun AodNotificationIcons(
                         overflow()
                     }
 
-                    // Icon chồng lên nhau như ảnh đại diện; nền đen dưới mỗi icon tách nó khỏi icon trước
                     AodNotificationsLayoutValue.STACK -> {
                         Row(horizontalArrangement = Arrangement.spacedBy((-6).dp * style.scale)) {
                             target.icons.forEach { icon ->
@@ -107,7 +105,6 @@ fun AodNotificationIcons(
                         overflow()
                     }
 
-                    // Chuông và số thông báo
                     AodNotificationsLayoutValue.BADGE -> {
                         Icon(
                             painter = painterResource(R.drawable.ic_bell_light),
@@ -125,7 +122,6 @@ fun AodNotificationIcons(
                         )
                     }
 
-                    // Mỗi app một chấm nhỏ
                     AodNotificationsLayoutValue.DOTS -> {
                         Row(horizontalArrangement = Arrangement.spacedBy(6.dp * style.scale)) {
                             repeat(target.icons.size) {
@@ -145,7 +141,6 @@ fun AodNotificationIcons(
     }
 }
 
-// Thông báo mới nhất: kiểu Hàng icon / Xếp lớp thì icon + tiêu đề + nội dung, kiểu Chuông / Chấm thì một dòng gọn "tiêu đề  nội dung".
 @Composable
 fun AodNotificationContent(
     content: NotificationContentUiModel?,

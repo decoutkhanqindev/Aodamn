@@ -37,10 +37,6 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.jersey.JerseyThe
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodIntent
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
 
-// Số áo, màn dọc: hai hàng chữ số rất cao chỉ có nét viền nằm giữa màn hình, ngày treo bên phải hàng giờ, dòng pin + icon thông báo ở dưới,
-// rồi các khối thêm (thời tiết, sự kiện, ghi nhớ, nét vẽ, nhạc) theo kiểu user chọn ở Tùy chỉnh. Ngày và dòng trạng thái không ảnh hưởng vị
-// trí số (hàng số luôn giữa màn hình, ô cố định nên giờ nào cũng vậy). Kích thước theo R như ảnh mẫu; có khối thêm thì hàng số nhỏ lại cho cả
-// cột vừa màn hình, ngày và dòng trạng thái giữ cỡ.
 @Composable
 fun AodJerseyPortrait(
     state: AodState,
@@ -66,8 +62,6 @@ fun AodJerseyPortrait(
     }
 }
 
-// Số áo, màn ngang: một cột giữa màn hình, ngày nằm ngang → bốn chữ số một hàng → pin + icon thông báo → các khối thêm xếp cạnh nhau (xuống
-// dòng khi không đủ bề ngang). Ngày và dòng trạng thái cỡ như màn dọc; hàng số lấp phần chiều cao còn lại (tắt ngày thì số to ra).
 @Composable
 fun AodJerseyLandscape(
     state: AodState,
@@ -112,8 +106,6 @@ fun AodJerseyLandscape(
     }
 }
 
-// Cụm số ở trên, khối thêm ở dưới, cả hai nằm giữa bề ngang. Đo khối thêm trước để biết còn bao nhiêu chiều cao cho hàng số; khối thêm đổi
-// cỡ có animation nên hàng số co giãn theo chứ không nhảy.
 @Composable
 private fun JerseyWithExtras(
     extras: @Composable () -> Unit,
@@ -153,7 +145,6 @@ private fun JerseyPortraitClock(
 
             JerseyTimeRow(nowMillis = state.nowMillis, isHour = false, glyphs = glyphs, rowHeight = rowHeight, brush = config.brushOf(JerseyThemeSpec.MinuteColor))
 
-            // Bọc Box: khối ẩn hẳn (AnimatedVisibility) thì không có node, Layout đọc con theo thứ tự nên luôn cần đủ 4 con.
             Box {
                 AnimatedVisibility(visible = state.extras.isDateEnabled, enter = fadeIn(), exit = fadeOut()) {
                     JerseyDateVertical(nowMillis = state.nowMillis, brush = config.brushOf(JerseyThemeSpec.DateColor), rowHeight = unit)
@@ -202,7 +193,6 @@ private fun JerseyLandscapeClock(
 
             JerseyTimeRow(nowMillis = state.nowMillis, isHour = false, glyphs = glyphs, rowHeight = rowHeight, brush = config.brushOf(JerseyThemeSpec.MinuteColor))
 
-            // Bọc Box: khối ẩn hẳn (AnimatedVisibility) thì không có node, Layout đọc con theo thứ tự nên luôn cần đủ 4 con.
             Box {
                 AnimatedVisibility(visible = state.extras.isDateEnabled) {
                     JerseyDateHorizontal(nowMillis = state.nowMillis, brush = config.brushOf(JerseyThemeSpec.DateColor), unit = unit)
@@ -235,7 +225,6 @@ private fun JerseyLandscapeClock(
     }
 }
 
-// Hàng giờ hoặc phút; hàng giờ mang cả giờ cho TalkBack.
 @Composable
 private fun JerseyTimeRow(
     nowMillis: Long,

@@ -144,6 +144,11 @@ check "ManagerImpl / BaseAds" \
   "1 class cụ thể XxxManager / AdsManager" \
   'grep -rn "ManagerImpl\|BaseAds" $SRC --include="*.kt"'
 
+# --- Comment ----------------------------------------------------------------------------------------
+check "Comment trong Kotlin / Gradle" \
+  "xoá comment (chỉ thêm khi user yêu cầu), ngoại lệ // TODO: và các dòng // nối tiếp ngay dưới nó" \
+  'find app/src baselineprofile/src -name "*.kt" -not -path "*/build/*" | xargs awk "{ t = \$0; gsub(/\"([^\"\\\\]|\\\\.)*\"/, \"\", t) } t ~ /^[ \t]*\/\/[ \t]*TODO/ { todo = 1; next } todo && t ~ /^[ \t]*\/\// { next } { todo = 0 } t ~ /\/\/|\/\*/ { print FILENAME \":\" FNR \": \" \$0 }" *.gradle.kts app/build.gradle.kts baselineprofile/build.gradle.kts; grep -n "#" gradle/libs.versions.toml'
+
 if [ "$violations" -eq 0 ]; then
   echo "[OK] $total rule, 0 vi phạm"
 else

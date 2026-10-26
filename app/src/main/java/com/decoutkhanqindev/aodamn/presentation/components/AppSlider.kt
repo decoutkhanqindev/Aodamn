@@ -54,11 +54,6 @@ import com.decoutkhanqindev.aodamn.utils.collectLatestCatching
 import timber.log.Timber
 import kotlin.math.roundToInt
 
-// Thanh theo số nguyên có bước (giá trị = min + vị trí * step). onProgressChange = null: chỉ hiển thị tiến trình (splash, thanh nhạc
-// trên AOD), không đi qua Slider của Material vì SliderImpl đọc state.value ngay trong composition (tham số slideOnKeyEvents) nên
-// recompose mỗi lần tiến trình đổi; progress được gọi ở pha vẽ của track và pha layout của thumb nên tiến trình đổi chỉ vẽ lại, cao
-// đúng bằng thumb / track. isThumbVisible = false: không vẽ thumb, track trải hết chiều ngang. track thay thanh mặc định (vd thanh nhạc
-// gợn sóng của chủ đề AOD), nhận fraction đọc ở pha vẽ.
 @Composable
 fun AppSlider(
     progress: () -> Int,
@@ -147,9 +142,6 @@ private fun AppProgressBar(
     }
 }
 
-// Thumb theo ngón tay bằng SliderState cục bộ, chỉ gọi onProgressChange khi sang bước khác nên không phụ thuộc độ trễ ghi DataStore /
-// ViewModel; giá trị đổi từ ngoài (hoàn tác, đặt lại, bị từ chối) kéo thumb theo khi không kéo. progress chỉ được gọi trong snapshotFlow,
-// track và hiệu ứng nhấn đọc ở pha vẽ nên kéo không làm AppSlider recompose (Slider của Material bên trong vẫn recompose theo value).
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AppInteractiveSlider(

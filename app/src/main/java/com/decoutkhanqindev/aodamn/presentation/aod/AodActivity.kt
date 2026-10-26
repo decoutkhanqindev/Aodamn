@@ -30,7 +30,6 @@ class AodActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         ComposeUiFlags.isBypassUnfocusableComposeViewEnabled = false
         super.onCreate(savedInstanceState)
-        // Cờ cửa sổ, không dùng android:turnScreenOn/setTurnScreenOn: màn hình chỉ sáng khi cửa sổ đã che màn hình khoá, nên màn hình khoá không loé lên và nhận diện khuôn mặt không chạy.
         @Suppress("DEPRECATION")
         window.addFlags(
             WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON,
@@ -49,7 +48,6 @@ class AodActivity : ComponentActivity() {
         }
         session.attach(this)
 
-        // Độ sáng và hướng xoay đặt trước khi cửa sổ hiện để ngay khung đầu tiên đã đúng.
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         setBrightness(normalBrightness)
         if (dataStoreManager.isAodLandscape.value == true) lockLandscape()
@@ -72,15 +70,13 @@ class AodActivity : ComponentActivity() {
         super.onDestroy()
     }
 
-    // Không tự đóng ở onStop: AOD có thể bị stop khi màn hình vẫn tắt, service quyết định lúc đóng.
     fun close() {
         if (isFinishing) return
         finish()
-        @Suppress("DEPRECATION") // overridePendingTransition: hàm thay thế chỉ có từ API 34
+        @Suppress("DEPRECATION")
         overridePendingTransition(0, 0)
     }
 
-    // App không tắt được màn hình: đen ở độ sáng thấp nhất, bỏ KEEP_SCREEN_ON để giờ chờ của máy tắt; lần tắt đó là chủ ý nên service không mở lại AOD.
     private fun renderDark(isDark: Boolean) {
         if (isDark == this.isDark) return
         this.isDark = isDark
@@ -95,7 +91,6 @@ class AodActivity : ComponentActivity() {
         }
     }
 
-    // Phòng tối: giảm về mức thấp nhất; đang tối hẳn thì renderDark giữ quyền quyết định độ sáng.
     private fun renderDim(isDimmed: Boolean) {
         if (isDimmed == this.isDimmed) return
         this.isDimmed = isDimmed
@@ -108,13 +103,12 @@ class AodActivity : ComponentActivity() {
         window.attributes = window.attributes.apply { screenBrightness = value }
     }
 
-    // Tuỳ chọn "đồng hồ đêm" của user: ngang theo cảm biến để dựng máy chiều nào cũng đúng. Màn hình lớn (Android 16+) bỏ qua yêu cầu này.
     @SuppressLint("SourceLockedOrientationActivity")
     private fun lockLandscape() {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
     }
 
-    @Suppress("DEPRECATION") // setDecorFitsSystemWindows: từ API 35 luôn edge-to-edge
+    @Suppress("DEPRECATION")
     private fun hideSystemBars() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.VANILLA_ICE_CREAM) {
             window.setDecorFitsSystemWindows(false)

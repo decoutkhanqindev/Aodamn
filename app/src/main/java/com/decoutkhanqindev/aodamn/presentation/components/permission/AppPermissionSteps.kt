@@ -54,8 +54,6 @@ import com.decoutkhanqindev.aodamn.presentation.theme.TitleMedium
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
-// Các quyền theo thứ tự cấp (màn quyền lúc onboarding, sheet quyền): tiến độ "đã cấp" ở trên (khi có nhiều quyền), mỗi quyền một hàng có
-// số thứ tự; quyền cần cấp tiếp theo (nextPermission) có viền mint để user biết bấm đâu.
 @Composable
 fun AppPermissionSteps(
     permissions: ImmutableList<PermissionUiModel>,

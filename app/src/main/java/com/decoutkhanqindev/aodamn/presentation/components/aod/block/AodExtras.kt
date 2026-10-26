@@ -48,7 +48,6 @@ import com.decoutkhanqindev.aodamn.presentation.theme.GreyB4
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
-// Thời tiết cạnh dòng ngày, font / cỡ / màu theo khối thời tiết; mỗi kiểu một bố cục.
 @Composable
 fun AodWeather(
     weather: WeatherUiModel?,
@@ -134,7 +133,6 @@ private fun WeatherText(
     )
 }
 
-// Sự kiện còn lại trong hôm nay, font / cỡ / màu theo khối sự kiện; mỗi kiểu một bố cục.
 @Composable
 fun AodEvents(
     events: ImmutableList<CalendarEventUiModel>,
@@ -158,7 +156,6 @@ fun AodEvents(
             }
 
             when (layout) {
-                // Icon lịch bên trái, mỗi sự kiện một dòng giờ + tên
                 AodEventsLayoutValue.LIST -> AodBlock(modifier = Modifier.padding(top = 16.dp)) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
@@ -184,7 +181,6 @@ fun AodEvents(
                     }
                 }
 
-                // Chấm nối nhau bằng vạch mảnh như dòng thời gian, giờ trên tên
                 AodEventsLayoutValue.TIMELINE -> AodBlock(modifier = Modifier.padding(top = 16.dp)) {
                     target.forEachIndexed { index, event ->
                         key(event.beginMillis, event.title) {
@@ -222,7 +218,6 @@ fun AodEvents(
                     }
                 }
 
-                // Chỉ sự kiện gần nhất: giờ lớn, tên dưới, còn bao nhiêu sự kiện nữa
                 AodEventsLayoutValue.NEXT -> Column(
                     modifier = Modifier
                         .padding(top = 16.dp)
@@ -243,7 +238,6 @@ fun AodEvents(
                     }
                 }
 
-                // Mỗi sự kiện một dòng căn giữa: giờ · tên
                 AodEventsLayoutValue.INLINE -> Column(
                     modifier = Modifier
                         .padding(top = 16.dp)
@@ -305,7 +299,6 @@ private fun EventText(
     )
 }
 
-// Ghi nhớ, font / cỡ / màu theo khối ghi nhớ; mỗi kiểu một bố cục.
 @Composable
 fun AodMemo(
     memo: String,
@@ -332,7 +325,6 @@ fun AodMemo(
                     }
                 }
 
-                // Dấu ngoặc kép lớn phía trên, chữ căn giữa
                 AodMemoLayoutValue.QUOTE -> Column(
                     modifier = Modifier
                         .padding(top = 12.dp)
@@ -360,7 +352,6 @@ fun AodMemo(
                         .widthIn(max = 280.dp),
                 )
 
-                // Nhãn "GHI NHỚ" giãn chữ phía trên
                 AodMemoLayoutValue.TAG -> Column(
                     modifier = Modifier
                         .padding(top = 12.dp)

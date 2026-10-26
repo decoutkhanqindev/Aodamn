@@ -19,8 +19,6 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.ripple.RippleThe
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.tick.TickThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.tower.TowerThemeSpec
 
-// Các chủ đề AOD. id lưu trong DataStore nên không đổi; thêm chủ đề = một mục ở đây + đặc tả AodThemeSpec + phần vẽ ở
-// components/aod/theme/ (AodPortrait / AodLandscape chọn theo mục này).
 @Immutable
 enum class AodThemeValue(
     val id: String,

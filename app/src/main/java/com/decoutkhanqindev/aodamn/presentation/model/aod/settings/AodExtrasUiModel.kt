@@ -33,7 +33,6 @@ fun DataStoreManager.currentAodExtras(): AodExtrasUiModel = AodExtrasUiModel(
     isBatteryEnabled = isAodBatteryEnabled.value ?: DataStoreManager.DEFAULT_IS_AOD_BATTERY_ENABLED,
 )
 
-// combine có kiểu chỉ nhận tối đa 5 flow nên ghép hai lớp.
 fun DataStoreManager.observeAodExtras(): Flow<AodExtrasUiModel> = combine(
     combine(
         aodMemo.filterNotNull(),
@@ -54,7 +53,6 @@ fun DataStoreManager.observeAodExtras(): Flow<AodExtrasUiModel> = combine(
     extras.copy(isDateEnabled = isDateEnabled, isBatteryEnabled = isBatteryEnabled)
 }
 
-// Chủ đề không có sự kiện / thời tiết (AodThemeSpec.components) thì coi như tắt để AOD không đọc lịch, tải thời tiết vô ích.
 fun AodExtrasUiModel.shownIn(spec: AodThemeSpec): AodExtrasUiModel = copy(
     isCalendarEnabled = isCalendarEnabled && AodComponentValue.EVENTS in spec.components,
     isWeatherEnabled = isWeatherEnabled && AodComponentValue.WEATHER in spec.components,

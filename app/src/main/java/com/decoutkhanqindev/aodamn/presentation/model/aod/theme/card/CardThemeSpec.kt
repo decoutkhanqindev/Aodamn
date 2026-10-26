@@ -16,13 +16,7 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.collections.immutable.toImmutableList
 
-// Chủ đề Thẻ (M3 Expressive của Muviz Edge, plans/muviz-edge-themes.md): số giờ rất cao và hẹp, phút nhỏ bằng nửa đặt trên ô AM/PM, cả cụm trong
-// một thẻ bo góc; ngày in hoa đậm dưới thẻ, trình phát riêng (nút phát tròn đặc, thanh gợn sóng), pin + icon thông báo chung một dòng dưới
-// cùng. Các khối dùng chung khác (thời tiết, sự kiện, ghi nhớ, nét vẽ) nằm giữa ngày và nhạc, kiểu chỉnh ở Tùy chỉnh như Cổ điển; thông báo
-// mới nhất không có (dòng trạng thái chỉ có icon). App mẫu có kiểu số, nền thẻ, hai màu, cỡ; thêm màu thẻ riêng (app mẫu lấy màu giờ), màu ngày,
-// màu nhạc, màu dòng pin như Viên nang.
 object CardThemeSpec : AodThemeSpec {
-    // Font cố định của ngày, trình phát và dòng trạng thái; chữ số và AM/PM là Big Shoulders Display Black nén ngang (CardGlyphs).
     val Font: FontFamily = FontFamilyPlusJakartaSans
 
     val Style = AodChoiceOption(
@@ -38,7 +32,6 @@ object CardThemeSpec : AodThemeSpec {
         default = AodCardBackgroundValue.TINTED,
     )
 
-    // Dải cỡ như app mẫu (80–120%).
     val Size = AodRangeOption(
         key = "size",
         labelRes = R.string.opt_size_value,
@@ -47,8 +40,6 @@ object CardThemeSpec : AodThemeSpec {
         default = 100,
     )
 
-    // Màu phút còn tô ô AM/PM như app mẫu. Màu thẻ là nền mờ hay nét viền tuỳ kiểu nền, mặc định trùng màu giờ như app mẫu; giờ và thẻ mặc
-    // định xanh dương cho thẻ chủ đề bắt mắt.
     val HourColor = AodColorOption(key = "hour_color", labelRes = R.string.theme_color_hour, default = Blue, isGradientAllowed = true)
     val MinuteColor = AodColorOption(
         key = "minute_color",
@@ -59,11 +50,9 @@ object CardThemeSpec : AodThemeSpec {
     val CardColor = AodColorOption(key = "card_color", labelRes = R.string.theme_color_card, default = Blue, isGradientAllowed = true)
     val DateColor = AodColorOption(key = "date_color", labelRes = R.string.theme_color_date, default = GreyE4, isGradientAllowed = true)
 
-    // Tên bài, nghệ sĩ, các nút và phần đã nghe của thanh tiến trình.
     val MediaColor = AodColorOption(key = "media_color", labelRes = R.string.theme_color_media, default = GreyE4, isGradientAllowed = true)
     val StatusColor = AodColorOption(key = "status_color", labelRes = R.string.theme_color_status, default = GreyE4, isGradientAllowed = true)
 
-    // Mỗi khối chủ đề tự vẽ (ownBlocks) có tab ở đây: Tùy chỉnh › Ngày / Pin / Thông báo / Nhạc dẫn sang màn chủ đề.
     override val tabs = persistentListOf(
         AodThemeTab(
             iconRes = R.drawable.ic_clock,

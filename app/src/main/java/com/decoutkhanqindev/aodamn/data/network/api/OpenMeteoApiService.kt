@@ -4,7 +4,6 @@ import com.decoutkhanqindev.aodamn.data.network.api.response.ForecastResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-// Open-Meteo không cần API key.
 interface OpenMeteoApiService {
 
     @GET("v1/forecast")

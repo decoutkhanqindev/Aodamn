@@ -5,7 +5,6 @@ import androidx.compose.runtime.Immutable
 import com.decoutkhanqindev.aodamn.R
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeChoice
 
-// Clock Style 1–4 của app mẫu, giữ đúng thứ tự: đặc / viền, góc vuông / bo tròn (trục ROND 0 / 100 của Google Sans Flex).
 @Immutable
 enum class AodBigOverlapStyleValue(
     override val code: Int,

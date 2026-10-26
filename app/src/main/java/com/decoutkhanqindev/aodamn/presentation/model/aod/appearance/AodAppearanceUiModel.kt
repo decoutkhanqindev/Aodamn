@@ -12,8 +12,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 
-// Diện mạo AOD: chủ đề đang dùng (đồng hồ và các khối nó tự vẽ), kiểu font / cỡ / màu của từng khối dùng chung (ngày, pin, thời tiết,
-// sự kiện, ghi nhớ, thông báo, nhạc, nét vẽ) và xoay ngang (đồng hồ đêm, chọn ở tab Cài đặt).
 @Immutable
 data class AodAppearanceUiModel(
     val theme: AodThemeUiModel = AodThemeUiModel(),

@@ -42,8 +42,6 @@ import com.decoutkhanqindev.aodamn.presentation.theme.GreyB4
 import com.decoutkhanqindev.aodamn.presentation.theme.Mint
 import com.decoutkhanqindev.aodamn.presentation.theme.Red
 
-// Pin (mức pin theo màu khối pin, sạc thì Mint kèm tia sét, yếu thì đỏ) và đèn pin đang bật (icon Mint); font / cỡ / màu theo khối pin,
-// mỗi kiểu một cách vẽ mức pin.
 @Composable
 fun AodStatus(
     battery: BatteryUiModel?,
@@ -103,7 +101,6 @@ private fun AodBattery(
         battery.isLow -> Red
         else -> style.color
     }
-    // Đang sạc / pin yếu thì phần đầy giữ màu báo trạng thái nên chỉ chữ phần trăm tô gradient.
     val glyphTint = if (battery.isCharging || battery.isLow) Modifier else Modifier.aodTint(style)
     val percent = stringResource(R.string.aod_battery, battery.percent)
 
@@ -114,7 +111,6 @@ private fun AodBattery(
             ChargingMark(battery = battery, style = style)
         }
 
-        // Vòng tiến trình, phần trăm ở giữa
         AodBatteryLayoutValue.RING -> {
             Box(
                 modifier = Modifier
@@ -162,7 +158,6 @@ private fun AodBattery(
             ChargingMark(battery = battery, style = style)
         }
 
-        // Thanh ngang mảnh, phần trăm bên phải
         AodBatteryLayoutValue.BAR -> {
             Box(
                 modifier = Modifier
@@ -185,7 +180,6 @@ private fun AodBattery(
             ChargingMark(battery = battery, style = style)
         }
 
-        // Năm chấm, mỗi chấm 20%
         AodBatteryLayoutValue.DOTS -> {
             val filled = (battery.percent + 19) / 20
             Row(modifier = glyphTint, horizontalArrangement = Arrangement.spacedBy(4.dp * style.scale)) {
@@ -202,7 +196,6 @@ private fun AodBattery(
             ChargingMark(battery = battery, style = style)
         }
 
-        // Chỉ chữ: "72%" hoặc "Đang sạc · 72%"
         AodBatteryLayoutValue.TEXT -> BatteryText(
             text = if (battery.isCharging) stringResource(R.string.aod_battery_charging, battery.percent) else percent,
             style = style,

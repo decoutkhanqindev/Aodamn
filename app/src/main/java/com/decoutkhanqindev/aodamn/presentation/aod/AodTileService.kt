@@ -26,7 +26,6 @@ import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import timber.log.Timber
 
-// Ô bật / tắt AOD trong Cài đặt nhanh; thiếu quyền bắt buộc thì ô xám, không chạm được (đọc lại mỗi lần mở bảng Cài đặt nhanh).
 class AodTileService : TileService(), Tag {
 
     private val dataStoreManager: DataStoreManager by inject()
@@ -65,7 +64,6 @@ class AodTileService : TileService(), Tag {
         renderTile(isEnabled)
         when {
             !isEnabled -> AodService.stop(this)
-            // Từ Android 15, app có "Hiển thị trên ứng dụng khác" chỉ được start foreground service từ nền khi đang có overlay: mở app để MainActivity start.
             !AodService.start(this) -> openApp()
         }
     }
@@ -82,7 +80,6 @@ class AodTileService : TileService(), Tag {
         tile.updateTile()
     }
 
-    // Theo ngôn ngữ user chọn trong app chứ không theo ngôn ngữ máy, như thông báo của AodService.
     private fun localizedResources(): Resources {
         val languageCode = LanguageValue.fromCode(dataStoreManager.selectedLangCode.value).code
         return languageManager.resourcesFor(languageManager.configurationFor(languageCode))
@@ -101,7 +98,6 @@ class AodTileService : TileService(), Tag {
                     ),
                 )
             } else {
-                // Bản nhận Intent chỉ ném lỗi từ Android 14, còn bản nhận PendingIntent thì chưa có dưới API 34.
                 @Suppress("DEPRECATION", "StartActivityAndCollapseDeprecated")
                 startActivityAndCollapse(intent)
             }

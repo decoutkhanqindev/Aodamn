@@ -98,7 +98,6 @@ fun AppOnboardingHeader(
     }
 }
 
-// Chân màn onboarding: một dòng gợi ý (nếu có) trên nút chính, banner (nếu có) dưới cùng sát thanh điều hướng.
 @Composable
 fun AppOnboardingFooter(
     actionLabel: String,

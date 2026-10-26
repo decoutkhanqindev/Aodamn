@@ -50,10 +50,6 @@ import com.decoutkhanqindev.aodamn.presentation.theme.RoundedCornerTopShape24dp
 import com.decoutkhanqindev.aodamn.presentation.theme.TitleLarge
 import com.decoutkhanqindev.aodamn.presentation.theme.TitleMedium
 
-// Bottom sheet của app thay cho sheet / hộp thoại Material: nền Neutral12, thanh kéo là dải màu mint → xanh → tím như icon app. Không vẽ
-// gì qua modifier của ModalBottomSheet: modifier nằm ngoài offset của sheet nên hình vẽ rơi lên mép trên màn hình. Hiện khi value khác
-// null và giữ value cũ trong lúc trượt xuống (nội dung không biến mất giữa animation). Kéo / chạm nền / Back gọi onDismissRequest;
-// isDragEnabled = false cho sheet có thao tác kéo bên trong (bảng vẽ, bánh xe chọn giờ).
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun <T : Any> AppSheet(
@@ -119,7 +115,6 @@ fun AppSheet(
     }
 }
 
-// Đầu sheet quyết định (xác nhận, quyền): hình minh hoạ với huy hiệu, tiêu đề và mô tả căn giữa.
 @Composable
 fun AppSheetHeroHeader(
     title: String,
@@ -162,8 +157,6 @@ fun AppSheetHeroHeader(
     }
 }
 
-// Đầu sheet nhập / chọn: ô icon, tiêu đề + một dòng giải thích. Không có nút X: sheet đóng bằng nút chữ Hủy ở cuối (AppTextButton) như các sheet
-// quyết định, hoặc vuốt xuống / chạm nền / Back.
 @Composable
 fun AppSheetToolHeader(
     @DrawableRes iconRes: Int,

@@ -19,8 +19,6 @@ import com.decoutkhanqindev.aodamn.presentation.screens.customize.state.Customiz
 import com.decoutkhanqindev.aodamn.presentation.screens.customize.state.CustomizeIntent
 import com.decoutkhanqindev.aodamn.presentation.theme.Theme
 
-// Thanh trên thay cho tiêu đề và thanh công cụ nổi cũ, để AOD xem trước không bị che: quay lại · hoàn tác, làm lại, đặt lại · hướng dẫn ·
-// (Bỏ qua lúc onboarding) · Áp dụng. Không có ô bước onboarding vì thanh không đủ chỗ; xoay khung là nút nổi.
 @Composable
 fun CustomizeTopBar(
     isFirstOpen: Boolean,

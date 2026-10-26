@@ -5,7 +5,6 @@ import androidx.compose.runtime.Immutable
 import com.decoutkhanqindev.aodamn.R
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeChoice
 
-// Hai kiểu vạch của Vành theo thứ tự app mẫu (iOS Fill Clock, Clock Style 1–2): đủ 60 vạch phút (vạch giờ đậm, vạch phút mờ) hoặc chỉ 12 vạch giờ.
 @Immutable
 enum class AodBezelTicksValue(
     override val code: Int,

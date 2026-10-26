@@ -9,7 +9,6 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.toStoredClo
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
-// Một mục của thuộc tính dạng danh sách (hình, kiểu khối, font, hiệu ứng): mã lưu và nhãn hiển thị.
 interface AodThemeChoice {
     val code: Int
 
@@ -17,8 +16,6 @@ interface AodThemeChoice {
     val labelRes: Int
 }
 
-// Một thuộc tính sửa được của chủ đề. Giá trị lưu thành Int trong AodThemeConfig (mã mục, ARGB, 0 / 1, số) nên thêm thuộc tính
-// mới không phải đổi cách lưu; màn sửa chủ đề dựng control theo loại thuộc tính, chủ đề chỉ khai báo danh sách thuộc tính.
 @Immutable
 sealed interface AodThemeOption<T> {
     val key: String
@@ -32,7 +29,6 @@ sealed interface AodThemeOption<T> {
     fun decode(raw: Int?): T
 }
 
-// Mục là AodShapeValue thì màn sửa vẽ hình thu nhỏ, là ClockFontValue thì chip viết bằng font đó, còn lại là chip chữ.
 @Immutable
 class AodChoiceOption<E : AodThemeChoice>(
     override val key: String,
@@ -45,9 +41,6 @@ class AodChoiceOption<E : AodThemeChoice>(
     override fun decode(raw: Int?): E = entries.find { it.code == raw } ?: default
 }
 
-// Khoá chính giữ màu một màu (= màu Đầu của gradient) nên code chỉ đọc Color không phải sửa. Gradient ghi thêm khoá phụ (gradientKeys);
-// không có khoá phụ là một màu, nên màu user đã lưu trước khi có gradient giữ nguyên. isGradientAllowed tắt thì bộ chọn chỉ có tab Một
-// màu (bật ở chỗ đã tô được gradient). defaultGradient khác null thì mặc định là gradient đó, default phải là màu Đầu của nó.
 @Immutable
 class AodColorOption(
     override val key: String,
@@ -72,7 +65,6 @@ class AodColorOption(
 
     override fun decode(raw: Int?): Color = raw?.let { Color(it) } ?: default
 
-    // Khoá chính chưa ghi (chưa chỉnh lần nào) thì theo mặc định; đã ghi mà không có khoá phụ là user chọn một màu.
     fun decodeGradient(values: Map<String, Int>): AodGradient? {
         if (key !in values) return defaultGradient
         val middle = values[middleKey] ?: return null
@@ -81,7 +73,6 @@ class AodColorOption(
         return AodGradient(persistentListOf(decode(values[key]), Color(middle), Color(end)), direction)
     }
 
-    // Giá trị ghi cho một lần đổi (null = xoá khoá): một màu xoá khoá phụ, gradient ghi đủ 4 khoá.
     fun encodeSolid(color: Color): Map<String, Int?> =
         mapOf(key to encode(color)) + gradientKeys.associateWith { null }
 
@@ -93,8 +84,6 @@ class AodColorOption(
     )
 }
 
-// labelRes nhận giá trị hiện tại làm tham số, vd "Cỡ đồng hồ: %1$d%%". autoLabelRes khác null: thuộc tính có chế độ tự động (giá trị AUTO,
-// ngoài range, vd vị trí theo giờ của Dải màu), màn sửa có công tắc tự động, tắt thì thanh trượt ghim một giá trị trong range.
 @Immutable
 class AodRangeOption(
     override val key: String,

@@ -1,8 +1,5 @@
 package com.decoutkhanqindev.aodamn.presentation.components.aod
 
-// Màn dọc giãn trên - dưới (Cổ điển, Sỏi, Viên nang, Thẻ; mock đã duyệt): cụm trên (đồng hồ, ngày, khối thêm) bắt đầu ở TOP_RATIO chiều cao,
-// cụm đáy (thông báo mới nhất, nhạc, dòng trạng thái) thẳng đáy cách đáy BOTTOM_RATIO, giữa để trống. Cụm trên dài tới cụm đáy thì cụm đáy
-// nằm ngay dưới, cách minGap.
 object AodSpreadMetrics {
     const val TOP_RATIO = 0.12f
     const val BOTTOM_RATIO = 0.1f

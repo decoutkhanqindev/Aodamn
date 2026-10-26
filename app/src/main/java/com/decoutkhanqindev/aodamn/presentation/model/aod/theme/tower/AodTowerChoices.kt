@@ -5,8 +5,6 @@ import androidx.compose.runtime.Immutable
 import com.decoutkhanqindev.aodamn.R
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeChoice
 
-// Cách tô một cặp chữ số của Tháp: đặc, nét viền, hay nét viền nhạt dần về chân / đỉnh số (app mẫu: 15 / 255 ở mép, 60 / 255 ở một phần tư,
-// đậm hẳn từ giữa).
 @Immutable
 enum class AodTowerPaintValue {
     FILL,
@@ -15,7 +13,6 @@ enum class AodTowerPaintValue {
     FADE_UP,
 }
 
-// Sáu kiểu số của Tháp theo thứ tự app mẫu (Long HyperOS, Clock Style 1–6); mỗi kiểu là cách tô cặp giờ và cặp phút.
 @Immutable
 enum class AodTowerStyleValue(
     override val code: Int,

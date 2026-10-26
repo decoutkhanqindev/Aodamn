@@ -30,7 +30,6 @@ import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import timber.log.Timber
 
-// rootBackStack: back stack gốc để vào Main khi màn nằm trong OnboardingNavDisplay.
 @Composable
 fun PermissionScreen(
     backStack: NavBackStack<NavKey>,

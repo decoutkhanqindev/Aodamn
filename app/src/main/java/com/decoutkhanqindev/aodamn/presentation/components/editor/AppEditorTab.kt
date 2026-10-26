@@ -42,8 +42,6 @@ import com.decoutkhanqindev.aodamn.presentation.theme.RoundedCornerShape16dp
 import com.decoutkhanqindev.aodamn.presentation.theme.Theme
 import com.decoutkhanqindev.aodamn.presentation.theme.TitleMedium
 
-// Một tab của thanh tab thấp (Tùy chỉnh, sửa chủ đề, thanh tab Main): chỉ có icon để thanh không che AOD xem trước, tab đang chọn nền mint
-// nhạt, icon đặc (như thanh tab Main) và hiện thêm tên để biết đang ở đâu. TalkBack luôn đọc tên.
 @Composable
 fun AppEditorTab(
     @DrawableRes iconRes: Int,
@@ -105,7 +103,6 @@ fun AppEditorTab(
     }
 }
 
-// Bản fill của icon tab ở Tùy chỉnh và màn chủ đề (tools/icons/icons.txt); icon chưa có bản fill thì giữ nguyên.
 @DrawableRes
 private fun filledIconOf(@DrawableRes iconRes: Int): Int = when (iconRes) {
     R.drawable.ic_clock -> R.drawable.ic_clock_fill

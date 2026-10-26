@@ -59,9 +59,6 @@ import com.decoutkhanqindev.aodamn.presentation.theme.RoundedCornerShape12dp
 import com.decoutkhanqindev.aodamn.presentation.theme.RoundedCornerShape24dp
 import com.decoutkhanqindev.aodamn.presentation.theme.Theme
 
-// Bộ chọn màu của một thuộc tính: tab Một màu (ClockColorPicker) và, khi thuộc tính cho phép, tab Gradient. Mỗi lần đổi phát đủ các khoá
-// của thuộc tính (null = xoá) để ViewModel ghi một bước hoàn tác. Đổi tab là đổi luôn giá trị: sang Một màu lấy màu Đầu, sang Gradient lấy
-// gradient vừa dùng trong lúc mở (hoặc mặc định của thuộc tính / bộ có sẵn đầu tiên).
 @Composable
 fun AodColorPicker(
     option: AodColorOption,
@@ -112,7 +109,6 @@ fun AodColorPicker(
     }
 }
 
-// Ba chấm tròn chồng nhau, chấm sau đè lên chấm trước (màu Đầu bên trái): dấu hiệu của gradient ở công tắc, ô bộ có sẵn, chip phần tô.
 @Composable
 fun AodGradientDots(
     colors: List<Color>,
@@ -297,8 +293,6 @@ private fun GradientSwatchGrid(
     }
 }
 
-// Thanh luôn tô ngang Đầu → Cuối để thấy thứ tự chấm, hướng thật chọn ở hàng Hướng. Mỗi chấm nằm giữa ô 56dp nên thanh lùi vào 28dp hai đầu
-// để hai chấm ngoài nằm đúng mép thanh.
 @Composable
 private fun GradientStopBar(
     gradient: AodGradient,

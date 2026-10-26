@@ -30,9 +30,6 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.tower.TowerTheme
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodIntent
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
 
-// Tháp, màn dọc như layout app mẫu: hàng số sát đỉnh màn hình (TowerMetrics.TOP_RATIO) → ngày (thời tiết một dòng riêng, mock đã duyệt); khoảng
-// còn lại chia 0,8 / 0,2, các khối thêm (thời tiết, sự kiện, ghi nhớ) → nhạc → pin + icon thông báo neo đáy phần 0,8. Nhiều khối không vừa thì
-// hàng số nhỏ lại (đo khối thêm trước rồi mới chọn R).
 @Composable
 fun AodTowerPortrait(
     state: AodState,
@@ -73,9 +70,6 @@ fun AodTowerPortrait(
     }
 }
 
-// Tháp, màn ngang: bố cục chung theo các khối đang hiện (AodLandscapeLayout), hero là hàng số + ngày (thời tiết cạnh ngày khi không có sự kiện)
-// + dòng pin; R theo min(0,3 cạnh dài, cạnh ngắn) như app mẫu và không cao quá màn hình. Khối bật / tắt hay nhạc phát / dừng thì đổi bố cục bằng
-// mờ chéo.
 @Composable
 fun AodTowerLandscape(
     state: AodState,
@@ -113,9 +107,6 @@ fun AodTowerLandscape(
     }
 }
 
-// Đo khối thêm trước để biết R (unitFor), rồi đặt hàng số + ngày cách đỉnh top; khối thêm + dòng trạng thái neo đáy phần BOTTOM_WEIGHT của khoảng
-// dưới ngày (không lấn lên ngày). Khối thêm đổi cỡ có animation nên hàng số co giãn theo chứ không nhảy; phần nào không có thì bỏ khoảng cách
-// phía trên nó.
 @Composable
 private fun TowerPortraitColumn(
     top: Dp,

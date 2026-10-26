@@ -4,7 +4,6 @@ import androidx.annotation.StringRes
 import androidx.compose.runtime.Immutable
 import com.decoutkhanqindev.aodamn.R
 
-// Các cụm tab ở màn thử tùy chỉnh, đúng thứ tự trên thanh tab; hướng dẫn đi qua từng cụm.
 @Immutable
 enum class CustomizeClusterValue(@param:StringRes val labelRes: Int) {
     APPEARANCE(labelRes = R.string.customize_cluster_appearance),

@@ -59,9 +59,6 @@ import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodIntent
 import com.decoutkhanqindev.aodamn.presentation.theme.Grey3A
 import kotlin.math.abs
 
-// Trình phát của Gợn sóng như media_widget_lt của app mẫu: thẻ bo tròn hết (ảnh bìa tròn, tên bài, nghệ sĩ tối hơn) và nút phát tròn riêng, nền
-// đặc hay viền theo kiểu mặt số. Không có nút lùi / tới: vuốt ngang thẻ để chuyển bài (sang phải: bài trước, sang trái: bài sau), tên bài mới
-// trượt vào theo hướng vuốt như app mẫu. App nhạc không gửi ảnh bìa thì ô tròn có nốt nhạc. Rộng theo khung của bố cục.
 @Composable
 fun AodRippleMedia(
     media: MediaUiModel,
@@ -186,7 +183,6 @@ fun AodRippleMedia(
     }
 }
 
-// Ảnh bìa tròn 55dp; không có ảnh thì ô tròn xám có nốt nhạc.
 @Composable
 private fun RippleAlbumArt(
     media: MediaUiModel,
@@ -222,7 +218,6 @@ private fun RippleAlbumArt(
     }
 }
 
-// Tên bài / nghệ sĩ một dòng, dài thì chạy chữ.
 @Composable
 private fun RippleMediaText(
     text: String,
@@ -239,7 +234,6 @@ private fun RippleMediaText(
     )
 }
 
-// Nền đặc hay viền 2dp bo tròn hết như rounded_box / rounded_box_stroke của app mẫu.
 private fun Modifier.rippleSurface(background: Brush, isOutline: Boolean): Modifier =
     if (isOutline) border(width = RippleMetrics.OutlineWidth, brush = background, shape = CircleShape) else background(brush = background, shape = CircleShape)
 

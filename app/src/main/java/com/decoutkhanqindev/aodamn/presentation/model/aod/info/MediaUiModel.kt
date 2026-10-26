@@ -16,7 +16,6 @@ data class MediaUiModel(
     val albumArt: Bitmap? = null,
 )
 
-// updatedAtMillis cùng mốc SystemClock.elapsedRealtime() với elapsedMillis truyền vào; speed = 0 thì đứng yên (bản xem trước).
 @Immutable
 data class MediaProgressUiModel(
     val durationMillis: Long,

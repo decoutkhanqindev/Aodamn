@@ -20,8 +20,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-// Tùy chỉnh › tab của khối chủ đề tự vẽ dẫn sang màn chủ đề ở tab chỉnh khối đó: chủ đề mới quên tab (như Số áo lúc đầu thiếu Pin & thông
-// báo) thì test này báo.
 class AodThemeSpecTest {
 
     @Test
@@ -43,9 +41,6 @@ class AodThemeSpecTest {
         }
     }
 
-    // Chủ đề mới thêm khối tự vẽ / bật lại nội dung thông báo không được đổi hành vi chủ đề cũ: chỉ Chuỗi tự vẽ ghi nhớ, sự kiện; chỉ Chuỗi và
-    // các chủ đề trong drawsLatest hiện nội dung thông báo dù tự vẽ dòng trạng thái (tự vẽ thông báo mới nhất như app mẫu); các chủ đề khác
-    // giữ như trước (nội dung thông báo chỉ khi không tự vẽ dòng trạng thái).
     @Test
     fun `only chain owns memo and events and only themes drawing their latest alert keep notification content with their status line`() {
         AodThemeValue.entries.forEach { theme ->
@@ -69,8 +64,6 @@ class AodThemeSpecTest {
         }
     }
 
-    // Vành chỉ có các khối vừa vùng trống quanh kim (mock đã duyệt): ghi nhớ, sự kiện, nét vẽ, nội dung thông báo bỏ hẳn, không lẻn lại khi thêm
-    // khối dùng chung mới.
     @Test
     fun `bezel only has the blocks that fit around its hands`() {
         val spec = AodThemeValue.BEZEL.spec
@@ -87,7 +80,6 @@ class AodThemeSpecTest {
         assertEquals(false, spec.hasNotificationContent)
     }
 
-    // La bàn chỉ có các khối đặt cân quanh mặt số tròn (mock đã duyệt): ghi nhớ, sự kiện, nét vẽ bỏ hẳn; thông báo mới nhất do chủ đề tự vẽ.
     @Test
     fun `compass only has the blocks that fit around its dial and draws the latest alert`() {
         val spec = AodThemeValue.COMPASS.spec
@@ -102,13 +94,10 @@ class AodThemeSpecTest {
             spec.components,
         )
         assertEquals(true, spec.hasNotificationContent)
-        // Đủ tuỳ chọn của app mẫu: Clock Style 1 (có vòng giây, mặc định) / 2 (không vòng giây).
         assertEquals(AodCompassStyleValue.entries, CompassThemeSpec.Style.entries)
         assertEquals(AodCompassStyleValue.SECONDS, CompassThemeSpec.Style.default)
     }
 
-    // Bán nguyệt chỉ có các khối đặt cân quanh nửa mặt số (mock đã duyệt): ghi nhớ, sự kiện, nét vẽ bỏ hẳn; thông báo mới nhất do chủ đề tự vẽ
-    // dưới dòng pin. Đủ 6 màu của app mẫu, màu điều khiển tách thành dòng pin và nhạc.
     @Test
     fun `half moon only has the blocks that fit around its half dial and keeps every reference color`() {
         val spec = AodThemeValue.HALF_MOON.spec
@@ -137,8 +126,6 @@ class AodThemeSpecTest {
         )
     }
 
-    // Dải màu chỉ có các khối đặt được trên / dưới vạch (mock đã duyệt): ghi nhớ, sự kiện, nét vẽ bỏ hẳn; thông báo mới nhất do chủ đề tự vẽ trên
-    // dòng pin. Đủ tuỳ chọn của app mẫu: cỡ 80–150% (mặc định 110%), vị trí mặc định theo giờ, vạch mặc định gradient của app mẫu.
     @Test
     fun `gradient line only has the blocks that fit along its line and keeps every reference option`() {
         val spec = AodThemeValue.GRADIENT_LINE.spec
@@ -159,7 +146,6 @@ class AodThemeSpecTest {
         assertEquals(GradientSwatchValue.SUNSET.gradient, AodThemeConfig().gradientOf(GradientLineThemeSpec.LineColor))
     }
 
-    // Vị trí ghim kéo được trong 0–100%; giá trị tự động chỉ hợp lệ ở thuộc tính có chế độ tự động, thuộc tính cũ vẫn kẹp vào range như trước.
     @Test
     fun `auto range keeps the auto value and old ranges still clamp it`() {
         val position = GradientLineThemeSpec.Position
@@ -169,9 +155,6 @@ class AodThemeSpecTest {
         assertEquals(80, GradientLineThemeSpec.Size.decode(AodRangeOption.AUTO))
     }
 
-    // Gợn sóng chỉ có các khối đặt cân quanh mặt số giữa màn (mock đã duyệt): ghi nhớ, sự kiện, nét vẽ bỏ hẳn; thông báo mới nhất do chủ đề tự vẽ
-    // dưới hàng icon. Đủ tuỳ chọn của app mẫu: kiểu đặc / viền (mặc định đặc), cỡ 60–110% (mặc định 80%), màu kim giờ, kim phút, chấm giây, mặt số,
-    // ngày; màu chủ đạo tách thành thông báo, pin, nhạc, nền thẻ nhạc.
     @Test
     fun `ripple only has the blocks that fit around its dial and keeps every reference option`() {
         val spec = AodThemeValue.RIPPLE.spec
@@ -208,8 +191,6 @@ class AodThemeSpecTest {
         )
     }
 
-    // Nhịp giây chỉ có các khối đặt cân quanh vòng (mock đã duyệt): ghi nhớ, sự kiện, nét vẽ bỏ hẳn. Giữ đủ tuỳ chọn của app mẫu: Clock Size (55–90,
-    // mặc định 70), màu vòng (gradient dọc mặc định, màu nhấn Tropic), màu đồng hồ; màu đồng hồ / điều khiển tách thành ngày, thông báo, pin, nhạc.
     @Test
     fun `tick only has the blocks that fit around its ring and keeps every reference option`() {
         val spec = AodThemeValue.TICK.spec
@@ -242,9 +223,6 @@ class AodThemeSpecTest {
         )
     }
 
-    // Chồng số: ngày, pin + thông báo (có thông báo mới nhất), thời tiết, nhạc; ghi nhớ, sự kiện, nét vẽ không có chỗ đặt cân quanh khối số. Giữ
-    // đủ Clock Style 1–4, Clock Size 50–100 và Color 1–4 của app mẫu (mặc định chéo: số 1 của giờ và số 2 của phút cùng màu); màu chủ đạo tách
-    // thành ngày, thông báo, pin, nhạc.
     @Test
     fun `big overlap only has the blocks that fit around its digits and keeps every reference option`() {
         val spec = AodThemeValue.BIG_OVERLAP.spec
@@ -284,8 +262,6 @@ class AodThemeSpecTest {
         )
     }
 
-    // Khung xem trước dùng giờ mẫu; chỉ chủ đề có chuyển động theo giờ thật như app mẫu (liveThemes: La bàn, Bán nguyệt, chấm giây của Gợn
-    // sóng…) chạy theo giờ thật cả ở xem trước, chủ đề cũ không đổi.
     @Test
     fun `only themes with real time motion run in real time in previews`() {
         val liveThemes = setOf(

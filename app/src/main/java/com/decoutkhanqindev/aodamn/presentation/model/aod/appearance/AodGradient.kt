@@ -48,7 +48,6 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 
-// Bốn hướng cộng nút Đảo chiều (đảo thứ tự màu) là đủ 8 hướng. start / end tính theo khung đang vẽ: Offset.Infinite là cạnh phải / dưới.
 @Immutable
 enum class AodGradientDirection(
     val code: Int,
@@ -94,7 +93,6 @@ enum class AodGradientDirection(
     }
 }
 
-// Ba màu Đầu → Giữa → Cuối. Màu Đầu cũng là màu một màu của thuộc tính (AodColorOption) nên code chỉ đọc Color vẫn đúng.
 @Immutable
 data class AodGradient(
     val colors: ImmutableList<Color>,
@@ -108,10 +106,8 @@ data class AodGradient(
 
     fun reversed(): AodGradient = copy(colors = colors.reversed().toImmutableList())
 
-    // Trải theo khung của chính phần được tô (mỗi chữ, mỗi icon), không theo cả màn.
     fun toBrush(): Brush = Brush.linearGradient(colors = colors, start = direction.start, end = direction.end)
 
-    // Như toBrush() nhưng theo khung cho sẵn, cho hình chỉ chiếm một phần vùng vẽ (vd vòng tròn giữa mặt số).
     fun toBrush(bounds: Rect): Brush = Brush.linearGradient(
         colors = colors,
         start = Offset(bounds.pick(direction.start.x, isX = true), bounds.pick(direction.start.y, isX = false)),
@@ -131,8 +127,6 @@ data class AodGradient(
     }
 }
 
-// Bộ gradient có sẵn lấy từ bảng màu của app mẫu (Muviz Edge), hướng đã quy về thứ tự Đầu → Cuối; bộ trùng đã bỏ.
-// Lưới 2 hàng × 6 theo đúng thứ tự khai báo.
 @Immutable
 enum class GradientSwatchValue(
     val gradient: AodGradient,

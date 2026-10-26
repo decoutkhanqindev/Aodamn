@@ -23,12 +23,10 @@ class ProximityManager(
 ) : Tag {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
-    // Hết người collect thì huỷ đăng ký cảm biến ngay và trả về false, để lần AOD sau không đọc giá trị cũ.
     val isNear: StateFlow<Boolean> = callbackFlow {
         val sensorManager = app.getSystemService(SensorManager::class.java)
         val listener = object : SensorEventListener {
             override fun onSensorChanged(event: SensorEvent) {
-                // Đa số cảm biến tiệm cận chỉ có 2 mức: 0 là gần, maximumRange là xa.
                 trySend(event.values[0] < minOf(event.sensor.maximumRange, NEAR_CM))
             }
 

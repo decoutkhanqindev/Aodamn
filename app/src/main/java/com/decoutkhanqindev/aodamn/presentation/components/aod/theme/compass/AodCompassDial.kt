@@ -42,11 +42,6 @@ import kotlinx.coroutines.launch
 import kotlin.math.ceil
 import kotlin.math.min
 
-// Mặt số La bàn giữa vùng được cho: đường chỉ cố định, các vòng số xoay về đường chỉ, hai vòng tròn mảnh. Chạy theo giờ thật (isLive: AOD thật, và
-// khung xem trước vì La bàn bật isLiveInPreview) như app mẫu: kiểu có vòng giây cập nhật mỗi khung hình (vòng giây quay một vòng mỗi phút, vòng phút
-// và giờ trôi liên tục); kiểu không vòng giây cập nhật đầu mỗi phút, vòng phút và giờ xoay mượt tới chỗ mới (app mẫu nhảy). Đổi kiểu thì vòng giây mờ
-// dần và đường chỉ lùi ra 0,28u trong 300ms như app mẫu. Mỗi vòng vẽ một lần vào GraphicsLayer (chỉ vẽ lại khi đổi cỡ / màu), mỗi khung hình chỉ xoay
-// layer nên không recompose, không vẽ lại chữ.
 @Composable
 fun AodCompassDial(
     nowMillis: Long,
@@ -87,8 +82,6 @@ fun AodCompassDial(
         }
     }
 
-    // Kiểu không vòng giây: góc đích là giờ lúc cập nhật (đầu mỗi phút, như setTime của app mẫu), đọc trong composition nên mỗi phút recompose
-    // một lần; góc vẽ đi theo bằng animation.
     val stepMillis = if (hasSeconds) 0L else if (isLive) clockMillis.longValue else nowMillis
     val stepped = remember { CompassTime(if (isLive) System.currentTimeMillis() else nowMillis) }
     val minuteDegrees = remember { Animatable(stepped.minutes * 6f) }
@@ -100,7 +93,6 @@ fun AodCompassDial(
             wasSeconds.value = true
             return@LaunchedEffect
         }
-        // Vừa đổi từ kiểu có vòng giây: đặt góc vẽ về chỗ các vòng đang đứng (góc cũ có thể đã cũ từ lâu) để không quay một vòng dài.
         if (wasSeconds.value) {
             val current = CompassTime(if (isLive) System.currentTimeMillis() else nowMillis)
             minuteDegrees.snapTo(current.minutes * 6f)
@@ -132,7 +124,6 @@ fun AodCompassDial(
                 }
                 val pointerEnd = Offset(center.x + unit, center.y)
                 val circleStroke = Stroke(width = CompassMetrics.CircleWidth.toPx())
-                // Hai vòng tròn giữa tô theo khung vòng ngoài; đường chỉ tô dọc theo chính nó (từ chỗ bắt đầu ra mép mặt số).
                 val outer = CompassMetrics.CIRCLE_OUTER * unit
                 val circleBrush = minuteGradient?.toBrush(Rect(center = center, radius = outer)) ?: SolidColor(minuteColor)
 
@@ -171,13 +162,11 @@ fun rememberCompassPaints(): CompassPaints {
     return remember(typeface) { CompassPaints(typeface) }
 }
 
-// Góc cộng dồn theo chiều ngắn nhất: 59 → 0 phút xoay tiếp 6°, không quay ngược cả vòng.
 private suspend fun Animatable<Float, *>.turnTo(degrees: Float) {
     val delta = ((degrees - value) % 360f + 540f) % 360f - 180f
     animateTo(targetValue = value + delta, animationSpec = tween(durationMillis = CompassMetrics.STEP_MILLIS))
 }
 
-// Vòng xoay cùng chiều kim đồng hồ đúng bằng phần đã trôi qua: số đang chỉ luôn nằm ngang trên đường chỉ.
 private fun DrawScope.drawRing(ring: GraphicsLayer, ringSize: IntSize, degrees: Float) {
     rotate(degrees = degrees, pivot = center) {
         translate(left = center.x - ringSize.width / 2f, top = center.y - ringSize.height / 2f) {

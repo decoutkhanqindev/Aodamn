@@ -56,9 +56,6 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.component.AodCom
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodIntent
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
 
-// Chồng số, màn dọc như layout mẫu: vùng trên cao tối thiểu 130dp, khối thông tin (ngày + thời tiết cuối dòng, icon thông báo, thông báo mới
-// nhất) căn trái dồn đáy vùng; khối số giữa phần còn lại theo trọng số 0,08 / 0,8 / 0,12; trình phát (khi có nhạc) rồi dòng pin ở đáy. Nhạc bật /
-// tắt thì khối số trượt lên / xuống như animateLayoutChanges của app mẫu.
 @Composable
 fun AodBigOverlapPortrait(
     state: AodState,
@@ -102,8 +99,6 @@ fun AodBigOverlapPortrait(
     }
 }
 
-// Chồng số, màn ngang (mock đã duyệt; app mẫu thu khối số vào cột trái): khối số giữa màn cỡ như màn dọc, như màn dọc chia trên / dưới thành
-// trái / phải: khối thông tin (thời tiết ngay sau ngày) bên trái, trình phát + dòng pin bên phải, giữa chiều cao; nhạc bật / tắt thì mờ chéo.
 @Composable
 fun AodBigOverlapLandscape(
     state: AodState,
@@ -162,8 +157,6 @@ private fun BigOverlapClock(
     )
 }
 
-// Khối thông tin căn trái như layout mẫu: dòng ngày (thời tiết cuối dòng ở màn dọc, ngay sau ngày ở màn ngang), cách 18dp hàng icon thông báo,
-// cách 10dp thông báo mới nhất. Dòng nào không có thì không chiếm chỗ.
 @Composable
 private fun BigOverlapInfo(
     state: AodState,
@@ -211,7 +204,6 @@ private fun BigOverlapInfo(
             )
         }
 
-        // Thông báo mới trượt xuống từ trên như move_in_from_top của app mẫu.
         AnimatedVisibility(
             visible = latest != null,
             enter = slideInVertically { height -> -height } + fadeIn(),
@@ -230,7 +222,6 @@ private fun BigOverlapInfo(
     }
 }
 
-// Ngày "EEE, d MMM" như date_tv của app mẫu.
 @Composable
 private fun BigOverlapDate(
     state: AodState,
@@ -249,7 +240,6 @@ private fun BigOverlapDate(
     )
 }
 
-// Thời tiết (khối dùng chung) một dòng; tắt thì không chiếm chỗ.
 @Composable
 private fun BigOverlapWeather(state: AodState) {
     val components = state.appearance.components
@@ -263,7 +253,6 @@ private fun BigOverlapWeather(state: AodState) {
     }
 }
 
-// Thông báo mới nhất như notify_lt của app mẫu: icon 18dp tô màu thông báo, cách 7dp một dòng 16sp: tiêu đề rồi nội dung tối hơn, dài thì chạy chữ.
 @Composable
 private fun BigOverlapLatest(
     latest: NotificationContentUiModel,
@@ -305,8 +294,6 @@ private fun BigOverlapLatest(
     }
 }
 
-// Dòng pin như battery_status của app mẫu: mờ 0,8 khi không sạc, rõ hẳn khi đang sạc; đèn pin đang bật thì icon cạnh pin. Ô giữ chiều cao dòng
-// nên tắt pin thì khối số không nhảy.
 @Composable
 private fun BigOverlapBattery(
     state: AodState,
@@ -337,7 +324,6 @@ private fun BigOverlapBattery(
     }
 }
 
-// Trình phát của chủ đề (AodBigOverlapMedia qua AodMediaControls); không có nhạc thì không chiếm chỗ.
 @Composable
 private fun BigOverlapPlayer(
     state: AodState,

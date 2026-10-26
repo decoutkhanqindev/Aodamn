@@ -29,8 +29,6 @@ import com.decoutkhanqindev.aodamn.presentation.theme.LabelMedium
 import com.decoutkhanqindev.aodamn.presentation.theme.Mint
 import com.decoutkhanqindev.aodamn.presentation.theme.Theme
 
-// Cùng kiểu thanh trên của Tùy chỉnh (không còn thanh công cụ nổi che AOD). Xem trước: tên chủ đề (+ "Đang dùng") · Sửa · Áp dụng
-// (chủ đề đang dùng thì Tùy chỉnh, sang phần chung); đang sửa: hoàn tác, làm lại, đặt lại · Lưu. Xoay khung là nút nổi.
 @Composable
 fun ThemeEditorTopBar(
     @StringRes themeNameRes: Int,

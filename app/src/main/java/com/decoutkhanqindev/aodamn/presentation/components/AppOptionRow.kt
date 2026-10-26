@@ -44,8 +44,6 @@ import com.decoutkhanqindev.aodamn.presentation.theme.RoundedCornerShape12dp
 import com.decoutkhanqindev.aodamn.presentation.theme.RoundedCornerShape16dp
 import com.decoutkhanqindev.aodamn.presentation.theme.TitleMedium
 
-// Một lựa chọn trong danh sách chọn một (sheet chọn thao tác / nguồn điện, chọn ngôn ngữ): đang chọn thì nền mint nhạt, viền mint, dấu
-// tích tròn; chưa chọn là vòng tròn rỗng. leading: ô icon (AppOptionIcon) hay nội dung riêng (cờ ngôn ngữ).
 @Composable
 fun AppOptionRow(
     label: String,

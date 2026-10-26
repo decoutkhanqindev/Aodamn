@@ -8,9 +8,6 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.component.AodComponentValue
 import com.decoutkhanqindev.aodamn.presentation.model.permission.PermissionValue
 
-// Mỗi tab chỉnh một phần trên AOD; permission = quyền phải có thì phần đó mới hiện được trên AOD thật. component: khối dùng chung mà tab
-// cho chỉnh font, cỡ, màu riêng (ngoài việc bật / tắt và nội dung của khối); tab Đồng hồ (CLOCK) lúc onboarding chỉnh Cổ điển, sau đó dẫn
-// sang màn chủ đề.
 @Immutable
 enum class CustomizeTabValue(
     val cluster: CustomizeClusterValue,
@@ -84,6 +81,5 @@ enum class CustomizeTabValue(
         PermissionValue.NOTIFICATION_ACCESS,
     );
 
-    // Tab của khối mà chủ đề không có (AodThemeSpec.components) thì ẩn; tab không gắn khối (đồng hồ, nền, hiệu ứng) luôn hiện.
     fun isShownIn(spec: AodThemeSpec): Boolean = component == null || component in spec.components
 }

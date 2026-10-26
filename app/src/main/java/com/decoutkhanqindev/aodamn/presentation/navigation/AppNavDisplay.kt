@@ -76,8 +76,6 @@ fun AppNavDisplay() {
     }
 }
 
-// Mỗi màn được cấp LocalTag = tên class của destination (vd MainDestination), cùng ý với interface Tag của lớp thường.
-// AppNavDisplay, MainNavDisplay (các tab) và OnboardingNavDisplay dùng chung.
 inline fun <reified K : NavKey> EntryProviderScope<NavKey>.screen(
     crossinline content: @Composable (K) -> Unit,
 ) {

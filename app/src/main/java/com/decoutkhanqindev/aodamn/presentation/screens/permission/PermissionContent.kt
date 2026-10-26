@@ -40,7 +40,6 @@ fun PermissionContent(
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            // Bỏ qua vào Main mà không nhắc quyền ngay (chỉ đòi lúc Áp dụng); đủ quyền thì nút dưới đã là Bắt đầu nên ẩn đi.
             AppOnboardingTopBar(
                 step = OnboardingStepValue.PERMISSION,
                 onNavigateBack = { onIntent(PermissionIntent.NavigateBack) },
@@ -57,7 +56,6 @@ fun PermissionContent(
         containerColor = Color.Transparent,
         contentColor = GreyED,
         bottomBar = {
-            // Thiếu quyền thì nút không mờ đi mà mở đúng quyền còn thiếu kế tiếp; đủ thì thành Bắt đầu.
             val next = state.permissions.nextPermission()
             val remaining = state.permissions.count { permission -> permission.isGranted == false }
             AppOnboardingFooter(

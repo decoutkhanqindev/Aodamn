@@ -29,9 +29,6 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.pebble.PebbleThe
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodIntent
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
 
-// Màn ngang của Sỏi: bố cục chung theo các khối đang hiện (AodLandscapeLayout) với nét riêng. Chỉ có nhạc thì "kẹp giữa": khối giờ bên trái,
-// khối phút bên phải, giữa là ngày, trình phát của Sỏi và pin. Có khối khác thì hai cột (cụm khối | các khối, nhạc xếp dưới), không ba cột
-// vì hai khối hình đã rộng. Không có khối nào thì cụm khối to giữa màn hình. Khối hình theo chiều cao màn hình, nhân tuỳ chọn Cỡ.
 @Composable
 fun AodPebbleLandscape(
     state: AodState,
@@ -76,7 +73,6 @@ fun AodPebbleLandscape(
     }
 }
 
-// Cụm khối giờ / phút cạnh nhau, ngày, rồi thời tiết (nếu đứng cạnh ngày), icon thông báo và pin.
 @Composable
 private fun PebbleHero(
     state: AodState,

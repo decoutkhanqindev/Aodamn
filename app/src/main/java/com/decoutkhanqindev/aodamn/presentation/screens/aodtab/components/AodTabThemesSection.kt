@@ -54,13 +54,8 @@ import com.decoutkhanqindev.aodamn.presentation.theme.Theme
 import com.decoutkhanqindev.aodamn.presentation.theme.TitleLarge
 import com.decoutkhanqindev.aodamn.presentation.theme.TitleMedium
 
-// Chủ đề mặc định không nằm trong lưới: quay về nó bằng icon đặt lại ở tiêu đề.
 private val ListedThemes = AodThemeValue.entries.filter { theme -> theme != AodThemeValue.DEFAULT }
 
-// Lưới chủ đề trong LazyVerticalGrid của tab AOD: tiêu đề chiếm cả hàng, mỗi chủ đề một ô. Mỗi mục luôn xem trước kiểu mặc định (kiểu đẹp nhất
-// của chủ đề), không theo cấu hình user đã sửa: thẻ là ảnh giới thiệu cố định; màn chủ đề mới mở cấu hình đã lưu (chưa sửa thì cũng là mặc
-// định). Đồng hồ, ngày, khối chủ đề tự vẽ; không nền, thông báo, pin... của user; tên căn giữa, không khung thẻ; chủ đề đang dùng viền mint
-// và có nhãn "Đang dùng" phủ trên ảnh.
 fun LazyGridScope.aodTabThemesSection(
     activeTheme: AodThemeValue,
     onIntent: (AodTabIntent) -> Unit,
@@ -90,8 +85,6 @@ fun LazyGridScope.aodTabThemesSection(
     }
 }
 
-// Tiêu đề "Chủ đề" và icon đặt lại về chủ đề mặc định (chỉ khi đang dùng chủ đề khác); hàng luôn cao 48dp để icon hiện / ẩn không làm
-// lưới nhảy.
 @Composable
 private fun ThemesHeader(
     isResetVisible: Boolean,
@@ -151,7 +144,6 @@ private fun ThemeCard(
             .padding(4.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        // Ảnh rộng đúng bằng ô, cao theo tỉ lệ màn hình.
         BoxWithConstraints(contentAlignment = Alignment.TopCenter) {
             val windowSize = LocalWindowInfo.current.containerSize
             AodThumbnail(

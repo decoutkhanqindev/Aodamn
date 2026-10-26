@@ -12,7 +12,6 @@ data class AodScheduleUiModel(
     val startMinute: Int = DataStoreManager.DEFAULT_AOD_SCHEDULE_START_MINUTE,
     val endMinute: Int = DataStoreManager.DEFAULT_AOD_SCHEDULE_END_MINUTE,
 ) {
-    // Giờ bắt đầu sau giờ kết thúc là khung giờ qua nửa đêm (vd 22:00–06:00); bắt đầu trùng kết thúc là cả ngày.
     fun isActiveAt(minuteOfDay: Int): Boolean = when {
         !isEnabled || startMinute == endMinute -> true
         startMinute < endMinute -> minuteOfDay in startMinute until endMinute

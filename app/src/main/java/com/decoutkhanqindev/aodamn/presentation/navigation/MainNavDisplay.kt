@@ -125,8 +125,6 @@ fun MainNavDisplay(
     }
 }
 
-// Tiêu đề đổi theo tab (mờ dần như nội dung tab), IAP và Share giữ nguyên khi đổi tab. Tiêu đề lệch 4dp để thẳng mép 20dp với
-// nội dung tab.
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MainTopBar(
@@ -177,7 +175,6 @@ private fun MainTopBar(
     )
 }
 
-// Thanh tab thấp 64dp cùng kiểu thanh tab của Tùy chỉnh (AppEditorTab): chỉ icon, tab đang chọn icon đặc và có tên.
 @Composable
 private fun MainNavigationBar(
     selectedTab: MainTabValue,
@@ -210,7 +207,6 @@ private fun MainNavigationBar(
     }
 }
 
-// Tab AOD luôn là gốc, tab khác chồng lên nó: Back ở tab khác về tab AOD rồi mới thoát app, và tab AOD giữ nguyên trạng thái.
 private fun NavBackStack<NavKey>.selectTab(tab: MainTabValue) {
     if (lastOrNull() == tab.destination) return
     navigateTo(MainTabValue.AOD.destination)

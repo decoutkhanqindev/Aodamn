@@ -44,9 +44,6 @@ import com.decoutkhanqindev.aodamn.presentation.theme.Black
 import com.decoutkhanqindev.aodamn.presentation.theme.Grey5A
 import com.decoutkhanqindev.aodamn.presentation.theme.GreyED
 
-// Trình phát của Thẻ theo layout app mẫu: tên bài 17sp / nghệ sĩ 14sp (80%) bên trái, lùi · nút phát tròn đặc 48dp · tới bên phải (lùi / tới
-// 80%), thanh tiến trình M3 gợn sóng (nét 6dp, biên độ 3dp, bước sóng 40dp, khe 5dp) lúc đang phát, dừng thì duỗi thẳng. Rộng 313dp như app
-// mẫu (màn 393dp trừ hai lề 40dp), cột hẹp hơn (màn ngang) thì hẹp theo.
 @Composable
 fun AodCardMedia(
     media: MediaUiModel,
@@ -154,7 +151,6 @@ fun AodCardMedia(
     }
 }
 
-// Nút phát tròn đặc 48dp màu nhạc, icon 18dp (đen trên màu sáng, trắng trên màu tối; gradient thì theo màu Đầu).
 @Composable
 private fun CardPlayButton(
     isPlaying: Boolean,

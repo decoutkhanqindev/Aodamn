@@ -33,10 +33,6 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.bigoverlap.BigOv
 import com.decoutkhanqindev.aodamn.presentation.theme.Black
 import kotlin.math.min
 
-// Bốn chữ số Chồng số giữa vùng được cho, cỡ theo cạnh ngắn của vùng như BigPixel2Clock: vẽ lần lượt giờ chục, giờ đơn vị, phút chục, phút đơn vị,
-// số nào cũng bị khoét theo hình các số vẽ sau. Kiểu đặc: nét đen dày quanh số (nửa ngoài thành khe đen giữa hai số) rồi tô màu; kiểu viền: nét màu
-// mảnh, ruột trong (khoét thật nên ảnh nền vẫn thấy qua ruột số). Đổi đặc ↔ viền chạy 500ms như app mẫu, độ lấn trượt theo (app mẫu nhảy); đổi
-// góc vuông ↔ bo tròn mờ chéo (app mẫu nhảy). Mỗi số tô gradient theo khung của chính nó.
 @Composable
 fun AodBigOverlapClock(
     nowMillis: Long,
@@ -125,8 +121,6 @@ private fun BigOverlapDigits(
     )
 }
 
-// Bút chữ số bằng Paint của Android (lấy hình chữ số để khoét); Typeface là file TTF tĩnh Google Sans Flex, không đặt trục (máy Xiaomi thay font
-// khi có trục).
 @Composable
 private fun rememberBigOverlapPaint(fontFamily: FontFamily): Paint {
     val typeface = LocalFontFamilyResolver.current

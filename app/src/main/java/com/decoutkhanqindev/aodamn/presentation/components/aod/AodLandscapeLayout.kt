@@ -25,11 +25,6 @@ import com.decoutkhanqindev.aodamn.presentation.theme.Grey3A
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
-// Bố cục ngang dùng chung cho các chủ đề (README › Thêm chủ đề mới › Bố cục ngang), hero là cụm đồng hồ của chủ đề:
-// - không có khối nào: hero giữa màn hình;
-// - nhạc cùng nhóm khác: ba cột, hero giữa màn hình, trái là cột thông tin (không có thì nét vẽ), phải là nhạc (kèm nét vẽ nếu bên trái
-//   đã là cột thông tin); chủ đề không muốn ba cột (isThreeColumnAllowed = false) thì nhạc xếp dưới các khối của bố cục hai cột;
-// - còn lại hai cột: hero | các khối (AodLandscapePanel).
 @Composable
 fun AodLandscapeLayout(
     plan: AodLandscapePlan,
@@ -39,7 +34,6 @@ fun AodLandscapeLayout(
     isThreeColumnAllowed: Boolean = true,
     hero: @Composable () -> Unit,
 ) {
-    // Lấp đầy và căn giữa: lúc mờ chéo giữa hai bố cục, cả hai cùng đứng giữa màn hình chứ không dạt về góc trên.
     Box(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
@@ -75,7 +69,6 @@ fun AodLandscapeLayout(
     }
 }
 
-// Các khối của bố cục hai cột: nét vẽ đứng cạnh cột thông tin (chỉ một trong hai thì đứng một mình), nhạc ở dưới cùng.
 @Composable
 fun AodLandscapePanel(
     plan: AodLandscapePlan,
@@ -129,7 +122,6 @@ fun AodPanelColumn(
     }
 }
 
-// Hai phần cạnh nhau ngăn bằng vạch mảnh, cả cụm giữa màn hình; phần sau chỉ lấy chỗ còn lại.
 @Composable
 fun AodSplitRow(
     start: @Composable () -> Unit,
@@ -150,8 +142,6 @@ fun AodSplitRow(
     }
 }
 
-// Ba cột: cột giữa đứng đúng giữa màn hình (không lệch theo bề ngang hai cột bên), hai cột bên rộng bằng nhau, chia phần còn lại (tối đa
-// 280dp), nội dung nằm giữa cột.
 @Composable
 fun AodThreeColumns(
     start: @Composable () -> Unit,

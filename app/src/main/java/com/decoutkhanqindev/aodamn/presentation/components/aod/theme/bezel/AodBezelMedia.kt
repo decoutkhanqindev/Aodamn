@@ -44,8 +44,6 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.bezel.BezelTheme
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodIntent
 import com.decoutkhanqindev.aodamn.presentation.theme.Grey5A
 
-// Trình phát gọn của Vành (mock đã duyệt; app mẫu không có trình phát): lùi · tên bài in hoa / nghệ sĩ mờ · tới, thanh tiến trình mảnh bên dưới,
-// rộng bằng vùng chữ quanh kim (184dp). Không có nút phát: chạm tên bài để phát / dừng, đang dừng thì chữ mờ đi.
 @Composable
 fun AodBezelMedia(
     media: MediaUiModel,
@@ -154,7 +152,6 @@ private fun BezelMediaText(
     )
 }
 
-// Nút lùi / tới: ô 32dp, icon đặc 13dp; không lùi / tới được thì xám.
 @Composable
 private fun BezelMediaButton(
     @DrawableRes iconRes: Int,

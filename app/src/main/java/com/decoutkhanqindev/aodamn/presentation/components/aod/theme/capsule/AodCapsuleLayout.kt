@@ -30,9 +30,6 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.component.AodCom
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodIntent
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
 
-// Viên nang, màn dọc giãn trên - dưới (AodPortraitSpread, mock đã duyệt): viên nang → ngày → các khối thêm (thời tiết, sự kiện, ghi nhớ, nét
-// vẽ) ở trên; thông báo mới nhất, nhạc rồi pin + icon thông báo neo đáy. Kích thước theo R (CapsuleMetrics), khối thêm theo kiểu user chọn ở
-// Tùy chỉnh.
 @Composable
 fun AodCapsulePortrait(
     state: AodState,
@@ -75,8 +72,6 @@ fun AodCapsulePortrait(
     }
 }
 
-// Viên nang, màn ngang: bố cục chung theo các khối đang hiện (AodLandscapeLayout), hero là viên nang + ngày (thời tiết cạnh ngày khi không có
-// sự kiện) + dòng pin; viên nang cỡ như màn dọc. Khối bật / tắt hay nhạc phát / dừng thì đổi bố cục bằng mờ chéo.
 @Composable
 fun AodCapsuleLandscape(
     state: AodState,

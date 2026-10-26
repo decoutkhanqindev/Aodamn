@@ -71,7 +71,6 @@ fun CustomizeContent(
     }
     var lastGuideStep by remember { mutableStateOf(CustomizeGuideStepValue.PREVIEW) }
 
-    // Nhấn giữ khung xem trước: ẩn thanh trên, panel, thanh tab và banner để xem AOD toàn màn hình, thả tay thì hiện lại.
     var isPeeking by remember { mutableStateOf(false) }
 
     SideEffect(state.guideStep) {
@@ -89,7 +88,6 @@ fun CustomizeContent(
     ) {
         AodPreviewFrame(state = preview, isLandscape = state.isLandscapePreview)
 
-        // Chạm vào khung xem trước (ngoài panel, thanh tab, thanh trên) khi panel đang mở thì đóng panel; nhấn giữ thì xem toàn màn hình.
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -134,7 +132,6 @@ fun CustomizeContent(
                 exit = fadeOut() + slideOutVertically { height -> height },
             ) {
                 Column(modifier = Modifier.fillMaxWidth()) {
-                    // Xoay khung là nút nổi cạnh phải, đi lên theo panel, không chiếm chỗ của thanh trên hay thanh tab.
                     AppPreviewOrientationButton(
                         isLandscape = state.isLandscapePreview,
                         onClick = { onIntent(CustomizeIntent.ToggleLandscapePreview) },

@@ -56,10 +56,6 @@ import com.decoutkhanqindev.aodamn.presentation.theme.NeutralVariant60
 import com.decoutkhanqindev.aodamn.presentation.theme.RoundedCornerShape12dp
 import com.decoutkhanqindev.aodamn.presentation.theme.Theme
 
-// Control của một tab dựng theo loại thuộc tính, không biết chủ đề nào (màn chủ đề, khối ở Tùy chỉnh): chủ đề mới chỉ khai báo thuộc tính
-// trong AodThemeSpec. Tab có nhiều màu thì gom thành chip chọn phần cần tô + một bảng màu, đặt ở chỗ màu đầu tiên. Nút đặt lại riêng tab
-// nằm ở thanh tiêu đề panel (AppEditorResetButton). Mỗi lần đổi phát map khoá → giá trị (null = xoá khoá): màu gradient ghi nhiều khoá
-// một lúc để ViewModel ghi thành một bước hoàn tác.
 @Composable
 fun AodThemeOptionList(
     tab: AodThemeTab,
@@ -140,7 +136,6 @@ private fun ThemeOptionControl(
     }
 }
 
-// Thuộc tính có chế độ tự động (vị trí theo giờ của Dải màu): công tắc tự động; tắt thì hiện thanh trượt ghim, bắt đầu ở giữa range.
 @Composable
 private fun AutoRangeControl(
     option: AodRangeOption,
@@ -169,8 +164,6 @@ private fun AutoRangeControl(
     }
 }
 
-// Mục là hình thì hiện hình thu nhỏ; mục có ảnh xem trước (font, mặt đồng hồ, kiểu từng khối) thì ô xem trước vẽ bằng chính AOD;
-// còn lại chip chữ.
 @Composable
 private fun ChoiceControl(
     option: AodChoiceOption<*>,
@@ -214,7 +207,6 @@ private fun ChoiceControl(
     }
 }
 
-// Chip mang chấm màu hiện tại của từng phần (phần đang là gradient thì 3 chấm chồng nhau); chọn chip nào thì bảng màu bên dưới tô phần đó.
 @Composable
 private fun ColorGroupControl(
     options: List<AodColorOption>,
@@ -264,8 +256,6 @@ private fun ColorGroupControl(
     }
 }
 
-// Ô xem trước 112 × 64dp nền đen như AOD, tên bên dưới (font thì viết bằng chính font đó). Lớp phủ trong ô chặn chạm vào nút của ảnh xem
-// trước (vd nút nhạc) để chạm rơi về ô.
 @Composable
 private fun PreviewChoice(
     label: String,

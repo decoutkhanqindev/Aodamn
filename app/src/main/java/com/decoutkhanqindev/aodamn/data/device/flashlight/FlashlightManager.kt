@@ -17,14 +17,12 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.stateIn
 import timber.log.Timber
 
-// Bật đèn pin bằng setTorchMode không cần quyền CAMERA.
 class FlashlightManager(
     private val app: Application,
 ) : Tag {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val cameraManager = app.getSystemService(CameraManager::class.java)
 
-    // Camera đầu tiên có đèn flash (thường là camera sau); không có thì máy không có đèn pin.
     private val torchCameraId: String? by lazy {
         try {
             cameraManager.cameraIdList.firstOrNull { cameraId ->
@@ -40,7 +38,6 @@ class FlashlightManager(
     val isAvailable: Boolean
         get() = torchCameraId != null
 
-    // Hệ thống báo trạng thái đèn do bất kỳ đâu bật (cả ô Đèn pin của thanh thông báo); đăng ký xong báo luôn trạng thái hiện tại.
     val isOn: StateFlow<Boolean> = callbackFlow {
         val cameraId = torchCameraId
         val callback = object : CameraManager.TorchCallback() {
@@ -62,7 +59,6 @@ class FlashlightManager(
             initialValue = false,
         )
 
-    // Camera đang được app khác dùng thì hệ thống từ chối bật đèn.
     fun toggle() {
         val cameraId = torchCameraId ?: return
         try {

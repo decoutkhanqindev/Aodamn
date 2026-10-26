@@ -50,11 +50,9 @@ class CustomizeViewModel(
     private val undoStack = ArrayDeque<CustomizeDraftUiModel>()
     private val redoStack = ArrayDeque<CustomizeDraftUiModel>()
 
-    // Mục cần quyền mà user vừa bật: chỉ ghi vào bản nháp khi quyền đã được cấp.
     private var pendingChange: (CustomizeDraftUiModel.() -> CustomizeDraftUiModel)? = null
     private var glowPreviewJob: Job? = null
 
-    // Kéo color picker (đồng hồ, kiểu khối): xem trước trực tiếp không ghi lịch sử, thả tay mới ghi một bước hoàn tác cho cả lần kéo.
     private var dragBase: CustomizeDraftUiModel? = null
 
     init {
@@ -85,7 +83,6 @@ class CustomizeViewModel(
         }
     }
 
-    // Bấm lại tab đang mở thì thu panel lại để nhìn trọn AOD.
     private fun onPanelIntent(intent: CustomizeIntent.Panel) {
         when (intent) {
             is CustomizeIntent.Panel.SelectTab ->
@@ -291,7 +288,6 @@ class CustomizeViewModel(
         }
     }
 
-    // Bản nháp bắt đầu từ cài đặt đang có (lần đầu mở app là mặc định).
     private fun loadDraft() {
         viewModelScope.launch {
             initialDraft = dataStoreManager.loadCustomizeDraft(aodImageManager, permissionManager)
@@ -320,8 +316,6 @@ class CustomizeViewModel(
         commit(from = current, next = current.transform())
     }
 
-    // Mỗi thay đổi đẩy bản trước vào lịch sử hoàn tác; thay đổi mới thì bỏ lịch sử làm lại. from khác bản đang hiện khi vừa kéo xem
-    // trước: kéo về đúng chỗ cũ thì chỉ trả bản nháp về from.
     private fun commit(from: CustomizeDraftUiModel, next: CustomizeDraftUiModel) {
         if (next == from) {
             if (state.value.draft != from) publish(from)
@@ -333,7 +327,6 @@ class CustomizeViewModel(
         publish(next)
     }
 
-    // Ngoài onboarding không có tab Đồng hồ: đặt lại giữ chủ đề đang dùng, nếu không Áp dụng sẽ âm thầm đổi chủ đề.
     private fun defaultDraft(): CustomizeDraftUiModel =
         if (isFirstOpen) CustomizeDraftUiModel() else CustomizeDraftUiModel().withTheme(initialDraft.appearance.clock.theme)
 
@@ -349,8 +342,6 @@ class CustomizeViewModel(
         commit(from = base, next = base.transform())
     }
 
-    // Chủ đề đổi ở màn chủ đề thì bản nháp, lịch sử hoàn tác và bản gốc đều lấy chủ đề mới, để Áp dụng không ghi đè lại chủ đề cũ.
-    // Ngoài onboarding Tùy chỉnh không tự đổi chủ đề nên bản nháp và bản gốc luôn cùng chủ đề.
     private fun refreshTheme() {
         if (isFirstOpen || state.value.isLoading) return
         viewModelScope.launch {
@@ -409,7 +400,6 @@ class CustomizeViewModel(
         }
     }
 
-    // Ảnh giữ trong bản nháp (chưa ghi file); giải mã ở IO vì ảnh gốc có thể rất lớn.
     private fun onBackgroundPickerResult(uri: String?) {
         if (uri == null) return
         viewModelScope.launch {
@@ -430,7 +420,6 @@ class CustomizeViewModel(
         change: CustomizeInfoUiModel.(Boolean) -> CustomizeInfoUiModel,
     ) = toggleWithPermission(permission, isEnabled) { enabled -> copy(info = info.change(enabled)) }
 
-    // Tắt thì ghi ngay; bật khi chưa có quyền thì hiện sheet quyền, cấp xong mới bật.
     private fun toggleWithPermission(
         permission: PermissionValue,
         isEnabled: Boolean,
@@ -464,8 +453,6 @@ class CustomizeViewModel(
         viewModelScope.launch { sendEffect(effect) }
     }
 
-    // Bị từ chối thì mở Thông tin ứng dụng (từ chối hai lần thì hệ thống không hỏi nữa), cấp xong app tự quay về và refreshPermissions
-    // bật mục đang chờ; sheet quyền giữ nguyên trong lúc đó.
     private fun onPermissionResult(permission: PermissionValue, isGranted: Boolean) {
         if (isGranted) {
             applyPendingChange()
@@ -474,13 +461,11 @@ class CustomizeViewModel(
         }
     }
 
-    // Quyền cấp ở app Cài đặt (truy cập thông báo, lịch / vị trí đã bị từ chối, quyền bắt buộc lúc áp dụng): quay lại màn này thì kiểm lại.
     private fun refreshPermissions() {
         state.value.permissionRequest?.let { permission -> if (isGranted(permission)) applyPendingChange() }
         if (state.value.isApplyPermissionSheetVisible) refreshApplyPermissions()
     }
 
-    // Đủ quyền bắt buộc thì đóng sheet và áp dụng luôn, như user vừa bấm lại Áp dụng.
     private fun refreshApplyPermissions() {
         val required = permissionManager.requiredAodPermissions()
         if (required.hasRequiredPermissions) {
@@ -491,7 +476,6 @@ class CustomizeViewModel(
         }
     }
 
-    // Bị từ chối thì mở trang cài đặt thông báo (sau 2 lần từ chối hệ thống không hiện hộp thoại nữa).
     private fun onNotificationPermissionResult(isGranted: Boolean) {
         if (isGranted) {
             refreshPermissions()
@@ -531,9 +515,6 @@ class CustomizeViewModel(
         updateState { copy(guideStep = null) }
     }
 
-    // Chỉ bấm được khi bản nháp đã khác lúc vào màn; ghi phần đã đổi. Mở từ màn chính thì ở lại màn và báo toast, bản vừa ghi thành bản
-    // gốc mới (ảnh ghi lỗi thì giữ bản gốc cũ để Áp dụng lại được); còn thiếu quyền bắt buộc thì chưa ghi gì, hiện sheet quyền, cấp đủ
-    // thì tự áp dụng (refreshApplyPermissions). Onboarding thì sang bước sau (navigateNext).
     private fun confirmCustomization() {
         if (state.value.isApplying || !state.value.history.hasChanges) return
         if (!isFirstOpen) {
@@ -560,15 +541,11 @@ class CustomizeViewModel(
         }
     }
 
-    // Onboarding: đủ quyền bắt buộc thì vào thẳng Main, không thì sang màn quyền. Bỏ qua không đi qua đây: không ghi gì và vào thẳng Main
-    // (thiếu quyền thì Main hiện bottom sheet nhắc), vì user đã muốn bỏ qua mà còn bắt cấp quyền thì dễ bỏ app.
     private suspend fun navigateNext() {
         val isReady = permissionManager.requiredAodPermissions().hasRequiredPermissions
         sendEffect(if (isReady) CustomizeEffect.Navigation.NavigateToMain else CustomizeEffect.Navigation.NavigateToPermission)
     }
 
-    // Chỉ ghi phần đã đổi: mục cần quyền user không đụng tới giữ cờ đã lưu (vd icon thông báo mặc định bật nhưng chưa có quyền).
-    // false khi ảnh nền hay nét vẽ ghi lỗi (đã báo toast lỗi).
     private suspend fun save(draft: CustomizeDraftUiModel, initial: CustomizeDraftUiModel): Boolean {
         saveAppearance(draft.appearance, initial.appearance)
         saveInfo(draft.info, initial.info)

@@ -24,9 +24,6 @@ import com.decoutkhanqindev.aodamn.presentation.theme.GreyB4
 import kotlin.math.PI
 import kotlin.math.sin
 
-// Thanh tiến trình nhạc gợn sóng của các chủ đề có trình phát riêng (Sỏi, Thẻ): phần đã nghe là sóng sin biên độ wave() × (height −
-// strokeWidth) / 2 (0 là thẳng), cách gap rồi tới phần còn lại thẳng màu trackColor. fraction và wave chỉ đọc ở pha vẽ. brush (mặc
-// định màu color) tô phần đã nghe, để chủ đề có màu nhạc gradient.
 @Composable
 fun AodWaveTrack(
     fraction: () -> Float,

@@ -30,14 +30,12 @@ class BatteryStateManager(
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val batteryChangedFilter = IntentFilter(Intent.ACTION_BATTERY_CHANGED)
 
-    // Receiver chỉ đăng ký khi có người collect (màn AOD): BATTERY_CHANGED gửi rất thường xuyên, service không nên nhận suốt.
     private val batteryChanged: SharedFlow<Intent> = callbackFlow {
         val receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
                 trySend(intent)
             }
         }
-        // BATTERY_CHANGED là sticky: đăng ký xong trả luôn giá trị hiện tại.
         app.registerSystemReceiver(receiver, batteryChangedFilter)?.let { trySend(it) }
         awaitClose { app.unregisterReceiver(receiver) }
     }
@@ -68,7 +66,6 @@ class BatteryStateManager(
             initialValue = null,
         )
 
-    // Cắm nguồn, kể cả khi pin đầy hoặc máy đang giới hạn sạc (vd dừng ở 80%) — khác isCharging.
     val isPlugged: StateFlow<Boolean?> = batteryChanged
         .map { it.isPlugged() }
         .distinctUntilChanged()

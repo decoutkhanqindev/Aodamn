@@ -14,8 +14,6 @@ import kotlin.math.sin
 private val UnitCos = FloatArray(AodShapeValue.POINTS) { index -> cos(2 * PI * index / AodShapeValue.POINTS).toFloat() }
 private val UnitSin = FloatArray(AodShapeValue.POINTS) { index -> sin(2 * PI * index / AodShapeValue.POINTS).toFloat() }
 
-// Path khép kín qua AodShapeValue.POINTS bán kính bằng spline Catmull-Rom, vừa khít khung size; inset chừa chỗ cho nét viền.
-// Truyền path cũ vào để dùng lại khi vẽ từng khung hình của animation.
 fun radialShapePath(
     radii: FloatArray,
     size: Size,
@@ -54,7 +52,6 @@ fun radialShapePath(
     return path
 }
 
-// Hình giữa from và to: nội suy từng bán kính, ghi vào out để không cấp phát mỗi khung hình.
 fun lerpRadii(
     from: FloatArray,
     to: FloatArray,
@@ -65,7 +62,6 @@ fun lerpRadii(
     return out
 }
 
-// Hình khối dùng làm Shape của Compose (nền, viền, clip), vd hình thu nhỏ ở màn sửa chủ đề.
 class AodShapeOutline(private val shape: AodShapeValue) : Shape {
     override fun createOutline(size: Size, layoutDirection: LayoutDirection, density: Density): Outline =
         Outline.Generic(radialShapePath(shape.radii, size))

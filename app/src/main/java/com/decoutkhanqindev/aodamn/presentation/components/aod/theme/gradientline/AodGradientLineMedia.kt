@@ -43,9 +43,6 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.gradientline.Gra
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodIntent
 import com.decoutkhanqindev.aodamn.presentation.theme.Grey5A
 
-// Trình phát của Dải màu như media_widget_lt của app mẫu: lùi · tên bài / nghệ sĩ mờ · tới, nút mờ 0,7, không có nút phát (chạm tên để phát /
-// dừng, đang dừng thì chữ mờ đi) và không thanh tiến trình. Đổi bài thì tên trượt lên từ dưới như app mẫu; tên dài thì chạy chữ. Rộng theo
-// khung của bố cục (màn dọc: màn trừ 40dp mỗi bên; màn ngang: 360dp).
 @Composable
 fun AodGradientLineMedia(
     media: MediaUiModel,
@@ -123,7 +120,6 @@ fun AodGradientLineMedia(
     }
 }
 
-// Tên bài / nghệ sĩ một dòng, dài thì chạy chữ (2 / 1 lần như marqueeRepeatLimit của app mẫu).
 @Composable
 private fun GradientLineMediaText(
     text: String,
@@ -142,7 +138,6 @@ private fun GradientLineMediaText(
     )
 }
 
-// Nút lùi / tới: ô 35dp, icon đặc 9dp mờ 0,7 như app mẫu; không lùi / tới được thì xám.
 @Composable
 private fun GradientLineMediaButton(
     @DrawableRes iconRes: Int,

@@ -15,8 +15,6 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.collections.immutable.toImmutableList
 
-// Chủ đề Cổ điển: 4 mặt đồng hồ có từ trước khi có chủ đề (số, số xếp chồng, kim, kim tối giản), giờ và phút có màu riêng. Mặc định là kiểu
-// bắt mắt nhất (số xếp chồng, giờ mint, phút trắng): thẻ chủ đề, màn chủ đề, Đặt lại và AOD sau khi áp dụng cùng một kiểu.
 object ClassicThemeSpec : AodThemeSpec {
     val Face = AodChoiceOption(
         key = "face",
@@ -31,7 +29,6 @@ object ClassicThemeSpec : AodThemeSpec {
         default = ClockFontValue.DEFAULT,
     )
 
-    // Giờ giữ khoá "color" của bản chỉ có một màu đồng hồ nên cấu hình đã lưu không mất; phút có màu riêng.
     val HourColor = AodColorOption(key = "color", labelRes = R.string.theme_color_hour, default = Mint, isGradientAllowed = true)
     val MinuteColor = AodColorOption(
         key = "minute_color",
@@ -47,7 +44,6 @@ object ClassicThemeSpec : AodThemeSpec {
         default = 100,
     )
 
-    // Một tab như khối ở Tùy chỉnh (mặt rồi font, cỡ, màu giờ / phút), dùng ở màn chủ đề và tab Đồng hồ lúc onboarding.
     val ClockTab = AodThemeTab(
         iconRes = R.drawable.ic_clock,
         labelRes = R.string.theme_tab_clock,

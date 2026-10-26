@@ -5,8 +5,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import kotlin.math.max
 
-// Vị trí vạch, giờ, dòng ngày và chỗ khoét trên vạch theo Sep23Clock của app mẫu; toạ độ px trong vùng vạch. fraction: phần đã qua của ngày
-// (hoặc vị trí ghim), 0 ở đầu vạch, 1 ở cuối vạch.
 @Immutable
 data class GradientLineGeometry(
     val lineStart: Offset,
@@ -16,8 +14,6 @@ data class GradientLineGeometry(
     val rowCenter: Offset,
 ) {
     companion object {
-        // Màn dọc như app mẫu: vạch dọc giữa vùng, giờ trượt từ trên xuống, dòng ngày dưới giờ cũng nằm trên vạch (vạch khoét cả dòng ngày).
-        // Dòng ngày + thời tiết cao hơn ngày của app mẫu thì lùi xuống và khoét dài theo, giữ khoảng cách tới giờ như app mẫu.
         fun vertical(
             width: Float,
             height: Float,
@@ -47,8 +43,6 @@ data class GradientLineGeometry(
             )
         }
 
-        // Màn ngang (mock đã duyệt): vạch ngang hết vùng, giờ trượt từ trái sang phải; giờ + dòng ngày không ra khỏi vùng, vạch chỉ khoét quanh giờ
-        // (dòng ngày nằm dưới vạch).
         fun horizontal(
             width: Float,
             height: Float,

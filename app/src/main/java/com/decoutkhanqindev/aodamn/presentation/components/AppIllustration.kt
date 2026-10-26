@@ -23,8 +23,6 @@ import com.decoutkhanqindev.aodamn.presentation.theme.Black
 import com.decoutkhanqindev.aodamn.presentation.theme.Mint
 import com.decoutkhanqindev.aodamn.presentation.theme.Neutral12
 
-// Hình minh hoạ của sheet / hộp thoại: điện thoại viền sáng như icon app (img_spot_phone, sinh bằng tools/brand/generate_illustrations.py,
-// khung 120 x 96) và huy hiệu tròn theo ngữ cảnh ở góc dưới phải điện thoại. isOffline: bản xám (mất mạng).
 @Composable
 fun AppIllustration(
     @DrawableRes badgeIconRes: Int?,
@@ -42,7 +40,6 @@ fun AppIllustration(
             modifier = Modifier.fillMaxSize(),
         )
 
-        // Tâm huy hiệu ở (76, 64) của khung 120 x 96: sát góc dưới phải điện thoại, vòng ngoài màu nền sheet tách nó khỏi viền sáng.
         if (badgeIconRes != null) {
             Box(
                 modifier = Modifier

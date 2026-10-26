@@ -19,7 +19,6 @@ import java.io.File
 import java.io.IOException
 import kotlin.math.roundToInt
 
-// Ảnh nền và hình vẽ nhanh của AOD, mỗi thứ một file trong bộ nhớ riêng của app.
 class AodImageManager(
     private val app: Application,
 ) : Tag {
@@ -27,7 +26,6 @@ class AodImageManager(
     private val backgroundFile = File(app.filesDir, BACKGROUND_FILE_NAME)
     private val drawingFile = File(app.filesDir, DRAWING_FILE_NAME)
 
-    // null = chưa kiểm xong file (kiểm trên IO, không đụng ổ đĩa ở main thread).
     private val _hasBackground = MutableStateFlow<Boolean?>(null)
     val hasBackground: StateFlow<Boolean?> = _hasBackground.asStateFlow()
 
@@ -46,7 +44,6 @@ class AodImageManager(
         }
     }
 
-    // Lưu bản sao đã thu về cỡ màn hình: Photo Picker chỉ cho đọc tạm thời, và AOD giải mã ảnh nhỏ nhanh hơn ảnh gốc.
     suspend fun saveBackground(uri: String): Boolean = withContextCatching(
         context = Dispatchers.IO,
         block = {
@@ -69,7 +66,6 @@ class AodImageManager(
         },
     )
 
-    // Màn thử tùy chỉnh giữ ảnh trong bộ nhớ làm bản nháp, chỉ ghi file khi user bấm Áp dụng.
     suspend fun decodeBackground(uri: String): Bitmap? = withContextCatching(
         context = Dispatchers.IO,
         block = { decodeScaled(uri) },
@@ -102,7 +98,6 @@ class AodImageManager(
         remove(file = backgroundFile, hasFile = _hasBackground)
     }
 
-    // PNG giữ nền trong suốt để AOD tô nét vẽ theo màu đồng hồ.
     suspend fun saveDrawing(bitmap: Bitmap): Boolean = withContextCatching(
         context = Dispatchers.IO,
         block = {
@@ -122,7 +117,6 @@ class AodImageManager(
         remove(file = drawingFile, hasFile = _hasDrawing)
     }
 
-    // Ghi file tạm rồi đổi tên: không bao giờ còn file ghi dở nếu app bị đóng giữa chừng.
     private fun writeAtomically(file: File, bitmap: Bitmap, format: Bitmap.CompressFormat) {
         val tempFile = File(file.parentFile, "${file.name}$TEMP_SUFFIX")
         tempFile.outputStream().use { output -> bitmap.compress(format, IMAGE_QUALITY, output) }
@@ -152,7 +146,6 @@ class AodImageManager(
         }
     }
 
-    // ImageDecoder tự xoay theo EXIF và đọc được HEIC; cạnh dài nhất không vượt quá cạnh dài của màn hình.
     private fun decodeScaled(uri: String): Bitmap {
         val source = ImageDecoder.createSource(app.contentResolver, uri.toUri())
         val maxSide = app.resources.displayMetrics.run { maxOf(widthPixels, heightPixels) }

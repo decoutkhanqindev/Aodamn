@@ -21,8 +21,6 @@ import com.decoutkhanqindev.aodamn.presentation.components.rememberZonedDateTime
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeConfig
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.bezel.BezelThemeSpec
 
-// Mặt số Vành phủ cả vùng được cho: vạch + số (BezelFace, tính lại khi đổi cỡ hay kiểu vạch) và hai kim. Kim quay 400ms theo chiều ngắn nhất khi
-// sang phút mới; góc kim chỉ đọc lúc vẽ nên quay kim không recompose.
 @Composable
 fun AodBezelDial(
     nowMillis: Long,
@@ -69,7 +67,6 @@ fun rememberBezelPaints(): BezelPaints {
     return remember(typeface) { BezelPaints(typeface) }
 }
 
-// Góc kim cộng dồn theo chiều ngắn nhất: 59 → 0 phút quay tiếp 6°, không quay ngược cả vòng.
 @Composable
 private fun rememberHandDegrees(degrees: Float): State<Float> {
     val angle = remember { Animatable(degrees) }

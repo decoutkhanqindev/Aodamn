@@ -38,10 +38,6 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeValue
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodIntent
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
 
-// Bố cục AOD màn dọc theo chủ đề: Cổ điển và Sỏi giãn trên - dưới (AodPortraitSpread: đồng hồ, ngày, khối thêm ở trên; nhạc, dòng pin neo đáy);
-// Số áo, Viên nang, Thẻ, Tháp, Chuỗi, Vành, La bàn, Bán nguyệt, Dải màu, Gợn sóng, Nhịp giây và Chồng số tự vẽ cả cụm (số, ngày, dòng trạng
-// thái) cùng các khối thông tin.
-// Thêm chủ đề = thêm một nhánh ở đây và ở AodLandscape.
 @Composable
 fun AodPortrait(
     state: AodState,
@@ -77,12 +73,6 @@ fun AodPortrait(
     }
 }
 
-// Bố cục AOD màn ngang theo chủ đề: mỗi chủ đề một bố cục riêng, dựng trên bố cục chung theo các khối đang hiện (AodLandscapeLayout); Chuỗi giữ
-// dạng chuỗi nên tự xếp cột (AodChainLandscape), Vành giữ mặt số phủ màn (AodBezelLandscape), La bàn giữ mặt số giữa màn (AodCompassLandscape),
-// Bán nguyệt giữ nửa mặt số sát mép trái (AodHalfMoonLandscape), Dải màu cho vạch nằm ngang hết bề rộng (AodGradientLineLandscape), Gợn sóng
-// giữ mặt số giữa màn (AodRippleLandscape).
-// Nhịp giây giữ vòng giữa màn cỡ như màn dọc, thông báo trái, pin và trình phát phải (AodTickLandscape).
-// Chồng số giữ khối số giữa màn cỡ như màn dọc, thông tin trái, nhạc + pin phải (AodBigOverlapLandscape).
 @Composable
 fun AodLandscape(
     state: AodState,

@@ -7,11 +7,9 @@ import kotlinx.serialization.Serializable
 @Serializable
 data object SplashDestination : NavKey
 
-// isPermissionSkipped: vào từ nút Bỏ qua ở màn quyền onboarding, tab AOD không tự hiện sheet quyền trong phiên này.
 @Serializable
 data class MainDestination(val isPermissionSkipped: Boolean) : NavKey
 
-// Onboarding lần đầu: Ngôn ngữ → Tùy chỉnh → Quyền trong OnboardingNavDisplay (back stack riêng, một banner chung).
 @Serializable
 data object OnboardingDestination : NavKey
 
@@ -27,7 +25,6 @@ data object PermissionDestination : NavKey
 @Serializable
 data object IapDestination : NavKey
 
-// focusBlock: mở thẳng chế độ sửa ở tab chỉnh khối chủ đề tự vẽ đó (từ Tùy chỉnh); null thì mở chế độ xem.
 @Serializable
 data class ThemeEditorDestination(val themeId: String, val focusBlock: AodBlockValue?) : NavKey
 

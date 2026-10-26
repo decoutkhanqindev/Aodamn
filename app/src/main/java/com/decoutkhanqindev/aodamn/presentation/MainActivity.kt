@@ -36,7 +36,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         requestConsent()
         runCatching { requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT }
-        // Theme luôn tối: icon thanh hệ thống luôn sáng, không theo theme hệ thống.
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
             navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
@@ -58,7 +57,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    // Mở app là cách chạy lại service nếu hệ thống (vd Xiaomi) đã đóng nó; khi khởi động máy thì BootReceiver lo.
     private fun startAodServiceIfEnabled() {
         lifecycleScope.launch {
             if (dataStoreManager.isAodEnabled.filterNotNull().first()) {

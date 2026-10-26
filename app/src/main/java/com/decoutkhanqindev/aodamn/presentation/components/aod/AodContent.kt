@@ -71,7 +71,6 @@ fun AodContent(
     val currentOnIntent by rememberUpdatedState(onIntent)
     val focusRequester = remember { FocusRequester() }
 
-    // Bản thu nhỏ nằm trong màn khác: lấy focus thì màn đó tự cuộn về chỗ nó, nhận chạm thì chặn click của khung bọc ngoài.
     SideEffect(Unit) {
         if (isInteractive) focusRequester.requestFocus()
     }
@@ -144,8 +143,6 @@ fun AodContent(
             color = state.glowColorArgb?.let { Color(it) } ?: Mint,
         )
 
-        // Cụm đồng hồ + thông tin đứng yên giữa màn hình, đúng như khung xem trước của chủ đề (không dịch vị trí theo phút). Dòng gợi ý
-        // thoát ghim ở đáy màn hình nên không đẩy cụm lệch lên.
         AnimatedVisibility(
             visible = !state.isDark,
             enter = fadeIn(),

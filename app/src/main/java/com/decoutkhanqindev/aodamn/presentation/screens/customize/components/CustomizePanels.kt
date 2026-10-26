@@ -64,8 +64,6 @@ fun CustomizePanel(
     }
 }
 
-// Font, cỡ, màu riêng của khối (dưới phần bật / tắt và nội dung của tab). Khối mà chủ đề đang dùng tự vẽ (ngày, nhạc của Sỏi) thì kiểu do
-// chủ đề quyết định: dẫn sang màn chủ đề thay vì hiện tùy chọn không có tác dụng.
 @Composable
 private fun ComponentStyle(
     component: AodComponentValue,
@@ -115,8 +113,6 @@ private fun AppearancePanel(
     }
 }
 
-// Onboarding: chỉ Cổ điển (chủ đề mặc định), mặt, font, màu, cỡ như bản trước khi có chủ đề, cùng control với màn chủ đề, để user mới thấy
-// app chỉnh được gì. Sau đó: dòng dẫn sang màn chủ đề của chủ đề đang dùng (chọn chủ đề khác ở tab AOD).
 @Composable
 private fun ClockPanel(
     isFirstOpen: Boolean,
@@ -162,7 +158,6 @@ private fun DecorPanel(
     }
 }
 
-// hasNotificationContent = false: chủ đề tự vẽ dòng trạng thái (Số áo) chỉ có icon thông báo, không có nội dung thông báo.
 @Composable
 private fun InfoPanel(
     tab: CustomizeTabValue,

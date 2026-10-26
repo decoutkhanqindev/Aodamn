@@ -15,7 +15,6 @@ data class CalendarEventUiModel(
     companion object {
         const val MAX_EVENTS = 2
 
-        // Mốc 0 giờ ngày mai theo múi giờ của máy, tức hết hôm nay.
         fun endOfDayMillis(nowMillis: Long): Long {
             val zone = ZoneId.systemDefault()
             return Instant.ofEpochMilli(nowMillis).atZone(zone).toLocalDate()

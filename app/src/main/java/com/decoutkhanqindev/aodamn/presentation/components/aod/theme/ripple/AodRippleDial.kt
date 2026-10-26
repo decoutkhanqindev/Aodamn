@@ -40,10 +40,6 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.ripple.RippleThe
 import kotlin.math.PI
 import kotlin.math.min
 
-// Mặt số Gợn sóng giữa vùng được cho: đĩa 12 gợn (đặc / viền), ngày uốn theo nửa trên đĩa, kim phút rồi kim giờ dày đầu tròn, chấm giây chạy vòng.
-// Chạy theo giờ thật mỗi khung hình (isLive: AOD thật, và khung xem trước vì Gợn sóng bật isLiveInPreview) như app mẫu: kim trôi liên tục, chấm
-// giây đi mượt. Bóng mờ 10% đen của kim ở app mẫu bỏ: không thấy được trên đĩa tối, nền đen. Mọi màu tô được gradient: kim theo chiều kim, đĩa và
-// chấm giây theo khung của chúng, ngày theo khung cung chữ.
 @Composable
 fun AodRippleDial(
     nowMillis: Long,
@@ -109,7 +105,6 @@ fun AodRippleDial(
                     right = middle.x + dateRadius,
                     bottom = middle.y - dateRadius,
                 )
-                // Căn giữa cung bằng hOffset (không dựa vào Paint.Align.CENTER khi vẽ theo đường).
                 val dateOffset = ((PI * dateRadius).toFloat() - datePaint.measureText(date)) / 2f
 
                 onDrawBehind {
@@ -133,15 +128,12 @@ fun AodRippleDial(
     )
 }
 
-// Kim từ tâm ra đầu kim; gradient trải từ tâm tới đầu kim.
 private fun DrawScope.drawHand(degrees: Float, length: Float, colors: List<Color>, width: Float) {
     val tip = ripplePoint(center, degrees, length)
     val brush = if (colors.size > 1) Brush.linearGradient(colors = colors, start = center, end = tip) else SolidColor(colors.first())
     drawLine(brush = brush, start = center, end = tip, strokeWidth = width, cap = StrokeCap.Round)
 }
 
-// Bút chữ ngày bằng Paint của Android (vẽ theo cung); Typeface là file TTF tĩnh Google Sans Medium, không đặt trục độ đậm (máy Xiaomi thay font
-// khi có trục).
 @Composable
 private fun rememberRippleDatePaint(): Paint {
     val typeface = LocalFontFamilyResolver.current

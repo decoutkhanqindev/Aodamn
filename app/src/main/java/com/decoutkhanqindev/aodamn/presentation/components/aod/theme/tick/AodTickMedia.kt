@@ -49,9 +49,6 @@ import com.decoutkhanqindev.aodamn.presentation.theme.Black
 import com.decoutkhanqindev.aodamn.presentation.theme.Grey5A
 import kotlinx.collections.immutable.toImmutableList
 
-// Trình phát của Nhịp giây như media_widget_lt của app mẫu: lùi · tên bài in hoa / nghệ sĩ tối hơn 30% · tới, chữ giãn 0,25em, không có nút phát
-// (chạm tên để phát / dừng; đang dừng thì chữ mờ đi, app mẫu không có). Đổi bài thì tên trượt lên từ dưới như app mẫu; tên dài thì chạy chữ.
-// Rộng theo khung của bố cục (màn dọc: màn trừ 40dp mỗi bên; màn ngang: vùng bên).
 @Composable
 fun AodTickMedia(
     media: MediaUiModel,
@@ -136,7 +133,6 @@ fun AodTickMedia(
     }
 }
 
-// Tên bài / nghệ sĩ một dòng, dài thì chạy chữ (2 / 1 lần như marqueeRepeatLimit của app mẫu).
 @Composable
 private fun TickMediaText(
     text: String,
@@ -158,7 +154,6 @@ private fun TickMediaText(
     )
 }
 
-// Nút lùi / tới: ô 40dp, icon đặc 12dp; không lùi / tới được thì xám.
 @Composable
 private fun TickMediaButton(
     @DrawableRes iconRes: Int,
@@ -185,7 +180,6 @@ private fun TickMediaButton(
     }
 }
 
-// Nghệ sĩ tối hơn 30% như app mẫu (màu điều khiển pha đen); gradient thì tối từng màu, giữ hướng.
 private fun AodThemeConfig.darkerBrushOf(option: AodColorOption): Brush {
     val gradient = gradientOf(option) ?: return SolidColor(lerp(get(option), Black, TickMetrics.TEXT_DARKEN))
     return gradient.copy(colors = gradient.colors.map { color -> lerp(color, Black, TickMetrics.TEXT_DARKEN) }.toImmutableList()).toBrush()

@@ -14,15 +14,9 @@ import com.decoutkhanqindev.aodamn.presentation.theme.GreyE0
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentSetOf
 
-// Chủ đề Dải màu (Gradient Line Clock của Muviz Edge, plans/muviz-edge-themes.md): vạch gradient mảnh chạy dọc cạnh dài của màn, giờ và ngày
-// nằm trên vạch (vạch khoét quanh), trượt từ đầu vạch (00:00) tới cuối vạch (23:59) theo phút trong ngày; trình phát ở đầu màn, dòng pin ·
-// thông báo neo đáy. Ghi nhớ, sự kiện, nét vẽ không có chỗ: khối giờ quét hết chiều dài vạch, hai bên vạch hẹp (mock đã duyệt).
-// App mẫu có màu chủ đạo cho mọi phần chưa chỉnh riêng; bên mình mỗi phần một màu, mặc định #E0E0E0 như màu chủ đạo của app mẫu (user duyệt).
 object GradientLineThemeSpec : AodThemeSpec {
-    // App mẫu dùng Product Sans Regular cho giờ, ngày, trình phát: Google Sans cùng thiết kế.
     val Font: FontFamily = FontFamilyGoogleSansText
 
-    // Cỡ giờ = 0,11 cạnh ngắn của vùng vạch × cỡ, dải và mặc định như app mẫu.
     val Size = AodRangeOption(
         key = "size",
         labelRes = R.string.opt_size_value,
@@ -31,7 +25,6 @@ object GradientLineThemeSpec : AodThemeSpec {
         default = 110,
     )
 
-    // Mặc định theo giờ như app mẫu (Position −1); tắt thì ghim khối giờ ở 0–100% chiều dài vạch, 20 nấc như thanh trượt của app mẫu.
     val Position = AodRangeOption(
         key = "position",
         labelRes = R.string.opt_position_value,
@@ -48,7 +41,6 @@ object GradientLineThemeSpec : AodThemeSpec {
         isGradientAllowed = true,
     )
 
-    // Gradient của app mẫu (vàng → hồng tím → xanh từ đầu tới cuối vạch) là màu nhấn của chủ đề; vạch luôn tô dọc theo vạch, bỏ qua hướng.
     val LineColor = AodColorOption(
         key = "line_color",
         labelRes = R.string.theme_color_line,
@@ -56,7 +48,6 @@ object GradientLineThemeSpec : AodThemeSpec {
         defaultGradient = GradientSwatchValue.SUNSET.gradient,
     )
 
-    // App mẫu vẽ ngày bằng màu giờ mờ 78%; tách màu riêng cho tab Ngày như các chủ đề khác (user duyệt), vẫn mờ 78%.
     val DateColor = AodColorOption(
         key = "date_color",
         labelRes = R.string.theme_color_date,
@@ -71,10 +62,8 @@ object GradientLineThemeSpec : AodThemeSpec {
         isGradientAllowed = true,
     )
 
-    // Tên bài, nghệ sĩ, các nút.
     val MediaColor = AodColorOption(key = "media_color", labelRes = R.string.theme_color_media, default = GreyE0, isGradientAllowed = true)
 
-    // Mỗi khối chủ đề tự vẽ (ownBlocks) có tab ở đây: Tùy chỉnh › Ngày / Pin / Thông báo / Nhạc dẫn sang màn chủ đề.
     override val tabs = persistentListOf(
         AodThemeTab(
             iconRes = R.drawable.ic_clock,
@@ -116,6 +105,5 @@ object GradientLineThemeSpec : AodThemeSpec {
         AodComponentValue.MEDIA,
     )
 
-    // App mẫu hiện thông báo mới (icon + chữ) ở đáy: chủ đề tự vẽ dòng thông báo mới nhất trên dòng pin.
     override val hasNotificationContent = true
 }

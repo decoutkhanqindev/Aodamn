@@ -32,7 +32,6 @@ class PermissionManager(
     fun hasCoarseLocationPermission(): Boolean =
         app.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
 
-    // "Truy cập thông báo" là quyền đặc biệt user bật trong Cài đặt, không có checkSelfPermission.
     fun isNotificationListenerEnabled(): Boolean =
         app.packageName in NotificationManagerCompat.getEnabledListenerPackages(app)
 
@@ -41,7 +40,6 @@ class PermissionManager(
     fun isMiuiBackgroundStartAllowed(): Boolean? =
         isMiuiOpAllowed(OP_MIUI_BACKGROUND_START_ACTIVITY)
 
-    // Op của Xiaomi không có API công khai và có thể bị đánh số lại theo bản HyperOS: đọc lỗi thì trả null (không rõ).
     @SuppressLint("DiscouragedPrivateApi")
     private fun isMiuiOpAllowed(op: Int): Boolean? = try {
         val appOps = app.getSystemService(AppOpsManager::class.java)

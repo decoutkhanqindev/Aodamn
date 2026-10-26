@@ -29,7 +29,6 @@ class AudioStateManager(
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val audioManager = app.getSystemService(AudioManager::class.java)
 
-    // true khi đang có chuông, cuộc gọi hoặc báo thức: màn hình của chúng phải nằm trên AOD.
     val isBusy: StateFlow<Boolean?> = callbackFlow {
         val playbackCallback = object : AudioManager.AudioPlaybackCallback() {
             override fun onPlaybackConfigChanged(configs: MutableList<AudioPlaybackConfiguration>?) {
@@ -43,7 +42,6 @@ class AudioStateManager(
             null
         }
         trySend(isBusyNow())
-        // Dưới Android 12 không có listener cho mode: hỏi lại mỗi phút.
         if (modeWatcher == null) {
             launch {
                 while (isActive) {
@@ -72,7 +70,6 @@ class AudioStateManager(
         audioManager.mode != AudioManager.MODE_NORMAL ||
                 audioManager.activePlaybackConfigurations.any { it.audioAttributes.usage in URGENT_USAGES }
 
-    // Class riêng để OnModeChangedListener (API 31) không bao giờ được nạp trên máy cũ hơn.
     @RequiresApi(Build.VERSION_CODES.S)
     private class ModeWatcher(
         private val audioManager: AudioManager,

@@ -24,7 +24,6 @@ import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-// focusBlock: mở từ Tùy chỉnh ở tab của một khối chủ đề tự vẽ (Ngày, Pin, Thông báo, Nhạc) thì vào thẳng chế độ sửa ở tab chỉnh khối đó.
 class ThemeEditorViewModel(
     themeId: String,
     focusBlock: AodBlockValue?,
@@ -37,7 +36,6 @@ class ThemeEditorViewModel(
     private val undoStack = ArrayDeque<AodThemeConfig>()
     private val redoStack = ArrayDeque<AodThemeConfig>()
 
-    // Kéo color picker hay slider: xem trước trực tiếp không ghi lịch sử, thả tay mới ghi một bước hoàn tác cho cả lần kéo.
     private var dragBase: AodThemeConfig? = null
 
     init {
@@ -171,7 +169,6 @@ class ThemeEditorViewModel(
         publish(state.value.savedConfig)
     }
 
-    // Chờ ghi xong dưới lớp phủ đang áp dụng (chặn chạm và Back) rồi mới thoát chế độ sửa.
     private fun saveTheme() {
         if (state.value.isApplying) return
         val config = state.value.config
@@ -185,7 +182,6 @@ class ThemeEditorViewModel(
         }
     }
 
-    // Còn thiếu quyền bắt buộc thì chưa ghi gì, hiện sheet quyền; cấp đủ thì tự áp dụng (refreshPermissions).
     private fun applyTheme() {
         val current = state.value
         if (current.isApplying) return
@@ -218,7 +214,6 @@ class ThemeEditorViewModel(
                     ThemeEditorEffect.OpenNotificationSettings
                 }
 
-            // Không phải quyền bắt buộc, sheet của màn này không có.
             PermissionValue.NOTIFICATION_ACCESS,
             PermissionValue.CALENDAR,
             PermissionValue.LOCATION -> return
@@ -226,7 +221,6 @@ class ThemeEditorViewModel(
         viewModelScope.launch { sendEffect(effect) }
     }
 
-    // Quyền cấp ở app Cài đặt hay hộp thoại hệ thống: quay lại màn này thì kiểm lại, đủ thì đóng sheet và áp dụng luôn.
     private fun refreshPermissions() {
         if (!state.value.isPermissionSheetVisible) return
         val required = permissionManager.requiredAodPermissions()
@@ -238,7 +232,6 @@ class ThemeEditorViewModel(
         }
     }
 
-    // Bị từ chối thì mở trang cài đặt thông báo (sau 2 lần từ chối hệ thống không hiện hộp thoại nữa).
     private fun onNotificationPermissionResult(isGranted: Boolean) {
         if (isGranted) {
             refreshPermissions()
@@ -247,7 +240,6 @@ class ThemeEditorViewModel(
         }
     }
 
-    // Mỗi thay đổi đẩy bản trước vào lịch sử hoàn tác; thay đổi mới thì bỏ lịch sử làm lại.
     private fun commit(from: AodThemeConfig, next: AodThemeConfig) {
         if (next == from) {
             if (state.value.config != from) publish(from)

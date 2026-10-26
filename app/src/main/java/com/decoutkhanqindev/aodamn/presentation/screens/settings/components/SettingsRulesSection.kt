@@ -118,7 +118,6 @@ fun SettingsRulesSection(
         )
     }
 
-    // Bánh xe cuộn dọc nên sheet không kéo được (kéo bánh xe không kéo theo sheet).
     AppSheet(
         value = rules.editingScheduleTime,
         onDismissRequest = { onIntent(SettingsIntent.Rules.DismissScheduleTimePicker) },

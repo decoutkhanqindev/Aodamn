@@ -31,8 +31,6 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeConfig
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.capsule.CapsuleThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.pebble.AodTileStyleValue
 
-// Đồng hồ Viên nang: giờ và phút trong viên nang 4,76 R × 1,81 R, mỗi chữ số căn giữa một ô rộng cố định nên giờ nào viên cũng như nhau. Vẽ
-// trong một lớp (đo chữ số bằng TextMeasurer, đặt theo đường chân chữ) để số đúng giữa viên theo chiều cao chữ số chứ không theo dòng chữ.
 @Composable
 fun AodCapsuleClock(
     nowMillis: Long,
@@ -56,7 +54,6 @@ fun AodCapsuleClock(
             .clearAndSetSemantics { contentDescription = description }
             .drawWithCache {
                 val r = unit.toPx()
-                // Mỗi chữ số đo riêng nên gradient của số trải theo khung từng số; hai chấm của dấu hai chấm theo khung viên nang.
                 val style = TextStyle(
                     brush = digitBrush,
                     fontSize = (r * CapsuleMetrics.DIGIT_FONT).toSp(),
@@ -112,7 +109,6 @@ fun AodCapsuleClock(
     )
 }
 
-// Ngày dưới viên nang: thứ • ngày tháng in hoa đậm, chiều cao dòng bằng cỡ chữ để khoảng cách tới viên đúng như ảnh mẫu.
 @Composable
 fun CapsuleDate(
     nowMillis: Long,

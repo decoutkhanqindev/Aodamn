@@ -20,7 +20,6 @@ abstract class AdUnit(
 
     private val adsManager: AdsManager by inject()
 
-    // Mobile Ads SDK bắt buộc load/show trên main thread → scope riêng của unit chạy Dispatchers.Main.
     protected val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
     protected var isAdShowing: Boolean
@@ -41,7 +40,6 @@ abstract class AdUnit(
 
     fun load(context: Context) {
         if (_state.value == AdUnitState.LOADING || _state.value == AdUnitState.LOADED) return
-        // Reset trước 2 gate để log của gate ghi đúng floor 0; KHÔNG đặt trên guard (đang LOADING sẽ tua floorIndex của request dở).
         resetWaterfall()
         if (!adsManager.canRequestAds) {
             log("Consent not granted, not loading")
@@ -85,7 +83,6 @@ abstract class AdUnit(
         }
     }
 
-    // Mọi log của unit đi qua đây để luôn kèm ad unit id của floor (1 placement có thể nhiều id).
     protected fun log(message: String, label: String = currentLabel) {
         Timber.tag(tag).d("$label - $message")
     }

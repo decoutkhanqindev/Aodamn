@@ -34,7 +34,6 @@ fun Context.packageUri(): Uri = "package:$packageName".toUri()
 
 fun Context.playStoreUrl(): String = "https://play.google.com/store/apps/details?id=$packageName"
 
-// Máy không có app nào nhận văn bản thì bỏ qua thay vì crash.
 fun Context.shareText(text: String, chooserTitle: String) {
     val intent = Intent(Intent.ACTION_SEND)
         .setType("text/plain")
@@ -46,18 +45,16 @@ fun Context.shareText(text: String, chooserTitle: String) {
     }
 }
 
-// Cần Context của Activity (không thêm FLAG_ACTIVITY_NEW_TASK); ROM không có trang đó thì mở Thông tin ứng dụng thay vì crash.
 fun Context.openSettingsPage(vararg intents: Intent): Boolean {
     for (intent in intents) {
         try {
             startSettingsPage(intent)
-            return true // Thành công mở được một trang
+            return true
         } catch (e: Exception) {
-            continue // Lỗi trang này thì thử Intent tiếp theo
+            continue
         }
     }
 
-    // Nếu tất cả Intent truyền vào đều crash/không có trên ROM
     return try {
         startSettingsPage(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, packageUri()))
         false
@@ -66,8 +63,6 @@ fun Context.openSettingsPage(vararg intents: Intent): Boolean {
     }
 }
 
-// Mở bằng startActivityForResult để returnAppWhen đóng được trang bằng finishActivity: đóng Activity mình đã mở không cần quyền mở
-// Activity từ nền (Xiaomi chặn startActivity từ nền tới khi có quyền "Hiển thị cửa sổ bật lên khi chạy nền").
 private fun Context.startSettingsPage(intent: Intent) {
     val activity: Activity? = findActivity()
     if (activity != null) {
@@ -77,8 +72,6 @@ private fun Context.startSettingsPage(intent: Intent) {
     }
 }
 
-// Mở trang cấp quyền rồi tự kéo app về khi quyền được cấp (cùng cách với openWifiSettings). Quyền đã có sẵn lúc mở thì chỉ mở trang:
-// user vào để xem hoặc tắt, kéo về sau 1 giây sẽ giật họ ra khỏi trang.
 private fun Context.openPermissionPage(isGranted: () -> Boolean, open: () -> Boolean) {
     val wasGranted = isGranted()
     if (open() && !wasGranted) returnAppWhen(condition = isGranted)
@@ -90,7 +83,6 @@ fun Context.openOverlaySettings(isGranted: () -> Boolean) {
     }
 }
 
-// Quyền runtime bị từ chối hai lần thì hệ thống không hiện hộp thoại nữa: chỉ cấp được ở trang Thông tin ứng dụng.
 fun Context.openAppSettings(isGranted: () -> Boolean) {
     openPermissionPage(isGranted) {
         openSettingsPage(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, packageUri()))
@@ -108,7 +100,6 @@ fun Context.openNotificationSettings(isGranted: () -> Boolean) {
     }
 }
 
-// Android 11+ có trang bật riêng cho từng listener; ROM không có trang đó thì mở danh sách "Truy cập thông báo".
 fun Context.openNotificationListenerSettings(listener: ComponentName, isGranted: () -> Boolean) {
     openPermissionPage(isGranted) {
         try {
@@ -126,7 +117,6 @@ fun Context.openNotificationListenerSettings(listener: ComponentName, isGranted:
     }
 }
 
-// Trang "Quyền khác" của Xiaomi (MIUI / HyperOS); máy hãng khác không có trang này nên rơi về Thông tin ứng dụng.
 fun Context.openMiuiPermissionSettings(isGranted: () -> Boolean) {
     openPermissionPage(isGranted) {
         openSettingsPage(
@@ -145,11 +135,9 @@ fun Context.openWifiSettings(isConnected: () -> Boolean) {
         Intent(Settings.ACTION_SETTINGS)
     )
 
-    // Nếu mở thành công bất kỳ trang cài đặt nào, bắt đầu vòng lặp check để return app
     if (opened) returnAppWhen { isConnected() }
 }
 
-// Dưới Android 13 chưa có cờ export; nơi gọi chỉ đăng ký broadcast hệ thống được bảo vệ, app khác không gửi được.
 @SuppressLint("UnspecifiedRegisterReceiverFlag")
 fun Context.registerSystemReceiver(receiver: BroadcastReceiver?, filter: IntentFilter): Intent? =
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -158,12 +146,6 @@ fun Context.registerSystemReceiver(receiver: BroadcastReceiver?, filter: IntentF
         registerReceiver(receiver, filter)
     }
 
-// Kéo app về khi condition đúng (poll, tối đa timeoutMs); user tự quay lại app trước đó thì thôi, không kéo nữa:
-// 1. finishActivity đóng trang Cài đặt mở bằng startSettingsPage: không cần quyền mở Activity từ nền.
-// 2. App vẫn chưa lên trước (trang nằm ở task khác, user đã đi sâu vào trang khác) thì startActivity, thử lại tới khi app lên trước:
-//    Xiaomi chặn lần mở từ nền khi chưa có quyền "Hiển thị cửa sổ bật lên khi chạy nền", user bật nó ngay sau đó (cùng trang "Quyền
-//    khác") thì lần thử sau mở được. CLEAR_TOP + SINGLE_TOP bỏ trang Cài đặt nằm trên MainActivity mà không tạo lại MainActivity.
-// Chạy trên scope của process (không mất khi Activity bị huỷ), giữ Activity bằng WeakReference.
 fun Context.returnAppWhen(
     timeoutMs: Long = DEFAULT_TIMEOUT_MS,
     condition: () -> Boolean,
@@ -199,8 +181,6 @@ fun Context.returnAppWhen(
     }
 }
 
-// Một Activity của app đang resumed (ProcessLifecycleOwner báo ON_PAUSE trễ 700 ms nên poll đầu tiên chờ FIRST_POLL_DELAY_MS).
-// Panel Cài đặt nổi trên app (vd Wi-Fi) làm Activity bị pause nên vẫn tính là chưa lên trước.
 private fun LifecycleOwner.isInFront(): Boolean = lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)
 
 fun Context.findActivity(): ComponentActivity? = when (this) {
@@ -215,7 +195,6 @@ private const val DEFAULT_TIMEOUT_MS = 60_000L
 private const val RETURN_CHECK_MS = 400L
 private const val RETURN_RETRY_MS = 500L
 
-// Dưới 0x10000: không trùng mã ActivityResultRegistry tự sinh.
 private const val SETTINGS_REQUEST_CODE = 0x0AD0
 
 private const val MIUI_PERMISSION_EDITOR_ACTION = "miui.intent.action.APP_PERM_EDITOR"

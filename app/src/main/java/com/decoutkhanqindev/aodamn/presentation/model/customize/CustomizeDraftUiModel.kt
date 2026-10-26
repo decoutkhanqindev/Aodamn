@@ -18,14 +18,12 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 
-// Chỉ ghi vào cài đặt thật khi bấm Áp dụng; mục cần quyền giữ giá trị có hiệu lực (đã bật và đã có quyền), mặc định = AOD trống.
 @Immutable
 data class CustomizeDraftUiModel(
     val appearance: CustomizeAppearanceUiModel = CustomizeAppearanceUiModel(),
     val decor: CustomizeDecorUiModel = CustomizeDecorUiModel(),
     val info: CustomizeInfoUiModel = CustomizeInfoUiModel(),
     val effects: CustomizeEffectsUiModel = CustomizeEffectsUiModel(),
-    // Bản nháp xem trước riêng chủ đề (toThemePreviewDraft): khối chủ đề tự vẽ cần nội dung (ghi nhớ) hiện bằng dữ liệu mẫu.
     val isThemePreview: Boolean = false,
 ) {
     val extras: AodExtrasUiModel
@@ -39,8 +37,6 @@ data class CustomizeDraftUiModel(
         )
 }
 
-// Xem trước riêng chủ đề (lưới chủ đề ở tab AOD, màn chủ đề): đồng hồ, ngày và các khối chủ đề tự vẽ (vd trình phát nhạc của Sỏi, dòng
-// pin + icon thông báo của Số áo, bằng dữ liệu mẫu), không có nền, thông báo, pin... của user; AOD đầy đủ chỉ ở Tùy chỉnh.
 fun AodThemeUiModel.toThemePreviewDraft(): CustomizeDraftUiModel {
     val ownBlocks = value.spec.ownBlocks
     return CustomizeDraftUiModel(
@@ -58,12 +54,9 @@ fun AodThemeUiModel.toThemePreviewDraft(): CustomizeDraftUiModel {
     )
 }
 
-// Xem trước một chủ đề khác với phần chung (nền, thông báo...) của bản nháp.
 fun CustomizeDraftUiModel.withTheme(theme: AodThemeUiModel): CustomizeDraftUiModel =
     copy(appearance = appearance.copy(clock = appearance.clock.copy(theme = theme)))
 
-// Tab của các khối đang bật (thẻ Giao diện của bạn ở tab AOD), theo thứ tự ở Tùy chỉnh; khối chủ đề không có thì không tính. Tính theo
-// cài đặt chứ không theo dữ liệu lúc chạy (thời tiết, sự kiện có thể chưa có) vì thẻ tóm tắt giao diện user đã chọn.
 fun CustomizeDraftUiModel.enabledBlockTabs(): ImmutableList<CustomizeTabValue> {
     val spec = appearance.clock.theme.value.spec
     return CustomizeTabValue.entries
@@ -90,7 +83,6 @@ data class CustomizeAppearanceUiModel(
     val isBatteryEnabled: Boolean = DataStoreManager.DEFAULT_IS_AOD_BATTERY_ENABLED,
 )
 
-// wallpaper và background loại trừ nhau: chọn cái này thì bỏ cái kia.
 @Immutable
 data class CustomizeDecorUiModel(
     val wallpaper: WallpaperValue? = null,
@@ -114,7 +106,6 @@ data class CustomizeEffectsUiModel(
     val isEdgeGlowEnabled: Boolean = false,
 )
 
-// Đúng như AOD đang hiện: mục cần quyền chỉ tính là bật khi đã có quyền, vì AOD bỏ qua mục đó khi thiếu quyền.
 suspend fun DataStoreManager.loadCustomizeDraft(
     aodImageManager: AodImageManager,
     permissionManager: PermissionManager,

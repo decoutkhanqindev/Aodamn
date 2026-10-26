@@ -65,9 +65,6 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
-// Chuỗi dòng có chấm của Chuỗi như layout app mẫu: mỗi dòng một chấm, vạch mảnh nối xuống chấm dòng sau, dòng cuối không có vạch. isStatusShown:
-// ngày (thời tiết cạnh ngày), pin, thông báo; isExtrasShown: ghi nhớ, sự kiện (màn ngang tách ra cột riêng, cũng là chuỗi). Dòng nào không có
-// gì để hiện thì ẩn và chuỗi tự nối lại.
 @Composable
 fun AodChainList(
     state: AodState,
@@ -133,16 +130,12 @@ fun AodChainList(
     }
 }
 
-// Ghi nhớ, sự kiện của chuỗi có gì để hiện (màn ngang dùng để chọn bố cục).
 fun AodState.hasChainMemo(): Boolean =
     AodComponentValue.MEMO in appearance.theme.value.spec.components && extras.memo.isNotBlank()
 
 fun AodState.hasChainEvents(): Boolean =
     AodComponentValue.EVENTS in appearance.theme.value.spec.components && events.isNotEmpty()
 
-// Một dòng của chuỗi: chấm ở giữa chữ hoa của tiêu đề (dotCenter tính từ đỉnh dòng), vạch từ dưới chấm tới chân dòng. Màu dòng là gradient
-// (brush) thì chấm và vạch tô theo khung dòng, chữ / icon theo khung của từng phần. Dòng hiện / ẩn, thành dòng
-// cuối hay thôi đều có animation (khoảng cách dưới dòng và vạch mờ dần).
 @Composable
 private fun ChainRow(
     isVisible: Boolean,
@@ -191,7 +184,6 @@ private fun ChainRow(
     }
 }
 
-// Ngày dài theo ngôn ngữ ("17 THÁNG 10, 2026", "OCTOBER 17, 2026") dưới là thứ; thời tiết (kiểu ở Tùy chỉnh) đứng cạnh ngày.
 @Composable
 private fun ChainDate(
     state: AodState,
@@ -227,7 +219,6 @@ private fun ChainDate(
     }
 }
 
-// "PIN 72%" dưới là trạng thái sạc như app mẫu (không sạc / đang sạc / đã sạc đầy); đèn pin đang bật thì icon Mint cạnh pin.
 @Composable
 private fun ChainBattery(
     battery: BatteryUiModel?,
@@ -265,8 +256,6 @@ private fun ChainBattery(
     }
 }
 
-// Bật nội dung thông báo thì thông báo mới nhất như notify_lt của app mẫu (icon + tiêu đề, dưới là nội dung tối đa hai dòng), không thì icon
-// các app đang có thông báo.
 @Composable
 private fun ChainNotifications(
     notifications: AodNotificationsUiModel,
@@ -332,7 +321,6 @@ private fun ChainNotifications(
     }
 }
 
-// Sự kiện gần nhất làm tiêu đề ("09:00  HỌP NHÓM"), các sự kiện sau mỗi cái một dòng phụ.
 @Composable
 private fun ChainEvents(
     events: ImmutableList<CalendarEventUiModel>,
@@ -362,7 +350,6 @@ private fun ChainEvents(
     )
 }
 
-// Icon đặc sáng như icon thông báo + tiêu đề in hoa đậm như ngày / pin, dưới là các dòng phụ.
 @Composable
 private fun ChainIconBlock(
     @DrawableRes iconRes: Int,
@@ -405,7 +392,6 @@ private fun ChainIconBlock(
     }
 }
 
-// Tiêu đề in hoa đậm, chiều cao dòng bằng cỡ chữ (như NoPadTextView của app mẫu) để chấm và khoảng cách đúng số đo.
 @Composable
 private fun ChainTitle(
     text: String,
@@ -453,12 +439,10 @@ private fun ChainSubtitle(
     )
 }
 
-// Giữa chữ hoa của tiêu đề, tính từ đỉnh dòng.
 @Composable
 private fun rememberTitleDotCenter(): Dp =
     with(LocalDensity.current) { (ChainMetrics.TitleSize * ChainMetrics.TITLE_DOT_CENTER).toDp() }
 
-// Dòng icon + tiêu đề: hàng cao bằng phần lớn hơn (icon hay dòng tiêu đề), tiêu đề nằm giữa hàng.
 @Composable
 private fun rememberIconRowDotCenter(): Dp {
     val density = LocalDensity.current

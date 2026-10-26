@@ -9,7 +9,6 @@ import com.decoutkhanqindev.aodamn.presentation.navigation.AodTabDestination
 import com.decoutkhanqindev.aodamn.presentation.navigation.EdgeLightDestination
 import com.decoutkhanqindev.aodamn.presentation.navigation.SettingsDestination
 
-// Các tab của Main, đúng thứ tự trên thanh điều hướng dưới; tab đầu là gốc của back stack các tab.
 @Immutable
 enum class MainTabValue(
     val destination: NavKey,

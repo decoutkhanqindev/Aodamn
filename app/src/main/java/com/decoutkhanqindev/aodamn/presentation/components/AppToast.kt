@@ -34,7 +34,6 @@ import com.decoutkhanqindev.aodamn.presentation.theme.Neutral12
 import com.decoutkhanqindev.aodamn.presentation.theme.Red
 import com.decoutkhanqindev.aodamn.presentation.theme.RedLight
 
-// Toast của app thay cho Toast hệ thống: Screen giữ SnackbarHostState và hiện bằng showSnackbar(ToastUiModel(...)).
 @Composable
 fun AppToastHost(
     hostState: SnackbarHostState,
@@ -48,7 +47,6 @@ fun AppToastHost(
     }
 }
 
-// Viên thuốc nền Neutral12, viền sáng như icon app (lỗi: viền đỏ, icon cảnh báo).
 @Composable
 fun AppToast(
     message: String,

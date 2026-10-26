@@ -40,8 +40,6 @@ import com.decoutkhanqindev.aodamn.presentation.theme.Neutral12
 import com.decoutkhanqindev.aodamn.presentation.theme.RoundedCornerTopShape16dp
 import com.decoutkhanqindev.aodamn.presentation.theme.TitleMedium
 
-// Tấm chỉnh trượt lên trên thanh tab của màn sửa (Tùy chỉnh, sửa chủ đề): tiêu đề tab giữa, action của tab (vd AppEditorResetButton)
-// bên phải tiêu đề, nội dung cuộn. Đổi tab thì mờ chéo, đóng thì trượt xuống mà vẫn giữ nội dung tab cuối cho tới hết animation.
 @Composable
 fun <T : Any> AppEditorPanel(
     selected: T?,
@@ -121,8 +119,6 @@ fun <T : Any> AppEditorPanel(
     }
 }
 
-// Đặt lại riêng tab đang mở về mặc định, ở thanh tiêu đề của AppEditorPanel; chỉ hiện khi tab đã khác mặc định (nút Đặt lại trên thanh
-// công cụ đặt lại tất cả).
 @Composable
 fun AppEditorResetButton(
     isVisible: Boolean,

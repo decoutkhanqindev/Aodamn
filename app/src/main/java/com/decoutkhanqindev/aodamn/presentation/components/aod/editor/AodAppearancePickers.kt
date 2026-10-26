@@ -82,8 +82,6 @@ fun WallpaperPicker(
     selected: WallpaperValue?,
     onSelect: (WallpaperValue) -> Unit,
 ) {
-    // Cuộn sẵn tới ảnh đang chọn (18 ảnh không vừa một màn hình); LazyRow chỉ dựng các ảnh đang thấy nên mở tab Nền không phải
-    // phân tích hết 18 vector một lượt.
     val listState = rememberLazyListState(
         initialFirstVisibleItemIndex = (WallpaperValue.entries.indexOf(selected) - 1).coerceAtLeast(0),
     )
@@ -156,11 +154,6 @@ fun WallpaperPicker(
     }
 }
 
-// Wheel HSV + thanh độ sáng của skydoves/colorpicker-compose. Kéo thì onColorPreview (xem trước trực tiếp), thả tay mới onColorChange
-// (một lần cho cả lần kéo). Màu đổi từ ngoài (hoàn tác, làm lại) thì kéo wheel theo; màu do chính picker phát ra đã bằng selectedColor
-// nên không chạy lại. Picker nằm trong panel cuộn dọc mà wheel tự nhận kéo theo cả hai trục nên giữ mất cú vuốt cuộn: lớp phủ nhận cử chỉ
-// thay wheel, chạm đúng nút chọn rồi kéo thì chọn màu, chạm nhẹ chỗ khác thì chọn màu ở đó, vuốt thì để panel cuộn. Thanh độ sáng chỉ
-// nhận vuốt ngang nên không cần.
 @Composable
 fun ClockColorPicker(
     color: Color,
@@ -216,8 +209,6 @@ fun ClockColorPicker(
                     .matchParentSize()
                     .pointerInput(controller) {
                         val thumbRadius = 28.dp.toPx()
-                        // Màu đang gần đen (vd mặt số, nền thẻ nhạc #121218 của Gợn sóng) thì độ sáng của wheel gần 0: chọn màu nào trên wheel cũng
-                        // ra gần đen như không chỉnh được, nên lúc thật sự chọn màu thì đưa độ sáng về tối đa (vuốt cuộn panel thì không đổi gì).
                         val brightenIfDark = {
                             val hsv = FloatArray(3).also { android.graphics.Color.colorToHSV(currentColor.toArgb(), it) }
                             if (hsv[2] < 0.2f) controller.setBrightness(1f, fromUser = false)
@@ -266,7 +257,6 @@ fun ClockColorPicker(
     }
 }
 
-// Gõ đủ 6 ký tự hex là đổi màu ngay; màu đổi từ ngoài (kéo vòng màu, chọn ô, hoàn tác) thì chữ theo, trừ khi đang là mã của chính màu đó.
 @Composable
 private fun HexColorField(
     color: Color,

@@ -4,7 +4,6 @@ import androidx.annotation.StringRes
 import androidx.compose.runtime.Immutable
 import com.decoutkhanqindev.aodamn.R
 
-// cluster = cụm tab được làm sáng; PREVIEW không làm sáng gì, ACTIONS làm sáng thanh công cụ dưới top bar.
 @Immutable
 enum class CustomizeGuideStepValue(
     @param:StringRes val titleRes: Int,

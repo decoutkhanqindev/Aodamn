@@ -17,7 +17,6 @@ class CalendarRepositoryImpl(
     private val app: Application,
 ) : CalendarRepository, Tag {
 
-    // Đọc lỗi (vd quyền READ_CALENDAR bị thu hồi sau khi đã bật) thì coi như hôm nay không có sự kiện: đồng hồ không giữ sự kiện cũ.
     override suspend fun getEvents(
         fromMillis: Long,
         toMillis: Long,
@@ -62,7 +61,6 @@ class CalendarRepositoryImpl(
             .orEmpty()
     }
 
-    // Sự kiện cả ngày lưu theo nửa đêm UTC: so theo ngày ghi trên lịch với ngày ở múi giờ của máy, không so theo mốc thời gian.
     private fun CalendarEvent.isOnLocalDayOf(nowMillis: Long): Boolean {
         if (!isAllDay) return true
         val today = Instant.ofEpochMilli(nowMillis).atZone(ZoneId.systemDefault()).toLocalDate()
@@ -83,7 +81,6 @@ class CalendarRepositoryImpl(
         private const val END_INDEX = 2
         private const val ALL_DAY_INDEX = 3
 
-        // Chỉ lịch đang hiện trong ứng dụng Lịch, bỏ sự kiện user đã từ chối và sự kiện đã kết thúc.
         private const val SELECTION = "${CalendarContract.Instances.VISIBLE} = 1" +
                 " AND ${CalendarContract.Instances.SELF_ATTENDEE_STATUS} != ${CalendarContract.Attendees.ATTENDEE_STATUS_DECLINED}" +
                 " AND ${CalendarContract.Instances.END} > ?"

@@ -22,7 +22,6 @@ data class AodRulesUiModel(
                 schedule.isActiveAt(minuteOfDay) &&
                 !isBatteryLow(batteryPercent, isCharging)
 
-    // Đang sạc thì ngưỡng pin không áp dụng; không đọc được pin (null) thì không chặn AOD.
     private fun isBatteryLow(batteryPercent: Int?, isCharging: Boolean): Boolean =
         !isCharging && batteryPercent != null && batteryPercent in 0 until minBattery
 

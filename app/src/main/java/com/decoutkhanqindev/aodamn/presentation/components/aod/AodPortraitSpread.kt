@@ -7,8 +7,6 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-// Cụm trên từ trên xuống, cụm đáy thẳng đáy (AodSpreadMetrics), mỗi phần giữa bề ngang. Khối hiện / ẩn có animation nên hai cụm co giãn
-// theo chứ không nhảy: cụm trên dài xuống, cụm đáy dài lên.
 @Composable
 fun AodPortraitSpread(
     top: @Composable () -> Unit,

@@ -2,7 +2,6 @@ package com.decoutkhanqindev.aodamn.data.mapper
 
 import com.decoutkhanqindev.aodamn.domain.model.WeatherCondition
 
-// Mã thời tiết WMO mà Open-Meteo trả về; mã lạ coi như trời nhiều mây.
 fun weatherConditionOf(wmoCode: Int): WeatherCondition = when (wmoCode) {
     0 -> WeatherCondition.CLEAR
     1, 2 -> WeatherCondition.PARTLY_CLOUDY

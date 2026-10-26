@@ -5,8 +5,6 @@ import androidx.compose.runtime.Immutable
 import com.decoutkhanqindev.aodamn.R
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeChoice
 
-// Kiểu hiển thị của từng khối dùng chung (như mặt đồng hồ): mỗi kiểu một bố cục, đều không viền, không nền; mã lưu không đổi.
-
 @Immutable
 enum class AodDateLayoutValue(
     override val code: Int,
