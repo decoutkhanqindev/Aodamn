@@ -2,6 +2,8 @@ package com.decoutkhanqindev.aodamn.presentation.components.aod.theme.gradientli
 
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodTextPlayerStyle
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.gradientline.GradientLineThemeSpec
 
 object GradientLineMetrics {
     const val TIME_SIZE = 0.11f
@@ -46,4 +48,16 @@ object GradientLineMetrics {
     val ArtistGap = 4.dp
     const val ARTIST_ALPHA = 0.7f
     const val PAUSED_ALPHA = 0.6f
+
+    val TextPlayer = AodTextPlayerStyle(
+        fontFamily = GradientLineThemeSpec.Font,
+        titleSize = TitleSize,
+        artistSize = ArtistSize,
+        artistGap = ArtistGap,
+        buttonSize = ButtonSize,
+        buttonIconSize = ButtonIconSize,
+        pausedAlpha = PAUSED_ALPHA,
+        artistAlpha = ARTIST_ALPHA,
+        buttonAlpha = BUTTON_ALPHA,
+    )
 }

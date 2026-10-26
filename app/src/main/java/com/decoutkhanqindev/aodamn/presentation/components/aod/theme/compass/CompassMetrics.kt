@@ -1,8 +1,11 @@
 package com.decoutkhanqindev.aodamn.presentation.components.aod.theme.compass
 
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodTextPlayerStyle
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.compass.CompassThemeSpec
 
 object CompassMetrics {
     const val DIAL_FRACTION = 0.75f
@@ -57,4 +60,20 @@ object CompassMetrics {
     val ArtistGap = 8.dp
     const val ARTIST_ALPHA = 0.7f
     const val PAUSED_ALPHA = 0.6f
+
+    val TextPlayer = AodTextPlayerStyle(
+        fontFamily = CompassThemeSpec.Font,
+        titleSize = TitleSize,
+        artistSize = ArtistSize,
+        artistGap = ArtistGap,
+        buttonSize = ButtonSize,
+        buttonIconSize = ButtonIconSize,
+        pausedAlpha = PAUSED_ALPHA,
+        textGap = TextGap,
+        titleWeight = FontWeight.Bold,
+        artistWeight = FontWeight.Normal,
+        letterSpacing = TrackSpacing,
+        artistAlpha = ARTIST_ALPHA,
+        isUppercase = true,
+    )
 }
