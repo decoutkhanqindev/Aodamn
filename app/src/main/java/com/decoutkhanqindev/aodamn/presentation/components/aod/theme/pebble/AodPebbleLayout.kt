@@ -17,9 +17,12 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.decoutkhanqindev.aodamn.presentation.components.aod.AodBottomDetails
 import com.decoutkhanqindev.aodamn.presentation.components.aod.AodHeroDetails
 import com.decoutkhanqindev.aodamn.presentation.components.aod.AodLandscapeLayout
 import com.decoutkhanqindev.aodamn.presentation.components.aod.AodPanelBlock
+import com.decoutkhanqindev.aodamn.presentation.components.aod.AodPortraitSpread
+import com.decoutkhanqindev.aodamn.presentation.components.aod.AodTopDetails
 import com.decoutkhanqindev.aodamn.presentation.components.aod.landscapePlan
 import com.decoutkhanqindev.aodamn.presentation.components.rememberTimeFormatter
 import com.decoutkhanqindev.aodamn.presentation.components.rememberZonedDateTime
@@ -28,6 +31,27 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodPanelBlockVal
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.pebble.PebbleThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodIntent
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
+
+@Composable
+fun AodPebblePortrait(
+    state: AodState,
+    onIntent: (AodIntent) -> Unit,
+) {
+    AodPortraitSpread(
+        top = {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                AodPebbleClock(
+                    nowMillis = state.nowMillis,
+                    config = state.appearance.theme.config,
+                    isDateEnabled = state.extras.isDateEnabled,
+                )
+
+                AodTopDetails(state = state, onIntent = onIntent)
+            }
+        },
+        bottom = { AodBottomDetails(state = state, onIntent = onIntent) },
+    )
+}
 
 @Composable
 fun AodPebbleLandscape(
@@ -139,6 +163,18 @@ private fun PebbleSandwich(
             modifier = Modifier.clearAndSetSemantics { },
         )
     }
+}
+
+@Preview(widthDp = 393, heightDp = 873)
+@Composable
+private fun AodPebblePortraitPreview() {
+    AodPebblePortrait(
+        state = AodState(
+            nowMillis = System.currentTimeMillis(),
+            battery = BatteryUiModel(percent = 72, isCharging = false),
+        ),
+        onIntent = {},
+    )
 }
 
 @Preview(widthDp = 873, heightDp = 393)

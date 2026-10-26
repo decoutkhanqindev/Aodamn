@@ -1,11 +1,6 @@
 package com.decoutkhanqindev.aodamn.presentation.components.aod.theme
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import com.decoutkhanqindev.aodamn.presentation.components.aod.AodBottomDetails
-import com.decoutkhanqindev.aodamn.presentation.components.aod.AodPortraitSpread
-import com.decoutkhanqindev.aodamn.presentation.components.aod.AodTopDetails
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.bezel.AodBezelLandscape
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.bezel.AodBezelPortrait
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.bigoverlap.AodBigOverlapLandscape
@@ -16,8 +11,8 @@ import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.card.AodCar
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.card.AodCardPortrait
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.chain.AodChainLandscape
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.chain.AodChainPortrait
-import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.classic.AodClassicClock
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.classic.AodClassicLandscape
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.classic.AodClassicPortrait
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.compass.AodCompassLandscape
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.compass.AodCompassPortrait
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.gradientline.AodGradientLineLandscape
@@ -26,8 +21,8 @@ import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.halfmoon.Ao
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.halfmoon.AodHalfMoonPortrait
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.jersey.AodJerseyLandscape
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.jersey.AodJerseyPortrait
-import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.pebble.AodPebbleClock
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.pebble.AodPebbleLandscape
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.pebble.AodPebblePortrait
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.quarters.AodQuartersLandscape
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.quarters.AodQuartersPortrait
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.ripple.AodRippleLandscape
@@ -45,21 +40,9 @@ fun AodPortrait(
     state: AodState,
     onIntent: (AodIntent) -> Unit,
 ) {
-    val theme = state.appearance.theme
-
-    when (theme.value) {
-        AodThemeValue.CLASSIC -> ClockAndDetails(state = state, onIntent = onIntent) {
-            AodClassicClock(nowMillis = state.nowMillis, config = theme.config)
-        }
-
-        AodThemeValue.PEBBLE -> ClockAndDetails(state = state, onIntent = onIntent) {
-            AodPebbleClock(
-                nowMillis = state.nowMillis,
-                config = theme.config,
-                isDateEnabled = state.extras.isDateEnabled,
-            )
-        }
-
+    when (state.appearance.theme.value) {
+        AodThemeValue.CLASSIC -> AodClassicPortrait(state = state, onIntent = onIntent)
+        AodThemeValue.PEBBLE -> AodPebblePortrait(state = state, onIntent = onIntent)
         AodThemeValue.JERSEY -> AodJerseyPortrait(state = state, onIntent = onIntent)
         AodThemeValue.CAPSULE -> AodCapsulePortrait(state = state, onIntent = onIntent)
         AodThemeValue.CARD -> AodCardPortrait(state = state, onIntent = onIntent)
@@ -98,22 +81,4 @@ fun AodLandscape(
         AodThemeValue.BIG_OVERLAP -> AodBigOverlapLandscape(state = state, onIntent = onIntent)
         AodThemeValue.QUARTERS -> AodQuartersLandscape(state = state, onIntent = onIntent)
     }
-}
-
-@Composable
-private fun ClockAndDetails(
-    state: AodState,
-    onIntent: (AodIntent) -> Unit,
-    clock: @Composable () -> Unit,
-) {
-    AodPortraitSpread(
-        top = {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                clock()
-
-                AodTopDetails(state = state, onIntent = onIntent)
-            }
-        },
-        bottom = { AodBottomDetails(state = state, onIntent = onIntent) },
-    )
 }

@@ -5,12 +5,32 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.tooling.preview.Preview
+import com.decoutkhanqindev.aodamn.presentation.components.aod.AodBottomDetails
 import com.decoutkhanqindev.aodamn.presentation.components.aod.AodHeroDetails
 import com.decoutkhanqindev.aodamn.presentation.components.aod.AodLandscapeLayout
+import com.decoutkhanqindev.aodamn.presentation.components.aod.AodPortraitSpread
+import com.decoutkhanqindev.aodamn.presentation.components.aod.AodTopDetails
 import com.decoutkhanqindev.aodamn.presentation.components.aod.landscapePlan
 import com.decoutkhanqindev.aodamn.presentation.model.aod.info.BatteryUiModel
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodIntent
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
+
+@Composable
+fun AodClassicPortrait(
+    state: AodState,
+    onIntent: (AodIntent) -> Unit,
+) {
+    AodPortraitSpread(
+        top = {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                AodClassicClock(nowMillis = state.nowMillis, config = state.appearance.theme.config)
+
+                AodTopDetails(state = state, onIntent = onIntent)
+            }
+        },
+        bottom = { AodBottomDetails(state = state, onIntent = onIntent) },
+    )
+}
 
 @Composable
 fun AodClassicLandscape(
@@ -26,6 +46,18 @@ fun AodClassicLandscape(
             }
         }
     }
+}
+
+@Preview(widthDp = 393, heightDp = 873)
+@Composable
+private fun AodClassicPortraitPreview() {
+    AodClassicPortrait(
+        state = AodState(
+            nowMillis = System.currentTimeMillis(),
+            battery = BatteryUiModel(percent = 72, isCharging = false),
+        ),
+        onIntent = {},
+    )
 }
 
 @Preview(widthDp = 873, heightDp = 393)
