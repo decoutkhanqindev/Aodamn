@@ -102,8 +102,6 @@ val FontFamilyJosefinSans = FontFamily(
     Font(R.font.josefin_sans_bold, FontWeight.Bold),
 )
 
-// TODO(coum-face): họ font mới của chủ đề
-// TODO(big-overlap): họ font mới của chủ đề
 // Bốn chữ số của Chồng số: Google Sans Flex như app mẫu, độ đậm 1000 (font mẫu còn đậm hơn bản Google Fonts đậm nhất). Góc vuông / bo tròn là hai
 // file tĩnh ghim trục ROND 0 / 100 nên là hai họ; chỉ vẽ chữ số.
 val FontFamilyGoogleSansFlex = FontFamily(

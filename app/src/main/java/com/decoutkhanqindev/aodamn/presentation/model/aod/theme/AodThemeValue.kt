@@ -5,6 +5,7 @@ import androidx.compose.runtime.Immutable
 import com.decoutkhanqindev.aodamn.R
 import com.decoutkhanqindev.aodamn.data.local.datastore.DataStoreManager
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.bezel.BezelThemeSpec
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.bigoverlap.BigOverlapThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.capsule.CapsuleThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.card.CardThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.chain.ChainThemeSpec
@@ -15,10 +16,7 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.halfmoon.HalfMoo
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.jersey.JerseyThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.pebble.PebbleThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.ripple.RippleThemeSpec
-// TODO(coum-face): import spec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.tick.TickThemeSpec
-// TODO(big-overlap): import spec
-import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.bigoverlap.BigOverlapThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.tower.TowerThemeSpec
 
 // Các chủ đề AOD. id lưu trong DataStore nên không đổi; thêm chủ đề = một mục ở đây + đặc tả AodThemeSpec + phần vẽ ở
@@ -41,11 +39,8 @@ enum class AodThemeValue(
     HALF_MOON(id = "half_moon", nameRes = R.string.theme_half_moon, spec = HalfMoonThemeSpec),
     GRADIENT_LINE(id = "gradient_line", nameRes = R.string.theme_gradient_line, spec = GradientLineThemeSpec),
     RIPPLE(id = "ripple", nameRes = R.string.theme_ripple, spec = RippleThemeSpec),
-    // TODO(coum-face): mục chủ đề
     TICK(id = "tick", nameRes = R.string.theme_tick, spec = TickThemeSpec),
-    // TODO(big-overlap): mục chủ đề
-    BIG_OVERLAP(id = "big_overlap", nameRes = R.string.theme_big_overlap, spec = BigOverlapThemeSpec),
-    ;
+    BIG_OVERLAP(id = "big_overlap", nameRes = R.string.theme_big_overlap, spec = BigOverlapThemeSpec);
 
     companion object {
         val DEFAULT = CLASSIC

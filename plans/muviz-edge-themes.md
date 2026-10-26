@@ -46,6 +46,8 @@ code dịch ngược, không lấy asset (font, ảnh, Lottie) từ APK. APK và
 | Bán nguyệt (`HALF_MOON`) | **20 · Dec22 "Half Concentric"** | làm từ danh mục này (2026-10-20), số đo lấy từ layout `dec22_screen_layout` dọc / ngang / `HalfConcentricClock` |
 | Dải màu (`GRADIENT_LINE`) | **29 · Sep23 "Gradient Line Clock"** | làm từ danh mục này (2026-10-20), số đo lấy từ layout `sep23_screen_layout` (chỉ có bản dọc) / `Sep23Clock` |
 | Gợn sóng (`RIPPLE`) | **4 · Aug21 "Android 12"** | làm từ danh mục này (2026-10-21), số đo lấy từ layout `aug21_screen_layout` (chỉ có bản dọc) / `Android12Clock2` / `Android12ClockBg2` |
+| Nhịp giây (`TICK`) | **30 · Oct23 "Coum Face Clock"** | làm từ danh mục này (2026-10-26), số đo lấy từ layout `oct23_screen_layout` (chỉ có bản dọc) / `CoumTick` |
+| Chồng số (`BIG_OVERLAP`) | **23 · Mar23 "Big Overlap Clock"** | làm từ danh mục này (2026-10-26), số đo lấy từ layout `mar23_screen_layout` dọc / ngang / `BigPixel2Clock` |
 
 ## Danh mục đủ 44 chủ đề
 

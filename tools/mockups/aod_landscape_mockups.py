@@ -7,6 +7,8 @@ ghi nhớ, nét vẽ, nhạc, dòng pin). Cách chọn bố cục theo khối đ
 
     pip install fonttools
     python tools/mockups/aod_landscape_mockups.py <thư mục ra>
+
+Chồng số cần thêm `pip install skia-pathops` (gộp phần chồng của chữ số); chạy script không có `-I`.
 """
 import math
 import sys
@@ -2338,7 +2340,6 @@ ripple = [
 ]
 
 
-# TODO(coum-face): mục mock của chủ đề (hàm vẽ + danh sách khung)
 # ================================================================== NHỊP GIÂY (Coum Face Clock của Muviz Edge; số đo lấy từ CoumTick và layout oct23_screen_layout (chỉ
 # có bản dọc) trong APK, không từ ảnh chụp). u = nửa cạnh ngắn, L = nửa cạnh dài. 60 vạch từ 0,8u tới 0,9u nét 0,007u xoay theo chiều kim 6°/giây
 # theo giờ thật; gradient của vòng trải từ tâm − 0,7u tới tâm + 0,7u, đứng yên theo màn (vạch đổi màu khi trôi qua); hai vùng tròn bán kính u ở
@@ -2553,7 +2554,6 @@ tick = [
           tk_reference_landscape()),
 ]
 tick.append(tk_live_script())
-# TODO(big-overlap): mục mock của chủ đề (hàm vẽ + danh sách khung)
 # ================================================================== CHỒNG SỐ (Big Overlap Clock của Muviz Edge; số đo lấy từ layout mar23_screen_layout dọc / ngang
 # và BigPixel2Clock trong APK, không từ ảnh chụp). Bốn chữ số Google Sans Flex (wght 1000, wdth 108; ROND 0 hoặc 100) cỡ 0,5 × cạnh ngắn vùng đồng hồ ×
 # cỡ (app mẫu × 1,2 ở màn ngang), lưới 2 × 2 quanh tâm: cột trái căn trái, cột phải căn phải trong ô rộng bằng số 0, hai cột lấn qua tâm 0,17 bề rộng số 0
@@ -2841,9 +2841,7 @@ for name, summary, defs, frames in [
     ("w_half", "Chủ đề Bán nguyệt (Half Concentric): màu, bốn khung dọc và ba bố cục ngang", HC_DEFS, half),
     ("w_gradient_line", "Chủ đề Dải màu (Gradient Line Clock): màu vạch, bốn khung dọc và bốn khung ngang", "", gradient_line),
     ("w_ripple", "Chủ đề Gợn sóng (Android 12): kiểu và màu, bốn khung dọc và bốn khung ngang", "", ripple),
-    # TODO(coum-face): dòng ("w_…", …) của chủ đề
     ("w_tick", "Chủ đề Nhịp giây (Coum Face Clock): màu vòng và cỡ, bốn khung dọc và bốn khung ngang", tk_ticks_def(), tick),
-    # TODO(big-overlap): dòng ("w_…", …) của chủ đề
     ("w_big_overlap", "Chủ đề Chồng số (Big Overlap Clock): bốn kiểu và màu, bốn khung dọc và bốn khung ngang", big_overlap_defs, big_overlap),
 ]:
     code = widget(summary, defs, frames)

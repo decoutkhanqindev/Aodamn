@@ -7,7 +7,6 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
-<!-- TODO(coum-face): mục CHANGELOG của chủ đề -->
 ## [Chưa phát hành] – 2026-10-26 – Chủ đề Nhịp giây
 
 Build được, unit test pass (thêm test chặn Nhịp giây có lại khối đã bỏ hay thiếu tuỳ chọn của app mẫu; test nội dung thông báo và chạy theo giờ
@@ -41,7 +40,6 @@ thật ở khung xem trước cho phép Nhịp giây), `tools/check-rules.sh` ra
 
 - Chỉ thêm, không đổi chủ đề đang có: mục `TICK` ở `AodThemeValue`, nhánh `when` ở `AodPortrait` / `AodLandscape` / `AodMediaControls`, chuỗi
   `theme_tick`, `theme_color_ring` và mẫu định dạng `aod_tick_*`, test ở `AodThemeSpecTest`; không thêm màu, font, icon.
-<!-- TODO(big-overlap): mục CHANGELOG của chủ đề -->
 ## [Chưa phát hành] – 2026-10-26 – Chủ đề Chồng số
 
 Build được, unit test pass (thêm test chặn Chồng số có lại khối đã bỏ hay thiếu tuỳ chọn của app mẫu, kiểm màu mặc định chéo; test nội dung
@@ -79,7 +77,7 @@ thông báo cho phép Chồng số), `tools/check-rules.sh` ra 0 vi phạm (38 r
 
 ### Thay đổi
 
-- Chỉ thêm, không đổi chủ đề đang có (đặt dưới các dòng `TODO(big-overlap)`): mục `BIG_OVERLAP` ở `AodThemeValue`, nhánh `when` ở `AodPortrait` /
+- Chỉ thêm, không đổi chủ đề đang có: mục `BIG_OVERLAP` ở `AodThemeValue`, nhánh `when` ở `AodPortrait` /
   `AodLandscape` / `AodMediaControls`, màu `Peach`, hai họ font, chuỗi vi / en (`theme_big_overlap`, `theme_color_hour_digit_1/2`,
   `theme_color_minute_digit_1/2`, `big_overlap_style_filled_round` / `_outline_round`), hai dòng font ở `make_static_fonts.py`; dùng lại nhãn
   Đặc / Viền, "Kiểu đồng hồ", mẫu ngày `aod_date_pattern` có sẵn.

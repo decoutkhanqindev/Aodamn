@@ -42,8 +42,6 @@ FONTS = {
     "josefin_sans": ([100, 300, 400, 600, 700], {}),
     # Bản Google Fonts nặng 5 MB vì nhiều hệ chữ: tools/fonts/variable giữ bản đã cắt còn Latin + tiếng Việt (fontTools subset, giữ mọi trục).
     "google_sans": ([400, 500, 700], {"GRAD": 0, "opsz": 18}),
-    # TODO(coum-face): họ font mới của chủ đề
-    # TODO(big-overlap): họ font mới của chủ đề
     # Chữ số của Chồng số: font mẫu đậm hơn cả wght 1000 nên lấy 1000, wdth 108 cho số 0 rộng như mẫu; góc vuông / bo tròn (ROND 0 / 100) là hai họ
     # cắt từ cùng một file nguồn (bản Google Fonts đã cắt còn Latin + tiếng Việt, ghim opsz 18, slnt 0).
     "google_sans_flex": ([1000], {"wdth": 108, "ROND": 0}),

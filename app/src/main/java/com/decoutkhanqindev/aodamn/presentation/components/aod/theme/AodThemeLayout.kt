@@ -8,6 +8,8 @@ import com.decoutkhanqindev.aodamn.presentation.components.aod.AodPortraitSpread
 import com.decoutkhanqindev.aodamn.presentation.components.aod.AodTopDetails
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.bezel.AodBezelLandscape
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.bezel.AodBezelPortrait
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.bigoverlap.AodBigOverlapLandscape
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.bigoverlap.AodBigOverlapPortrait
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.capsule.AodCapsuleLandscape
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.capsule.AodCapsulePortrait
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.card.AodCardLandscape
@@ -28,12 +30,8 @@ import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.pebble.AodP
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.pebble.AodPebbleLandscape
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.ripple.AodRippleLandscape
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.ripple.AodRipplePortrait
-// TODO(coum-face): import bố cục dọc / ngang
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.tick.AodTickLandscape
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.tick.AodTickPortrait
-// TODO(big-overlap): import bố cục dọc / ngang
-import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.bigoverlap.AodBigOverlapLandscape
-import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.bigoverlap.AodBigOverlapPortrait
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.tower.AodTowerLandscape
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.tower.AodTowerPortrait
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeValue
@@ -41,7 +39,8 @@ import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodIntent
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
 
 // Bố cục AOD màn dọc theo chủ đề: Cổ điển và Sỏi giãn trên - dưới (AodPortraitSpread: đồng hồ, ngày, khối thêm ở trên; nhạc, dòng pin neo đáy);
-// Số áo, Viên nang, Thẻ, Tháp, Chuỗi, Vành, La bàn và Bán nguyệt tự vẽ cả cụm (số, ngày, dòng trạng thái) cùng các khối thông tin.
+// Số áo, Viên nang, Thẻ, Tháp, Chuỗi, Vành, La bàn, Bán nguyệt, Dải màu, Gợn sóng, Nhịp giây và Chồng số tự vẽ cả cụm (số, ngày, dòng trạng
+// thái) cùng các khối thông tin.
 // Thêm chủ đề = thêm một nhánh ở đây và ở AodLandscape.
 @Composable
 fun AodPortrait(
@@ -73,9 +72,7 @@ fun AodPortrait(
         AodThemeValue.HALF_MOON -> AodHalfMoonPortrait(state = state, onIntent = onIntent)
         AodThemeValue.GRADIENT_LINE -> AodGradientLinePortrait(state = state, onIntent = onIntent)
         AodThemeValue.RIPPLE -> AodRipplePortrait(state = state, onIntent = onIntent)
-        // TODO(coum-face): nhánh màn dọc
         AodThemeValue.TICK -> AodTickPortrait(state = state, onIntent = onIntent)
-        // TODO(big-overlap): nhánh màn dọc
         AodThemeValue.BIG_OVERLAP -> AodBigOverlapPortrait(state = state, onIntent = onIntent)
     }
 }
@@ -84,9 +81,7 @@ fun AodPortrait(
 // dạng chuỗi nên tự xếp cột (AodChainLandscape), Vành giữ mặt số phủ màn (AodBezelLandscape), La bàn giữ mặt số giữa màn (AodCompassLandscape),
 // Bán nguyệt giữ nửa mặt số sát mép trái (AodHalfMoonLandscape), Dải màu cho vạch nằm ngang hết bề rộng (AodGradientLineLandscape), Gợn sóng
 // giữ mặt số giữa màn (AodRippleLandscape).
-// TODO(coum-face): một câu về bố cục ngang
 // Nhịp giây giữ vòng giữa màn cỡ như màn dọc, thông báo trái, pin và trình phát phải (AodTickLandscape).
-// TODO(big-overlap): một câu về bố cục ngang
 // Chồng số giữ khối số giữa màn cỡ như màn dọc, thông tin trái, nhạc + pin phải (AodBigOverlapLandscape).
 @Composable
 fun AodLandscape(
@@ -106,9 +101,7 @@ fun AodLandscape(
         AodThemeValue.HALF_MOON -> AodHalfMoonLandscape(state = state, onIntent = onIntent)
         AodThemeValue.GRADIENT_LINE -> AodGradientLineLandscape(state = state, onIntent = onIntent)
         AodThemeValue.RIPPLE -> AodRippleLandscape(state = state, onIntent = onIntent)
-        // TODO(coum-face): nhánh màn ngang
         AodThemeValue.TICK -> AodTickLandscape(state = state, onIntent = onIntent)
-        // TODO(big-overlap): nhánh màn ngang
         AodThemeValue.BIG_OVERLAP -> AodBigOverlapLandscape(state = state, onIntent = onIntent)
     }
 }

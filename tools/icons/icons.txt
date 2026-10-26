@@ -30,6 +30,3 @@ fill: play pause skip-back skip-forward
 # Sheet, hộp thoại, toast: icon từng lựa chọn (thao tác, nguồn điện), công cụ bảng vẽ, huy hiệu của hình minh hoạ
 regular: prohibit lock-key moon flashlight play-pause skip-back skip-forward infinity plugs-connected battery-charging eraser
 fill: shield-check warning-circle
-
-# TODO(coum-face): dòng icon mới của chủ đề (vd "light: …")
-# TODO(big-overlap): dòng icon mới của chủ đề (vd "light: …")

@@ -41,19 +41,17 @@ import androidx.compose.ui.unit.sp
 import com.decoutkhanqindev.aodamn.R
 import com.decoutkhanqindev.aodamn.presentation.components.AppSlider
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.bezel.AodBezelMedia
-import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.compass.AodCompassMedia
-import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.gradientline.AodGradientLineMedia
-import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.halfmoon.AodHalfMoonMedia
-import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.ripple.AodRippleMedia
-// TODO(coum-face): import trình phát
-import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.tick.AodTickMedia
-// TODO(big-overlap): import trình phát
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.bigoverlap.AodBigOverlapMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.capsule.AodCapsuleMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.card.AodCardMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.chain.AodChainMedia
-import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.tower.AodTowerMedia
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.compass.AodCompassMedia
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.gradientline.AodGradientLineMedia
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.halfmoon.AodHalfMoonMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.pebble.AodPebbleMedia
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.ripple.AodRippleMedia
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.tick.AodTickMedia
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.tower.AodTowerMedia
 import com.decoutkhanqindev.aodamn.presentation.components.onClick
 import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.ClockFontValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.info.MediaProgressUiModel
@@ -97,9 +95,7 @@ fun AodMediaControls(
                 AodThemeValue.HALF_MOON -> AodHalfMoonMedia(media = target, config = theme.config, onIntent = onIntent)
                 AodThemeValue.GRADIENT_LINE -> AodGradientLineMedia(media = target, config = theme.config, onIntent = onIntent)
                 AodThemeValue.RIPPLE -> AodRippleMedia(media = target, config = theme.config, onIntent = onIntent)
-                // TODO(coum-face): nhánh trình phát
                 AodThemeValue.TICK -> AodTickMedia(media = target, config = theme.config, onIntent = onIntent)
-                // TODO(big-overlap): nhánh trình phát
                 AodThemeValue.BIG_OVERLAP -> AodBigOverlapMedia(media = target, config = theme.config, onIntent = onIntent)
             }
         }

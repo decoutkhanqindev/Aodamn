@@ -62,9 +62,7 @@
     <string name="theme_half_moon">Bán nguyệt</string>
     <string name="theme_gradient_line">Dải màu</string>
     <string name="theme_ripple">Gợn sóng</string>
-    <!-- TODO(coum-face): tên chủ đề -->
     <string name="theme_tick">Nhịp giây</string>
-    <!-- TODO(big-overlap): tên chủ đề -->
     <string name="theme_big_overlap">Chồng số</string>
     <string name="aod_jersey_date_first_pattern">dd</string>
     <string name="aod_jersey_date_second_pattern">MM</string>
@@ -116,9 +114,7 @@
     <string name="theme_color_line">Vạch</string>
     <string name="theme_color_face">Mặt số</string>
     <string name="theme_color_media_background">Nền thẻ nhạc</string>
-    <!-- TODO(coum-face): nhãn màu / tuỳ chọn -->
     <string name="theme_color_ring">Vòng</string>
-    <!-- TODO(big-overlap): nhãn màu / tuỳ chọn -->
     <string name="theme_color_hour_digit_1">Giờ · số 1</string>
     <string name="theme_color_hour_digit_2">Giờ · số 2</string>
     <string name="theme_color_minute_digit_1">Phút · số 1</string>
