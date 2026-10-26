@@ -11,10 +11,14 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.component.AodCom
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.gradientline.GradientLineThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.halfmoon.HalfMoonThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.pebble.AodTileStyleValue
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.quarters.AodQuartersDigitStyleValue
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.quarters.QuartersThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.ripple.RippleThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.tick.TickThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
+import com.decoutkhanqindev.aodamn.presentation.theme.Cream
 import com.decoutkhanqindev.aodamn.presentation.theme.GreyCE
+import com.decoutkhanqindev.aodamn.presentation.theme.Orchid
 import com.decoutkhanqindev.aodamn.presentation.theme.Peach
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -53,6 +57,7 @@ class AodThemeSpecTest {
                     AodThemeValue.RIPPLE,
                     AodThemeValue.TICK,
                     AodThemeValue.BIG_OVERLAP,
+                    AodThemeValue.QUARTERS,
                 )
             assertEquals("${theme.id}: ghi nhớ", isChain, AodBlockValue.MEMO in theme.spec.ownBlocks)
             assertEquals("${theme.id}: sự kiện", isChain, AodBlockValue.EVENTS in theme.spec.ownBlocks)
@@ -263,12 +268,53 @@ class AodThemeSpecTest {
     }
 
     @Test
+    fun `quarters only has the blocks that fit around its dial and keeps every reference option`() {
+        val spec = AodThemeValue.QUARTERS.spec
+        assertEquals(
+            setOf(
+                AodComponentValue.DATE,
+                AodComponentValue.BATTERY,
+                AodComponentValue.WEATHER,
+                AodComponentValue.NOTIFICATIONS,
+                AodComponentValue.MEDIA,
+            ),
+            spec.components,
+        )
+        assertEquals(true, spec.hasNotificationContent)
+        assertEquals(AodQuartersDigitStyleValue.entries, QuartersThemeSpec.DigitStyle.entries)
+        assertEquals(AodQuartersDigitStyleValue.FILLED_ROUND, QuartersThemeSpec.DigitStyle.default)
+        assertEquals(AodTileStyleValue.entries, QuartersThemeSpec.HandStyle.entries)
+        assertEquals(AodTileStyleValue.FILLED, QuartersThemeSpec.HandStyle.default)
+        assertEquals(50..90, QuartersThemeSpec.Size.range)
+        assertEquals(70, QuartersThemeSpec.Size.default)
+        assertEquals(Orchid, QuartersThemeSpec.DigitColor.default)
+        assertEquals(GreyCE, QuartersThemeSpec.HourColor.default)
+        assertEquals(Cream, QuartersThemeSpec.MinuteColor.default)
+        assertEquals(
+            listOf(
+                QuartersThemeSpec.DigitStyle,
+                QuartersThemeSpec.HandStyle,
+                QuartersThemeSpec.Size,
+                QuartersThemeSpec.DigitColor,
+                QuartersThemeSpec.HourColor,
+                QuartersThemeSpec.MinuteColor,
+                QuartersThemeSpec.DateColor,
+                QuartersThemeSpec.NotificationsColor,
+                QuartersThemeSpec.BatteryColor,
+                QuartersThemeSpec.MediaColor,
+            ),
+            spec.options,
+        )
+    }
+
+    @Test
     fun `only themes with real time motion run in real time in previews`() {
         val liveThemes = setOf(
             AodThemeValue.COMPASS,
             AodThemeValue.HALF_MOON,
             AodThemeValue.RIPPLE,
             AodThemeValue.TICK,
+            AodThemeValue.QUARTERS,
         )
         AodThemeValue.entries.forEach { theme ->
             assertEquals("${theme.id}: xem trước theo giờ thật", theme in liveThemes, theme.spec.isLiveInPreview)

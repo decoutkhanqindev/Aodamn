@@ -2828,6 +2828,207 @@ big_overlap = [
 big_overlap_defs = bo_defs()
 
 
+# ================================================================== BỐN SỐ (Android 14 Analog Clock của Muviz Edge; số đo lấy từ layout apr23_screen_layout dọc /
+# ngang, PixelAnalogClock và PilotBold2Tick trong APK, không từ ảnh chụp). r = cỡ × cạnh ngắn vùng đồng hồ / 2 (app mẫu × 1,2 ở màn ngang). Bốn số 12 / 3 / 6 / 9
+# Google Sans Flex (cùng font với Chồng số) cỡ chữ 0,72r, tâm khung nét chữ ở 0,52r (12, 6) / 0,6r (3, 9); kiểu 1 đặc bo tròn (ROND 100), 2 đặc góc
+# vuông, 3 viền bo tròn, 4 viền góc vuông (nét 2 dp). Kim giờ là viên dày 0,15r từ −0,085r tới 0,615r (đặc, hoặc viền: nền đen 10% + nét 0,0175r), kim
+# phút vạch 0,035r tới 0,86r, kim giây vạch 0,013r tới 0,91r + chấm tâm 0,0234r màu kim giờ tối 25%; các kim có bóng đen 50% bán kính 0,1r, chạy liên
+# tục theo mili giây. Màn dọc như Chồng số (cùng layout gốc của app mẫu); màn ngang tự dựng: mặt số giữa màn cỡ như màn dọc, thông tin trái, trình
+# phát + pin phải.
+class AqFont:
+    """Như BoFont nhưng giữ cả bước chữ (số "12" đặt theo khung nét của cả chuỗi như Paint.getTextBounds)."""
+
+    def __init__(self, rond, key):
+        from fontTools.ttLib.removeOverlaps import removeOverlaps
+
+        font = instancer.instantiateVariableFont(TTFont(ROOT / "tools/fonts/variable/google_sans_flex_variable.ttf"),
+                                                 {"wght": 1000, "wdth": 108, "ROND": rond}, inplace=False)
+        removeOverlaps(font, [font.getBestCmap()[ord(ch)] for ch in "12369"])
+        glyphs, cmap = font.getGlyphSet(), font.getBestCmap()
+        self.key, self.upm, self.bounds, self.paths, self.adv = key, font["head"].unitsPerEm, {}, {}, {}
+        for ch in "12369":
+            glyph = glyphs[cmap[ord(ch)]]
+            bp, sp = BoundsPen(glyphs), SVGPathPen(glyphs, ntos=lambda v: f"{v:.0f}")
+            glyph.draw(bp)
+            glyph.draw(sp)
+            self.bounds[ch], self.paths[ch], self.adv[ch] = bp.bounds, sp.getCommands(), glyph.width
+
+
+AQ_SHARP, AQ_ROUND = AqFont(0, "s"), AqFont(100, "r")
+AQ_USED = set()
+AQ_LIVE = []
+AQ_DIALS = []
+AQ_STYLES = {1: (False, True), 2: (False, False), 3: (True, True), 4: (True, False)}  # Text Style 1–4: (viền, bo tròn)
+AQ_ORCHID = "#EE9BE6"  # màu nhấn đề xuất: phong lan, chưa chủ đề nào dùng
+AQ_CREAM = "#FEF7EB"  # kim phút mặc định của app mẫu
+AQ_COLORS = {"numbers": AQ_ORCHID, "hour": BO_GREY, "minute": AQ_CREAM, "date": BO_GREY, "noti": BO_GREY, "media": BO_GREY,
+             "battery": BO_GREY, "weather": G}
+AQ_REF = {**AQ_COLORS, "numbers": "#CFD8DC", "hour": "#CFD8DC", "date": "#CFD8DC", "noti": "#CFD8DC", "media": "#CFD8DC",
+          "battery": "#CFD8DC"}
+AQ_MIX = {**AQ_COLORS, "numbers": "url(#aqGrad)", "hour": "#80DEEA"}
+AQ_GRAD = ('<defs><linearGradient id="aqGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFCC70"/>'
+           '<stop offset=".5" stop-color="#C850C0"/><stop offset="1" stop-color="#4158D0"/></linearGradient></defs>')
+
+
+def aq_numbers(cx, cy, r, style, color):
+    """PilotBold2Tick.onDraw: mỗi số đặt giữa khung nét chữ của nó (exactCenter) tại 0,52r / 0,6r."""
+    outline, rounded = AQ_STYLES[style]
+    font = AQ_ROUND if rounded else AQ_SHARP
+    k = .72 * r / font.upm
+    paint = (f'fill="none" stroke="{color}" stroke-width="{f(2 / k)}" stroke-linejoin="round"' if outline else f'fill="{color}"')
+    s = ""
+    for text, deg, d in (("3", 90, .6), ("6", 180, .52), ("9", 270, .6), ("12", 0, .52)):
+        pens, x = [], 0
+        for ch in text:
+            pens.append(x)
+            x += font.adv[ch]
+        x0 = min(font.bounds[ch][0] + p for ch, p in zip(text, pens))
+        x1 = max(font.bounds[ch][2] + p for ch, p in zip(text, pens))
+        y0 = min(font.bounds[ch][1] for ch in text)
+        y1 = max(font.bounds[ch][3] for ch in text)
+        a = math.radians(deg)
+        px, py = cx + math.sin(a) * d * r, cy - math.cos(a) * d * r
+        for ch, p in zip(text, pens):
+            AQ_USED.add(font.key + ch)
+            tx, ty = px - k * (x0 + x1) / 2 + k * p, py + k * (y0 + y1) / 2
+            s += f'<use href="#aq{font.key}{ch}" transform="translate({f(tx)} {f(ty)}) scale({k:.5f} {-k:.5f})" {paint}/>'
+    return s
+
+
+def aq_dial(cx, cy, r, hh=10, mm=8, ss=42, style=1, hand=1, colors=AQ_COLORS, live=False):
+    """PixelAnalogClock.onDraw trên PilotBold2Tick: số dưới cùng, rồi kim giờ (viên), kim phút, kim giây + chấm tâm; kim có bóng đen."""
+    AQ_DIALS.append(cx)
+    sid = f"aq{len(AQ_DIALS)}"
+    if live:
+        AQ_LIVE.append((sid, cx, cy))
+    h_deg = (hh % 12 + mm / 60 + ss / 3600) * 30
+    m_deg = (mm + ss / 60) * 6
+    s_deg = ss * 6
+    sec = bo_dark(colors["hour"], .25) if colors["hour"].startswith("#") else colors["hour"]
+    pill = (f'x="{f(cx - .085 * r)}" y="{f(cy - .075 * r)}" width="{f(.7 * r)}" height="{f(.15 * r)}" rx="{f(.075 * r)}"')
+    hour = (f'<rect {pill} fill="#000" fill-opacity=".1" stroke="{colors["hour"]}" stroke-width="{f(.0175 * r)}"/>' if hand == 2
+            else f'<rect {pill} fill="{colors["hour"]}"/>')
+    return (f'<filter id="{sid}f" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="0" stdDeviation="{f(.058 * r)}" '
+            f'flood-color="#000" flood-opacity=".5"/></filter>'
+            + aq_numbers(cx, cy, r, style, colors["numbers"])
+            + f'<g filter="url(#{sid}f)"><g id="{sid}h" transform="rotate({f(h_deg + 270)} {f(cx)} {f(cy)})">{hour}</g>'
+            f'<g id="{sid}m" transform="rotate({f(m_deg)} {f(cx)} {f(cy)})"><line x1="{f(cx)}" y1="{f(cy)}" x2="{f(cx)}" '
+            f'y2="{f(cy - .86 * r)}" stroke="{colors["minute"]}" stroke-width="{f(.035 * r)}" stroke-linecap="round"/></g>'
+            f'<g id="{sid}s" transform="rotate({f(s_deg)} {f(cx)} {f(cy)})"><line x1="{f(cx)}" y1="{f(cy)}" x2="{f(cx)}" '
+            f'y2="{f(cy - .91 * r)}" stroke="{sec}" stroke-width="{f(.013 * r)}" stroke-linecap="round"/></g></g>'
+            f'<circle cx="{f(cx)}" cy="{f(cy)}" r="{f(.0234 * r)}" fill="{sec}"/>')
+
+
+def aq_live_script():
+    """Khung live: ba kim chạy liên tục theo đồng hồ của máy xem mock (như setTime lấy cả mili giây)."""
+    dials = ",".join(f'["{sid}",{f(cx)},{f(cy)}]' for sid, cx, cy in AQ_LIVE)
+    return ('<script>(function(){var c=[' + dials + '];function t(){var d=new Date(),s=d.getSeconds()+d.getMilliseconds()/1e3,'
+            'm=d.getMinutes()+s/60,h=d.getHours()%12+m/60;c.forEach(function(e){[["h",h*30+270],["m",m*6],["s",s*6]].forEach(function(k){'
+            'var g=document.getElementById(e[0]+k[0]);if(g)g.setAttribute("transform","rotate("+k[1].toFixed(2)+" "+e[1]+" "+e[2]+")");});});'
+            'requestAnimationFrame(t);}t();})();</script>')
+
+
+def aq_defs():
+    return "".join(f'<path id="aq{key}" d="{(AQ_ROUND if key[0] == "r" else AQ_SHARP).paths[key[1]]}"/>' for key in sorted(AQ_USED))
+
+
+def aq_portrait(hh=10, mm=8, ss=42, style=1, hand=1, size=.7, colors=AQ_COLORS, date=True, weather=False, n=3, latest=False, media=False,
+                paused=False, charging=False, live=False):
+    """Màn dọc như layout mẫu (giống Chồng số): ngày + icon thông báo căn trái dồn đáy vùng trên cao tối thiểu 130 dp; trình phát (khi có) và
+    dòng pin ở đáy; mặt số giữa phần còn lại theo trọng số 0,08 / 0,8 / 0,12, r = cỡ × cạnh ngắn vùng đó / 2."""
+    ih, info = bo_info(40, PW - 80, colors, date, weather, n, latest)
+    top = max(130.0, ih)
+    s = info(top - ih)
+    ph, player = bo_player(40, 0, PW - 80, colors["media"], paused) if media else (0, "")
+    rem = PH - top - ph - (80 + bo_line(14))
+    y0, ch = top + .08 * rem, .8 * rem
+    s += aq_dial(PW / 2, y0 + ch / 2, size * min(PW, ch) / 2, hh, mm, ss, style, hand, colors, live)
+    if media:
+        s += f'<g transform="translate(0 {f(top + rem)})">{player}</g>'
+    return s + bo_battery(PW / 2, PH - 40 - bo_line(14) / 2, colors["battery"], charging)
+
+
+def aq_landscape(hh=10, mm=8, ss=42, style=1, hand=1, size=.7, colors=AQ_COLORS, weather=False, n=3, latest=False, media=False, paused=False,
+                 charging=False, live=False):
+    """Màn ngang: mặt số giữa màn, r = cỡ × cao màn / 2 (bằng màn dọc; app mẫu nhân 1,2 vì mặt số chỉ có cột trái thấp); bên trái ngày + thông báo
+    (căn trái, lề 40 dp), bên phải trình phát + dòng pin, giữa chiều cao."""
+    r = size * H / 2
+    s = aq_dial(W / 2, CY, r, hh, mm, ss, style, hand, colors, live)
+    gap = 36
+    lw = W / 2 - r - gap - 40
+    ih, info = bo_info(40, lw, colors, True, weather, n, latest, 18, True)
+    s += info(CY - ih / 2)
+    rx = W / 2 + r + gap
+    rw = W - 40 - rx
+    if not media:
+        return s + bo_battery(rx + rw / 2, CY, colors["battery"], charging)
+    ph, player = bo_player(rx, 0, rw, colors["media"], paused)
+    bh = bo_line(14)
+    top = CY - (ph + 24 + bh) / 2
+    return s + f'<g transform="translate(0 {f(top)})">{player}</g>' + bo_battery(rx + rw / 2, top + ph + 24 + bh / 2, colors["battery"], charging)
+
+
+def aq_reference_landscape():
+    """App mẫu ở màn ngang (layout-land): cột trái 0,45 bề ngang (ngày 18 sp đệm 30, mặt số × 1,2, pin 13 sp đệm 30), cột phải 0,45 đệm 40 dồn đáy
+    (icon thông báo, vạch màu thông báo tối 50%, trình phát)."""
+    c = AQ_REF
+    x0, x1 = .05 * W, .5 * W
+    cx = (x0 + x1) / 2
+    d_h, b_h = 60 + bo_line(18), 60 + bo_line(13)
+    s = CP_REG.text(cx, 30 + BO_ASC * 18, BO_DATE, 18, c["date"], "middle")
+    ch = H - d_h - b_h
+    s += aq_dial(cx, d_h + ch / 2, .7 * 1.2 * min(x1 - x0, ch) / 2, style=1, colors=c)
+    s += bo_battery(cx, H - 30 - bo_line(13) / 2, c["battery"], size=13)
+    rx, rw = x1 + 40, .45 * W - 80
+    ph, player = bo_player(rx, 0, rw, c["media"])
+    top = H - 40 - ph
+    s += f'<g transform="translate(0 {f(top)})">{player}</g>'
+    s += f'<rect x="{f(rx)}" y="{f(top - 30)}" width="{f(rw)}" height=".4" fill="{bo_dark(c["noti"], .5)}"/>'
+    return s + bo_icons(rx, top - 50 - 9, 3, c["noti"])
+
+
+def aq_strip():
+    k, s = 0.4, ""
+    for i, (label, kw) in enumerate((("Mặc định: số đặc bo tròn, kim đặc", {}),
+                                      ("Số đặc góc vuông, màu app mẫu", {"style": 2, "colors": AQ_REF, "hh": 7, "mm": 21, "ss": 5}),
+                                      ("Số viền bo tròn, kim giờ viền", {"style": 3, "hand": 2, "hh": 4, "mm": 38, "ss": 50}),
+                                      ("Số viền góc vuông, gradient", {"style": 4, "colors": AQ_MIX, "hh": 1, "mm": 47, "ss": 20, "size": .9}))):
+        x = 36 + i * 212
+        s += (f'<g transform="translate({x} 14) scale({k})"><clipPath id="aqc{i}"><rect width="{PW}" height="{PH}" rx="34"/></clipPath>'
+              f'<rect width="{PW}" height="{PH}" rx="34" fill="#000" stroke="#333" stroke-width="2"/><g clip-path="url(#aqc{i})">')
+        s += aq_portrait(**kw) + "</g></g>" + txt(x + PW * k / 2, 14 + PH * k + 22, label, 13, DM, 400, "middle")
+    return (f'<p style="font-size:13px;color:var(--text-secondary);margin:1.25rem 0 6px">Bốn kiểu số (Text Style 1–4) × hai kiểu kim giờ '
+            f'(Clock Style 1–2) và màu (màu nào cũng có thể là gradient)</p><svg viewBox="0 0 {W} 400" width="100%" role="img" '
+            f'aria-label="Kiểu và màu" style="display:block;font-family:\'Plus Jakarta Sans\',sans-serif" fill="{G}">{AQ_GRAD}'
+            f'<rect width="{W}" height="400" rx="20" fill="#111"/>{s}</svg>')
+
+
+quarters = [
+    BO_FONTS,
+    aq_strip(),
+    '<div style="font-size:0">',
+    frame_portrait("D1 · Dọc, mặc định (cũng là thẻ ở lưới chủ đề), kim chạy theo giờ thật: ngày + icon thông báo trên trái, pin dưới",
+                   aq_portrait(live=True)),
+    frame_portrait("D2 · Dọc, 08:30, thời tiết cuối dòng ngày, thông báo mới nhất, đang phát nhạc (mặt số trượt lên nhường chỗ)",
+                   aq_portrait(8, 30, 12, weather=True, latest=True, n=2, media=True)),
+    frame_portrait("D3 · Dọc, 21:47, số viền bo tròn, kim giờ viền, cỡ 90%, đang sạc, nhạc đang dừng",
+                   aq_portrait(21, 47, 33, 3, 2, .9, charging=True, media=True, paused=True, n=1)),
+    frame_portrait("D4 · Dọc, 05:59, số đặc góc vuông gradient, kim giờ xanh, cỡ 55%, tắt ngày",
+                   f'{AQ_GRAD}' + aq_portrait(5, 59, 48, 2, size=.55, colors=AQ_MIX, date=False, n=0)),
+    '</div>',
+    frame("N1 · Ngang, không nhạc, kim chạy theo giờ thật: ngày + thời tiết + thông báo trái, pin phải; mặt số giữa màn",
+          aq_landscape(weather=True, live=True)),
+    frame("N2 · Ngang, 08:30, đang phát nhạc, thông báo mới nhất: trình phát + pin phải",
+          aq_landscape(8, 30, 12, weather=True, latest=True, n=2, media=True)),
+    frame("N3 · Ngang, 21:47, số viền bo tròn, kim giờ viền, đang sạc, nhạc đang dừng",
+          aq_landscape(21, 47, 33, 3, 2, charging=True, media=True, paused=True, n=1)),
+    frame("N4 · Để so: layout ngang của app mẫu (mặt số trong cột trái, thông báo + trình phát dồn đáy cột phải)",
+          aq_reference_landscape()),
+]
+quarters.append(aq_live_script())
+quarters_defs = aq_defs()
+
+
 for name, summary, defs, frames in [
     ("w_classic", "Bảy bố cục ngang của chủ đề Cổ điển theo các khối đang bật", classic_defs, classic),
     ("w_jersey", "Bố cục ngang của chủ đề Số áo: ngày, bốn chữ số một hàng, dòng pin", jersey_defs, jersey),
@@ -2843,6 +3044,7 @@ for name, summary, defs, frames in [
     ("w_ripple", "Chủ đề Gợn sóng (Android 12): kiểu và màu, bốn khung dọc và bốn khung ngang", "", ripple),
     ("w_tick", "Chủ đề Nhịp giây (Coum Face Clock): màu vòng và cỡ, bốn khung dọc và bốn khung ngang", tk_ticks_def(), tick),
     ("w_big_overlap", "Chủ đề Chồng số (Big Overlap Clock): bốn kiểu và màu, bốn khung dọc và bốn khung ngang", big_overlap_defs, big_overlap),
+    ("w_quarters", "Chủ đề Bốn số (Android 14 Analog Clock): kiểu số, kiểu kim và màu, bốn khung dọc và bốn khung ngang", quarters_defs, quarters),
 ]:
     code = widget(summary, defs, frames)
     OUT.mkdir(parents=True, exist_ok=True)

@@ -15,6 +15,7 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.gradientline.Gra
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.halfmoon.HalfMoonThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.jersey.JerseyThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.pebble.PebbleThemeSpec
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.quarters.QuartersThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.ripple.RippleThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.tick.TickThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.tower.TowerThemeSpec
@@ -38,7 +39,8 @@ enum class AodThemeValue(
     GRADIENT_LINE(id = "gradient_line", nameRes = R.string.theme_gradient_line, spec = GradientLineThemeSpec),
     RIPPLE(id = "ripple", nameRes = R.string.theme_ripple, spec = RippleThemeSpec),
     TICK(id = "tick", nameRes = R.string.theme_tick, spec = TickThemeSpec),
-    BIG_OVERLAP(id = "big_overlap", nameRes = R.string.theme_big_overlap, spec = BigOverlapThemeSpec);
+    BIG_OVERLAP(id = "big_overlap", nameRes = R.string.theme_big_overlap, spec = BigOverlapThemeSpec),
+    QUARTERS(id = "quarters", nameRes = R.string.theme_quarters, spec = QuartersThemeSpec);
 
     companion object {
         val DEFAULT = CLASSIC

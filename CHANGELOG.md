@@ -7,6 +7,41 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-10-26 – Chủ đề Bốn số
+
+Build được, unit test pass (thêm test chặn Bốn số có lại khối đã bỏ hay thiếu tuỳ chọn của app mẫu; test nội dung thông báo và chạy theo giờ
+thật ở khung xem trước cho phép Bốn số), `tools/check-rules.sh` ra 0 vi phạm, thư mục các chủ đề cũ không đổi dòng nào. Chưa test trên máy.
+
+### Thêm
+
+- Chủ đề Bốn số (Android 14 Analog Clock của Muviz Edge, số đo lấy từ `PixelAnalogClock`, `PilotBold2Tick`, `Apr23Screen` và layout
+  `apr23_screen_layout` dọc / ngang dịch ngược; mock duyệt trước khi code). r = cỡ × cạnh ngắn vùng đồng hồ / 2. Bốn số 12 / 3 / 6 / 9 Google
+  Sans Flex cỡ chữ 0,72r, mỗi số đặt giữa khung nét chữ của nó tại 0,52r (12, 6) / 0,6r (3, 9). Kim giờ hình viên dày 0,15r từ −0,085r tới
+  0,615r, kim phút vạch 0,035r tới 0,86r, kim giây vạch 0,013r tới 0,91r + chấm tâm 0,0234r màu kim giờ tối 25%; cả ba kim có bóng đen 50% bán
+  kính 0,1r và chạy liên tục theo giờ thật mỗi khung hình như app mẫu (kim giờ, phút trôi theo giây), cả ở màn chủ đề và Tùy chỉnh
+  (`isLiveInPreview`); thẻ ở lưới đứng yên. Bốn kiểu số như Text Style 1–4 của app mẫu: đặc bo tròn (ROND 100), đặc, viền bo tròn, viền (nét 2dp);
+  hai kiểu kim giờ như Clock Style 1–2: đặc, viền (nền đen 10% + nét 0,0175r). Nâng cấp: đổi kiểu số mờ chéo, đổi kiểu kim giờ chuyển mượt nửa
+  giây (app mẫu nhảy). Bỏ trạng thái tiết kiệm của app mẫu (ẩn kim giây, số và kim giờ sang viền) vì AOD không có trạng thái đó (user duyệt).
+- Bố cục dọc như layout mẫu (giống Chồng số, app mẫu dùng chung layout gốc): ngày "EEE, d MMM" 20sp + thời tiết cuối dòng, hàng icon thông báo,
+  thông báo mới nhất căn trái ở vùng trên cao tối thiểu 130dp; mặt số giữa phần còn lại (0,08 / 0,8 / 0,12); trình phát (tên 16sp / nghệ sĩ 14sp tối
+  hơn 30%, nút phát / dừng 40dp, nút tới 35dp, thanh 1,5dp) và dòng pin 14sp ở đáy. Thông báo mới nhất và trình phát hiện cố định thay vì hiện
+  vài giây rồi ẩn như app mẫu (user duyệt). Màn ngang (app mẫu thu mặt số vào cột trái): mặt số giữa màn cỡ như màn dọc, ngày + thông báo bên trái,
+  trình phát + dòng pin bên phải, đổi bằng mờ chéo (user duyệt).
+- Tuỳ chọn đủ như app mẫu: kiểu số (4), kiểu kim giờ (2), cỡ 50–90% (mặc định 70%), Color 1 / 2 / 3 thành màu Kim giờ (kim giây theo màu này) /
+  Chữ số / Kim phút; màu chủ đạo tách thành màu ngày, thông báo, pin, nhạc. Mặc định: số đặc bo tròn màu `Orchid` (#EE9BE6, phong lan, màu nhấn
+  chưa chủ đề nào dùng), kim giờ `GreyCE` (gần #CFD8DC của app mẫu), kim phút `Cream` (#FEF7EB như app mẫu). Màu nào cũng tô được gradient (mỗi
+  số theo khung của nó, kim từ tâm ra đầu kim).
+- Bốn số chỉ có ngày, thời tiết, pin, thông báo (kèm thông báo mới nhất, `hasNotificationContent = true`), nhạc: ghi nhớ, sự kiện, nét vẽ không
+  có chỗ đặt cân quanh mặt số giữa màn.
+- Chữ số dùng lại hai họ Google Sans Flex wght 1000 của Chồng số: app mẫu dùng cùng một file font cho cả hai chủ đề. Mock của chủ đề ở
+  `tools/mockups/aod_landscape_mockups.py` (`w_quarters`, kim chạy theo giờ thật ở khung D1 / N1).
+
+### Thay đổi
+
+- Chỉ thêm, không đổi chủ đề đang có: mục `QUARTERS` ở `AodThemeValue`, nhánh `when` ở `AodPortrait` / `AodLandscape` / `AodMediaControls`,
+  màu `Orchid`, `Cream`, `BlackAlpha10`, chuỗi vi / en (`theme_quarters`, `theme_color_hour_hand`, `theme_color_minute_hand`,
+  `theme_opt_hand_style`); dùng lại nhãn Đặc / Viền / Đặc bo tròn / Viền bo tròn, "Kiểu số", "Chữ số", mẫu ngày `aod_date_pattern` có sẵn.
+
 ## [Chưa phát hành] – 2026-10-26 – Chủ đề Nhịp giây
 
 Build được, unit test pass (thêm test chặn Nhịp giây có lại khối đã bỏ hay thiếu tuỳ chọn của app mẫu; test nội dung thông báo và chạy theo giờ

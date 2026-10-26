@@ -48,6 +48,7 @@ code dịch ngược, không lấy asset (font, ảnh, Lottie) từ APK. APK và
 | Gợn sóng (`RIPPLE`) | **4 · Aug21 "Android 12"** | làm từ danh mục này (2026-10-21), số đo lấy từ layout `aug21_screen_layout` (chỉ có bản dọc) / `Android12Clock2` / `Android12ClockBg2` |
 | Nhịp giây (`TICK`) | **30 · Oct23 "Coum Face Clock"** | làm từ danh mục này (2026-10-26), số đo lấy từ layout `oct23_screen_layout` (chỉ có bản dọc) / `CoumTick` |
 | Chồng số (`BIG_OVERLAP`) | **23 · Mar23 "Big Overlap Clock"** | làm từ danh mục này (2026-10-26), số đo lấy từ layout `mar23_screen_layout` dọc / ngang / `BigPixel2Clock` |
+| Bốn số (`QUARTERS`) | **24 · Apr23 "Android 14 Analog Clock"** | làm từ danh mục này (2026-10-26), số đo lấy từ layout `apr23_screen_layout` dọc / ngang / `PixelAnalogClock` / `PilotBold2Tick` |
 
 ## Danh mục đủ 44 chủ đề
 
@@ -79,7 +80,7 @@ text view chung) hoặc font dùng trong code; "chữ (font layout)" nghĩa là 
 | 21 | Jan23 | Moon Phase ⭐ | Clock Color, Date Color, Clock Size, Character Color, Character Size, Peek, Rotation, Glow Color, Particle Color, Controls Color | – | MoonSpace, StarField | – | chưa có |
 | 22 | Feb23 | Vertical Text | Text, Spacing, Text Size, Text Style, Text Color, Notification Color, Controls Color | – | chữ: 12 font (abril, bebas, monoton, rye…) | ô nhập chữ | chưa có |
 | 23 | Mar23 | Big Overlap Clock | Clock Style, Clock Size, Color 1, Color 2, Theme Color | Color 3, Color 4, Date, Notification, Controls, Battery Status | BigPixel2Clock | – | **Chồng số** (`BIG_OVERLAP`) |
-| 24 | Apr23 | Android 14 Analog Clock | Text Style, Clock Style, Clock Size, Color 1, Color 2, Theme Color | Color 3, Date, Notification, Controls, Battery Status | PilotBold2Tick, PixelAnalogClock | – | chưa có |
+| 24 | Apr23 | Android 14 Analog Clock | Text Style, Clock Style, Clock Size, Color 1, Color 2, Theme Color | Color 3, Date, Notification, Controls, Battery Status | PilotBold2Tick, PixelAnalogClock | – | **Bốn số** (`QUARTERS`) |
 | 25 | May23 | Ambitio Face ⭐ | Clock Style, Clock Size, Color 1, Color 2, Controls Color | – | AmbitioClock | – | **La bàn** (`COMPASS`) |
 | 26 | Jun23 | iOS Lockscreen | Clock Style, Clock Size, Clock Color, Theme Color | Date, Notification, Controls, Battery Status | chữ: 5 font iOS | font độc quyền | chưa có |
 | 27 | Jul23 | Nothing(2) | Clock Size, Theme Color | Clock, Date, Notification, Controls, Battery Status | chữ: ndot47 | font độc quyền | chưa có |
@@ -168,6 +169,13 @@ mỗi phút (`AodViewModel`), nên phần chạy theo giây của app mẫu ph�
   Color 1–4 chéo (Color 3 theo 2, Color 4 theo 1). Font mẫu là bản cắt riêng đậm hơn cả wght 1000 của Google Fonts: dùng wght 1000, wdth 108;
   số 4 của bản Google Fonts là đường viền tự cắt nên gộp phần chồng trước khi vẽ nét. Layout dọc: ngày 20sp + icon thông báo căn trái trên,
   khối số giữa (0,08 / 0,8 / 0,12), trình phát (phát / tới, thanh 1,5dp) + pin 14sp dưới; layout ngang mẫu: khối số nhỏ ở cột trái.
+- ~~**24 · Android 14 Analog Clock**~~ (`PixelAnalogClock` + `PilotBold2Tick`, đã làm thành Bốn số 2026-10-26): r = cỡ (50–90, mặc định 70) ×
+  cạnh ngắn / 2; bốn số 12 / 3 / 6 / 9 Google Sans Flex (cùng file font với Big Overlap) cỡ 0,72r, giữa khung nét chữ tại 0,52r (12, 6) /
+  0,6r (3, 9); Text Style 1–4 = đặc ROND 100 / đặc ROND 0 / viền ROND 100 / viền ROND 0 (nét 2dp; đọc từ bytecode vì JADX gộp sai nhánh);
+  kim giờ viên 0,15r từ −0,085r tới 0,615r (Clock Style 2: nền #1A000000 + nét 0,0175r), kim phút 0,035r tới 0,86r, kim giây 0,013r tới 0,91r +
+  chấm 0,0234r màu Color 1 tối 25%; bóng #80000000 bán kính 0,1r; kim chạy theo mili giây. Màu: Color 1 kim giờ #CFD8DC, Color 2 số (mặc
+  định theo Color 1), Color 3 kim phút #FEF7EB. Layout dọc giống Big Overlap; ngang mẫu: mặt số × 1,2 ở cột trái. Tiết kiệm: ẩn kim giây,
+  số và kim giờ sang viền (bỏ, user duyệt).
 - **43 · MIUI Doodle** ⭐ (`Nov24Screen`): giờ, phút, thứ, tháng, ngày là **ảnh vẽ tay** (24 + 60 + 7 + 12 + 31 hình), không phải
   font; không được lấy ảnh của app mẫu, phải tự vẽ cả bộ, nên để sau.
 

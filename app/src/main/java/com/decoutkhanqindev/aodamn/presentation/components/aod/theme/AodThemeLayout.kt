@@ -28,6 +28,8 @@ import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.jersey.AodJ
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.jersey.AodJerseyPortrait
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.pebble.AodPebbleClock
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.pebble.AodPebbleLandscape
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.quarters.AodQuartersLandscape
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.quarters.AodQuartersPortrait
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.ripple.AodRippleLandscape
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.ripple.AodRipplePortrait
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.tick.AodTickLandscape
@@ -70,6 +72,7 @@ fun AodPortrait(
         AodThemeValue.RIPPLE -> AodRipplePortrait(state = state, onIntent = onIntent)
         AodThemeValue.TICK -> AodTickPortrait(state = state, onIntent = onIntent)
         AodThemeValue.BIG_OVERLAP -> AodBigOverlapPortrait(state = state, onIntent = onIntent)
+        AodThemeValue.QUARTERS -> AodQuartersPortrait(state = state, onIntent = onIntent)
     }
 }
 
@@ -93,6 +96,7 @@ fun AodLandscape(
         AodThemeValue.RIPPLE -> AodRippleLandscape(state = state, onIntent = onIntent)
         AodThemeValue.TICK -> AodTickLandscape(state = state, onIntent = onIntent)
         AodThemeValue.BIG_OVERLAP -> AodBigOverlapLandscape(state = state, onIntent = onIntent)
+        AodThemeValue.QUARTERS -> AodQuartersLandscape(state = state, onIntent = onIntent)
     }
 }
 

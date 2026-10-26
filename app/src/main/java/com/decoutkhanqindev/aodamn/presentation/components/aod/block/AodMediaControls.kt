@@ -49,6 +49,7 @@ import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.compass.Aod
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.gradientline.AodGradientLineMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.halfmoon.AodHalfMoonMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.pebble.AodPebbleMedia
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.quarters.AodQuartersMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.ripple.AodRippleMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.tick.AodTickMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.tower.AodTowerMedia
@@ -96,6 +97,7 @@ fun AodMediaControls(
                 AodThemeValue.RIPPLE -> AodRippleMedia(media = target, config = theme.config, onIntent = onIntent)
                 AodThemeValue.TICK -> AodTickMedia(media = target, config = theme.config, onIntent = onIntent)
                 AodThemeValue.BIG_OVERLAP -> AodBigOverlapMedia(media = target, config = theme.config, onIntent = onIntent)
+                AodThemeValue.QUARTERS -> AodQuartersMedia(media = target, config = theme.config, onIntent = onIntent)
             }
         }
     }
