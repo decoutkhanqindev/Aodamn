@@ -29,6 +29,8 @@ import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.pebble.AodP
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.ripple.AodRippleLandscape
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.ripple.AodRipplePortrait
 // TODO(coum-face): import bố cục dọc / ngang
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.tick.AodTickLandscape
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.tick.AodTickPortrait
 // TODO(big-overlap): import bố cục dọc / ngang
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.tower.AodTowerLandscape
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.tower.AodTowerPortrait
@@ -70,6 +72,7 @@ fun AodPortrait(
         AodThemeValue.GRADIENT_LINE -> AodGradientLinePortrait(state = state, onIntent = onIntent)
         AodThemeValue.RIPPLE -> AodRipplePortrait(state = state, onIntent = onIntent)
         // TODO(coum-face): nhánh màn dọc
+        AodThemeValue.TICK -> AodTickPortrait(state = state, onIntent = onIntent)
         // TODO(big-overlap): nhánh màn dọc
     }
 }
@@ -79,6 +82,7 @@ fun AodPortrait(
 // Bán nguyệt giữ nửa mặt số sát mép trái (AodHalfMoonLandscape), Dải màu cho vạch nằm ngang hết bề rộng (AodGradientLineLandscape), Gợn sóng
 // giữ mặt số giữa màn (AodRippleLandscape).
 // TODO(coum-face): một câu về bố cục ngang
+// Nhịp giây giữ vòng giữa màn cỡ như màn dọc, thông báo trái, pin và trình phát phải (AodTickLandscape).
 // TODO(big-overlap): một câu về bố cục ngang
 @Composable
 fun AodLandscape(
@@ -99,6 +103,7 @@ fun AodLandscape(
         AodThemeValue.GRADIENT_LINE -> AodGradientLineLandscape(state = state, onIntent = onIntent)
         AodThemeValue.RIPPLE -> AodRippleLandscape(state = state, onIntent = onIntent)
         // TODO(coum-face): nhánh màn ngang
+        AodThemeValue.TICK -> AodTickLandscape(state = state, onIntent = onIntent)
         // TODO(big-overlap): nhánh màn ngang
     }
 }

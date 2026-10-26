@@ -10,6 +10,8 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.halfmoon.HalfMoo
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.pebble.AodTileStyleValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.ripple.RippleThemeSpec
 // TODO(coum-face): import spec
+import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.AodGradientDirection
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.tick.TickThemeSpec
 // TODO(big-overlap): import spec
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
 import org.junit.Assert.assertEquals
@@ -53,6 +55,7 @@ class AodThemeSpecTest {
                     AodThemeValue.GRADIENT_LINE,
                     AodThemeValue.RIPPLE,
                     // TODO(coum-face): thêm nếu chủ đề tự vẽ thông báo mới nhất
+                    AodThemeValue.TICK,
                     // TODO(big-overlap): thêm nếu chủ đề tự vẽ thông báo mới nhất
                 )
             assertEquals("${theme.id}: ghi nhớ", isChain, AodBlockValue.MEMO in theme.spec.ownBlocks)
@@ -205,6 +208,39 @@ class AodThemeSpecTest {
     }
 
     // TODO(coum-face): test riêng của chủ đề
+    // Nhịp giây chỉ có các khối đặt cân quanh vòng (mock đã duyệt): ghi nhớ, sự kiện, nét vẽ bỏ hẳn. Giữ đủ tuỳ chọn của app mẫu: Clock Size (55–90,
+    // mặc định 70), màu vòng (gradient dọc mặc định, màu nhấn Tropic), màu đồng hồ; màu đồng hồ / điều khiển tách thành ngày, thông báo, pin, nhạc.
+    @Test
+    fun `tick only has the blocks that fit around its ring and keeps every reference option`() {
+        val spec = AodThemeValue.TICK.spec
+        assertEquals(
+            setOf(
+                AodComponentValue.DATE,
+                AodComponentValue.BATTERY,
+                AodComponentValue.WEATHER,
+                AodComponentValue.NOTIFICATIONS,
+                AodComponentValue.MEDIA,
+            ),
+            spec.components,
+        )
+        assertEquals(true, spec.hasNotificationContent)
+        assertEquals(55..90, TickThemeSpec.Size.range)
+        assertEquals(70, TickThemeSpec.Size.default)
+        assertEquals(GradientSwatchValue.TROPIC.gradient.colors, TickThemeSpec.RingColor.defaultGradient?.colors)
+        assertEquals(AodGradientDirection.VERTICAL, TickThemeSpec.RingColor.defaultGradient?.direction)
+        assertEquals(
+            listOf(
+                TickThemeSpec.Size,
+                TickThemeSpec.ClockColor,
+                TickThemeSpec.RingColor,
+                TickThemeSpec.DateColor,
+                TickThemeSpec.NotificationsColor,
+                TickThemeSpec.BatteryColor,
+                TickThemeSpec.MediaColor,
+            ),
+            spec.options,
+        )
+    }
     // TODO(big-overlap): test riêng của chủ đề
 
     // Khung xem trước dùng giờ mẫu; chỉ chủ đề có chuyển động theo giờ thật như app mẫu (liveThemes: La bàn, Bán nguyệt, chấm giây của Gợn
@@ -216,6 +252,7 @@ class AodThemeSpecTest {
             AodThemeValue.HALF_MOON,
             AodThemeValue.RIPPLE,
             // TODO(coum-face): thêm nếu chủ đề chạy theo giờ thật ở xem trước
+            AodThemeValue.TICK,
             // TODO(big-overlap): thêm nếu chủ đề chạy theo giờ thật ở xem trước
         )
         AodThemeValue.entries.forEach { theme ->

@@ -46,6 +46,7 @@ import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.gradientlin
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.halfmoon.AodHalfMoonMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.ripple.AodRippleMedia
 // TODO(coum-face): import trình phát
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.tick.AodTickMedia
 // TODO(big-overlap): import trình phát
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.capsule.AodCapsuleMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.card.AodCardMedia
@@ -96,6 +97,7 @@ fun AodMediaControls(
                 AodThemeValue.GRADIENT_LINE -> AodGradientLineMedia(media = target, config = theme.config, onIntent = onIntent)
                 AodThemeValue.RIPPLE -> AodRippleMedia(media = target, config = theme.config, onIntent = onIntent)
                 // TODO(coum-face): nhánh trình phát
+                AodThemeValue.TICK -> AodTickMedia(media = target, config = theme.config, onIntent = onIntent)
                 // TODO(big-overlap): nhánh trình phát
             }
         }

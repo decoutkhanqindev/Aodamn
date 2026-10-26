@@ -16,6 +16,7 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.jersey.JerseyThe
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.pebble.PebbleThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.ripple.RippleThemeSpec
 // TODO(coum-face): import spec
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.tick.TickThemeSpec
 // TODO(big-overlap): import spec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.tower.TowerThemeSpec
 
@@ -40,6 +41,7 @@ enum class AodThemeValue(
     GRADIENT_LINE(id = "gradient_line", nameRes = R.string.theme_gradient_line, spec = GradientLineThemeSpec),
     RIPPLE(id = "ripple", nameRes = R.string.theme_ripple, spec = RippleThemeSpec),
     // TODO(coum-face): mục chủ đề
+    TICK(id = "tick", nameRes = R.string.theme_tick, spec = TickThemeSpec),
     // TODO(big-overlap): mục chủ đề
     ;
 

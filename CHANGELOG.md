@@ -8,6 +8,39 @@ ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, 
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
 <!-- TODO(coum-face): mục CHANGELOG của chủ đề -->
+## [Chưa phát hành] – 2026-10-26 – Chủ đề Nhịp giây
+
+Build được, unit test pass (thêm test chặn Nhịp giây có lại khối đã bỏ hay thiếu tuỳ chọn của app mẫu; test nội dung thông báo và chạy theo giờ
+thật ở khung xem trước cho phép Nhịp giây), `tools/check-rules.sh` ra 0 vi phạm, thư mục các chủ đề cũ không đổi dòng nào. Chưa test trên máy.
+
+### Thêm
+
+- Chủ đề Nhịp giây (Coum Face Clock của Muviz Edge, số đo lấy từ `CoumTick` và layout `oct23_screen_layout` dịch ngược; mock duyệt trước khi
+  code): vòng 60 vạch từ 0,8 tới 0,9 nửa cạnh ngắn, nét 0,007, trôi theo chiều kim 6°/giây theo giờ thật mỗi khung hình, cả ở khung xem trước
+  (`isLiveInPreview`); gradient của vòng đứng yên theo màn nên vạch đổi màu khi trôi qua; vòng mờ dần ở trên / dưới như hai vùng tròn của app
+  mẫu; chấm tròn có số giây ở mép phải vòng. Giờ Google Sans Regular (72sp × cỡ trên màn 393dp, tính theo nửa cạnh ngắn) giãn 0,02em, ngày
+  "EEE, dd MMM" in hoa giãn 0,12em ở giữa vòng; khung xem trước chạy theo giờ thật thì giờ cũng là giờ thật. Bỏ trạng thái tiết kiệm của app mẫu
+  (vòng dừng, ẩn chấm giây) để vòng luôn chạy (user chọn).
+- Làm hơn app mẫu: vùng mờ và chấm giây chỉ xoá vạch trên lớp riêng (`BlendMode.DstOut` / `Clear`) thay vì phủ đen nên ảnh nền vẫn thấy;
+  gradient của vòng theo cả 4 hướng + đảo chiều (app mẫu chỉ dọc); chữ trình phát mờ khi dừng nhạc.
+- Bố cục (user duyệt): hàng icon thông báo và thông báo mới nhất (icon + "TIÊU ĐỀ: NỘI DUNG" in hoa, chạy chữ một lần, thông báo mới trượt
+  xuống từ trên) ở trên, trình phát (lùi · tên bài / nghệ sĩ in hoa giãn chữ, nghệ sĩ tối hơn 30% · tới, chạm tên để phát / dừng, đổi bài thì
+  tên trượt lên) và dòng pin ở dưới, cùng cách mép 70dp như khối dưới của layout mẫu; app mẫu dồn hết xuống dưới và đổi qua lại giữa dòng
+  pin, thông báo mới, trình phát theo hẹn giờ, bên mình hiện cùng lúc. Thời tiết (khối dùng chung) treo dưới ngày, không dời giờ. Màn ngang (app
+  mẫu dùng chung layout dọc nên vòng tính theo bề ngang chỉ còn hai cung lớn sát mép): vòng giữa màn cỡ như màn dọc, thông báo trái, pin phải,
+  có nhạc thì trình phát ngay trên dòng pin.
+- Tuỳ chọn đủ như app mẫu: cỡ 55–90% (mặc định 70%, chỉ đổi giờ và ngày), màu vòng, màu đồng hồ (giờ + chấm giây); màu điều khiển tách thành
+  màu ngày (mặc định màu đồng hồ tối hơn 30% như app mẫu), thông báo, pin, nhạc. Mặc định bắt mắt: vòng gradient Tropic dọc (cam vàng → xanh
+  ngọc → cam đỏ, bộ có sẵn chưa chủ đề nào dùng làm mặc định; Sunset của app mẫu Dải màu đã dùng), giờ GreyE0. Màu nào cũng tô được gradient.
+- Nhịp giây chỉ có ngày, thời tiết, pin, thông báo (kèm thông báo mới nhất, `hasNotificationContent = true`), nhạc: ghi nhớ, sự kiện, nét vẽ
+  không có chỗ đặt cân quanh vòng ở cả dọc lẫn ngang.
+- `tools/mockups/aod_landscape_mockups.py` có nhóm khung của Nhịp giây (màu vòng và cỡ, bốn khung dọc, bốn khung ngang kèm khung so với app
+  mẫu ở màn ngang; khung D1 và N1 chạy theo giờ thật của máy xem mock).
+
+### Thay đổi
+
+- Chỉ thêm, không đổi chủ đề đang có: mục `TICK` ở `AodThemeValue`, nhánh `when` ở `AodPortrait` / `AodLandscape` / `AodMediaControls`, chuỗi
+  `theme_tick`, `theme_color_ring` và mẫu định dạng `aod_tick_*`, test ở `AodThemeSpecTest`; không thêm màu, font, icon.
 <!-- TODO(big-overlap): mục CHANGELOG của chủ đề -->
 
 ## [Chưa phát hành] – 2026-10-21 – Chủ đề Gợn sóng

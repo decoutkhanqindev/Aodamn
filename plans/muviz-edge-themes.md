@@ -83,7 +83,7 @@ text view chung) hoặc font dùng trong code; "chữ (font layout)" nghĩa là 
 | 27 | Jul23 | Nothing(2) | Clock Size, Theme Color | Clock, Date, Notification, Controls, Battery Status | chữ: ndot47 | font độc quyền | chưa có |
 | 28 | Aug23 | Bullet List | Clock Size, Theme Color | Clock, Date, Battery Status, Notification, Controls | Aug23Clock | – | **Chuỗi** (`CHAIN`) |
 | 29 | Sep23 | Gradient Line Clock | Clock Size, Dash Color, Theme Color | Position, Clock, Battery Status, Notification, Controls | Sep23Clock | – | **Dải màu** (`GRADIENT_LINE`) |
-| 30 | Oct23 | Coum Face Clock ⭐ | Clock Size, Ring Color, Clock Color, Controls Color | – | CoumTick | – | chưa có |
+| 30 | Oct23 | Coum Face Clock ⭐ | Clock Size, Ring Color, Clock Color, Controls Color | – | CoumTick | – | **Nhịp giây** (`TICK`) |
 | 31 | Nov23 | Space Mono | Clock Size, Hour Color, Minute Color, Theme Color | Date, Notification, Controls | chữ (font layout) | – | chưa có |
 | 32 | Dec23 | Flex Round | Clock Style, Color 1, Color 2, Clock Size | – | chữ (font layout) | – | **Viên nang** (`CAPSULE`) |
 | 33 | Jan24 | Dual Timezone | Time Zone, Clock Style, Color 1, Color 2 | – | SimpleAnalogClock | chọn múi giờ | chưa có |
@@ -150,8 +150,13 @@ mỗi phút (`AodViewModel`), nên phần chạy theo giây của app mẫu ph�
   ngày "E  dd" Rubik Medium uốn theo nửa trên đĩa, kim giờ / phút dày đầu tròn, chấm giây chạy vòng; hàng icon / thông báo mới (icon trong
   vòng tròn màu) ở trên, thẻ nhạc bo tròn có ảnh bìa (vuốt để chuyển bài) + nút phát tròn và chữ pin ở dưới; trạng thái tiết kiệm đổi đĩa sang
   viền, ẩn chấm giây. Một layout cho cả màn ngang (mặt số còn rất nhỏ) nên bên mình tự dựng màn ngang.
-- **30 · Coum Face** ⭐ (`CoumTick` + `oct23_screen_layout`): giờ số "09:50" 50sp + ngày 16sp ở giữa, vòng 60 vạch phủ màn xoay
-  theo **giây**, số giây trong chấm tròn ở mép phải, tối dần trên / dưới; màu vòng có thể là gradient. Nét đặc trưng là giây.
+- ~~**30 · Coum Face**~~ ⭐ (`CoumTick` + `oct23_screen_layout`, đã làm thành Nhịp giây 2026-10-26): giờ "HH:mm" Product Sans 72sp × cỡ
+  (55–90, mặc định 70) + ngày "EEE, dd MMM" in hoa 23sp × cỡ ở giữa, vòng 60 vạch 0,8–0,9 nửa bề ngang trôi theo chiều kim 6°/giây (gradient
+  dọc đứng yên theo màn, mặc định #4158D0 → #C850C0 → #FFCC70 từ dưới lên), hai vùng tròn đen mờ dần làm vòng chìm trên / dưới, số giây trong
+  chấm tròn ở mép phải (nền đen, viền + số theo màu đồng hồ); dòng pin · icon thông báo cách đáy 60dp, thông báo mới và trình phát (lùi · tên
+  bài / nghệ sĩ · tới) thay chỗ dòng đó theo hẹn giờ; trạng thái tiết kiệm dừng vòng, ẩn chấm giây. Một layout cho cả màn ngang (vòng tính theo
+  bề ngang chỉ còn hai cung lớn sát mép) nên bên mình tự dựng màn ngang; bỏ trạng thái tiết kiệm, hiện cùng lúc thông báo / trình phát / pin
+  (user chọn).
 - **39 · Nothing Wide** (`NothingWideClock`): khung chữ nhật bo góc sát mép, 60 vạch là tia cắt trong dải (như Vành), kim có
   bóng, kim giây đỏ: gần như cùng cấu trúc với Vành, không làm tiếp ngay.
 - **23 · Big Overlap** (`BigPixel2Clock`): bốn chữ số lớn lưới 2×2 (giờ trên, phút dưới) chồng mép lên nhau, mỗi số một màu, kiểu

@@ -63,6 +63,7 @@
     <string name="theme_gradient_line">Dải màu</string>
     <string name="theme_ripple">Gợn sóng</string>
     <!-- TODO(coum-face): tên chủ đề -->
+    <string name="theme_tick">Nhịp giây</string>
     <!-- TODO(big-overlap): tên chủ đề -->
     <string name="aod_jersey_date_first_pattern">dd</string>
     <string name="aod_jersey_date_second_pattern">MM</string>
@@ -115,6 +116,7 @@
     <string name="theme_color_face">Mặt số</string>
     <string name="theme_color_media_background">Nền thẻ nhạc</string>
     <!-- TODO(coum-face): nhãn màu / tuỳ chọn -->
+    <string name="theme_color_ring">Vòng</string>
     <!-- TODO(big-overlap): nhãn màu / tuỳ chọn -->
     <string name="theme_opt_digit_style">Kiểu số</string>
     <string name="theme_opt_card_background">Nền thẻ</string>

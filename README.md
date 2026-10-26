@@ -1023,6 +1023,21 @@ chọn theo các khối đang có dữ liệu, dùng chung cho mọi chủ đề
     Xoay ngang: mặt số giữa màn to như màn dọc; không nhạc: thông báo trái, thời tiết + pin phải; phát nhạc: thông báo, thời tiết,
     pin trái, trình phát phải, đổi bằng mờ chéo. Trên máy Xiaomi: chữ là Google Sans. Các chủ đề khác không đổi gì.
 <!-- TODO(coum-face): bước test trên máy của chủ đề (25p / 25q) -->
+25p. Chủ đề Nhịp giây: tab AOD › Chủ đề › Nhịp giây: thẻ ở lưới là vòng 60 vạch mảnh quanh giờ "08:30" xám sáng và ngày hôm nay
+    in hoa giãn chữ xám tối hơn (vd "TH 2, 26 THG 10"), vạch tô gradient Tropic (cam vàng phía trên, xanh ngọc hai bên, cam đỏ phía dưới), mờ dần ở
+    đỉnh và đáy; chấm tròn có số giây ở mép phải vòng; thẻ ở tab AOD đứng yên, khung xem trước ở màn chủ đề, Tùy chỉnh thì vòng trôi
+    theo chiều kim và số giây chạy theo giờ thật (giờ trong khung cũng là giờ thật). Áp dụng rồi khóa máy: vòng trôi mượt mỗi khung
+    hình, một vạch mỗi giây, vạch đổi màu khi trôi qua (gradient đứng yên); số giây trong chấm đổi mỗi giây; sang phút mới giờ đổi đúng
+    lúc số giây về 00. Đặt ảnh nền: vùng mờ trên / dưới và chấm giây không phủ đen lên ảnh (chỉ vạch mờ đi, ảnh thấy qua chấm giây).
+    Trên cùng là hàng icon thông báo; bật nội dung thông báo thì dưới đó là icon + "TIÊU ĐỀ: NỘI DUNG" in hoa, dài thì chạy chữ một
+    lần, thông báo mới trượt xuống từ trên. Bật thời tiết: một dòng dưới ngày, giờ không dời chỗ. Đáy là pin; phát nhạc: trình phát
+    ngay trên dòng pin, lùi · tên bài / nghệ sĩ in hoa giãn chữ (nghệ sĩ tối hơn) · tới, chạm tên là phát / dừng (dừng thì chữ mờ),
+    đổi bài thì tên trượt lên. Để AOD lâu hay phòng tối: vòng vẫn trôi, chấm giây vẫn hiện (không có chế độ tiết kiệm như app mẫu).
+    Sửa: tab Đồng hồ (Cỡ 55–90%: giờ và ngày to / nhỏ, vòng giữ nguyên; màu đồng hồ: giờ + chấm giây; màu vòng: chọn hướng gradient
+    Ngang thì cung trái một màu, cung phải một màu, một màu thì cả vòng một màu), Ngày, Pin & thông báo (màu thông báo, màu pin),
+    Nhạc; màu nào cũng có tab Gradient. Tắt ngày: giờ về giữa vòng. Tùy chỉnh khi đang dùng Nhịp giây: không có tab Ghi chú, Sự kiện,
+    Nét vẽ. Xoay ngang: vòng giữa màn cỡ như màn dọc, vẫn trôi; thông báo trái, pin phải, phát nhạc thì trình phát ngay trên pin.
+    Trên máy Xiaomi: chữ là Google Sans. Các chủ đề khác không đổi gì.
 <!-- TODO(big-overlap): bước test trên máy của chủ đề (25p / 25q) -->
 25f. Overlay mới (không còn hộp thoại / nút Material): mọi sheet có thanh kéo dải màu mint → xanh → tím; mép trên màn
     hình không có viền sáng khi sheet hiện. Đặt lại (tab AOD › Chủ đề, Tùy chỉnh, màn chủ đề): sheet có hình điện thoại với huy hiệu mũi tên xoay, nút

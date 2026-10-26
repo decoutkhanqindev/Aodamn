@@ -70,6 +70,7 @@
     <string name="theme_gradient_line">Gradient line</string>
     <string name="theme_ripple">Ripple</string>
     <!-- TODO(coum-face): tên chủ đề -->
+    <string name="theme_tick">Tick</string>
     <!-- TODO(big-overlap): tên chủ đề -->
     <string name="theme_in_use">In use</string>
     <string name="theme_edit">Edit</string>
@@ -119,6 +120,7 @@
     <string name="theme_color_face">Dial</string>
     <string name="theme_color_media_background">Music card</string>
     <!-- TODO(coum-face): nhãn màu / tuỳ chọn -->
+    <string name="theme_color_ring">Ring</string>
     <!-- TODO(big-overlap): nhãn màu / tuỳ chọn -->
     <string name="theme_opt_digit_style">Digit style</string>
     <string name="theme_opt_card_background">Card background</string>
@@ -387,6 +389,10 @@
     <string name="aod_gradient_line_notification" translatable="false">%1$s: %2$s</string>
     <string name="aod_ripple_date_pattern" translatable="false">E  dd</string>
     <!-- TODO(coum-face): mẫu định dạng (translatable="false") -->
+    <string name="aod_tick_time_24h" translatable="false">HH:mm</string>
+    <string name="aod_tick_time_12h" translatable="false">hh:mm</string>
+    <string name="aod_tick_date_pattern" translatable="false">EEE, dd MMM</string>
+    <string name="aod_tick_notification" translatable="false">%1$s: %2$s</string>
     <!-- TODO(big-overlap): mẫu định dạng (translatable="false") -->
     <string name="aod_hint">Double-tap to exit</string>
     <string name="aod_battery" translatable="false">%1$d%%</string>

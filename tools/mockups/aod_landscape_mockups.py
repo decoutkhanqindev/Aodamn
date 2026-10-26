@@ -2339,6 +2339,220 @@ ripple = [
 
 
 # TODO(coum-face): mục mock của chủ đề (hàm vẽ + danh sách khung)
+# ================================================================== NHỊP GIÂY (Coum Face Clock của Muviz Edge; số đo lấy từ CoumTick và layout oct23_screen_layout (chỉ
+# có bản dọc) trong APK, không từ ảnh chụp). u = nửa cạnh ngắn, L = nửa cạnh dài. 60 vạch từ 0,8u tới 0,9u nét 0,007u xoay theo chiều kim 6°/giây
+# theo giờ thật; gradient của vòng trải từ tâm − 0,7u tới tâm + 0,7u, đứng yên theo màn (vạch đổi màu khi trôi qua); hai vùng tròn bán kính u ở
+# tâm ± 0,7L làm vòng chìm dần trên / dưới (mất hẳn trong 0,65u); chấm giây ở tâm + 0,84u bên phải, bán kính 0,12u, viền 0,007u + số giây 0,115u
+# Google Sans Regular theo màu giờ, khoét vòng. Giờ Google Sans Regular 0,3664u × cỡ (72 sp × cỡ trên màn 393 dp) giãn 0,02 em, ngày in hoa
+# 0,117u × cỡ giãn 0,12 em, cụm giờ + ngày giữa vòng; thời tiết treo dưới ngày. Dòng pin cách đáy 60 dp (icon 15 dp, chữ 14 sp giãn 0,05), trình
+# phát ngay trên (lùi 40 dp · tên 13 sp Bold / nghệ sĩ 11,5 sp in hoa giãn 0,25 tối hơn 30% · tới 40 dp, lề 40 dp); hàng icon thông báo (17 dp
+# cách 10 dp) + thông báo mới nhất (icon 17 dp + chữ 13 sp in hoa giãn 0,1) đối xứng ở trên. Màn ngang: vòng giữa màn cỡ như màn dọc, thông báo
+# trái, pin (+ trình phát) phải.
+TK_TROPIC = ("#F0AB32", "#07A7B9", "#DD4B1C")  # GradientSwatchValue.TROPIC hướng dọc: màu nhấn đề xuất, chưa chủ đề nào dùng
+TK_SUNSET = ("#FFCC70", "#C850C0", "#4158D0")  # mặc định của app mẫu (trùng Dải màu)
+TK_LILAC_SEA = ("#D8B5FF", "#63A4B6", "#1EAE98")
+TK_COLORS = {"ring": TK_TROPIC, "dir": "v", "clock": "#E0E0E0", "date": "#9A9A9A", "noti": "#E0E0E0", "battery": "#E0E0E0",
+             "media": "#E0E0E0", "weather": G}
+TK_REF = {**TK_COLORS, "ring": TK_SUNSET, "clock": "#B39DDB", "date": rp_dark("#B39DDB", .3), "noti": "#B39DDB", "battery": "#B39DDB",
+          "media": "#B39DDB"}
+TK_SEA = {**TK_COLORS, "ring": TK_LILAC_SEA, "dir": "h", "clock": "#D8B5FF", "date": rp_dark("#D8B5FF", .3)}
+TK_MONO = {**TK_COLORS, "ring": ("#9A9A9A",)}
+TK_DATE = "TH 2, 26 THG 10"
+TK_ASC, TK_LINE = 0.966, 1.252  # Google Sans: đỉnh dòng → đường gốc, cao dòng (em)
+TK_LIVE = []
+TK_N = [0]
+
+
+def tk_ticks_def():
+    """60 vạch quanh gốc toạ độ ở u = 100 (dùng lại bằng <use> + scale), nét trắng để làm mặt nạ."""
+    d = ""
+    for i in range(60):
+        a = math.radians(6 * i)
+        sx, sy = math.sin(a), -math.cos(a)
+        d += f"M{f(sx * 80)},{f(sy * 80)}L{f(sx * 90)},{f(sy * 90)}"
+    return f'<path id="tkt" d="{d}" fill="none" stroke="#fff" stroke-width=".7"/>'
+
+
+def tk_id():
+    TK_N[0] += 1
+    return f"tk{TK_N[0]}"
+
+
+def tk_dial(cx, cy, u, big, hh=10, mm=8, ss=42, colors=TK_COLORS, size=70, date=True, weather=False, live=False, tu=None):
+    """Vòng 60 vạch (tô qua mặt nạ để gradient đứng yên khi vạch xoay), hai vùng chìm ở tâm ± 0,7 big, chấm giây khoét vòng, giờ + ngày giữa
+    vòng (cỡ chữ theo tu, mặc định u)."""
+    gid = tk_id()
+    ring, s = colors["ring"], ""
+    if len(ring) > 1:
+        v = colors["dir"] == "v"
+        grad = gl_grad(gid + "g", cx if v else cx - .7 * u, cy - .7 * u if v else cy, cx if v else cx + .7 * u, cy + .7 * u if v else cy, ring)
+        paint = f"url(#{gid}g)"
+    else:
+        grad, paint = "", ring[0]
+    bx, br = cx + .84 * u, .12 * u
+    rid = f' id="{gid}r"' if live else ""
+    s += (f'<defs>{grad}<mask id="{gid}t" maskUnits="userSpaceOnUse" x="{f(cx - u)}" y="{f(cy - u)}" width="{f(2 * u)}" height="{f(2 * u)}">'
+          f'<use href="#tkt"{rid} transform="translate({f(cx)} {f(cy)}) rotate({f(ss * 6)}) scale({f(u / 100)})"/></mask>'
+          f'<radialGradient id="{gid}d"><stop offset=".65" stop-color="#000"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>'
+          f'<mask id="{gid}f" maskUnits="userSpaceOnUse" x="{f(cx - u)}" y="{f(cy - u)}" width="{f(2 * u)}" height="{f(2 * u)}">'
+          f'<rect x="{f(cx - u)}" y="{f(cy - u)}" width="{f(2 * u)}" height="{f(2 * u)}" fill="#fff"/>'
+          f'<circle cx="{f(cx)}" cy="{f(cy - .7 * big)}" r="{f(u)}" fill="url(#{gid}d)"/>'
+          f'<circle cx="{f(cx)}" cy="{f(cy + .7 * big)}" r="{f(u)}" fill="url(#{gid}d)"/>'
+          f'<circle cx="{f(bx)}" cy="{f(cy)}" r="{f(br)}" fill="#000"/></mask></defs>'
+          f'<g mask="url(#{gid}f)"><rect x="{f(cx - u)}" y="{f(cy - u)}" width="{f(2 * u)}" height="{f(2 * u)}" fill="{paint}" '
+          f'mask="url(#{gid}t)"/></g>')
+    c = colors["clock"]
+    s += f'<circle cx="{f(bx)}" cy="{f(cy)}" r="{f(br)}" fill="none" stroke="{c}" stroke-width="{f(.007 * u)}"/>'
+    sec, fs = f"{ss:02d}", .115 * u
+    lo, top, hi, bottom = CP_REG.ink(sec, fs)
+    num = CP_REG.text(bx - (lo + hi) / 2, cy - (top + bottom) / 2, sec, fs, c)
+    tu = tu or u
+    ts, ds = .3664 * tu * size / 100, .117 * tu * size / 100
+    h = TK_LINE * ts + (TK_LINE * ds if date else 0)
+    gt = cy - h / 2
+    clock = cp_text(CP_REG, cx, gt + TK_ASC * ts, f"{hh:02d}:{mm:02d}", ts, c, "middle", .02)
+    if live:
+        num = num.replace("<text ", f'<text id="{gid}s" ', 1)
+        clock = clock.replace("<text ", f'<text id="{gid}h" ', 1)
+        TK_LIVE.append((gid, cx, cy, u))
+    s += num + clock
+    if date:
+        s += cp_text(CP_REG, cx, gt + TK_LINE * ts + TK_ASC * ds, TK_DATE, ds, colors["date"], "middle", .12)
+    if weather:
+        s += rp_weather(cx, cy + h / 2 + 18, colors)
+    return s
+
+
+def tk_live_script():
+    """Khung live: vạch xoay 6°/giây mượt từng khung hình, số giây và giờ theo đồng hồ của máy xem mock."""
+    frames = ",".join(f'["{lid}",{f(cx)},{f(cy)},{f(u)}]' for lid, cx, cy, u in TK_LIVE)
+    return ('<script>(function(){var c=[' + frames + '];function p(n){return(n<10?"0":"")+n}'
+            'function t(){var d=new Date(),s=d.getSeconds()+d.getMilliseconds()/1e3;'
+            'c.forEach(function(e){var id=e[0],x=e[1],y=e[2],u=e[3],r=document.getElementById(id+"r");'
+            'if(r)r.setAttribute("transform","translate("+x+" "+y+") rotate("+(6*s).toFixed(2)+") scale("+u/100+")");'
+            '[["s",p(d.getSeconds()),x+.84*u],["h",p(d.getHours())+":"+p(d.getMinutes()),x]].forEach(function(k){'
+            'var l=document.getElementById(id+k[0]);if(!l||l.textContent===k[1])return;l.textContent=k[1];var b=l.getBBox();'
+            'l.setAttribute("x",(k[2]-b.width/2).toFixed(1));});});requestAnimationFrame(t);}t();})();</script>')
+
+
+def tk_icons(cx, cy, n, color):
+    g, gap = 17, 10
+    w = n * g + (n - 1) * gap
+    shapes = icon_shapes(color)
+    return "".join(shapes[i % 3](cx - w / 2 + i * (g + gap), cy - g / 2, g) for i in range(n))
+
+
+def tk_latest(cx, cy, w, color, text="MAI: TỐI NAY ĐI ĂN NHÉ"):
+    """Thông báo mới nhất như notify_lt: icon 17 dp, cách 10 dp, chữ 13 sp in hoa giãn 0,1 (dài thì chạy chữ; mock cắt "…")."""
+    fs, ls = 13, .1
+    while cp_width(CP_REG, text, fs, ls) > w - 27 and len(text) > 1:
+        text = text[:-2].rstrip() + "…"
+    x = cx - (27 + cp_width(CP_REG, text, fs, ls)) / 2
+    return icon_shapes(color)[0](x, cy - 8.5, 17) + cp_text(CP_REG, x + 27, cy + .34 * fs, text, fs, color, ls=ls)
+
+
+def tk_notifications(cx, cy, colors, n=3, latest=False, w=313, center=False):
+    """Hàng icon rồi thông báo mới nhất cách 12 dp; cy là hàng đầu (center: cy là giữa cả nhóm)."""
+    rows = ([lambda y: tk_icons(cx, y, n, colors["noti"])] if n else []) + ([lambda y: tk_latest(cx, y, w, colors["noti"])] if latest else [])
+    y = cy - (len(rows) - 1) * 14.5 if center else cy
+    s = ""
+    for draw in rows:
+        s += draw(y)
+        y += 29
+    return s
+
+
+def tk_battery(cx, cy, colors, charging=False):
+    """Dòng pin như battery_lt: icon 15 dp, cách 5 dp chữ 14 sp giãn 0,05."""
+    g, fs, ls, color = 15.0, 14.0, .05, colors["battery"]
+    x = cx - (20 + cp_width(CP_REG, "72%", fs, ls)) / 2
+    return bz_battery(x + (15 - .522 * g) / 2, cy - g / 2, g, color, charging) + cp_text(CP_REG, x + 20, cy + .34 * fs, "72%", fs, color, ls=ls)
+
+
+def tk_player(cx, cy, w, colors, paused=False, title="THAT COOL SONG"):
+    """media_widget_lt: nút lùi / tới 40 dp (icon 12 dp), tên Bold 13 sp in hoa giãn 0,25, cách 8 dp nghệ sĩ 11,5 sp in hoa giãn 0,25 tối hơn
+    30%; chạm tên để phát / dừng, dừng thì chữ mờ 0,6 (nâng cấp như La bàn)."""
+    color, op, x, s = colors["media"], .6 if paused else 1.0, cx - w / 2, ""
+    for bx, d in ((x + 20, -1), (x + w - 20, 1)):
+        s += (f'<path d="M{f(bx - 4 * d)},{f(cy - 6)} L{f(bx + 3 * d)},{f(cy)} L{f(bx - 4 * d)},{f(cy + 6)} Z" fill="{color}" '
+              f'stroke="{color}" stroke-width="1" stroke-linejoin="round"/>'
+              f'<rect x="{f(bx + 4 * d - (1.6 if d < 0 else 0))}" y="{f(cy - 6)}" width="1.6" height="12" rx=".8" fill="{color}"/>')
+    t = title
+    while cp_width(CP_BOLD, t, 13, .25) > w - 100 and len(t) > 1:
+        t = t[:-2].rstrip() + "…"
+    top = cy - (TK_LINE * 13 + 8 + TK_LINE * 11.5) / 2
+    s += cp_text(CP_BOLD, cx, top + TK_ASC * 13, t, 13, color, "middle", .25, op)
+    return s + cp_text(CP_REG, cx, top + TK_LINE * 13 + 8 + TK_ASC * 11.5, "IT'S ARTIST", 11.5, rp_dark(color, .3), "middle", .25, op)
+
+
+def tk_portrait(hh=10, mm=8, ss=42, colors=TK_COLORS, size=70, date=True, weather=False, media=False, paused=False, latest=False, n=3,
+                charging=False, live=False):
+    s = tk_notifications(PW / 2, 78.5, colors, n, latest)
+    s += tk_dial(PW / 2, PH / 2, PW / 2, PH / 2, hh, mm, ss, colors, size, date, weather, live)
+    if media:
+        s += tk_player(PW / 2, PH - 78.5 - 46.5, PW - 80, colors, paused)
+    return s + tk_battery(PW / 2, PH - 78.5, colors, charging)
+
+
+def tk_landscape(hh=10, mm=8, ss=42, colors=TK_COLORS, size=70, date=True, weather=False, media=False, paused=False, latest=False, n=3,
+                 charging=False, live=False):
+    """Vòng giữa màn cỡ như màn dọc; hai vùng bên rộng 209 dp đối xứng qua tâm (bên phải bắt đầu sau chấm giây): thông báo trái, pin phải,
+    có nhạc thì trình phát ngay trên dòng pin (cả nhóm giữa chiều cao)."""
+    s = tk_dial(W / 2, CY, H / 2, W / 2, hh, mm, ss, colors, size, date, weather, live)
+    lx, rx, zone = 128.5, 744.5, 209
+    s += tk_notifications(lx, CY, colors, n, latest, zone, center=True)
+    if media:
+        return s + tk_player(rx, CY - 23.25, zone, colors, paused) + tk_battery(rx, CY + 23.25, colors, charging)
+    return s + tk_battery(rx, CY, colors, charging)
+
+
+def tk_reference_landscape():
+    """App mẫu ở màn ngang: dùng chung layout dọc, vòng và chấm giây tính theo nửa bề ngang (chấm giây to 52 dp), hai vùng chìm ở tâm ± 0,7 nửa
+    chiều cao nên chỉ còn hai cung lớn sát mép; giờ, ngày, dòng pin giữ cỡ sp như màn dọc."""
+    return tk_dial(W / 2, CY, W / 2, H / 2, colors=TK_REF, tu=PW / 2) + tk_battery(W / 2, H - 78.5, TK_REF)
+
+
+def tk_strip():
+    k, s = 0.4, ""
+    for i, (label, kw) in enumerate((("Mặc định: Tropic dọc", {}),
+                                      ("Như app mẫu", {"colors": TK_REF, "hh": 9, "mm": 50, "ss": 17}),
+                                      ("Gradient ngang", {"colors": TK_SEA, "hh": 4, "mm": 38, "ss": 5}),
+                                      ("Một màu, cỡ 90, tắt ngày", {"colors": TK_MONO, "size": 90, "date": False, "hh": 21, "mm": 47,
+                                                                          "ss": 29}))):
+        x = 36 + i * 212
+        s += (f'<g transform="translate({x} 14) scale({k})"><clipPath id="tkc{i}"><rect width="{PW}" height="{PH}" rx="34"/></clipPath>'
+              f'<rect width="{PW}" height="{PH}" rx="34" fill="#000" stroke="#333" stroke-width="2"/><g clip-path="url(#tkc{i})">')
+        s += tk_portrait(**kw) + "</g></g>" + txt(x + PW * k / 2, 14 + PH * k + 22, label, 13, DM, 400, "middle")
+    return (f'<p style="font-size:13px;color:var(--text-secondary);margin:1.25rem 0 6px">Màu vòng và cỡ (màu nào cũng có thể là gradient, '
+            f'gradient của vòng theo 4 hướng + đảo chiều)</p>'
+            f'<svg viewBox="0 0 {W} 400" width="100%" role="img" aria-label="Màu và cỡ" '
+            f'style="display:block;font-family:\'Plus Jakarta Sans\',sans-serif" fill="{G}">'
+            f'<rect width="{W}" height="400" rx="20" fill="#111"/>{s}</svg>')
+
+
+tick = [
+    CP_FONTS,
+    tk_strip(),
+    '<div style="font-size:0">',
+    frame_portrait("D1 · Dọc, mặc định (cũng là thẻ ở lưới chủ đề): vòng trôi theo chiều kim 6°/giây và số giây chạy theo giờ thật",
+                   tk_portrait(live=True)),
+    frame_portrait("D2 · Dọc, 08:30, thông báo mới nhất trên, thời tiết dưới ngày, đang phát nhạc",
+                   tk_portrait(8, 30, 12, weather=True, media=True, latest=True, n=2)),
+    frame_portrait("D3 · Dọc, 21:47, đang sạc, nhạc đang dừng (chữ mờ), một thông báo",
+                   tk_portrait(21, 47, 33, charging=True, media=True, paused=True, n=1)),
+    frame_portrait("D4 · Dọc, 23:10, màu như app mẫu, cỡ 90%, không thông báo",
+                   tk_portrait(23, 10, 51, TK_REF, 90, n=0)),
+    '</div>',
+    frame("N1 · Ngang, không nhạc (live): thông báo trái, pin phải; vòng giữa màn cỡ như màn dọc, thời tiết dưới ngày",
+          tk_landscape(weather=True, live=True)),
+    frame("N2 · Ngang, 08:30, đang phát nhạc: thông báo + thông báo mới nhất trái; trình phát + pin phải",
+          tk_landscape(8, 30, 12, media=True, latest=True, n=2)),
+    frame("N3 · Ngang, 21:47, màu như app mẫu, đang sạc, nhạc đang dừng", tk_landscape(21, 47, 33, TK_REF, media=True, paused=True, charging=True,
+                                                                                  n=1)),
+    frame("N4 · Để so: app mẫu ở màn ngang dùng chung layout dọc, vòng tính theo bề ngang nên chỉ còn hai cung lớn sát mép",
+          tk_reference_landscape()),
+]
+tick.append(tk_live_script())
 # TODO(big-overlap): mục mock của chủ đề (hàm vẽ + danh sách khung)
 
 
@@ -2356,6 +2570,7 @@ for name, summary, defs, frames in [
     ("w_gradient_line", "Chủ đề Dải màu (Gradient Line Clock): màu vạch, bốn khung dọc và bốn khung ngang", "", gradient_line),
     ("w_ripple", "Chủ đề Gợn sóng (Android 12): kiểu và màu, bốn khung dọc và bốn khung ngang", "", ripple),
     # TODO(coum-face): dòng ("w_…", …) của chủ đề
+    ("w_tick", "Chủ đề Nhịp giây (Coum Face Clock): màu vòng và cỡ, bốn khung dọc và bốn khung ngang", tk_ticks_def(), tick),
     # TODO(big-overlap): dòng ("w_…", …) của chủ đề
 ]:
     code = widget(summary, defs, frames)
