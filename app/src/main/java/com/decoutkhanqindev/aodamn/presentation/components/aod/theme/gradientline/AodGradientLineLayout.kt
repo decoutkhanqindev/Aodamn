@@ -3,9 +3,7 @@ package com.decoutkhanqindev.aodamn.presentation.components.aod.theme.gradientli
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,26 +13,22 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.aodamn.R
 import com.decoutkhanqindev.aodamn.presentation.components.aod.AodPanelBlock
+import com.decoutkhanqindev.aodamn.presentation.components.aod.block.AodLatestLine
 import com.decoutkhanqindev.aodamn.presentation.components.aod.block.AodStatusLine
 import com.decoutkhanqindev.aodamn.presentation.components.aod.block.aodTint
+import com.decoutkhanqindev.aodamn.presentation.components.aod.block.lineText
 import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.AodAppearanceUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.info.AodNotificationsUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.info.BatteryUiModel
-import com.decoutkhanqindev.aodamn.presentation.model.aod.info.NotificationContentUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodPanelBlockValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeValue
@@ -139,9 +133,12 @@ private fun GradientLineDetails(
     ) {
         AnimatedVisibility(visible = latest != null) {
             if (latest != null) {
-                GradientLineLatest(
-                    latest = latest,
-                    state = state,
+                AodLatestLine(
+                    text = latest.lineText(R.string.aod_gradient_line_notification),
+                    icon = latest.icon,
+                    color = state.appearance.theme.config[GradientLineThemeSpec.NotificationsColor],
+                    brush = state.appearance.theme.config.gradientOf(GradientLineThemeSpec.NotificationsColor)?.toBrush(),
+                    style = GradientLineMetrics.LatestLine,
                     modifier = Modifier.padding(bottom = GradientLineMetrics.LatestGap),
                 )
             }
@@ -191,47 +188,6 @@ private fun GradientLineStatus(state: AodState) {
             glyphHeight = glyph,
             fontFamily = GradientLineThemeSpec.Font,
             brush = notificationsBrush,
-        )
-    }
-}
-
-@Composable
-private fun GradientLineLatest(
-    latest: NotificationContentUiModel,
-    state: AodState,
-    modifier: Modifier = Modifier,
-) {
-    val color = state.appearance.theme.config[GradientLineThemeSpec.NotificationsColor]
-    val brush = state.appearance.theme.config.gradientOf(GradientLineThemeSpec.NotificationsColor)?.toBrush()
-    val text = when {
-        latest.isHidden -> stringResource(R.string.aod_notification_content_hidden)
-        latest.text.isEmpty() -> latest.title
-        else -> stringResource(R.string.aod_gradient_line_notification, latest.title, latest.text)
-    }
-
-    Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Image(
-            bitmap = remember(latest.icon) { latest.icon.asImageBitmap() },
-            contentDescription = null,
-            modifier = Modifier
-                .size(GradientLineMetrics.LatestIcon)
-                .aodTint(brush),
-            colorFilter = ColorFilter.tint(color),
-        )
-
-        Text(
-            text = text,
-            modifier = Modifier
-                .padding(start = GradientLineMetrics.LatestIconGap)
-                .basicMarquee(iterations = 1)
-                .aodTint(brush),
-            color = color,
-            fontSize = GradientLineMetrics.LatestSize,
-            fontFamily = GradientLineThemeSpec.Font,
-            maxLines = 1,
         )
     }
 }

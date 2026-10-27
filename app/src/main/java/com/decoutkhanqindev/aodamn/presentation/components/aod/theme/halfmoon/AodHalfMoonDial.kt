@@ -4,10 +4,7 @@ import android.graphics.Typeface
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.CornerRadius
@@ -27,12 +24,13 @@ import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.layer.GraphicsLayer
 import androidx.compose.ui.graphics.layer.drawLayer
-import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.rememberLiveClockMillis
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.resolveTypeface
 import com.decoutkhanqindev.aodamn.presentation.components.is24HourFormat
 import com.decoutkhanqindev.aodamn.presentation.components.rememberTimeFormatter
 import com.decoutkhanqindev.aodamn.presentation.components.rememberZonedDateTime
@@ -62,15 +60,7 @@ fun AodHalfMoonDial(
     val dialBrush = config.brushOf(HalfMoonThemeSpec.DialColor)
     val is24Hour = is24HourFormat()
     val description = rememberZonedDateTime(nowMillis).format(rememberTimeFormatter())
-    val clockMillis = remember { mutableLongStateOf(System.currentTimeMillis()) }
-
-    if (isLive) {
-        LaunchedEffect(Unit) {
-            while (true) {
-                withFrameMillis { clockMillis.longValue = System.currentTimeMillis() }
-            }
-        }
-    }
+    val clockMillis = rememberLiveClockMillis(isLive)
 
     Spacer(
         modifier = modifier
@@ -185,9 +175,7 @@ fun AodHalfMoonDial(
 
 @Composable
 fun rememberHalfMoonPaints(): HalfMoonPaints {
-    val typeface = LocalFontFamilyResolver.current
-        .resolve(fontFamily = HalfMoonThemeSpec.Font, fontWeight = FontWeight.Normal)
-        .value as? Typeface ?: Typeface.DEFAULT
+    val typeface = resolveTypeface(fontFamily = HalfMoonThemeSpec.Font, fontWeight = FontWeight.Normal, fallback = Typeface.DEFAULT)
     return remember(typeface) { HalfMoonPaints(typeface) }
 }
 

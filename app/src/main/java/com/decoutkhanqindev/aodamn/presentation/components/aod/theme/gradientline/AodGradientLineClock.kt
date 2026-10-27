@@ -20,7 +20,6 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
@@ -33,6 +32,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.min
 import com.decoutkhanqindev.aodamn.R
 import com.decoutkhanqindev.aodamn.presentation.components.aod.block.AodWeather
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.resolveTypeface
 import com.decoutkhanqindev.aodamn.presentation.components.is24HourFormat
 import com.decoutkhanqindev.aodamn.presentation.components.rememberFormatter
 import com.decoutkhanqindev.aodamn.presentation.components.rememberTimeFormatter
@@ -206,9 +206,7 @@ private fun GradientLineDateRow(
 
 @Composable
 private fun rememberGradientLinePaints(): GradientLinePaints {
-    val typeface = LocalFontFamilyResolver.current
-        .resolve(fontFamily = GradientLineThemeSpec.Font, fontWeight = FontWeight.Normal)
-        .value as? Typeface ?: Typeface.DEFAULT
+    val typeface = resolveTypeface(fontFamily = GradientLineThemeSpec.Font, fontWeight = FontWeight.Normal, fallback = Typeface.DEFAULT)
     return remember(typeface) { GradientLinePaints(typeface) }
 }
 

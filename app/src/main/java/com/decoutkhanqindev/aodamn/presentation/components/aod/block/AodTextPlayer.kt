@@ -1,6 +1,5 @@
 package com.decoutkhanqindev.aodamn.presentation.components.aod.block
 
-import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -9,14 +8,11 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.basicMarquee
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.onClick
@@ -39,7 +34,6 @@ import com.decoutkhanqindev.aodamn.presentation.components.onClick
 import com.decoutkhanqindev.aodamn.presentation.model.aod.info.MediaUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodTextPlayerStyle
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodIntent
-import com.decoutkhanqindev.aodamn.presentation.theme.Grey5A
 
 @Composable
 fun AodTextPlayer(
@@ -58,19 +52,22 @@ fun AodTextPlayer(
         label = "AodTextPlayerAlpha",
     )
     val playLabel = stringResource(if (media.isPlaying) R.string.aod_media_pause else R.string.aod_media_play)
+    val buttonModifier = if (style.buttonAlpha < 1f) Modifier.alpha(style.buttonAlpha) else Modifier
 
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        TextPlayerButton(
+        AodPlayerButton(
             iconRes = R.drawable.ic_skip_back_fill,
             contentDescription = stringResource(R.string.aod_media_previous),
             isEnabled = media.canSkipToPrevious,
-            style = style,
             color = color,
             gradient = gradient,
+            size = style.buttonSize,
+            iconSize = style.buttonIconSize,
             onClick = { onIntent(AodIntent.SkipToPreviousTrack) },
+            modifier = buttonModifier,
         )
 
         AnimatedContent(
@@ -120,14 +117,16 @@ fun AodTextPlayer(
             }
         }
 
-        TextPlayerButton(
+        AodPlayerButton(
             iconRes = R.drawable.ic_skip_forward_fill,
             contentDescription = stringResource(R.string.aod_media_next),
             isEnabled = media.canSkipToNext,
-            style = style,
             color = color,
             gradient = gradient,
+            size = style.buttonSize,
+            iconSize = style.buttonIconSize,
             onClick = { onIntent(AodIntent.SkipToNextTrack) },
+            modifier = buttonModifier,
         )
     }
 }
@@ -152,32 +151,4 @@ private fun TextPlayerText(
         letterSpacing = style.letterSpacing,
         maxLines = 1,
     )
-}
-
-@Composable
-private fun TextPlayerButton(
-    @DrawableRes iconRes: Int,
-    contentDescription: String,
-    isEnabled: Boolean,
-    style: AodTextPlayerStyle,
-    color: Color,
-    gradient: Brush?,
-    onClick: () -> Unit,
-) {
-    Box(
-        modifier = Modifier
-            .size(style.buttonSize)
-            .then(if (style.buttonAlpha < 1f) Modifier.alpha(style.buttonAlpha) else Modifier)
-            .then(if (isEnabled) Modifier.onClick(shape = CircleShape, ripple = false, action = onClick) else Modifier),
-        contentAlignment = Alignment.Center,
-    ) {
-        Icon(
-            painter = painterResource(iconRes),
-            contentDescription = contentDescription,
-            modifier = Modifier
-                .size(style.buttonIconSize)
-                .aodTint(gradient.takeIf { isEnabled }),
-            tint = if (isEnabled) color else Grey5A,
-        )
-    }
 }

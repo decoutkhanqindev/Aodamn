@@ -6,13 +6,9 @@ import android.graphics.Typeface
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.center
 import androidx.compose.ui.graphics.Brush
@@ -24,12 +20,13 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import com.decoutkhanqindev.aodamn.R
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.rememberLiveClockMillis
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.resolveTypeface
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.toShader
 import com.decoutkhanqindev.aodamn.presentation.components.rememberFormatter
 import com.decoutkhanqindev.aodamn.presentation.components.rememberTimeFormatter
@@ -62,15 +59,7 @@ fun AodRippleDial(
     val date = if (isDateShown) time.format(rememberFormatter(R.string.aod_ripple_date_pattern)) else ""
     val description = time.format(rememberTimeFormatter())
     val datePaint = rememberRippleDatePaint()
-    val clockMillis = remember { mutableLongStateOf(System.currentTimeMillis()) }
-
-    if (isLive) {
-        LaunchedEffect(Unit) {
-            while (true) {
-                withFrameMillis { clockMillis.longValue = System.currentTimeMillis() }
-            }
-        }
-    }
+    val clockMillis = rememberLiveClockMillis(isLive)
 
     Spacer(
         modifier = modifier
@@ -136,9 +125,7 @@ private fun DrawScope.drawHand(degrees: Float, length: Float, colors: List<Color
 
 @Composable
 private fun rememberRippleDatePaint(): Paint {
-    val typeface = LocalFontFamilyResolver.current
-        .resolve(fontFamily = RippleThemeSpec.Font, fontWeight = FontWeight.Medium)
-        .value as? Typeface ?: Typeface.DEFAULT
+    val typeface = resolveTypeface(fontFamily = RippleThemeSpec.Font, fontWeight = FontWeight.Medium, fallback = Typeface.DEFAULT)
     return remember(typeface) {
         Paint(Paint.ANTI_ALIAS_FLAG).apply {
             this.typeface = typeface

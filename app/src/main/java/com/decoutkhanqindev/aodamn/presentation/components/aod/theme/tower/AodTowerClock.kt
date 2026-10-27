@@ -22,7 +22,6 @@ import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
@@ -35,6 +34,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import com.decoutkhanqindev.aodamn.R
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.resolveTypeface
 import com.decoutkhanqindev.aodamn.presentation.components.is24HourFormat
 import com.decoutkhanqindev.aodamn.presentation.components.rememberFormatter
 import com.decoutkhanqindev.aodamn.presentation.components.rememberTimeFormatter
@@ -205,9 +205,7 @@ fun TowerDate(
 
 @Composable
 fun rememberTowerGlyphs(): TowerGlyphs {
-    val typeface = LocalFontFamilyResolver.current
-        .resolve(fontFamily = FontFamilyBigShouldersDisplay, fontWeight = FontWeight.Black)
-        .value as? Typeface ?: Typeface.DEFAULT_BOLD
+    val typeface = resolveTypeface(fontFamily = FontFamilyBigShouldersDisplay, fontWeight = FontWeight.Black, fallback = Typeface.DEFAULT_BOLD)
     return remember(typeface) { TowerGlyphs(typeface) }
 }
 

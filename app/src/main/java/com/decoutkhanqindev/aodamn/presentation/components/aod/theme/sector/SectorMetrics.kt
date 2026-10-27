@@ -2,6 +2,7 @@ package com.decoutkhanqindev.aodamn.presentation.components.aod.theme.sector
 
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodBadgeLatestStyle
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodCompactPlayerStyle
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.sector.SectorThemeSpec
 
@@ -83,5 +84,19 @@ object SectorMetrics {
         trackAlpha = TRACK_ALPHA,
         playStartGap = ButtonGap,
         nextStartGap = ButtonGap,
+    )
+
+    val BadgeLatest = AodBadgeLatestStyle(
+        font = SectorThemeSpec.Font,
+        badgeSize = LatestBadge,
+        iconSize = LatestIcon,
+        textStartGap = LatestTextGap,
+        titleSize = TitleSize,
+        textSize = TextSize,
+        textGap = TextGap,
+        textDarken = TEXT_DARKEN,
+        textMaxLines = LATEST_MAX_LINES,
+        isTitleMarquee = true,
+        isTextShrinkable = true,
     )
 }

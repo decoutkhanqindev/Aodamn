@@ -5,10 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
@@ -23,6 +20,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.tooling.preview.Preview
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.rememberLiveClockMillis
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.toLineShader
 import com.decoutkhanqindev.aodamn.presentation.components.rememberTimeFormatter
 import com.decoutkhanqindev.aodamn.presentation.components.rememberZonedDateTime
@@ -41,15 +39,7 @@ fun rememberSectorMillis(
     nowMillis: Long,
     isLive: Boolean,
 ): () -> Long {
-    val clockMillis = remember { mutableLongStateOf(System.currentTimeMillis()) }
-
-    if (isLive) {
-        LaunchedEffect(Unit) {
-            while (true) {
-                withFrameMillis { clockMillis.longValue = System.currentTimeMillis() }
-            }
-        }
-    }
+    val clockMillis = rememberLiveClockMillis(isLive)
 
     return remember(nowMillis, isLive) { { if (isLive) clockMillis.longValue else nowMillis } }
 }

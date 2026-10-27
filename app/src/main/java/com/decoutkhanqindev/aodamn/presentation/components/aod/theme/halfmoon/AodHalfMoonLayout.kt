@@ -1,33 +1,25 @@
 package com.decoutkhanqindev.aodamn.presentation.components.aod.theme.halfmoon
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.lerp
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,15 +28,15 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.aodamn.R
 import com.decoutkhanqindev.aodamn.presentation.components.aod.AodPanelBlock
+import com.decoutkhanqindev.aodamn.presentation.components.aod.block.AodLatestLine
 import com.decoutkhanqindev.aodamn.presentation.components.aod.block.AodStatusLine
 import com.decoutkhanqindev.aodamn.presentation.components.aod.block.AodWeather
-import com.decoutkhanqindev.aodamn.presentation.components.aod.block.aodTint
+import com.decoutkhanqindev.aodamn.presentation.components.aod.block.lineText
 import com.decoutkhanqindev.aodamn.presentation.components.rememberFormatter
 import com.decoutkhanqindev.aodamn.presentation.components.rememberZonedDateTime
 import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.AodAppearanceUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.AodGradient
 import com.decoutkhanqindev.aodamn.presentation.model.aod.info.BatteryUiModel
-import com.decoutkhanqindev.aodamn.presentation.model.aod.info.NotificationContentUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodPanelBlockValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeValue
@@ -201,10 +193,12 @@ private fun HalfMoonColumn(
 
         AnimatedVisibility(visible = latest != null) {
             if (latest != null) {
-                HalfMoonLatest(
-                    latest = latest,
+                AodLatestLine(
+                    text = latest.lineText(R.string.aod_half_moon_notification),
+                    icon = latest.icon,
                     color = statusColor,
                     brush = statusBrush,
+                    style = HalfMoonMetrics.LatestLine,
                     modifier = Modifier
                         .padding(top = HalfMoonMetrics.LatestGap)
                         .widthIn(max = maxWidth),
@@ -263,47 +257,6 @@ private fun HalfMoonDateText(
         maxLines = 1,
         softWrap = false,
     )
-}
-
-@Composable
-private fun HalfMoonLatest(
-    latest: NotificationContentUiModel,
-    color: Color,
-    brush: Brush?,
-    modifier: Modifier = Modifier,
-) {
-    val text = when {
-        latest.isHidden -> stringResource(R.string.aod_notification_content_hidden)
-        latest.text.isEmpty() -> latest.title
-        else -> stringResource(R.string.aod_half_moon_notification, latest.title, latest.text)
-    }
-
-    Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Image(
-            bitmap = remember(latest.icon) { latest.icon.asImageBitmap() },
-            contentDescription = null,
-            modifier = Modifier
-                .size(HalfMoonMetrics.LatestIcon)
-                .aodTint(brush),
-            colorFilter = ColorFilter.tint(color),
-        )
-
-        Text(
-            text = text.uppercase(),
-            modifier = Modifier
-                .padding(start = HalfMoonMetrics.LatestIconGap)
-                .basicMarquee(iterations = 1)
-                .aodTint(brush),
-            color = color,
-            fontSize = HalfMoonMetrics.LatestSize,
-            fontFamily = HalfMoonThemeSpec.Font,
-            letterSpacing = HalfMoonMetrics.LatestSpacing,
-            maxLines = 1,
-        )
-    }
 }
 
 @Composable

@@ -26,12 +26,12 @@ import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.layer.GraphicsLayer
 import androidx.compose.ui.graphics.layer.drawLayer
-import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.resolveTypeface
 import com.decoutkhanqindev.aodamn.presentation.components.rememberTimeFormatter
 import com.decoutkhanqindev.aodamn.presentation.components.rememberZonedDateTime
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeConfig
@@ -156,9 +156,7 @@ fun AodCompassDial(
 
 @Composable
 fun rememberCompassPaints(): CompassPaints {
-    val typeface = LocalFontFamilyResolver.current
-        .resolve(fontFamily = CompassThemeSpec.NumberFont, fontWeight = FontWeight.Normal)
-        .value as? Typeface ?: Typeface.DEFAULT
+    val typeface = resolveTypeface(fontFamily = CompassThemeSpec.NumberFont, fontWeight = FontWeight.Normal, fallback = Typeface.DEFAULT)
     return remember(typeface) { CompassPaints(typeface) }
 }
 

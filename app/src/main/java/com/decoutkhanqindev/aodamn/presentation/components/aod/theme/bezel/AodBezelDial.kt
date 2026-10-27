@@ -11,11 +11,11 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.resolveTypeface
 import com.decoutkhanqindev.aodamn.presentation.components.rememberTimeFormatter
 import com.decoutkhanqindev.aodamn.presentation.components.rememberZonedDateTime
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeConfig
@@ -61,9 +61,7 @@ fun AodBezelDial(
 
 @Composable
 fun rememberBezelPaints(): BezelPaints {
-    val typeface = LocalFontFamilyResolver.current
-        .resolve(fontFamily = BezelThemeSpec.NumberFont, fontWeight = FontWeight.SemiBold)
-        .value as? Typeface ?: Typeface.DEFAULT_BOLD
+    val typeface = resolveTypeface(fontFamily = BezelThemeSpec.NumberFont, fontWeight = FontWeight.SemiBold, fallback = Typeface.DEFAULT_BOLD)
     return remember(typeface) { BezelPaints(typeface) }
 }
 

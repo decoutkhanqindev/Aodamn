@@ -12,12 +12,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
@@ -36,7 +33,6 @@ import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -44,6 +40,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.min
 import com.decoutkhanqindev.aodamn.R
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.rememberLiveClockMillis
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.resolveTypeface
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.toShader
 import com.decoutkhanqindev.aodamn.presentation.components.is24HourFormat
 import com.decoutkhanqindev.aodamn.presentation.components.rememberFormatter
@@ -65,17 +63,9 @@ fun AodTickDial(
     modifier: Modifier = Modifier,
     below: @Composable () -> Unit = {},
 ) {
-    val clockMillis = remember { mutableLongStateOf(System.currentTimeMillis()) }
+    val clockMillis = rememberLiveClockMillis(isLive)
     val minuteMillis by remember(isLive, nowMillis) {
         derivedStateOf { if (isLive) clockMillis.longValue / TickMetrics.MINUTE_MILLIS * TickMetrics.MINUTE_MILLIS else nowMillis }
-    }
-
-    if (isLive) {
-        LaunchedEffect(Unit) {
-            while (true) {
-                withFrameMillis { clockMillis.longValue = System.currentTimeMillis() }
-            }
-        }
     }
 
     BoxWithConstraints(
@@ -248,9 +238,7 @@ private fun TickFace(
 
 @Composable
 private fun rememberTickSecondPaint(): Paint {
-    val typeface = LocalFontFamilyResolver.current
-        .resolve(fontFamily = TickThemeSpec.Font, fontWeight = FontWeight.Normal)
-        .value as? Typeface ?: Typeface.DEFAULT
+    val typeface = resolveTypeface(fontFamily = TickThemeSpec.Font, fontWeight = FontWeight.Normal, fallback = Typeface.DEFAULT)
     return remember(typeface) {
         Paint(Paint.ANTI_ALIAS_FLAG).apply {
             this.typeface = typeface

@@ -18,12 +18,12 @@ import androidx.compose.ui.graphics.asComposePath
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.lerp
-import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import com.decoutkhanqindev.aodamn.R
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.resolveTypeface
 import com.decoutkhanqindev.aodamn.presentation.components.is24HourFormat
 import com.decoutkhanqindev.aodamn.presentation.components.rememberFormatter
 import com.decoutkhanqindev.aodamn.presentation.components.rememberTimeFormatter
@@ -123,9 +123,7 @@ private fun BigOverlapDigits(
 
 @Composable
 private fun rememberBigOverlapPaint(fontFamily: FontFamily): Paint {
-    val typeface = LocalFontFamilyResolver.current
-        .resolve(fontFamily = fontFamily, fontWeight = BigOverlapThemeSpec.DigitWeight)
-        .value as? Typeface ?: Typeface.DEFAULT_BOLD
+    val typeface = resolveTypeface(fontFamily = fontFamily, fontWeight = BigOverlapThemeSpec.DigitWeight, fallback = Typeface.DEFAULT_BOLD)
     return remember(typeface) {
         Paint(Paint.ANTI_ALIAS_FLAG).apply {
             this.typeface = typeface

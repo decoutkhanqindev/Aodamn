@@ -21,9 +21,9 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.asComposePath
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.resolveTypeface
 import com.decoutkhanqindev.aodamn.presentation.theme.FontFamilyBigShouldersDisplay
 import kotlin.math.max
 import android.graphics.Path as AndroidPath
@@ -73,9 +73,7 @@ private fun JerseyDigit(
 
 @Composable
 fun rememberJerseyGlyphs(): JerseyGlyphs {
-    val typeface = LocalFontFamilyResolver.current
-        .resolve(fontFamily = FontFamilyBigShouldersDisplay, fontWeight = FontWeight.Black)
-        .value as? Typeface ?: Typeface.DEFAULT_BOLD
+    val typeface = resolveTypeface(fontFamily = FontFamilyBigShouldersDisplay, fontWeight = FontWeight.Black, fallback = Typeface.DEFAULT_BOLD)
     return remember(typeface) { JerseyGlyphs(typeface) }
 }
 

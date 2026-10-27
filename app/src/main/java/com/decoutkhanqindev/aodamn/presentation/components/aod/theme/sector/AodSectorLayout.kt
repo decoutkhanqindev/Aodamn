@@ -6,9 +6,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -20,37 +18,32 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.CompositingStrategy
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.aodamn.R
 import com.decoutkhanqindev.aodamn.presentation.components.aod.AodPanelBlock
+import com.decoutkhanqindev.aodamn.presentation.components.aod.block.AodBadgeLatest
 import com.decoutkhanqindev.aodamn.presentation.components.aod.block.AodStatusLine
 import com.decoutkhanqindev.aodamn.presentation.components.aod.block.AodWeather
 import com.decoutkhanqindev.aodamn.presentation.components.rememberFormatter
 import com.decoutkhanqindev.aodamn.presentation.components.rememberZonedDateTime
 import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.AodAppearanceUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.info.BatteryUiModel
-import com.decoutkhanqindev.aodamn.presentation.model.aod.info.NotificationContentUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodPanelBlockValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeValue
@@ -58,7 +51,6 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.component.AodCom
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.sector.SectorThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodIntent
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
-import com.decoutkhanqindev.aodamn.presentation.theme.Black
 import com.decoutkhanqindev.aodamn.presentation.theme.BlackAlpha20
 import com.decoutkhanqindev.aodamn.presentation.theme.BlackAlpha50
 import com.decoutkhanqindev.aodamn.presentation.theme.Mint
@@ -276,68 +268,13 @@ private fun SectorLatest(state: AodState) {
         exit = fadeOut(),
     ) {
         if (latest != null) {
-            SectorLatestCard(
+            AodBadgeLatest(
                 latest = latest,
-                state = state,
+                config = state.appearance.theme.config,
+                colorOption = SectorThemeSpec.NotificationsColor,
+                style = SectorMetrics.BadgeLatest,
                 modifier = Modifier.padding(top = if (hasTopGap) SectorMetrics.LatestGap else 0.dp),
             )
-        }
-    }
-}
-
-@Composable
-private fun SectorLatestCard(
-    latest: NotificationContentUiModel,
-    state: AodState,
-    modifier: Modifier = Modifier,
-) {
-    val config = state.appearance.theme.config
-    val brush = config.brushOf(SectorThemeSpec.NotificationsColor)
-    val text = if (latest.isHidden) stringResource(R.string.aod_notification_content_hidden) else latest.text
-
-    Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Box(
-            modifier = Modifier
-                .size(SectorMetrics.LatestBadge)
-                .background(brush = brush, shape = CircleShape),
-            contentAlignment = Alignment.Center,
-        ) {
-            Image(
-                bitmap = remember(latest.icon) { latest.icon.asImageBitmap() },
-                contentDescription = null,
-                modifier = Modifier.size(SectorMetrics.LatestIcon),
-                colorFilter = ColorFilter.tint(Black),
-            )
-        }
-
-        Column(
-            modifier = Modifier
-                .weight(1f, fill = false)
-                .padding(start = SectorMetrics.LatestTextGap),
-        ) {
-            Text(
-                text = latest.title,
-                modifier = Modifier.basicMarquee(iterations = 1),
-                style = TextStyle(brush = brush, fontSize = SectorMetrics.TitleSize, fontFamily = SectorThemeSpec.Font),
-                maxLines = 1,
-            )
-
-            if (text.isNotEmpty()) {
-                Text(
-                    text = text,
-                    modifier = Modifier.padding(top = SectorMetrics.TextGap),
-                    style = TextStyle(
-                        brush = config.darkBrushOf(SectorThemeSpec.NotificationsColor, SectorMetrics.TEXT_DARKEN),
-                        fontSize = SectorMetrics.TextSize,
-                        fontFamily = SectorThemeSpec.Font,
-                    ),
-                    maxLines = SectorMetrics.LATEST_MAX_LINES,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
         }
     }
 }

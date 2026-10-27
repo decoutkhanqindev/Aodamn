@@ -1,16 +1,12 @@
 package com.decoutkhanqindev.aodamn.presentation.components.aod.block
 
-import androidx.annotation.DrawableRes
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.onClick
@@ -30,14 +25,11 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.aodamn.R
-import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.AodWaveTrack
 import com.decoutkhanqindev.aodamn.presentation.components.onClick
 import com.decoutkhanqindev.aodamn.presentation.model.aod.info.MediaUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodWavePlayerStyle
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodIntent
-import com.decoutkhanqindev.aodamn.presentation.theme.Grey5A
 
 @Composable
 fun AodWavePlayer(
@@ -59,13 +51,14 @@ fun AodWavePlayer(
 
     Column(modifier = modifier.width(style.width)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            WavePlayerButton(
+            AodPlayerButton(
                 iconRes = R.drawable.ic_skip_back_fill,
                 contentDescription = stringResource(R.string.aod_media_previous),
                 isEnabled = media.canSkipToPrevious,
-                style = style,
                 color = color,
                 gradient = gradient,
+                size = style.buttonSize,
+                iconSize = style.buttonIconSize,
                 onClick = { onIntent(AodIntent.SkipToPreviousTrack) },
                 modifier = Modifier.padding(start = style.buttonOuterGap, end = style.buttonInnerGap),
             )
@@ -108,34 +101,26 @@ fun AodWavePlayer(
                 }
             }
 
-            WavePlayerButton(
+            AodPlayerButton(
                 iconRes = R.drawable.ic_skip_forward_fill,
                 contentDescription = stringResource(R.string.aod_media_next),
                 isEnabled = media.canSkipToNext,
-                style = style,
                 color = color,
                 gradient = gradient,
+                size = style.buttonSize,
+                iconSize = style.buttonIconSize,
                 onClick = { onIntent(AodIntent.SkipToNextTrack) },
                 modifier = Modifier.padding(start = style.buttonInnerGap, end = style.buttonOuterGap),
             )
         }
 
         if (progress != null) {
-            AodMediaProgress(
+            AodFlatProgress(
                 progress = progress,
-                track = { fraction ->
-                    AodWaveTrack(
-                        fraction = fraction,
-                        wave = { 0f },
-                        color = color,
-                        trackColor = color.copy(alpha = color.alpha * style.trackAlpha),
-                        brush = brush,
-                        height = style.trackHeight,
-                        strokeWidth = style.trackHeight,
-                        wavelength = 40.dp,
-                        gap = 0.dp,
-                    )
-                },
+                color = color,
+                brush = brush,
+                trackHeight = style.trackHeight,
+                trackAlpha = style.trackAlpha,
                 modifier = Modifier.padding(start = style.progressInset, top = style.progressGap, end = style.progressInset),
             )
         }
@@ -164,32 +149,4 @@ private fun WavePlayerText(
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
     )
-}
-
-@Composable
-private fun WavePlayerButton(
-    @DrawableRes iconRes: Int,
-    contentDescription: String,
-    isEnabled: Boolean,
-    style: AodWavePlayerStyle,
-    color: Color,
-    gradient: Brush?,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Box(
-        modifier = modifier
-            .size(style.buttonSize)
-            .then(if (isEnabled) Modifier.onClick(shape = CircleShape, ripple = false, action = onClick) else Modifier),
-        contentAlignment = Alignment.Center,
-    ) {
-        Icon(
-            painter = painterResource(iconRes),
-            contentDescription = contentDescription,
-            modifier = Modifier
-                .size(style.buttonIconSize)
-                .aodTint(gradient.takeIf { isEnabled }),
-            tint = if (isEnabled) color else Grey5A,
-        )
-    }
 }

@@ -10,10 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
@@ -26,11 +23,12 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.rememberLiveClockMillis
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.resolveTypeface
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.toLineShader
 import com.decoutkhanqindev.aodamn.presentation.components.rememberTimeFormatter
 import com.decoutkhanqindev.aodamn.presentation.components.rememberZonedDateTime
@@ -59,15 +57,7 @@ fun AodQuartersDial(
     val description = rememberZonedDateTime(nowMillis).format(rememberTimeFormatter())
     val sharpPaint = rememberQuartersPaint(QuartersThemeSpec.DigitFont)
     val roundedPaint = rememberQuartersPaint(QuartersThemeSpec.RoundedDigitFont)
-    val clockMillis = remember { mutableLongStateOf(System.currentTimeMillis()) }
-
-    if (isLive) {
-        LaunchedEffect(Unit) {
-            while (true) {
-                withFrameMillis { clockMillis.longValue = System.currentTimeMillis() }
-            }
-        }
-    }
+    val clockMillis = rememberLiveClockMillis(isLive)
 
     Box(modifier = modifier.clearAndSetSemantics { contentDescription = description }) {
         Crossfade(
@@ -220,9 +210,7 @@ private fun degreesOf(localMillis: Long, periodMillis: Long): Float = Math.floor
 
 @Composable
 private fun rememberQuartersPaint(fontFamily: FontFamily): Paint {
-    val typeface = LocalFontFamilyResolver.current
-        .resolve(fontFamily = fontFamily, fontWeight = QuartersThemeSpec.DigitWeight)
-        .value as? Typeface ?: Typeface.DEFAULT_BOLD
+    val typeface = resolveTypeface(fontFamily = fontFamily, fontWeight = QuartersThemeSpec.DigitWeight, fallback = Typeface.DEFAULT_BOLD)
     return remember(typeface) {
         Paint(Paint.ANTI_ALIAS_FLAG).apply {
             this.typeface = typeface

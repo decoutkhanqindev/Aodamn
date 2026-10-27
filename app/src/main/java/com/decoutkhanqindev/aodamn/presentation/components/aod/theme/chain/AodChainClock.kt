@@ -21,13 +21,13 @@ import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import com.decoutkhanqindev.aodamn.R
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.resolveTypeface
 import com.decoutkhanqindev.aodamn.presentation.components.is24HourFormat
 import com.decoutkhanqindev.aodamn.presentation.components.rememberFormatter
 import com.decoutkhanqindev.aodamn.presentation.components.rememberTimeFormatter
@@ -116,9 +116,7 @@ fun AodChainClock(
 
 @Composable
 fun rememberChainGlyphs(): ChainGlyphs {
-    val typeface = LocalFontFamilyResolver.current
-        .resolve(fontFamily = FontFamilyAnton, fontWeight = FontWeight.Normal)
-        .value as? Typeface ?: Typeface.DEFAULT_BOLD
+    val typeface = resolveTypeface(fontFamily = FontFamilyAnton, fontWeight = FontWeight.Normal, fallback = Typeface.DEFAULT_BOLD)
     return remember(typeface) { ChainGlyphs(typeface) }
 }
 

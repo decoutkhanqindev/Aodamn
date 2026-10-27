@@ -2,6 +2,7 @@ package com.decoutkhanqindev.aodamn.presentation.components.aod.theme.gradientli
 
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodLatestLineStyle
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodTextPlayerStyle
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.gradientline.GradientLineThemeSpec
 
@@ -59,5 +60,12 @@ object GradientLineMetrics {
         pausedAlpha = PAUSED_ALPHA,
         artistAlpha = ARTIST_ALPHA,
         buttonAlpha = BUTTON_ALPHA,
+    )
+
+    val LatestLine = AodLatestLineStyle(
+        font = GradientLineThemeSpec.Font,
+        iconSize = LatestIcon,
+        iconGap = LatestIconGap,
+        textSize = LatestSize,
     )
 }

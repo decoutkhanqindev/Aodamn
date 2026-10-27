@@ -4,6 +4,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodLatestLineStyle
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodTextPlayerStyle
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.halfmoon.HalfMoonThemeSpec
 
@@ -85,6 +86,15 @@ object HalfMoonMetrics {
         artistWeight = FontWeight.Normal,
         letterSpacing = TrackSpacing,
         artistAlpha = ARTIST_ALPHA,
+        isUppercase = true,
+    )
+
+    val LatestLine = AodLatestLineStyle(
+        font = HalfMoonThemeSpec.Font,
+        iconSize = LatestIcon,
+        iconGap = LatestIconGap,
+        textSize = LatestSize,
+        letterSpacing = LatestSpacing,
         isUppercase = true,
     )
 }

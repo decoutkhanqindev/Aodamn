@@ -1,7 +1,10 @@
 package com.decoutkhanqindev.aodamn.presentation.components.aod.theme.ripple
 
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodBadgeLatestStyle
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.ripple.RippleThemeSpec
 
 object RippleMetrics {
     const val FACE_RADIUS = 0.9f
@@ -51,4 +54,17 @@ object RippleMetrics {
     val PlayIcon = 16.dp
     val FallbackIcon = 24.dp
     val SwipeThreshold = 48.dp
+
+    val BadgeLatest = AodBadgeLatestStyle(
+        font = RippleThemeSpec.Font,
+        badgeSize = LatestBadge,
+        iconSize = LatestIcon,
+        textStartGap = LatestGap,
+        titleSize = LatestTitleSize,
+        textSize = LatestTextSize,
+        textGap = LatestTextGap,
+        textDarken = TEXT_DARKEN,
+        textMaxLines = 2,
+        textWeight = FontWeight.Normal,
+    )
 }
