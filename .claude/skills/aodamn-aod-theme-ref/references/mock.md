@@ -37,7 +37,8 @@ Sửa tới khi ổn rồi mới hiện.
   4. Khối dùng chung: từng khối (ngày, pin, thông báo + thông báo mới nhất, thời tiết, sự kiện, ghi nhớ, nét vẽ, nhạc) là có hay
      bỏ, mỗi khối bỏ một dòng lý do; khối có thì đặt ở đâu ở cả dọc lẫn ngang.
   5. Font định dùng (tải Google Fonts nào, sinh độ đậm nào).
-  6. Code dùng chung cần thêm (nếu có), mỗi thứ một dòng lý do và mặc định giữ hành vi cũ.
+  6. Code dùng chung ([reuse.md](reuse.md)): khối dùng lại (trình phát, thông báo mới nhất, khung bố cục); khối cần mở rộng, mỗi thuộc tính mới một
+     dòng lý do và mặc định giữ hành vi cũ; phần viết riêng, mỗi phần một dòng lý do vì sao khối có sẵn không khớp.
 - Kết thúc lượt bằng câu hỏi duyệt (wrap_up), không code.
 
 ## Khi user góp ý

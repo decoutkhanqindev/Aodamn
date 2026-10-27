@@ -10,11 +10,17 @@ Mỗi dòng là một lỗi đã xảy ra thật; kiểm từng dòng trước k
   Kiểm cả 0–9 dạng viền, không chỉ số đang hiện.
 - **Vùng mờ / khoét che mất ảnh nền** (Nhịp giây): vùng mờ, lỗ cho chấm giây vẽ bằng `BlendMode.DstOut` / `Clear` trên lớp
   riêng (`graphicsLayer` offscreen), không phủ màu đen lên trên.
-- **Chuyển động theo giây**: vòng / chấm giây tự chạy đồng hồ mỗi khung hình (`withFrameMillis` đọc ở pha vẽ, mẫu
-  `AodTickDial`), phần theo phút recompose bằng `derivedStateOf`. Không cấp phát brush / path mỗi khung: dựng trong
+- **Chuyển động theo giây**: vòng / chấm giây tự chạy đồng hồ mỗi khung hình (`rememberLiveClockMillis`, đọc `longValue` ở
+  pha vẽ, mẫu `AodSectorDial`), phần theo phút recompose bằng `derivedStateOf`. Không cấp phát brush / path mỗi khung: dựng trong
   `drawWithCache`.
 - **Hằng số trong file Compose**: không `val` / `const val` cấp file (check-rules chặn); số đo vào `<Chủ đề>Metrics`.
 - **`min` / `max` với `Dp`**: dùng `androidx.compose.ui.unit.min/max`, không phải `kotlin.math`.
+
+## Dùng lại
+
+- **Chép code của chủ đề cũ**: mỗi chủ đề chép trình phát (3 kiểu, 10 chủ đề), thông báo mới nhất (6), khung bố cục (Chồng số,
+  4 góc), hàm làm tối brush (5), resolve typeface cho `Paint` (12), vòng lặp giờ thật (5) từ chủ đề trước rồi sửa; sau đó phải
+  tách lại thành các khối ở [reuse.md](reuse.md). Chọn khối theo reuse.md trước khi viết từng phần.
 
 ## Tuỳ chọn và màn chỉnh
 

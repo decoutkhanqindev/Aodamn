@@ -37,6 +37,8 @@ Chép checklist này vào task list (`update_plan`) và đi đúng thứ tự. H
 ### 1. Đọc app mẫu
 Theo [references/read-reference.md](references/read-reference.md): đọc code vẽ + layout dọc / ngang + hàm tuỳ chọn của chủ
 đề, đo font, rồi lập **bảng mọi tuỳ chọn, chi tiết, chuyển động** của app mẫu. Không mô tả hay đề xuất gì trước khi đọc code.
+Xong bảng thì so trình phát, thông báo mới nhất, bố cục, font của `Paint`, giờ thật với khối dùng chung theo
+[references/reuse.md](references/reuse.md) để ghi vào mock.
 
 ### 2. Mock ⛔
 Theo [references/mock.md](references/mock.md): thêm mục chủ đề vào `tools/mockups/aod_landscape_mockups.py`, render, tự
@@ -44,8 +46,10 @@ chụp kiểm, rồi vẽ inline bằng `show_widget` kèm bảng giữ / đổi
 user thì không viết dòng code chủ đề nào. Sửa mock theo góp ý thì vẽ lại **cả bản**.
 
 ### 3. Code
-Theo README › Thêm chủ đề mới bước 3–6, mẫu gần nhất là chủ đề vừa làm (`ripple/`, `tick/`, `bigoverlap/`). Trước khi viết,
-đọc [references/pitfalls.md](references/pitfalls.md): danh sách lỗi đã gặp, mỗi lỗi một dòng kiểm.
+Theo README › Thêm chủ đề mới bước 3–6. Media, Layout, thông báo mới nhất, font, giờ thật: dùng khối đã chọn ở
+[references/reuse.md](references/reuse.md), chủ đề chỉ thêm style trong Metrics; không chép hàm làm tối brush, resolve
+typeface hay vòng lặp giờ thật. Phần riêng mới lấy mẫu từ chủ đề vừa làm (`sector/`, `bigoverlap/`, `tick/`). Trước khi viết, đọc
+[references/pitfalls.md](references/pitfalls.md): danh sách lỗi đã gặp, mỗi lỗi một dòng kiểm.
 
 Code dùng chung (ngoài nhánh `when` của chủ đề) chỉ thêm, có mặc định giữ hành vi cũ, và **hỏi user trước** khi sửa.
 

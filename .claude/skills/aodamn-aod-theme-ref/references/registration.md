@@ -9,8 +9,11 @@ cũng phải có. `scripts/check_theme.sh` đếm tên ở các chỗ này.
 | File | Thêm |
 |---|---|
 | `model/aod/theme/AodThemeValue.kt` | import spec + mục enum cuối (id chữ thường, không đổi về sau; `;` ở mục cuối) |
-| `components/aod/theme/AodThemeLayout.kt` | import, nhánh `AodPortrait`, nhánh `AodLandscape` |
-| `components/aod/block/AodMediaControls.kt` | import + nhánh trình phát (chủ đề tự vẽ nhạc) |
+| `components/aod/theme/AodThemeLayout.kt` | import, nhánh `AodPortrait`, nhánh `AodLandscape` (bố cục khớp khung chung thì `Aod<Chủ đề>Layout` chỉ gọi `AodHeroInfoPortrait` / `AodHeroInfoLandscape`, [reuse.md](reuse.md)) |
+| `components/aod/block/AodMediaControls.kt` | import + nhánh trình phát (chủ đề tự vẽ nhạc); `Aod<Chủ đề>Media` gọi trình phát dùng chung với style trong `<Chủ đề>Metrics` khi khớp ([reuse.md](reuse.md)) |
+| `<Chủ đề>Metrics` | style cho khối dùng chung (`val TextPlayer` / `WavePlayer` / `CompactPlayer`, `LatestLine` / `BadgeLatest`, `HeroInfo`), hằng `TEXT_DARKEN` cho `darkBrushOf` |
+| `res/values/strings.xml` (mẫu dòng thông báo) | chuỗi định dạng "tiêu đề + nội dung" cho `lineText(R.string.aod_<chủ đề>_notification)` khi dùng `AodLatestLine` |
+| `model/aod/theme/Aod*Style.kt`, khối ở `block/` / `theme/` | chỉ khi mở rộng khối dùng chung: thuộc tính mới có mặc định đúng hành vi cũ (hỏi user trước) |
 | `app/src/test/.../AodThemeSpecTest.kt` | import, `drawsLatest` / `liveThemes` nếu đúng, test riêng |
 | `theme/Colors.kt`, `theme/Typography.kt` | màu nhấn / họ font mới |
 | `res/values/strings.xml`, `res/values-vi/strings.xml` | `theme_<id>`, nhãn màu / tuỳ chọn mới; mẫu định dạng `translatable="false"` chỉ ở `values/` |
