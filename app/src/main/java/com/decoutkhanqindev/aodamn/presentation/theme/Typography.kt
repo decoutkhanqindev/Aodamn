@@ -96,6 +96,10 @@ val FontFamilyGoogleSansFlexRounded = FontFamily(
     Font(R.font.google_sans_flex_rounded_extrablack, FontWeight(1000)),
 )
 
+val FontFamilyLato = FontFamily(
+    Font(R.font.lato_regular, FontWeight.Normal),
+)
+
 private val MaterialTypeScale = androidx.compose.material3.Typography()
 
 val DisplaySmall = MaterialTypeScale.displaySmall.copy(fontFamily = FontFamilyPlusJakartaSans)

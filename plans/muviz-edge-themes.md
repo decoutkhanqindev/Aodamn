@@ -49,6 +49,7 @@ code dịch ngược, không lấy asset (font, ảnh, Lottie) từ APK. APK và
 | Nhịp giây (`TICK`) | **30 · Oct23 "Coum Face Clock"** | làm từ danh mục này (2026-10-26), số đo lấy từ layout `oct23_screen_layout` (chỉ có bản dọc) / `CoumTick` |
 | Chồng số (`BIG_OVERLAP`) | **23 · Mar23 "Big Overlap Clock"** | làm từ danh mục này (2026-10-26), số đo lấy từ layout `mar23_screen_layout` dọc / ngang / `BigPixel2Clock` |
 | Bốn số (`QUARTERS`) | **24 · Apr23 "Android 14 Analog Clock"** | làm từ danh mục này (2026-10-26), số đo lấy từ layout `apr23_screen_layout` dọc / ngang / `PixelAnalogClock` / `PilotBold2Tick` |
+| Rẻ quạt (`SECTOR`) | **3 · Jul21 "Nike"** | làm từ danh mục này (2026-10-27), số đo lấy từ layout `jul21_screen_layout` / `AnalogueClock1` / `PieClock` |
 
 ## Danh mục đủ 44 chủ đề
 
@@ -59,7 +60,7 @@ text view chung) hoặc font dùng trong code; "chữ (font layout)" nghĩa là 
 |---|---|---|---|---|---|---|---|
 | 1 | May21 | Gradient | Clock Weight, Clock Size, Theme Color | Hour, Minute, Date, Notification, Controls, Battery Status | chữ: lato | – | chưa có |
 | 2 | Jun21 | Default | Symbol, Clock Weight, Symbol Size, Clock Size, Theme Color | Hour, Minute, Date, Notification, Controls, Battery Status | chữ: rubik | chọn ký hiệu | chưa có |
-| 3 | Jul21 | Nike | Clock Size, Hour Color, Minute Color, Second Color, Clock Background Color, Theme Color | Date, Notification, Controls, Battery Status | AnalogueClock1, PieClock | – | chưa có |
+| 3 | Jul21 | Nike | Clock Size, Hour Color, Minute Color, Second Color, Clock Background Color, Theme Color | Date, Notification, Controls, Battery Status | AnalogueClock1, PieClock | – | **Rẻ quạt** (`SECTOR`) |
 | 4 | Aug21 | Android 12 | Clock Style, Clock Size, Hour Color, Minute Color, Second Color, Date Color, Theme Color | Clock Background, Controls, Controls Background, Notification, Battery Status | Android12Clock2, Android12ClockBg2 | – | **Gợn sóng** (`RIPPLE`) |
 | 5 | Sep21 | Text Clock | Clock Weight, Clock Size, Theme Color | Hour, Minute, Date, Notification, Controls, Battery Status | chữ: lato | – | chưa có |
 | 6 | Oct21 | Visualizer | Clock Size, Viz Height, Viz Spread, Viz Speed, Theme Color | Viz 1, Viz 2, Viz 3, Hour, Minute, Date, Notification, Controls, Battery Status | chữ (font layout) | quyền RECORD_AUDIO | chưa có |
@@ -176,6 +177,23 @@ mỗi phút (`AodViewModel`), nên phần chạy theo giây của app mẫu ph�
   chấm 0,0234r màu Color 1 tối 25%; bóng #80000000 bán kính 0,1r; kim chạy theo mili giây. Màu: Color 1 kim giờ #CFD8DC, Color 2 số (mặc
   định theo Color 1), Color 3 kim phút #FEF7EB. Layout dọc giống Big Overlap; ngang mẫu: mặt số × 1,2 ở cột trái. Tiết kiệm: ẩn kim giây,
   số và kim giờ sang viền (bỏ, user duyệt).
+- ~~**3 · Nike**~~ (`AnalogueClock1` + `PieClock`, `jul21_screen_layout`, đọc 2026-10-26, đã làm thành Rẻ quạt 2026-10-27): kim phủ cả màn, r = cỡ (60–120, mặc định 100) ×
+  nửa bề ngang; kim giờ / phút hai đoạn (cổ mảnh 7px tới 0,2r, thân dày từ 0,15r tới 0,45r / 0,75r), kim giây 4px từ −0,1r tới 0,75r màu
+  #FF0A54, tâm chấm 18px màu kim giờ + lỗ đen 10px + vòng 5px màu giây, bóng #444444 (độ dày kim giờ đọc từ bytecode); màn vẽ lại mỗi giây nên
+  kim nhảy từng giây. Nền là **hình quạt lớn hơn** giữa kim giờ và kim phút, bán kính bằng chiều cao màn nên phủ tới mép, màu Clock Background
+  #121218, cả view mờ 0,8; dải đen 50% → 20% → 0 sau khối chữ trên / dưới; chủ đề tắt dịch điểm ảnh chống lưu ảnh. Trên: ngày "EEEE  dd" Lato 18sp,
+  vạch ngăn + icon thông báo, thẻ thông báo mới (icon trong ô tròn màu, tiêu đề 16sp / nội dung 15sp); dưới (cách 40dp): trình phát (tên
+  16sp / nghệ sĩ 15sp, phát + tới 22dp, thanh tiến trình) và dòng pin. Màu: giờ, phút trắng, giây #FF0A54, nền quạt #121218, Theme trắng
+  (ngày, thông báo, nhạc tối 10%, pin tối 40%). Tiết kiệm: ẩn kim giây, quạt sang đen (bỏ, user duyệt). Không có layout ngang (bên mình tự dựng); tên mẫu là thương hiệu nên
+  đặt tên khác.
+- **13 · Paper Clip** (`PaperClipClock`, `may22_screen_layout` + bản ngang, đọc 2026-10-26): r = cỡ (60–100, mặc định 80) / 110 × nửa cạnh
+  ngắn; kim giờ / phút là viên **chỉ viền** (nét 0,021r, cao 0,14r, lùi sau tâm 0,07r) tới 0,55r / 0,85r như kẹp giấy, kim giờ có bóng
+  #444444; chấm tâm 0,021r màu Second #4AEDC6; không kim giây, kim chỉ đổi mỗi phút. Cụm dưới cách đáy 60dp: ngày "dd MMMM yyyy" Poppins
+  SemiBold 15sp, dòng pin · icon thông báo (thông báo mới thay dòng này một lúc), trình phát (lùi 40dp · tên / nghệ sĩ · tới 40dp) thay chỗ
+  theo hẹn giờ. Màu: Theme trắng, chữ phụ tối 30%.
+- **12 · Vertical Clock** (`VerticalTextView`, `apr22_screen_layout` + bản ngang, đọc 2026-10-26): "HH:mm" Josefin Sans 40sp × cỡ xoay
+  −90° (đọc từ dưới lên) và ngày "EEE, dd MMMM" in hoa nửa cỡ, xếp ở góc dưới trái cách mép 18dp; cụm thông báo / nhạc / pin căn trái từ
+  25% chiều cao, lề 40dp. Màu Theme trắng.
 - **43 · MIUI Doodle** ⭐ (`Nov24Screen`): giờ, phút, thứ, tháng, ngày là **ảnh vẽ tay** (24 + 60 + 7 + 12 + 31 hình), không phải
   font; không được lấy ảnh của app mẫu, phải tự vẽ cả bộ, nên để sau.
 

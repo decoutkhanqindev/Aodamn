@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Tách file font tĩnh từng độ đậm từ font variable (Google Fonts, OFL) ở tools/fonts/variable vào app/src/main/res/font; họ font Google Fonts
-chỉ phát hành bản tĩnh (Anton) hoặc có tên dành riêng trong OFL (Zalando, Krona One: không được sửa file nên lấy bản tĩnh gốc của nhà làm font) thì chép file
+chỉ phát hành bản tĩnh (Anton, Lato) hoặc có tên dành riêng trong OFL (Zalando, Krona One, Lato: không được sửa file nên lấy bản tĩnh gốc của nhà làm font) thì chép file
 ở tools/fonts/static.
 
 Chạy ở gốc repo:  python -I tools/fonts/make_static_fonts.py [họ font ...]   (cần fonttools: pip install fonttools, chỉ dùng cho script này)
@@ -53,6 +53,7 @@ STATIC_FONTS = {
     "anton": [400],
     "zalando_sans_expanded": [600],
     "krona_one": [400],
+    "lato": [400],
 }
 
 

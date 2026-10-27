@@ -72,6 +72,7 @@
     <string name="theme_tick">Tick</string>
     <string name="theme_big_overlap">Overlap</string>
     <string name="theme_quarters">Quarters</string>
+    <string name="theme_sector">Sector</string>
     <string name="theme_in_use">In use</string>
     <string name="theme_edit">Edit</string>
     <string name="theme_saved">Theme saved</string>
@@ -126,6 +127,8 @@
     <string name="theme_color_minute_digit_2">Minute digit 2</string>
     <string name="theme_color_hour_hand">Hour hand</string>
     <string name="theme_color_minute_hand">Minute hand</string>
+    <string name="theme_color_second_hand">Second hand</string>
+    <string name="theme_color_sector">Sector</string>
     <string name="big_overlap_style_filled_round">Rounded filled</string>
     <string name="big_overlap_style_outline_round">Rounded outline</string>
     <string name="theme_opt_digit_style">Digit style</string>
@@ -367,6 +370,7 @@
     <string name="aod_hour_pattern_12h" translatable="false">hh</string>
     <string name="aod_minute_pattern" translatable="false">mm</string>
     <string name="aod_date_pattern" translatable="false">EEE, d MMM</string>
+    <string name="aod_sector_date_pattern" translatable="false">"EEEE  dd"</string>
     <string name="aod_date_weekday_pattern" translatable="false">EEEE</string>
     <string name="aod_date_day_pattern" translatable="false">d MMMM</string>
     <string name="aod_date_full_pattern" translatable="false">EEEE, d MMMM</string>
@@ -412,6 +416,8 @@
     <string name="aod_chain_battery_idle">Not charging</string>
     <string name="aod_chain_battery_charging">Charging</string>
     <string name="aod_chain_battery_full">Charged</string>
+    <string name="aod_sector_battery_charging">"%1$d%%  ·  Charging"</string>
+    <string name="aod_sector_battery_full">"%1$d%%  ·  Charged"</string>
     <string name="aod_notification_content_hidden">Contents hidden</string>
     <string name="aod_weather_temperature" translatable="false">%1$d°</string>
     <string name="aod_event_all_day">All day</string>

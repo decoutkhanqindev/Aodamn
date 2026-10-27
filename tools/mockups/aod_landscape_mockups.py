@@ -3029,6 +3029,303 @@ quarters.append(aq_live_script())
 quarters_defs = aq_defs()
 
 
+# ================================================================== RẺ QUẠT (Nike của Muviz Edge; số đo lấy từ AnalogueClock1, PieClock và layout jul21_screen_layout (chỉ
+# có bản dọc) trong APK, không từ ảnh chụp). r = cỡ × nửa cạnh ngắn (app mẫu: nửa bề ngang, nét kim tính bằng px cố định, quy về r trên màn 1080 px).
+# Kim giờ / phút hai đoạn: cổ 0,013r từ tâm tới 0,2r, thân 0,0333r từ 0,15r tới 0,45r / 0,75r; kim giây 0,0074r từ −0,1r tới 0,75r; vẽ kim phút, kim
+# giây, kim giờ, rồi chấm tâm 0,0333r màu kim giờ, lỗ đen 0,0185r, vòng 0,0093r màu giây; bóng #444444 bán kính 0,0185r; chạy theo mili giây. Nền là
+# hình quạt lớn hơn giữa kim giờ và kim phút, phủ tới mép màn, mờ 0,8; dải mờ đen 50% → 20% → 0 sau vùng chữ trên / dưới. Màn dọc như layout mẫu:
+# ngày "EEEE  dd" Lato 18 sp (thời tiết sau ngày) + vạch 0,5 dp cách 12 dp + icon thông báo 18 dp cách 10 dp, căn giữa, cách đỉnh 80 dp; thông báo
+# mới nhất (icon đen trong ô tròn 28 dp màu thông báo, tiêu đề 16 sp / nội dung 15 sp tối 40%, tối đa 2 dòng) dưới dòng đó; trình phát (tên 16 sp /
+# nghệ sĩ 15 sp tối 40%, phát 22 dp, tới 16 dp, thanh 1 dp cách 20 dp) lề 40 dp, dòng pin 14 sp cách đáy 30 dp. Màn ngang tự dựng: kim giữa màn cỡ
+# như màn dọc, thông tin giữa vùng trái, trình phát + pin giữa vùng phải, dải mờ hai bên.
+SC_LATO = BzFont(TTFont(ROOT / "tools/fonts/static/lato_regular.ttf"), "scl")
+SC_FONTS = ('<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@400&display=swap">'
+            '<style>.scl{font-family:"Lato";font-weight:400}</style>')
+SC_ASC = SC_LATO.font["hhea"].ascent / SC_LATO.upm
+SC_LH = (SC_LATO.font["hhea"].ascent - SC_LATO.font["hhea"].descent) / SC_LATO.upm
+SC_RUBY = "#FF0A54"  # màu nhấn: kim giây mặc định của app mẫu, chưa chủ đề nào dùng
+SC_INK = "#121218"  # nền quạt mặc định của app mẫu (Ink có sẵn)
+SC_COLORS = {"hour": GE, "minute": GE, "second": SC_RUBY, "wedge": SC_INK, "date": "#E4E4E4", "noti": "#E4E4E4", "media": "#E4E4E4",
+             "battery": "#9A9A9A", "weather": G}
+SC_REF = {**SC_COLORS, "hour": "#FFFFFF", "minute": "#FFFFFF", "date": "#E6E6E6", "noti": "#E6E6E6", "media": "#E6E6E6", "battery": "#999999"}
+SC_LAVA = {**SC_COLORS, "wedge": "lava", "second": "#FFD54F"}
+SC_DATE = "Thứ Hai  26"
+SC_N = [0]
+SC_LIVE = []
+
+
+def sc_defs():
+    lava = '<stop offset="0" stop-color="#FC210D"/><stop offset=".5" stop-color="#981424"/><stop offset="1" stop-color="#450A3B"/>'
+    fade = '<stop offset="0" stop-opacity=".5"/><stop offset=".5" stop-opacity=".2"/><stop offset="1" stop-opacity="0"/>'
+    return (f'<linearGradient id="scLavaP" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="{PW}" y2="{PH}">{lava}</linearGradient>'
+            f'<linearGradient id="scLavaL" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="{W}" y2="{H}">{lava}</linearGradient>'
+            f'<linearGradient id="scFadeT" x1="0" y1="0" x2="0" y2="1">{fade}</linearGradient>'
+            f'<linearGradient id="scFadeB" x1="0" y1="1" x2="0" y2="0">{fade}</linearGradient>'
+            f'<linearGradient id="scFadeL" x1="0" y1="0" x2="1" y2="0">{fade}</linearGradient>'
+            f'<linearGradient id="scFadeR" x1="1" y1="0" x2="0" y2="0">{fade}</linearGradient>'
+            f'<clipPath id="scClipP"><rect width="{PW}" height="{PH}" rx="34"/></clipPath>'
+            f'<clipPath id="scClipL"><rect width="{W}" height="{H}" rx="30"/></clipPath>')
+
+
+def sc_angles(hh, mm, ss):
+    return (hh % 12 + mm / 60 + ss / 3600) * 30, (mm + ss / 60) * 6, ss * 6
+
+
+def sc_wedge(sid, cx, cy, big, hh, mm, ss, colors, o):
+    """PieClock.onDraw: phần lớn hơn trong hai phần kim giờ và kim phút chia ra, tâm giữa màn, bán kính vượt mép; cả view mờ 0,8."""
+    h, m, _ = sc_angles(hh, mm, ss)
+    a, b = max(h, m), min(h, m)
+    start, sweep = (a, 360 - (a - b)) if a - b <= 180 else (b, a - b)
+
+    def p(deg):
+        t = math.radians(deg)
+        return f"{f(cx + big * math.sin(t))},{f(cy - big * math.cos(t))}"
+    d = (f"M{f(cx - big)},{f(cy)} a{f(big)},{f(big)} 0 1 0 {f(2 * big)},0 a{f(big)},{f(big)} 0 1 0 {f(-2 * big)},0Z" if sweep > 359.9
+         else f"M{f(cx)},{f(cy)} L{p(start)} A{f(big)},{f(big)} 0 1 1 {p(start + sweep)} Z")
+    fill = f"url(#scLava{o})" if colors["wedge"] == "lava" else colors["wedge"]
+    return f'<path id="{sid}w" d="{d}" fill="{fill}" fill-opacity=".8"/>'
+
+
+def sc_hand(cx, cy, r, deg, gid, color, parts):
+    s = f'<g id="{gid}" transform="rotate({f(deg)} {f(cx)} {f(cy)})">'
+    for a, b, w in parts:
+        s += (f'<line x1="{f(cx)}" y1="{f(cy - a * r)}" x2="{f(cx)}" y2="{f(cy - b * r)}" stroke="{color}" stroke-width="{w * r:.2f}" '
+              f'stroke-linecap="round"/>')
+    return s + "</g>"
+
+
+def sc_hands(sid, cx, cy, r, hh, mm, ss, colors, seconds=True):
+    """AnalogueClock1.onDraw: kim phút, kim giây, kim giờ (có bóng #444444), rồi chấm tâm màu kim giờ, lỗ đen, vòng màu giây."""
+    h, m, s = sc_angles(hh, mm, ss)
+    out = (f'<filter id="{sid}f" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="0" stdDeviation="{.0093 * r:.2f}" '
+           f'flood-color="#444444"/></filter><g filter="url(#{sid}f)">'
+           + sc_hand(cx, cy, r, m, sid + "m", colors["minute"], ((0, .2, .013), (.15, .75, .0333))))
+    if seconds:
+        out += sc_hand(cx, cy, r, s, sid + "s", colors["second"], ((-.1, .75, .0074),))
+    out += sc_hand(cx, cy, r, h, sid + "h", colors["hour"], ((0, .2, .013), (.15, .45, .0333))) + "</g>"
+    out += (f'<circle cx="{f(cx)}" cy="{f(cy)}" r="{.0333 * r:.2f}" fill="{colors["hour"]}"/>'
+            f'<circle cx="{f(cx)}" cy="{f(cy)}" r="{.0185 * r:.2f}" fill="#000"/>')
+    if seconds:
+        out += (f'<circle cx="{f(cx)}" cy="{f(cy)}" r="{.0185 * r:.2f}" fill="none" stroke="{colors["second"]}" '
+                f'stroke-width="{.0093 * r:.2f}"/>')
+    return out
+
+
+def sc_dial(fw, fh, cx, cy, r, hh, mm, ss, colors, o, live=False, seconds=True):
+    SC_N[0] += 1
+    sid = f"sc{SC_N[0]}"
+    big = math.hypot(fw, fh)
+    if live:
+        SC_LIVE.append((sid, cx, cy, big))
+    return sc_wedge(sid, cx, cy, big, hh, mm, ss, colors, o), sc_hands(sid, cx, cy, r, hh, mm, ss, colors, seconds)
+
+
+def sc_row(colors, date=True, weather=False, n=3):
+    """date_active_lt: ngày, thời tiết (cách 14 dp), vạch 0,5 dp cách 12 dp hai bên, icon 18 dp cách 10 dp. Trả về (rộng, hàm vẽ theo (trái, tâm dọc))."""
+    k = 18 / 14
+    parts = []
+    if date:
+        parts.append((0, SC_LATO.width(SC_DATE, 18), lambda x, cy: SC_LATO.text(x, cy - SC_LH * 9 + SC_ASC * 18, SC_DATE, 18, colors["date"])))
+    if weather:
+        ww = 29 * k + SC_LATO.width("24°", 18)
+        parts.append((14 if date else 0, ww, lambda x, cy: cloud(x - 1, cy + 6 * k, .62 * k, colors["weather"], 1.6)
+                      + SC_LATO.text(x + 29 * k, cy - SC_LH * 9 + SC_ASC * 18, "24°", 18, colors["weather"])))
+    if n:
+        if parts:
+            parts.append((12, .5, lambda x, cy: f'<rect x="{f(x)}" y="{f(cy - SC_LH * 9)}" width=".5" height="{f(SC_LH * 18)}" '
+                                               f'fill="{colors["noti"]}"/>'))
+        parts.append((12 if parts else 0, n * 28 - 10, lambda x, cy: bo_icons(x, cy, n, colors["noti"])))
+    w = sum(g + pw for g, pw, _ in parts)
+
+    def draw(x, cy):
+        s = ""
+        for g, pw, fn in parts:
+            x += g
+            s += fn(x, cy)
+            x += pw
+        return s
+    return w, draw
+
+
+def sc_wrap(text, size, w, lines=2):
+    out, cur = [], ""
+    for word in text.split():
+        nxt = (cur + " " + word).strip()
+        if SC_LATO.width(nxt, size) <= w or not cur:
+            cur = nxt
+        else:
+            out.append(cur)
+            cur = word
+    out.append(cur)
+    if len(out) > lines:
+        out = out[:lines - 1] + [SC_LATO.fit(" ".join(out[lines - 1:]) + " ", size, w)]
+    return out
+
+
+def sc_latest(colors, maxw, title="Mai", text="Tối nay đi ăn nhé, nhớ mang ô"):
+    """notification_lt: icon đen 18 dp trong ô tròn 28 dp màu thông báo, cách 12 dp cột tiêu đề 16 sp / nội dung 15 sp tối 40% (tối đa 2 dòng, cách
+    5 dp). Trả về (rộng, cao, hàm vẽ theo (trái, đỉnh))."""
+    lines = sc_wrap(text, 15, maxw - 40)
+    col_h = SC_LH * 16 + 5 + SC_LH * 15 * len(lines)
+    h = max(28.0, col_h)
+    w = 40 + max([SC_LATO.width(title, 16)] + [SC_LATO.width(t, 15) for t in lines])
+
+    def draw(x, top):
+        cy, ct = top + h / 2, top + (h - col_h) / 2
+        s = f'<circle cx="{f(x + 14)}" cy="{f(cy)}" r="14" fill="{colors["noti"]}"/>' + icon_shapes("#000")[0](x + 5, cy - 9, 18)
+        s += SC_LATO.text(x + 40, ct + SC_ASC * 16, title, 16, colors["noti"])
+        for i, t in enumerate(lines):
+            s += SC_LATO.text(x + 40, ct + SC_LH * 16 + 5 + SC_LH * 15 * i + SC_ASC * 15, t, 15, bo_dark(colors["noti"], .4))
+        return s
+    return w, h, draw
+
+
+def sc_player(x, top, w, color, paused=False, title="That Cool Song", artist="It's Artist"):
+    """media_widget_lt: tên 16 sp / nghệ sĩ 15 sp tối 40% (cách 8 dp) bên trái, nút phát 22 dp + tới 16 dp (đệm 10, cách 10), thanh 1 dp cách 20 dp
+    (nền thanh cùng màu mờ). Trả về (cao, hình)."""
+    tw = w - 98
+    row_h = SC_LH * 16 + 8 + SC_LH * 15
+    cy = top + row_h / 2
+    s = (SC_LATO.text(x, top + SC_ASC * 16, SC_LATO.fit(title, 16, tw), 16, color)
+         + SC_LATO.text(x, top + SC_LH * 16 + 8 + SC_ASC * 15, SC_LATO.fit(artist, 15, tw), 15, bo_dark(color, .4)))
+    px, nx = x + tw + 31, x + tw + 80
+    if paused:
+        s += f'<path d="M{f(px - 7)},{f(cy - 9)} L{f(px + 9)},{f(cy)} L{f(px - 7)},{f(cy + 9)} Z" fill="{color}"/>'
+    else:
+        s += (f'<rect x="{f(px - 7)}" y="{f(cy - 9)}" width="5" height="18" rx="1.2" fill="{color}"/>'
+              f'<rect x="{f(px + 2)}" y="{f(cy - 9)}" width="5" height="18" rx="1.2" fill="{color}"/>')
+    s += (f'<path d="M{f(nx - 6)},{f(cy - 6.5)} L{f(nx + 4)},{f(cy)} L{f(nx - 6)},{f(cy + 6.5)} Z" fill="{color}"/>'
+          f'<rect x="{f(nx + 4.5)}" y="{f(cy - 6.5)}" width="2" height="13" rx="1" fill="{color}"/>')
+    by = top + row_h + 20
+    s += (f'<rect x="{f(x)}" y="{f(by)}" width="{f(w)}" height="1" fill="{color}" fill-opacity=".3"/>'
+          f'<rect x="{f(x)}" y="{f(by)}" width="{f(w * .35)}" height="1" fill="{color}"/>')
+    return row_h + 21, s
+
+
+def sc_battery(cx, top, color, charging=False):
+    """bottom_tv: chữ pin 14 sp ("72%", đang sạc thêm "  ·  Đang sạc"), mờ 0,8 khi không sạc."""
+    t = "72%" + ("  ·  Đang sạc" if charging else "")
+    return f'<g opacity="{1 if charging else .8}">{SC_LATO.text(cx, top + SC_ASC * 14, t, 14, color, "middle")}</g>'
+
+
+def sc_column(fw, fh, hh=10, mm=8, ss=42, size=1.0, colors=SC_COLORS, date=True, weather=False, n=3, latest=False, media=False,
+              paused=False, charging=False, live=False, seconds=True, wedge=True):
+    """Layout dọc của app mẫu (cũng là màn dọc bên mình): r = cỡ × nửa bề ngang, khối trên đệm 70 dp (dòng ngày giữa đệm 10 dp, thông báo mới nhất
+    ngay dưới), khối dưới (trình phát lề 40 dp, dòng pin cách đáy 30 dp); dải mờ sau mỗi khối; kim trên cùng."""
+    o = "P" if fh > fw else "L"
+    cx, cy = fw / 2, fh / 2
+    face, hands = sc_dial(fw, fh, cx, cy, size * fw / 2, hh, mm, ss, colors, o, live, seconds)
+    s = face if wedge else ""
+    rw, row = sc_row(colors, date, weather, n)
+    row_h = SC_LH * 18 if rw else 0
+    lw, lh, ldraw = sc_latest(colors, fw - 80) if latest else (0, 0, None)
+    top_h = 70 + (row_h + 20 if rw else 0) + (lh + (6 if rw else 0) if latest else 0) + 70
+    bat_h = SC_LH * 14
+    ph, player = sc_player(40, 0, fw - 80, colors["media"], paused) if media else (0, "")
+    bot_h = 30 + bat_h + (80 + ph if media else 0)
+    s += (f'<rect width="{fw}" height="{f(top_h)}" fill="url(#scFadeT)"/>'
+          f'<rect y="{f(fh - bot_h)}" width="{fw}" height="{f(bot_h)}" fill="url(#scFadeB)"/>')
+    if rw:
+        s += row(cx - rw / 2, 80 + row_h / 2)
+    if latest:
+        s += ldraw(cx - lw / 2, 70 + (row_h + 26 if rw else 0))
+    if media:
+        s += f'<g transform="translate(0 {f(fh - 30 - bat_h - 40 - ph)})">{player}</g>'
+    s += sc_battery(cx, fh - 30 - bat_h, colors["battery"], charging)
+    return f'<g clip-path="url(#scClip{o})">{s}{hands}</g>'
+
+
+def sc_landscape(hh=10, mm=8, ss=42, size=1.0, colors=SC_COLORS, date=True, weather=False, n=3, latest=False, media=False, paused=False,
+                 charging=False, live=False):
+    """Màn ngang tự dựng: kim giữa màn, r = cỡ × nửa cao màn (bằng màn dọc); vùng trái (lề 40 dp tới cách đầu kim phút 36 dp): dòng ngày + thời tiết,
+    hàng icon, thông báo mới nhất, căn giữa vùng; vùng phải: trình phát + dòng pin (không nhạc thì chỉ pin), giữa chiều cao; dải mờ hai bên."""
+    r = size * H / 2
+    reach = .75 * r
+    face, hands = sc_dial(W, H, W / 2, CY, r, hh, mm, ss, colors, "L", live)
+    edge = W / 2 - reach
+    s = face + (f'<rect width="{f(edge)}" height="{H}" fill="url(#scFadeL)"/>'
+                f'<rect x="{f(W - edge)}" width="{f(edge)}" height="{H}" fill="url(#scFadeR)"/>')
+    lz0, lz1 = 40, edge - 36
+    lcx, lzw = (lz0 + lz1) / 2, lz1 - lz0
+    blocks = []
+    dw, drow = sc_row(colors, date, weather, 0)
+    if dw:
+        blocks.append((SC_LH * 18, lambda top: drow(lcx - dw / 2, top + SC_LH * 9)))
+    if n:
+        iw, irow = sc_row(colors, False, False, n)
+        blocks.append((18, lambda top: irow(lcx - iw / 2, top + 9)))
+    if latest:
+        lw, lh, ldraw = sc_latest(colors, lzw)
+        blocks.append((lh, lambda top: ldraw(lcx - lw / 2, top)))
+    total = sum(b[0] for b in blocks) + 14 * (len(blocks) - 1)
+    top = CY - total / 2
+    for bh, fn in blocks:
+        s += fn(top)
+        top += bh + 14
+    rz0 = W / 2 + reach + 36
+    rcx, rzw = (rz0 + W - 40) / 2, W - 40 - rz0
+    bat_h = SC_LH * 14
+    if media:
+        ph, player = sc_player(rz0, 0, rzw, colors["media"], paused)
+        top = CY - (ph + 24 + bat_h) / 2
+        s += f'<g transform="translate(0 {f(top)})">{player}</g>' + sc_battery(rcx, top + ph + 24, colors["battery"], charging)
+    else:
+        s += sc_battery(rcx, CY - bat_h / 2, colors["battery"], charging)
+    return f'<g clip-path="url(#scClipL)">{s}{hands}</g>'
+
+
+def sc_live_script():
+    """Khung live: ba kim chạy liên tục theo đồng hồ của máy xem mock, hình quạt đổi theo kim giờ / phút."""
+    dials = ",".join(f'["{sid}",{f(cx)},{f(cy)},{f(big)}]' for sid, cx, cy, big in SC_LIVE)
+    return ('<script>(function(){var c=[' + dials + '];function p(x,y,R,d){var t=d*Math.PI/180;return(x+R*Math.sin(t)).toFixed(1)+","'
+            '+(y-R*Math.cos(t)).toFixed(1)}function t(){var d=new Date(),s=d.getSeconds()+d.getMilliseconds()/1e3,m=d.getMinutes()+s/60,'
+            'h=d.getHours()%12+m/60,H=h*30,M=m*6,S=s*6;c.forEach(function(e){var id=e[0],x=e[1],y=e[2],R=e[3];[["h",H],["m",M],["s",S]].forEach('
+            'function(k){var g=document.getElementById(id+k[0]);if(g)g.setAttribute("transform","rotate("+k[1].toFixed(2)+" "+x+" "+y+")");});'
+            'var w=document.getElementById(id+"w");if(!w)return;var a=Math.max(H,M),b=Math.min(H,M),st=a-b<=180?a:b,sw=a-b<=180?360-(a-b):a-b;'
+            'w.setAttribute("d",sw>359.9?"M"+(x-R)+","+y+" a"+R+","+R+" 0 1 0 "+2*R+",0 a"+R+","+R+" 0 1 0 "+(-2*R)+",0Z":"M"+x+","+y+" L"'
+            '+p(x,y,R,st)+" A"+R+","+R+" 0 1 1 "+p(x,y,R,st+sw)+" Z");});requestAnimationFrame(t);}t();})();</script>')
+
+
+def sc_strip():
+    k, s = 0.4, ""
+    for i, (label, kw) in enumerate((("Mặc định", {}),
+                                      ("Màu app mẫu, cỡ 120%", {"colors": SC_REF, "size": 1.2, "hh": 7, "mm": 21, "ss": 5}),
+                                      ("Quạt gradient, cỡ 80%", {"colors": SC_LAVA, "size": .8, "hh": 4, "mm": 38, "ss": 50}),
+                                      ("Tiết kiệm (app mẫu)", {"wedge": False, "seconds": False, "hh": 1, "mm": 47}))):
+        x = 36 + i * 212
+        s += (f'<g transform="translate({x} 14) scale({k})"><rect width="{PW}" height="{PH}" rx="34" fill="#000" stroke="#333" stroke-width="2"/>'
+              + sc_column(PW, PH, **kw) + "</g>" + txt(x + PW * k / 2, 14 + PH * k + 22, label, 13, DM, 400, "middle"))
+    return (f'<p style="font-size:13px;color:var(--text-secondary);margin:1.25rem 0 6px">Mặc định (kim xám trắng, kim giây hồng ruby, quạt mực) · màu app mẫu (trắng) · quạt '
+            f'gradient Dung nham + kim giây vàng (màu nào cũng có thể là gradient) · trạng thái tiết kiệm của app mẫu: ẩn kim giây, tắt quạt (đề xuất bỏ)</p><svg viewBox="0 0 {W} 400" width="100%" role="img" aria-label="Màu và cỡ" '
+            f'style="display:block;font-family:\'Plus Jakarta Sans\',sans-serif" fill="{G}"><rect width="{W}" height="400" rx="20" fill="#111"/>'
+            f'{s}</svg>')
+
+
+sector = [
+    SC_FONTS,
+    sc_strip(),
+    '<div style="font-size:0">',
+    frame_portrait("D1 · Dọc, mặc định (cũng là thẻ ở lưới chủ đề), kim chạy theo giờ thật: ngày | icon thông báo trên, pin dưới",
+                   sc_column(PW, PH, live=True)),
+    frame_portrait("D2 · Dọc, 08:30, thời tiết sau ngày, thông báo mới nhất dưới dòng ngày, đang phát nhạc",
+                   sc_column(PW, PH, 8, 30, 12, weather=True, latest=True, n=2, media=True)),
+    frame_portrait("D3 · Dọc, 21:47, cỡ 120%, đang sạc, nhạc đang dừng",
+                   sc_column(PW, PH, 21, 47, 33, 1.2, charging=True, media=True, paused=True, n=1)),
+    frame_portrait("D4 · Dọc, 05:59, quạt gradient Dung nham, kim giây vàng, cỡ 70%, tắt ngày",
+                   sc_column(PW, PH, 5, 59, 48, .7, SC_LAVA, date=False, n=0)),
+    '</div>',
+    frame("N1 · Ngang, không nhạc, kim chạy theo giờ thật: ngày + thời tiết + icon trái, pin phải; kim giữa màn",
+          sc_landscape(weather=True, live=True)),
+    frame("N2 · Ngang, 08:30, đang phát nhạc, thông báo mới nhất: trình phát + pin phải",
+          sc_landscape(8, 30, 12, weather=True, latest=True, n=2, media=True)),
+    frame("N3 · Ngang, 21:47, cỡ 120%, đang sạc, nhạc đang dừng",
+          sc_landscape(21, 47, 33, 1.2, charging=True, media=True, paused=True, n=1)),
+    frame("N4 · Để so: app mẫu ở màn ngang dùng chung layout dọc, kim tính theo nửa bề ngang nên tràn khỏi màn",
+          sc_column(W, H)),
+]
+sector.append(sc_live_script())
+
+
 for name, summary, defs, frames in [
     ("w_classic", "Bảy bố cục ngang của chủ đề Cổ điển theo các khối đang bật", classic_defs, classic),
     ("w_jersey", "Bố cục ngang của chủ đề Số áo: ngày, bốn chữ số một hàng, dòng pin", jersey_defs, jersey),
@@ -3045,6 +3342,7 @@ for name, summary, defs, frames in [
     ("w_tick", "Chủ đề Nhịp giây (Coum Face Clock): màu vòng và cỡ, bốn khung dọc và bốn khung ngang", tk_ticks_def(), tick),
     ("w_big_overlap", "Chủ đề Chồng số (Big Overlap Clock): bốn kiểu và màu, bốn khung dọc và bốn khung ngang", big_overlap_defs, big_overlap),
     ("w_quarters", "Chủ đề Bốn số (Android 14 Analog Clock): kiểu số, kiểu kim và màu, bốn khung dọc và bốn khung ngang", quarters_defs, quarters),
+    ("w_sector", "Chủ đề Rẻ quạt (Nike): màu và cỡ, bốn khung dọc và bốn khung ngang", sc_defs(), sector),
 ]:
     code = widget(summary, defs, frames)
     OUT.mkdir(parents=True, exist_ok=True)

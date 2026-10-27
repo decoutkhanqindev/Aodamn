@@ -7,6 +7,50 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-10-27 – Chủ đề Rẻ quạt
+
+Build được, unit test pass (thêm test chặn Rẻ quạt có lại khối đã bỏ hay thiếu tuỳ chọn của app mẫu; test nội dung thông báo và chạy theo giờ
+thật ở khung xem trước cho phép Rẻ quạt), `tools/check-rules.sh` ra 0 vi phạm, thư mục các chủ đề cũ không đổi dòng nào. Chưa test trên máy.
+
+User duyệt mock: "Duyệt mock Rẻ quạt: tên Rẻ quạt / Sector, màu nhấn hồng ruby, đồng ý các mục đổi (kim xám trắng, bỏ màu chủ đề chung, nét
+theo r, thông báo / trình phát cố định, bố cục ngang mới), kim chạy mượt, bỏ trạng thái tiết kiệm. Bắt đầu code."
+
+### Thêm
+
+- Chủ đề Rẻ quạt (Nike của Muviz Edge, tên mẫu là thương hiệu nên đổi; số đo lấy từ `AnalogueClock1`, `PieClock`, `Jul21Screen` và layout
+  `jul21_screen_layout` dịch ngược, độ dày thân kim giờ đọc từ bytecode vì JADX mất; mock duyệt trước khi code). r = cỡ × nửa cạnh ngắn. Kim
+  giờ / phút hai đoạn: cổ 0,013r từ tâm tới 0,2r, thân 0,0333r từ 0,15r tới 0,45r / 0,75r; kim giây 0,0074r từ −0,1r tới 0,75r; vẽ kim phút,
+  kim giây, kim giờ rồi chấm tâm 0,0333r màu kim giờ, lỗ đen 0,0185r, vòng 0,0093r màu kim giây; bóng `#444444` bán kính 0,0185r. App mẫu
+  tính nét kim bằng px cố định, bên mình quy về r trên màn 1080 px nên cỡ nào, màn nào kim cũng cân (user duyệt). Nền là phần lớn hơn trong
+  hai phần kim giờ và kim phút chia ra, tâm giữa màn, phủ tới mép, mờ 0,8 như app mẫu. Nâng cấp: kim và hình quạt chạy mượt mỗi khung hình
+  (app mẫu vẽ lại mỗi giây nên kim nhảy), cả ở màn chủ đề và Tùy chỉnh (`isLiveInPreview`); thẻ ở lưới đứng yên. Bỏ trạng thái tiết kiệm của
+  app mẫu (ẩn kim giây, tắt quạt) vì AOD không có trạng thái đó (user duyệt).
+- Bố cục dọc như layout mẫu: dải trên đệm 70dp, ngày "EEEE  dd" Lato 18sp + thời tiết (cách 14dp) + vạch 0,5dp (cách 12dp) + hàng icon
+  thông báo 18dp căn giữa; thông báo mới nhất (icon đen trong ô tròn 28dp màu thông báo, tiêu đề 16sp / nội dung 15sp tối hơn 40%, tối đa 2
+  dòng) ngay dưới; dải dưới: trình phát lề 40dp (tên 16sp / nghệ sĩ 15sp tối hơn 40%, nút phát 22dp, nút tới 16dp, thanh 1dp cách 20dp) và
+  dòng pin chữ 14sp cách đáy 30dp ("72%", đang sạc "72%  ·  Đang sạc", đầy "Đã sạc đầy", mờ 0,8 khi không sạc như app mẫu; đèn pin thì icon
+  mint sau chữ). Hai dải mờ 50% → 20% → 0 sau vùng chữ như app mẫu, nâng cấp: chỉ khoét hình quạt (`BlendMode.DstOut` trên lớp offscreen) chứ
+  không phủ đen nên ảnh nền vẫn thấy. Thông báo mới nhất và trình phát hiện cố định thay vì theo hẹn giờ như app mẫu (user duyệt). Màn ngang
+  (app mẫu dùng chung layout dọc nên kim tràn khỏi màn): kim giữa màn cỡ như màn dọc, hình quạt phủ cả màn, ngày + thời tiết, hàng icon,
+  thông báo mới nhất giữa vùng trái, trình phát + dòng pin giữa vùng phải (đổi bằng mờ chéo), dải mờ hai bên (user duyệt).
+- Tuỳ chọn đủ như app mẫu: cỡ 60–120% (mặc định 100%), màu kim giờ, kim phút, kim giây, nền quạt (Clock Background Color); màu chủ đạo (Theme
+  Color) tách thành màu ngày, thông báo, pin, nhạc với mặc định suy như app mẫu (tối hơn 10%, pin tối hơn 40%) (user duyệt). Mặc định: kim giờ,
+  kim phút `GreyED` (app mẫu trắng, user duyệt), kim giây `Ruby` (#FF0A54, hồng ruby như app mẫu, màu nhấn chưa chủ đề nào dùng), hình quạt
+  `Ink` (#121218 như app mẫu), ngày / thông báo / nhạc `GreyE4`, pin `Grey9A`. Màu nào cũng tô được gradient (kim từ tâm ra đầu kim, hình quạt
+  theo cả màn).
+- Rẻ quạt chỉ có ngày, thời tiết, pin, thông báo (kèm thông báo mới nhất, `hasNotificationContent = true`), nhạc: kim phủ gần hết màn và quét
+  qua mọi chỗ giữa màn nên ghi nhớ, sự kiện, nét vẽ không có chỗ đặt cân.
+- Font Lato Regular bản Google Fonts 2.015 (OFL, có tiếng Việt; bản trong app mẫu 1.104 không có, số đo giống hệt): chỉ có bản tĩnh và có tên
+  dành riêng "Lato" nên chép nguyên file ở `tools/fonts/static/` (641 KB), giấy phép `licenses/Lato-OFL.txt`. Mock của chủ đề ở
+  `tools/mockups/aod_landscape_mockups.py` (`w_sector`, kim và hình quạt chạy theo giờ thật ở khung D1 / N1).
+
+### Thay đổi
+
+- Chỉ thêm, không đổi chủ đề đang có: mục `SECTOR` ở `AodThemeValue`, nhánh `when` ở `AodPortrait` / `AodLandscape` / `AodMediaControls`,
+  màu `Ruby`, `Grey44`, `BlackAlpha20`, họ font `FontFamilyLato`, mục `lato` ở `make_static_fonts.py`, chuỗi vi / en (`theme_sector`,
+  `theme_color_second_hand`, `theme_color_sector`, `aod_sector_battery_charging`, `aod_sector_battery_full`, mẫu `aod_sector_date_pattern`);
+  dùng lại nhãn "Kim giờ", "Kim phút", cỡ, màu ngày / thông báo / pin / nhạc và mẫu `aod_battery` có sẵn.
+
 ## [Chưa phát hành] – 2026-10-26 – Chủ đề Bốn số
 
 Build được, unit test pass (thêm test chặn Bốn số có lại khối đã bỏ hay thiếu tuỳ chọn của app mẫu; test nội dung thông báo và chạy theo giờ
