@@ -29,6 +29,8 @@ import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.ripple.AodR
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.ripple.AodRipplePortrait
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.sector.AodSectorLandscape
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.sector.AodSectorPortrait
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.spine.AodSpineLandscape
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.spine.AodSpinePortrait
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.tick.AodTickLandscape
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.tick.AodTickPortrait
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.tower.AodTowerLandscape
@@ -59,6 +61,7 @@ fun AodPortrait(
         AodThemeValue.BIG_OVERLAP -> AodBigOverlapPortrait(state = state, onIntent = onIntent)
         AodThemeValue.QUARTERS -> AodQuartersPortrait(state = state, onIntent = onIntent)
         AodThemeValue.SECTOR -> AodSectorPortrait(state = state, onIntent = onIntent)
+        AodThemeValue.SPINE -> AodSpinePortrait(state = state, onIntent = onIntent)
     }
 }
 
@@ -84,5 +87,6 @@ fun AodLandscape(
         AodThemeValue.BIG_OVERLAP -> AodBigOverlapLandscape(state = state, onIntent = onIntent)
         AodThemeValue.QUARTERS -> AodQuartersLandscape(state = state, onIntent = onIntent)
         AodThemeValue.SECTOR -> AodSectorLandscape(state = state, onIntent = onIntent)
+        AodThemeValue.SPINE -> AodSpineLandscape(state = state, onIntent = onIntent)
     }
 }

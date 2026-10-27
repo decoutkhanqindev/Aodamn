@@ -15,10 +15,13 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.quarters.AodQuar
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.quarters.QuartersThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.ripple.RippleThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.sector.SectorThemeSpec
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.spine.SpineThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.tick.TickThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
+import com.decoutkhanqindev.aodamn.presentation.theme.Amber
 import com.decoutkhanqindev.aodamn.presentation.theme.Cream
 import com.decoutkhanqindev.aodamn.presentation.theme.GreyCE
+import com.decoutkhanqindev.aodamn.presentation.theme.GreyE4
 import com.decoutkhanqindev.aodamn.presentation.theme.GreyED
 import com.decoutkhanqindev.aodamn.presentation.theme.Ink
 import com.decoutkhanqindev.aodamn.presentation.theme.Orchid
@@ -63,6 +66,7 @@ class AodThemeSpecTest {
                     AodThemeValue.BIG_OVERLAP,
                     AodThemeValue.QUARTERS,
                     AodThemeValue.SECTOR,
+                    AodThemeValue.SPINE,
                 )
             assertEquals("${theme.id}: ghi nhớ", isChain, AodBlockValue.MEMO in theme.spec.ownBlocks)
             assertEquals("${theme.id}: sự kiện", isChain, AodBlockValue.EVENTS in theme.spec.ownBlocks)
@@ -343,6 +347,42 @@ class AodThemeSpecTest {
                 SectorThemeSpec.NotificationsColor,
                 SectorThemeSpec.BatteryColor,
                 SectorThemeSpec.MediaColor,
+            ),
+            spec.options,
+        )
+    }
+
+    @Test
+    fun `spine draws everything but the drawing and keeps every reference option with one color per part`() {
+        val spec = AodThemeValue.SPINE.spec
+        assertEquals(
+            setOf(
+                AodComponentValue.DATE,
+                AodComponentValue.BATTERY,
+                AodComponentValue.WEATHER,
+                AodComponentValue.EVENTS,
+                AodComponentValue.MEMO,
+                AodComponentValue.NOTIFICATIONS,
+                AodComponentValue.MEDIA,
+            ),
+            spec.components,
+        )
+        assertEquals(setOf(AodBlockValue.DATE, AodBlockValue.STATUS, AodBlockValue.MEDIA), spec.ownBlocks)
+        assertEquals(true, spec.hasNotificationContent)
+        assertEquals(false, spec.isLiveInPreview)
+        assertEquals(60..150, SpineThemeSpec.Size.range)
+        assertEquals(100, SpineThemeSpec.Size.default)
+        assertEquals(Amber, SpineThemeSpec.ClockColor.default)
+        assertEquals(GreyE4, SpineThemeSpec.DateColor.default)
+        assertEquals(GreyE4, SpineThemeSpec.StatusColor.default)
+        assertEquals(GreyE4, SpineThemeSpec.MediaColor.default)
+        assertEquals(
+            listOf(
+                SpineThemeSpec.Size,
+                SpineThemeSpec.ClockColor,
+                SpineThemeSpec.DateColor,
+                SpineThemeSpec.StatusColor,
+                SpineThemeSpec.MediaColor,
             ),
             spec.options,
         )

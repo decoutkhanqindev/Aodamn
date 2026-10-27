@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import com.decoutkhanqindev.aodamn.R
 import com.decoutkhanqindev.aodamn.presentation.components.onClick
@@ -51,13 +52,14 @@ fun AodCompactPlayer(
                 label = "AodCompactPlayerTrack",
             ) { (title, artist) ->
                 Column(modifier = Modifier.fillMaxWidth()) {
-                    CompactPlayerText(text = title, brush = brush, fontSize = style.titleSize, style = style, iterations = 2)
+                    CompactPlayerText(text = title, brush = brush, fontSize = style.titleSize, fontWeight = null, style = style, iterations = 2)
 
                     artist?.let {
                         CompactPlayerText(
                             text = artist,
                             brush = config.darkBrushOf(colorOption, style.artistDarken),
                             fontSize = style.artistSize,
+                            fontWeight = style.artistWeight,
                             style = style,
                             iterations = 1,
                             modifier = Modifier.padding(top = style.artistGap),
@@ -91,7 +93,7 @@ fun AodCompactPlayer(
             )
         }
 
-        if (progress != null) {
+        if (progress != null && style.isProgressShown) {
             AodFlatProgress(
                 progress = progress,
                 color = color,
@@ -109,6 +111,7 @@ private fun CompactPlayerText(
     text: String,
     brush: Brush,
     fontSize: TextUnit,
+    fontWeight: FontWeight?,
     style: AodCompactPlayerStyle,
     iterations: Int,
     modifier: Modifier = Modifier,
@@ -119,6 +122,7 @@ private fun CompactPlayerText(
         style = TextStyle(
             brush = brush,
             fontSize = fontSize,
+            fontWeight = fontWeight,
             fontFamily = style.font,
             letterSpacing = style.letterSpacing,
         ),

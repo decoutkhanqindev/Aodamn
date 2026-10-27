@@ -3326,6 +3326,212 @@ sector = [
 sector.append(sc_live_script())
 
 
+# ================================================================== GÁY SÁCH (Vertical Clock của Muviz Edge; số đo lấy từ VerticalTextView, Apr22Screen và layout
+# apr22_screen_layout dọc / ngang trong APK, không từ ảnh chụp). Giờ "HH:mm" Josefin Sans Regular cỡ = Cỡ (25–60, mặc định 40) × cạnh ngắn / 393, xoay −90°
+# (đọc từ dưới lên, nét chữ căn giữa dòng cao bằng khung chữ của font), ngày "EEE, dd MMMM" in hoa nửa cỡ đó trên giờ, cùng trục, cách 30 dp; cột cách mép
+# trái 18 dp, đáy giờ cách đáy 45 dp (ngang 30 dp). Màn dọc: phần trên cột giờ chia 0,25 trống / 0,75 cho cột thông tin (lề 40 / 20 dp): hàng pin 15,5 dp +
+# "72%" 15 sp · chấm 14 sp cách 12 dp · icon thông báo 17 dp cách 10 dp, thông báo mới nhất (icon 17 dp cách 10 dp + một dòng 17 sp), đệm 40 dp, trình
+# phát (tên 18 sp Regular / nghệ sĩ 16 sp Light cách 2 dp, phát 42 dp cách 30 dp, tới 37 dp cách 5 dp, lề phải 30 dp, rộng tối đa 344 dp). Màn ngang như
+# layout ngang mẫu: 5% trống, cột giờ đáy trái, 10% trống, cột thông tin neo đáy (lề 30 dp), 5% trống; bên mình co cột giờ cho vừa chiều cao màn.
+SP_VAR = ROOT / "tools/fonts/variable/josefin_sans_variable.ttf"
+SP_REG = BzFont(instancer.instantiateVariableFont(TTFont(SP_VAR), {"wght": 400}, inplace=False), "spr")
+SP_LIGHT = BzFont(instancer.instantiateVariableFont(TTFont(SP_VAR), {"wght": 300}, inplace=False), "spl")
+SP_FONTS = ('<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400&display=swap">'
+            '<style>.spr{font-family:"Josefin Sans";font-weight:400}.spl{font-family:"Josefin Sans";font-weight:300}</style>')
+SP_ASC = SP_REG.font["hhea"].ascent / SP_REG.upm
+SP_LH = (SP_REG.font["hhea"].ascent - SP_REG.font["hhea"].descent) / SP_REG.upm
+SP_BOX = (SP_REG.font["head"].yMax - SP_REG.font["head"].yMin) / SP_REG.upm  # TextView có đệm font: dòng cao bằng khung chữ của font
+SP_AMBER = "#FFD54F"  # màu nhấn: Amber có sẵn, chưa chủ đề nào dùng làm mặc định
+SP_COLORS = {"clock": SP_AMBER, "date": "#E4E4E4", "noti": "#E4E4E4", "media": "#E4E4E4", "weather": G}
+SP_REF = {"clock": "#FFFFFF", "date": "#FFFFFF", "noti": "#FFFFFF", "media": "#FFFFFF", "weather": "#FFFFFF"}
+SP_SUNSET = {**SP_COLORS, "clock": "url(#spSunset)"}
+SP_DATE = "TH 2, 26 THÁNG 10"
+
+
+def sp_defs():
+    return ('<linearGradient id="spSunset" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#4158D0"/><stop offset=".5" '
+            'stop-color="#C850C0"/><stop offset="1" stop-color="#FFCC70"/></linearGradient>'
+            f'<clipPath id="spClipP"><rect width="{PW}" height="{PH}" rx="34"/></clipPath>'
+            f'<clipPath id="spClipL"><rect width="{W}" height="{H}" rx="30"/></clipPath>')
+
+
+def sp_vtext(cx, bottom, text, size, color):
+    """VerticalTextView.onDraw: xoay −90° quanh đáy, chữ bắt đầu ở đáy và đọc lên trên, nét chữ căn giữa trục cx. Trả về (dài, hình)."""
+    _, t, _, b = SP_REG.ink(text, size)
+    return SP_REG.width(text, size), (f'<g transform="translate({f(cx)} {f(bottom)}) rotate(-90)">'
+                                     f'{SP_REG.text(0, -(t + b) / 2, text, size, color)}</g>')
+
+
+def sp_column(left, bottom, size, colors, date=True, text="10:08", gap=45, k=1.0):
+    """Cột giờ (v_lt): rộng 18 dp + dòng giờ, giờ từ đáy (cách đáy gap), ngày nửa cỡ trên giờ cách 30 dp. Trả về (rộng, cao, hình)."""
+    cs = size * k
+    cx = left + 18 * k + SP_BOX * cs / 2
+    y = bottom - gap * k
+    cl, s = sp_vtext(cx, y, text, cs, colors["clock"])
+    h = gap * k + cl
+    if date:
+        dl, ds = sp_vtext(cx, y - cl - 30 * k, SP_DATE, cs / 2, colors["date"])
+        s += ds
+        h += 30 * k + dl
+    return 18 * k + SP_BOX * cs, h, s
+
+
+def sp_battery(x, cy, color, charging=False):
+    s = (f'<rect x="{f(x + 4.2)}" y="{f(cy - 6)}" width="7" height="12.5" rx="1.6" fill="none" stroke="{color}" stroke-width="1.3"/>'
+         f'<rect x="{f(x + 6.2)}" y="{f(cy - 7.6)}" width="3" height="1.6" rx=".6" fill="{color}"/>')
+    if charging:
+        s += f'<path d="M{f(x + 8.4)},{f(cy - 4)} L{f(x + 6.2)},{f(cy + .6)} H{f(x + 7.9)} L{f(x + 7)},{f(cy + 4.4)} L{f(x + 9.6)},{f(cy - .6)} H{f(x + 7.9)} Z" fill="{color}"/>'
+    else:
+        s += f'<rect x="{f(x + 5.7)}" y="{f(cy - 2.2)}" width="4" height="7.2" rx=".6" fill="{color}"/>'
+    return s
+
+
+def sp_row(x, cy, colors, weather=False, n=3, charging=False):
+    """icons_lt: (thời tiết ·) pin 15,5 dp + "72%" 15 sp · icon thông báo 17 dp cách 10 dp; chấm 14 sp cách 12 dp giữa các phần."""
+    c = colors["noti"]
+    parts = []
+    if weather:
+        parts.append((25 + SP_REG.width("24°", 15), lambda X: cloud(X - 1, cy + 6, .55, colors["weather"], 1.5)
+                      + SP_REG.text(X + 25, cy + .36 * 15, "24°", 15, colors["weather"])))
+    parts.append((20.5 + SP_REG.width("72%", 15), lambda X: sp_battery(X, cy, c, charging) + SP_REG.text(X + 20.5, cy + .36 * 15, "72%", 15, c)))
+    if n:
+        parts.append((n * 27 - 10, lambda X: "".join(icon_shapes(c)[i % 3](X + i * 27, cy - 8.5, 17) for i in range(n))))
+    s, dot = "", SP_REG.width("•", 14)
+    for i, (w, fn) in enumerate(parts):
+        if i:
+            s += SP_REG.text(x + 12, cy + .36 * 14, "•", 14, c)
+            x += 24 + dot
+        s += fn(x)
+        x += w
+    return s
+
+
+def sp_latest(x, cy, w, color, text="Mai: Tối nay đi ăn nhé, nhớ mang ô"):
+    """notify_lt: icon 17 dp cách 10 dp, một dòng 17 sp chạy chữ (AodLatestLine)."""
+    return icon_shapes(color)[0](x, cy - 8.5, 17) + SP_REG.text(x + 27, cy + .36 * 17, SP_REG.fit(text, 17, w - 27), 17, color)
+
+
+def sp_player(x, top, w, color, paused=False, title="That Cool Song", artist="It's Artist"):
+    """media_widget_lt (AodCompactPlayer): tên 18 sp / nghệ sĩ 16 sp Light cách 2 dp, phát 42 dp (icon 22) cách 30 dp, tới 37 dp (icon 17) cách 5 dp,
+    lề phải 30 dp, rộng tối đa 344 dp; nâng cấp: thanh tiến trình 1 dp cách 12 dp. Trả về (cao, hình)."""
+    pw = min(w, 344)
+    tw = pw - 144
+    row_h = max(42.0, SP_LH * 18 + 2 + SP_LH * 16)
+    ct = top + (row_h - (SP_LH * 18 + 2 + SP_LH * 16)) / 2
+    cy = top + row_h / 2
+    s = (SP_REG.text(x, ct + SP_ASC * 18, SP_REG.fit(title, 18, tw), 18, color)
+         + SP_LIGHT.text(x, ct + SP_LH * 18 + 2 + SP_ASC * 16, SP_LIGHT.fit(artist, 16, tw), 16, color))
+    px, nx = x + tw + 30 + 21, x + tw + 30 + 42 + 5 + 18.5
+    if paused:
+        s += f'<path d="M{f(px - 6)},{f(cy - 8)} L{f(px + 8)},{f(cy)} L{f(px - 6)},{f(cy + 8)} Z" fill="{color}"/>'
+    else:
+        s += (f'<rect x="{f(px - 6.5)}" y="{f(cy - 8)}" width="4.5" height="16" rx="1.2" fill="{color}"/>'
+              f'<rect x="{f(px + 2)}" y="{f(cy - 8)}" width="4.5" height="16" rx="1.2" fill="{color}"/>')
+    s += (f'<path d="M{f(nx - 5.5)},{f(cy - 6)} L{f(nx + 3.5)},{f(cy)} L{f(nx - 5.5)},{f(cy + 6)} Z" fill="{color}"/>'
+          f'<rect x="{f(nx + 4)}" y="{f(cy - 6)}" width="1.8" height="12" rx=".9" fill="{color}"/>')
+    by = top + row_h + 12
+    s += (f'<rect x="{f(x)}" y="{f(by)}" width="{f(pw - 30)}" height="1" fill="{color}" fill-opacity=".3"/>'
+          f'<rect x="{f(x)}" y="{f(by)}" width="{f((pw - 30) * .35)}" height="1" fill="{color}"/>')
+    return row_h + 13, s
+
+
+def sp_details(x, top, w, colors, weather=False, n=3, latest=False, charging=False):
+    """details_lt: hàng trạng thái rồi thông báo mới nhất (bên mình hiện cố định dưới hàng, app mẫu thay hàng một lúc). Trả về (cao, hình)."""
+    s = sp_row(x, top + 9, colors, weather, n, charging)
+    h = 18
+    if latest:
+        s += sp_latest(x, top + h + 10 + 9, w, colors["noti"])
+        h += 10 + 18
+    return h, s
+
+
+def sp_extras(x, top):
+    """Khối dùng chung thêm vào cột thông tin (bên mình): sự kiện rồi ghi nhớ, căn trái. Trả về (cao, hình)."""
+    return 95, f'<g transform="translate({f(x)} {f(top + 13)})">{events_list(3)}<g transform="translate(0 78)">{memo_icon()}</g></g>'
+
+
+def sp_portrait(hh=10, mm=8, size=40, colors=SP_COLORS, date=True, weather=False, n=3, latest=False, media=False, paused=False, charging=False,
+                extras=False):
+    """Layout dọc của app mẫu: cột giờ đáy trái; phần trên chia 0,25 trống / 0,75, cột thông tin (lề 40 / 20 dp) ở đầu phần 0,75; sự kiện + ghi nhớ
+    (bên mình thêm) dưới trình phát cách 28 dp."""
+    _, ch, col = sp_column(0, PH, size, colors, date, f"{hh:02d}:{mm:02d}")
+    top = .25 * (PH - ch)
+    dh, details = sp_details(40, top, PW - 60, colors, weather, n, latest, charging)
+    s = col + details
+    y = top + dh + 40
+    if media:
+        ph, player = sp_player(40, y, PW - 60, colors["media"], paused)
+        s += player
+        y += ph + 28
+    if extras:
+        s += sp_extras(40, y)[1]
+    return f'<g clip-path="url(#spClipP)">{s}</g>'
+
+
+def sp_landscape(hh=10, mm=8, size=40, colors=SP_COLORS, date=True, weather=False, n=3, latest=False, media=False, paused=False, charging=False,
+                 fit=True, extras=False):
+    """Layout ngang của app mẫu: 5% trống, cột giờ neo đáy (cách đáy 30 dp), 10% trống, cột thông tin neo đáy (lề 30 dp), 5% trống; bên mình co cột
+    giờ (cả khoảng cách) cho vừa chiều cao màn trừ 24 dp."""
+    _, ch, _ = sp_column(0, H, size, colors, date, gap=30)
+    k = min(1.0, (H - 24) / ch) if fit else 1.0
+    vw, _, _ = sp_column(0, H, size, colors, date, gap=30, k=k)
+    rem = W - vw - 60
+    x0 = rem * .05 / 1.2
+    _, _, col = sp_column(x0, H, size, colors, date, f"{hh:02d}:{mm:02d}", 30, k)
+    ix, iw = x0 + vw + rem * .1 / 1.2 + 30, rem / 1.2
+    ph = 0
+    s = col
+    if media:
+        ph, player = sp_player(ix, 0, iw, colors["media"], paused)
+        s += f'<g transform="translate(0 {f(H - 30 - ph)})">{player}</g>'
+    dh, _ = sp_details(ix, 0, iw, colors, weather, n, latest, charging)
+    dt = H - 30 - ph - 40 - dh
+    _, details = sp_details(ix, dt, min(iw, 344), colors, weather, n, latest, charging)
+    if extras:
+        eh, _ = sp_extras(ix, 0)
+        s += sp_extras(ix, dt - 28 - eh)[1]
+    return f'<g clip-path="url(#spClipL)">{s}{details}</g>'
+
+
+def sp_strip():
+    k, s = 0.4, ""
+    for i, (label, kw) in enumerate((("Mặc định", {}),
+                                      ("Màu app mẫu", {"colors": SP_REF, "hh": 7, "mm": 21}),
+                                      ("Giờ gradient, cỡ 55", {"colors": SP_SUNSET, "size": 55, "hh": 4, "mm": 38}),
+                                      ("Cỡ 25, tắt ngày", {"size": 25, "date": False, "hh": 1, "mm": 47, "n": 0}))):
+        x = 36 + i * 212
+        s += (f'<g transform="translate({x} 14) scale({k})"><rect width="{PW}" height="{PH}" rx="34" fill="#000" stroke="#333" stroke-width="2"/>'
+              + sp_portrait(**kw) + "</g>" + txt(x + PW * k / 2, 14 + PH * k + 22, label, 13, DM, 400, "middle"))
+    return (f'<p style="font-size:13px;color:var(--text-secondary);margin:1.25rem 0 6px">Mặc định (giờ hổ phách, chữ xám sáng) · màu app mẫu (trắng hết) · '
+            f'giờ gradient Hoàng hôn, cỡ 55 (màu nào cũng có thể là gradient) · cỡ nhỏ nhất 25, tắt ngày</p><svg viewBox="0 0 {W} 400" width="100%" '
+            f'role="img" aria-label="Màu và cỡ" style="display:block;font-family:\'Plus Jakarta Sans\',sans-serif" fill="{G}"><rect width="{W}" '
+            f'height="400" rx="20" fill="#111"/>{s}</svg>')
+
+
+spine = [
+    SP_FONTS,
+    sp_strip(),
+    '<div style="font-size:0">',
+    frame_portrait("D1 · Dọc, mặc định (cũng là thẻ ở lưới chủ đề): giờ + ngày dọc đáy trái, pin · icon thông báo trên",
+                   sp_portrait()),
+    frame_portrait("D2 · Dọc, 08:30, thời tiết đầu hàng, thông báo mới nhất dưới hàng, đang phát nhạc, sự kiện + ghi nhớ dưới trình phát",
+                   sp_portrait(8, 30, weather=True, latest=True, n=2, media=True, extras=True)),
+    frame_portrait("D3 · Dọc, 21:47, cỡ 60 (lớn nhất), đang sạc, nhạc đang dừng, thông báo mới nhất, sự kiện + ghi nhớ",
+                   sp_portrait(21, 47, 60, charging=True, media=True, paused=True, latest=True, n=1, extras=True)),
+    frame_portrait("D4 · Dọc, 05:59, giờ gradient Hoàng hôn, cỡ 30, tắt ngày, không thông báo",
+                   sp_portrait(5, 59, 30, SP_SUNSET, date=False, n=0)),
+    '</div>',
+    frame("N1 · Ngang, mặc định: cột giờ đáy trái, pin · icon thông báo neo đáy bên phải",
+          sp_landscape(weather=True)),
+    frame("N2 · Ngang, 08:30, đang phát nhạc, thông báo mới nhất, sự kiện + ghi nhớ trên hàng trạng thái",
+          sp_landscape(8, 30, weather=True, latest=True, n=2, media=True, extras=True)),
+    frame("N3 · Ngang, 21:47, cỡ 60: cột giờ co lại cho vừa chiều cao màn; đang sạc, nhạc đang dừng",
+          sp_landscape(21, 47, 60, charging=True, media=True, paused=True, n=1)),
+    frame("N4 · Để so: app mẫu ở cỡ 60, cột giờ + ngày cao hơn màn ngang nên ngày bị cắt ở mép trên",
+          sp_landscape(21, 47, 60, colors=SP_REF, n=1, fit=False)),
+]
+
+
 for name, summary, defs, frames in [
     ("w_classic", "Bảy bố cục ngang của chủ đề Cổ điển theo các khối đang bật", classic_defs, classic),
     ("w_jersey", "Bố cục ngang của chủ đề Số áo: ngày, bốn chữ số một hàng, dòng pin", jersey_defs, jersey),
@@ -3343,6 +3549,7 @@ for name, summary, defs, frames in [
     ("w_big_overlap", "Chủ đề Chồng số (Big Overlap Clock): bốn kiểu và màu, bốn khung dọc và bốn khung ngang", big_overlap_defs, big_overlap),
     ("w_quarters", "Chủ đề Bốn số (Android 14 Analog Clock): kiểu số, kiểu kim và màu, bốn khung dọc và bốn khung ngang", quarters_defs, quarters),
     ("w_sector", "Chủ đề Rẻ quạt (Nike): màu và cỡ, bốn khung dọc và bốn khung ngang", sc_defs(), sector),
+    ("w_spine", "Chủ đề Gáy sách (Vertical Clock): màu và cỡ, bốn khung dọc và bốn khung ngang", sp_defs(), spine),
 ]:
     code = widget(summary, defs, frames)
     OUT.mkdir(parents=True, exist_ok=True)

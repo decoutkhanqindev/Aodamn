@@ -7,6 +7,43 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-10-27 – Chủ đề Gáy sách
+
+Build được, unit test pass (thêm test chặn Gáy sách có lại khối đã bỏ hay thiếu tuỳ chọn của app mẫu; test nội dung thông báo cho phép Gáy
+sách), `tools/check-rules.sh` ra 0 vi phạm, thư mục các chủ đề cũ không đổi dòng nào. Chưa test trên máy.
+
+User duyệt mock: "Duyệt mock Gáy sách như trên nhưng không thêm thanh tiến trình cho trình phát (giữ như app mẫu). Bắt đầu code."
+
+### Thêm
+
+- Chủ đề Gáy sách (Vertical Clock của Muviz Edge; số đo lấy từ `VerticalTextView`, `Apr22Screen` và layout `apr22_screen_layout` dọc / ngang
+  dịch ngược; mock duyệt trước khi code). Giờ "HH:mm" (12 / 24 giờ theo máy) Josefin Sans Regular xoay −90°, đọc từ dưới lên, nét chữ căn
+  giữa dòng cao bằng khung chữ của font như `VerticalTextView`; ngày "EEE, dd MMMM" in hoa bằng nửa cỡ giờ nằm trên giờ cùng trục, cách 30dp;
+  cột cách mép trái 18dp, đáy giờ cách đáy 45dp (ngang 30dp). Cỡ chữ = 40sp × cỡ × cạnh ngắn / 393, các khoảng cách của cột cũng theo đó.
+  Vẽ bằng `Paint` (`resolveTypeface`), gradient tô theo chiều chữ.
+- Bố cục dọc như layout mẫu: phần trên cột giờ chia 0,25 trống / 0,75 cho cột thông tin (lề 40 / 20dp): dòng thời tiết · pin + "72%" · icon
+  thông báo 17dp (`AodStatusLine`, chấm ngăn), thông báo mới nhất (icon 17dp + một dòng 17sp chạy chữ, `AodLatestLine`), đệm 40dp, trình phát
+  (tên 18sp / nghệ sĩ 16sp Josefin Light cùng màu, phát 42dp cách 30dp, tới 37dp cách 5dp, không nút lùi, không thanh tiến trình như app mẫu
+  (user duyệt), rộng tối đa 344dp, lề phải 30dp), rồi sự kiện, ghi nhớ cách 28dp. Thông báo mới nhất hiện cố định dưới hàng icon thay vì thay
+  hàng đó một lúc, trình phát hiện suốt khi có nhạc thay vì theo hẹn giờ (user duyệt). Màn ngang như layout ngang mẫu: 5% trống, cột giờ neo
+  đáy trái, 10% trống, cột thông tin neo đáy (lề 30dp: sự kiện, ghi nhớ, dòng pin · thông báo, thông báo mới nhất, trình phát), 5% trống;
+  cỡ lớn thì cột giờ co lại cho vừa chiều cao màn trừ 24dp (app mẫu ở cỡ 60 cắt mất ngày) (user duyệt).
+- Tuỳ chọn đủ như app mẫu: cỡ (Clock Size 25–60sp, mặc định 40, thành 60–150% với 100% = 40sp như thanh cỡ của các chủ đề khác), màu đồng
+  hồ, ngày, pin & thông báo (Notification Color, app mẫu tô cả pin), nhạc (Controls Color); màu chủ đạo (Theme Color) bỏ, mỗi phần một màu
+  (user duyệt). Mặc định: giờ `Amber` (#FFD54F, màu nhấn chưa chủ đề nào dùng; app mẫu trắng), ngày / pin & thông báo / nhạc `GreyE4`. Màu
+  nào cũng tô được gradient. Không có chuyển động theo giây hay trạng thái tiết kiệm (app mẫu cũng không).
+- Gáy sách có ngày, thời tiết (đầu dòng pin), pin, thông báo (kèm thông báo mới nhất, `hasNotificationContent = true`), sự kiện, ghi nhớ
+  (cột thông tin căn trái), nhạc; không có nét vẽ: giờ dọc đáy trái và cột thông tin chỉ chừa vùng trống hẹp, không đều. Mock của chủ đề ở
+  `tools/mockups/aod_landscape_mockups.py` (`w_spine`).
+
+### Thay đổi
+
+- Chỉ thêm, không đổi chủ đề đang có: mục `SPINE` ở `AodThemeValue`, nhánh `when` ở `AodPortrait` / `AodLandscape` / `AodMediaControls`,
+  chuỗi vi / en `theme_spine`, mẫu `aod_spine_date_pattern`, `aod_spine_notification`; dùng lại nhãn cỡ, màu đồng hồ / ngày / pin & thông
+  báo / nhạc, màu `Amber`, họ font `FontFamilyJosefinSans` có sẵn. `AodCompactPlayerStyle` thêm `artistWeight` (mặc định `null`: nghệ sĩ cùng
+  độ đậm với tên bài như cũ) và `isProgressShown` (mặc định `true`: có thanh tiến trình như cũ) để Gáy sách dùng chung trình phát của Chồng số,
+  4 góc, Rẻ quạt mà nghệ sĩ là Josefin Light và không có thanh tiến trình; ba chủ đề đó không đổi gì.
+
 ## [Chưa phát hành] – 2026-10-27 – Chủ đề Rẻ quạt
 
 Build được, unit test pass (thêm test chặn Rẻ quạt có lại khối đã bỏ hay thiếu tuỳ chọn của app mẫu; test nội dung thông báo và chạy theo giờ

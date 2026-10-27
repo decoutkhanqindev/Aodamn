@@ -50,6 +50,7 @@ code dịch ngược, không lấy asset (font, ảnh, Lottie) từ APK. APK và
 | Chồng số (`BIG_OVERLAP`) | **23 · Mar23 "Big Overlap Clock"** | làm từ danh mục này (2026-10-26), số đo lấy từ layout `mar23_screen_layout` dọc / ngang / `BigPixel2Clock` |
 | Bốn số (`QUARTERS`) | **24 · Apr23 "Android 14 Analog Clock"** | làm từ danh mục này (2026-10-26), số đo lấy từ layout `apr23_screen_layout` dọc / ngang / `PixelAnalogClock` / `PilotBold2Tick` |
 | Rẻ quạt (`SECTOR`) | **3 · Jul21 "Nike"** | làm từ danh mục này (2026-10-27), số đo lấy từ layout `jul21_screen_layout` / `AnalogueClock1` / `PieClock` |
+| Gáy sách (`SPINE`) | **12 · Apr22 "Vertical Clock"** | làm từ danh mục này (2026-10-27), số đo lấy từ layout `apr22_screen_layout` dọc / ngang / `VerticalTextView` |
 
 ## Danh mục đủ 44 chủ đề
 
@@ -69,7 +70,7 @@ text view chung) hoặc font dùng trong code; "chữ (font layout)" nghĩa là 
 | 9 | Jan22 | Flip Clock | Clock Style, Clock Size, Character Size, Clock Color, Character Color | – | FlipClock | – | chưa có |
 | 10 | Feb22 | Box Clock | Clock Size, Theme Color | Clock, Date, Notification, Controls | chữ (font layout) | – | chưa có |
 | 11 | Mar22 | Eclipse | Clock Color, Shadow Color, Rotation, Peek, Character Color, Controls Color | – | Eclipse | – | chưa có |
-| 12 | Apr22 | Vertical Clock | Clock Size, Theme Color | Clock, Date, Notification, Controls | VerticalTextView | – | chưa có |
+| 12 | Apr22 | Vertical Clock | Clock Size, Theme Color | Clock, Date, Notification, Controls | VerticalTextView | – | **Gáy sách** (`SPINE`) |
 | 13 | May22 | Paper Clip | Clock Size, Second Color, Theme Color | Hour, Minute, Controls | PaperClipClock | – | chưa có |
 | 14 | Jun22 | Solar System | Clock Size, Digital Clock, Hour Color, Minute Color, Second Color, Clock Color, Controls Color | – | SolarSystemClock | – | chưa có |
 | 15 | Jul22 | Samsung Like | Clock Weight, Clock Size, Hour Color, Minute Color, Notification Color, Controls Color | – | chữ: nunito | – | chưa có |
@@ -191,9 +192,14 @@ mỗi phút (`AodViewModel`), nên phần chạy theo giây của app mẫu ph�
   #444444; chấm tâm 0,021r màu Second #4AEDC6; không kim giây, kim chỉ đổi mỗi phút. Cụm dưới cách đáy 60dp: ngày "dd MMMM yyyy" Poppins
   SemiBold 15sp, dòng pin · icon thông báo (thông báo mới thay dòng này một lúc), trình phát (lùi 40dp · tên / nghệ sĩ · tới 40dp) thay chỗ
   theo hẹn giờ. Màu: Theme trắng, chữ phụ tối 30%.
-- **12 · Vertical Clock** (`VerticalTextView`, `apr22_screen_layout` + bản ngang, đọc 2026-10-26): "HH:mm" Josefin Sans 40sp × cỡ xoay
-  −90° (đọc từ dưới lên) và ngày "EEE, dd MMMM" in hoa nửa cỡ, xếp ở góc dưới trái cách mép 18dp; cụm thông báo / nhạc / pin căn trái từ
-  25% chiều cao, lề 40dp. Màu Theme trắng.
+- ~~**12 · Vertical Clock**~~ (`VerticalTextView`, `apr22_screen_layout` + bản ngang, đọc 2026-10-26, đọc lại đủ 2026-10-27, đã làm thành Gáy
+  sách 2026-10-27): "HH:mm" Josefin Sans Regular cỡ 25–60sp (mặc định 40) xoay −90° (đọc từ dưới lên, nét chữ căn giữa dòng), ngày "EEE, dd MMMM" in
+  hoa nửa cỡ trên giờ cùng trục cách 30dp; cột cách mép trái 18dp, đáy giờ cách đáy 45dp (ngang 30dp). Dọc: phần trên cột chia 0,25 trống /
+  0,75 cho cột thông tin (lề 40 / 20dp): pin 15,5dp + "72%" 15sp · chấm 14sp · icon thông báo 17dp cách 10dp; thông báo mới (icon 17dp +
+  một dòng 17sp) thay hàng đó một lúc; đệm 40dp; trình phát (tên 18sp / nghệ sĩ 16sp Light, chữ 120–200dp, phát 42dp cách 30dp, tới 37dp
+  cách 5dp, không nút lùi, không thanh tiến trình) hiện theo hẹn giờ. Ngang: 5% · cột giờ neo đáy · 10% · cột thông tin neo đáy lề 30dp ·
+  5%; cỡ lớn thì cột giờ cao hơn màn ngang. Màu: Theme trắng, Clock / Date / Notification (cả pin) / Controls theo Theme. Không có dạng
+  tiết kiệm.
 - **43 · MIUI Doodle** ⭐ (`Nov24Screen`): giờ, phút, thứ, tháng, ngày là **ảnh vẽ tay** (24 + 60 + 7 + 12 + 31 hình), không phải
   font; không được lấy ảnh của app mẫu, phải tự vẽ cả bộ, nên để sau.
 

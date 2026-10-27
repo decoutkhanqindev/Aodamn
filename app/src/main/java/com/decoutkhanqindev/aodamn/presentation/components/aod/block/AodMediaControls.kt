@@ -52,6 +52,7 @@ import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.pebble.AodP
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.quarters.AodQuartersMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.ripple.AodRippleMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.sector.AodSectorMedia
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.spine.AodSpineMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.tick.AodTickMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.tower.AodTowerMedia
 import com.decoutkhanqindev.aodamn.presentation.components.onClick
@@ -100,6 +101,7 @@ fun AodMediaControls(
                 AodThemeValue.BIG_OVERLAP -> AodBigOverlapMedia(media = target, config = theme.config, onIntent = onIntent)
                 AodThemeValue.QUARTERS -> AodQuartersMedia(media = target, config = theme.config, onIntent = onIntent)
                 AodThemeValue.SECTOR -> AodSectorMedia(media = target, config = theme.config, onIntent = onIntent)
+                AodThemeValue.SPINE -> AodSpineMedia(media = target, config = theme.config, onIntent = onIntent)
             }
         }
     }

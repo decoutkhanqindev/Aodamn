@@ -18,6 +18,7 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.pebble.PebbleThe
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.quarters.QuartersThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.ripple.RippleThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.sector.SectorThemeSpec
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.spine.SpineThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.tick.TickThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.tower.TowerThemeSpec
 
@@ -42,7 +43,8 @@ enum class AodThemeValue(
     TICK(id = "tick", nameRes = R.string.theme_tick, spec = TickThemeSpec),
     BIG_OVERLAP(id = "big_overlap", nameRes = R.string.theme_big_overlap, spec = BigOverlapThemeSpec),
     QUARTERS(id = "quarters", nameRes = R.string.theme_quarters, spec = QuartersThemeSpec),
-    SECTOR(id = "sector", nameRes = R.string.theme_sector, spec = SectorThemeSpec);
+    SECTOR(id = "sector", nameRes = R.string.theme_sector, spec = SectorThemeSpec),
+    SPINE(id = "spine", nameRes = R.string.theme_spine, spec = SpineThemeSpec);
 
     companion object {
         val DEFAULT = CLASSIC

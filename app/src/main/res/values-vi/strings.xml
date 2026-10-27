@@ -66,6 +66,7 @@
     <string name="theme_big_overlap">Chồng số</string>
     <string name="theme_quarters">Bốn số</string>
     <string name="theme_sector">Rẻ quạt</string>
+    <string name="theme_spine">Gáy sách</string>
     <string name="aod_jersey_date_first_pattern">dd</string>
     <string name="aod_jersey_date_second_pattern">MM</string>
     <string name="aod_bezel_weekday_pattern">EEEE</string>
