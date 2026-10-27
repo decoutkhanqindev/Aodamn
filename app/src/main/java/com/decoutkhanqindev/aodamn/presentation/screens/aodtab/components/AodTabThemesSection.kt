@@ -6,6 +6,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -14,11 +15,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -26,6 +29,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -45,8 +49,11 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeValue
 import com.decoutkhanqindev.aodamn.presentation.model.customize.toThemePreviewDraft
 import com.decoutkhanqindev.aodamn.presentation.screens.aodtab.state.AodTabIntent
+import com.decoutkhanqindev.aodamn.presentation.theme.BodySmall
+import com.decoutkhanqindev.aodamn.presentation.theme.Grey9A
 import com.decoutkhanqindev.aodamn.presentation.theme.GreyED
 import com.decoutkhanqindev.aodamn.presentation.theme.Mint
+import com.decoutkhanqindev.aodamn.presentation.theme.MintAlpha12
 import com.decoutkhanqindev.aodamn.presentation.theme.NeutralVariant30
 import com.decoutkhanqindev.aodamn.presentation.theme.RoundedCornerShape12dp
 import com.decoutkhanqindev.aodamn.presentation.theme.RoundedCornerShape16dp
@@ -91,36 +98,69 @@ private fun ThemesHeader(
     onResetClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .heightIn(min = 48.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(
-            text = stringResource(R.string.aod_tab_themes_title),
+    Column(modifier = modifier.fillMaxWidth()) {
+        Row(
             modifier = Modifier
-                .weight(1f)
-                .semantics { heading() },
-            color = GreyED,
-            fontWeight = FontWeight.SemiBold,
-            style = TitleLarge,
-        )
-
-        AnimatedVisibility(
-            visible = isResetVisible,
-            enter = fadeIn(),
-            exit = fadeOut(),
+                .fillMaxWidth()
+                .heightIn(min = 48.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            IconButton(onClick = onResetClick) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_arrow_counter_clockwise),
-                    contentDescription = stringResource(R.string.aod_tab_theme_reset),
-                    tint = GreyED,
-                )
+            Text(
+                text = stringResource(R.string.aod_tab_themes_title),
+                modifier = Modifier
+                    .weight(1f)
+                    .semantics { heading() },
+                color = GreyED,
+                fontWeight = FontWeight.SemiBold,
+                style = TitleLarge,
+            )
+
+            AnimatedVisibility(
+                visible = isResetVisible,
+                enter = fadeIn(),
+                exit = fadeOut(),
+            ) {
+                IconButton(onClick = onResetClick) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_arrow_counter_clockwise),
+                        contentDescription = stringResource(R.string.aod_tab_theme_reset),
+                        tint = GreyED,
+                    )
+                }
             }
         }
+
+        Row(
+            modifier = Modifier.padding(bottom = 4.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            LiveMark(contentDescription = null)
+
+            Text(
+                text = stringResource(R.string.aod_tab_themes_live_hint),
+                color = Grey9A,
+                style = BodySmall,
+            )
+        }
     }
+}
+
+@Composable
+private fun LiveMark(
+    contentDescription: String?,
+    modifier: Modifier = Modifier,
+) {
+    Icon(
+        painter = painterResource(R.drawable.ic_shooting_star_fill),
+        contentDescription = contentDescription,
+        modifier = modifier
+            .size(22.dp)
+            .clip(CircleShape)
+            .background(MintAlpha12)
+            .padding(4.dp),
+        tint = Mint,
+    )
 }
 
 @Composable
@@ -157,6 +197,15 @@ private fun ThemeCard(
                 isActive = isActive,
                 modifier = Modifier.padding(top = 8.dp),
             )
+
+            if (theme.spec.isLiveInPreview) {
+                LiveMark(
+                    contentDescription = stringResource(R.string.aod_tab_theme_live),
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(6.dp),
+                )
+            }
         }
 
         Text(

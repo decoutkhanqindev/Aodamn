@@ -46,6 +46,8 @@
     <string name="aod_tab_design_photo">Ảnh của bạn</string>
     <string name="aod_tab_design_black">Nền đen</string>
     <string name="aod_tab_themes_title">Chủ đề &amp; kiểu dáng</string>
+    <string name="aod_tab_themes_live_hint">Chạy theo giờ thật, nhấn vào chủ đề để xem</string>
+    <string name="aod_tab_theme_live">Chuyển động theo giờ thật</string>
     <string name="aod_tab_theme_reset">Đặt lại chủ đề mặc định</string>
     <string name="aod_tab_theme_reset_title">Đặt lại chủ đề mặc định?</string>
     <string name="aod_tab_theme_reset_desc">AOD sẽ dùng lại chủ đề %1$s. Những gì bạn đã chỉnh và lưu ở từng chủ đề vẫn được giữ.</string>

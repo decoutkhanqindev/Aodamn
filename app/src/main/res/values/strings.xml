@@ -53,6 +53,8 @@
     <string name="aod_tab_design_summary" translatable="false">%1$s · %2$s</string>
     <string name="aod_tab_design_more" translatable="false">+%1$d</string>
     <string name="aod_tab_themes_title">Themes &amp; styles</string>
+    <string name="aod_tab_themes_live_hint">Moves in real time. Tap a theme to watch</string>
+    <string name="aod_tab_theme_live">Moves in real time</string>
     <string name="aod_tab_theme_reset">Reset to the default theme</string>
     <string name="aod_tab_theme_reset_title">Reset to the default theme?</string>
     <string name="aod_tab_theme_reset_desc">The always-on display goes back to the %1$s theme. Changes you saved in each theme are kept.</string>
