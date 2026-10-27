@@ -241,7 +241,7 @@ private fun RippleLatest(
                     text = text,
                     modifier = Modifier.padding(top = RippleMetrics.LatestTextGap),
                     style = TextStyle(
-                        brush = config.darkerBrushOf(RippleThemeSpec.NotificationsColor),
+                        brush = config.darkBrushOf(RippleThemeSpec.NotificationsColor, RippleMetrics.TEXT_DARKEN),
                         fontSize = RippleMetrics.LatestTextSize,
                         fontWeight = FontWeight.Normal,
                         fontFamily = RippleThemeSpec.Font,

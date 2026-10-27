@@ -68,7 +68,7 @@ fun AodRippleMedia(
     val isOutline = config[RippleThemeSpec.Style] == AodTileStyleValue.OUTLINE
     val background = config.brushOf(RippleThemeSpec.MediaBackgroundColor)
     val textBrush = config.brushOf(RippleThemeSpec.MediaColor)
-    val artistBrush = config.darkerBrushOf(RippleThemeSpec.MediaColor)
+    val artistBrush = config.darkBrushOf(RippleThemeSpec.MediaColor, RippleMetrics.TEXT_DARKEN)
     val swipeThreshold = with(LocalDensity.current) { RippleMetrics.SwipeThreshold.toPx() }
     val currentMedia by rememberUpdatedState(media)
     var isPreviousSwipe by remember { mutableStateOf(false) }

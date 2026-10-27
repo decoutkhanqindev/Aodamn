@@ -330,7 +330,7 @@ private fun SectorLatestCard(
                     text = text,
                     modifier = Modifier.padding(top = SectorMetrics.TextGap),
                     style = TextStyle(
-                        brush = config.sectorDimBrushOf(SectorThemeSpec.NotificationsColor),
+                        brush = config.darkBrushOf(SectorThemeSpec.NotificationsColor, SectorMetrics.TEXT_DARKEN),
                         fontSize = SectorMetrics.TextSize,
                         fontFamily = SectorThemeSpec.Font,
                     ),

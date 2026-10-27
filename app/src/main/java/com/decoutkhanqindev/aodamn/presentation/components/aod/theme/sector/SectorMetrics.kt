@@ -2,6 +2,8 @@ package com.decoutkhanqindev.aodamn.presentation.components.aod.theme.sector
 
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodCompactPlayerStyle
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.sector.SectorThemeSpec
 
 object SectorMetrics {
     const val NECK_END = 0.2f
@@ -65,4 +67,21 @@ object SectorMetrics {
     val ProgressGap = 20.dp
     val TrackHeight = 1.dp
     const val TRACK_ALPHA = 0.3f
+
+    val CompactPlayer = AodCompactPlayerStyle(
+        font = SectorThemeSpec.Font,
+        titleSize = TitleSize,
+        artistSize = TextSize,
+        artistGap = ArtistGap,
+        artistDarken = TEXT_DARKEN,
+        playButton = PlayButton,
+        playIcon = PlayIcon,
+        nextButton = NextButton,
+        nextIcon = NextIcon,
+        progressGap = ProgressGap,
+        trackHeight = TrackHeight,
+        trackAlpha = TRACK_ALPHA,
+        playStartGap = ButtonGap,
+        nextStartGap = ButtonGap,
+    )
 }

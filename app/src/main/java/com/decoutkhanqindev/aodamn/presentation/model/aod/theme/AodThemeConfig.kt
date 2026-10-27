@@ -4,9 +4,12 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.lerp
 import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.AodGradient
+import com.decoutkhanqindev.aodamn.presentation.theme.Black
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.persistentMapOf
+import kotlinx.collections.immutable.toImmutableList
 
 fun String?.toAodConfigValues(): Map<String, Int> = orEmpty().split(',').mapNotNull { pair ->
     val value = pair.substringAfter('=', missingDelimiterValue = "").toIntOrNull() ?: return@mapNotNull null
@@ -32,6 +35,11 @@ data class AodThemeConfig(val values: PersistentMap<String, Int> = persistentMap
     fun brushOf(option: AodColorOption): Brush = gradientOf(option)?.toBrush() ?: SolidColor(get(option))
 
     fun colorsOf(option: AodColorOption): List<Color> = gradientOf(option)?.colors ?: listOf(get(option))
+
+    fun darkBrushOf(option: AodColorOption, fraction: Float): Brush {
+        val gradient = gradientOf(option) ?: return SolidColor(lerp(get(option), Black, fraction))
+        return gradient.copy(colors = gradient.colors.map { color -> lerp(color, Black, fraction) }.toImmutableList()).toBrush()
+    }
 
     fun without(options: List<AodThemeOption<*>>): AodThemeConfig =
         copy(values = options.flatMap { option -> option.storedKeys }.fold(values) { map, key -> map.remove(key) })
