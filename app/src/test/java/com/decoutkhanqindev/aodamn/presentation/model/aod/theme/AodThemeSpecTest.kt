@@ -9,6 +9,8 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.clip.ClipThemeSp
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.compass.AodCompassStyleValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.compass.CompassThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.component.AodComponentValue
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.fade.AodFadeWeightValue
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.fade.FadeThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.gradientline.GradientLineThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.halfmoon.HalfMoonThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.pebble.AodTileStyleValue
@@ -22,6 +24,7 @@ import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
 import com.decoutkhanqindev.aodamn.presentation.theme.Amber
 import com.decoutkhanqindev.aodamn.presentation.theme.Aquamarine
 import com.decoutkhanqindev.aodamn.presentation.theme.Cream
+import com.decoutkhanqindev.aodamn.presentation.theme.Grey9A
 import com.decoutkhanqindev.aodamn.presentation.theme.GreyB4
 import com.decoutkhanqindev.aodamn.presentation.theme.GreyCE
 import com.decoutkhanqindev.aodamn.presentation.theme.GreyE4
@@ -71,6 +74,7 @@ class AodThemeSpecTest {
                     AodThemeValue.SECTOR,
                     AodThemeValue.SPINE,
                     AodThemeValue.CLIP,
+                    AodThemeValue.FADE,
                 )
             assertEquals("${theme.id}: ghi nhớ", isChain, AodBlockValue.MEMO in theme.spec.ownBlocks)
             assertEquals("${theme.id}: sự kiện", isChain, AodBlockValue.EVENTS in theme.spec.ownBlocks)
@@ -425,6 +429,53 @@ class AodThemeSpecTest {
                 ClipThemeSpec.DateColor,
                 ClipThemeSpec.StatusColor,
                 ClipThemeSpec.MediaColor,
+            ),
+            spec.options,
+        )
+    }
+
+    @Test
+    fun `fade keeps the reference size and four weights with a fading pastel sky clock and no memo, events or drawing`() {
+        val spec = AodThemeValue.FADE.spec
+        assertEquals(
+            setOf(
+                AodComponentValue.DATE,
+                AodComponentValue.BATTERY,
+                AodComponentValue.WEATHER,
+                AodComponentValue.NOTIFICATIONS,
+                AodComponentValue.MEDIA,
+            ),
+            spec.components,
+        )
+        assertEquals(setOf(AodBlockValue.DATE, AodBlockValue.STATUS, AodBlockValue.MEDIA), spec.ownBlocks)
+        assertEquals(true, spec.hasNotificationContent)
+        assertEquals(false, spec.isLiveInPreview)
+        assertEquals(30..100, FadeThemeSpec.Size.range)
+        assertEquals(60, FadeThemeSpec.Size.default)
+        assertEquals(
+            listOf(AodFadeWeightValue.THIN, AodFadeWeightValue.LIGHT, AodFadeWeightValue.REGULAR, AodFadeWeightValue.BOLD),
+            FadeThemeSpec.Weight.entries,
+        )
+        assertEquals(AodFadeWeightValue.BOLD, FadeThemeSpec.Weight.default)
+        assertEquals(true, FadeThemeSpec.Fade.default)
+        val sky = GradientSwatchValue.PASTEL_SKY.gradient.copy(direction = AodGradientDirection.VERTICAL)
+        assertEquals(sky, FadeThemeSpec.HourColor.defaultGradient)
+        assertEquals(sky, FadeThemeSpec.MinuteColor.defaultGradient)
+        assertEquals(GreyE4, FadeThemeSpec.DateColor.default)
+        assertEquals(GreyE4, FadeThemeSpec.NotificationsColor.default)
+        assertEquals(Grey9A, FadeThemeSpec.BatteryColor.default)
+        assertEquals(GreyE4, FadeThemeSpec.MediaColor.default)
+        assertEquals(
+            listOf(
+                FadeThemeSpec.Size,
+                FadeThemeSpec.Weight,
+                FadeThemeSpec.Fade,
+                FadeThemeSpec.HourColor,
+                FadeThemeSpec.MinuteColor,
+                FadeThemeSpec.DateColor,
+                FadeThemeSpec.NotificationsColor,
+                FadeThemeSpec.BatteryColor,
+                FadeThemeSpec.MediaColor,
             ),
             spec.options,
         )

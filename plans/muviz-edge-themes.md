@@ -52,6 +52,7 @@ code dịch ngược, không lấy asset (font, ảnh, Lottie) từ APK. APK và
 | Rẻ quạt (`SECTOR`) | **3 · Jul21 "Nike"** | làm từ danh mục này (2026-10-27), số đo lấy từ layout `jul21_screen_layout` / `AnalogueClock1` / `PieClock` |
 | Gáy sách (`SPINE`) | **12 · Apr22 "Vertical Clock"** | làm từ danh mục này (2026-10-27), số đo lấy từ layout `apr22_screen_layout` dọc / ngang / `VerticalTextView` |
 | Kẹp giấy (`CLIP`) | **13 · May22 "Paper Clip"** | làm từ danh mục này (2026-10-28), số đo lấy từ layout `may22_screen_layout` dọc / ngang / `PaperClipClock` |
+| Phai (`FADE`) | **1 · May21 "Gradient"** | làm từ danh mục này (2026-10-28), số đo lấy từ layout `may21_screen_layout` (chỉ có bản dọc) / `May21Screen` / font Lato 1.104 trong APK |
 
 ## Danh mục đủ 44 chủ đề
 
@@ -60,7 +61,7 @@ text view chung) hoặc font dùng trong code; "chữ (font layout)" nghĩa là 
 
 | # | Class | Tên | Tuỳ chọn chính | Advanced | Vẽ bằng | Cần thêm | Bên mình |
 |---|---|---|---|---|---|---|---|
-| 1 | May21 | Gradient | Clock Weight, Clock Size, Theme Color | Hour, Minute, Date, Notification, Controls, Battery Status | chữ: lato | – | chưa có |
+| 1 | May21 | Gradient | Clock Weight, Clock Size, Theme Color | Hour, Minute, Date, Notification, Controls, Battery Status | chữ: lato | – | **Phai** (`FADE`) |
 | 2 | Jun21 | Default | Symbol, Clock Weight, Symbol Size, Clock Size, Theme Color | Hour, Minute, Date, Notification, Controls, Battery Status | chữ: rubik | chọn ký hiệu | chưa có |
 | 3 | Jul21 | Nike | Clock Size, Hour Color, Minute Color, Second Color, Clock Background Color, Theme Color | Date, Notification, Controls, Battery Status | AnalogueClock1, PieClock | – | **Rẻ quạt** (`SECTOR`) |
 | 4 | Aug21 | Android 12 | Clock Style, Clock Size, Hour Color, Minute Color, Second Color, Date Color, Theme Color | Clock Background, Controls, Controls Background, Notification, Battery Status | Android12Clock2, Android12ClockBg2 | – | **Gợn sóng** (`RIPPLE`) |
@@ -205,6 +206,30 @@ mỗi phút (`AodViewModel`), nên phần chạy theo giây của app mẫu ph�
   góc vuông, màn chia 0,25 / 0,5 / 0,25; **31 · Space Mono** "HH" trên "mm" căn giữa 160sp × cỡ (60–100, mặc định 80), thêm một kiểu xếp
   chồng; **35 · Text HyperOS** "HH mm" / "EEEE" / "d/M" chữ rất to Neumatic Black, **36 · Big Retro** "HH:mm" MT Pixel Display, **42 · Pixel
   Growth Rotation** font Growth / Rotation của Pixel: cả ba font không có trên Google Fonts, đặc trưng nằm ở font.
+- Đọc 2026-10-28 (bước 0 sau Kẹp giấy), đề xuất: ~~**1 · Gradient**~~ (`May21Screen`, `may21_screen_layout`, chỉ bản dọc; đã làm thành Phai 2026-10-28): "HH" trên "mm"
+  Lato, mỗi số là ô chữ tự co giãn (tối đa 250sp) chiếm cỡ / 2 phần giữa màn (cỡ 30–100, mặc định 60), phút lấn lên 15dp; Clock Weight
+  Thin (mặc định) / Light / Regular / Bold; khi Hour, Minute, Theme để mặc định thì mỗi số tô `LinearGradient` trong suốt → trắng chéo từ
+  góc trên trái chữ số đầu tới đầu chữ số sau + 0,25 em (chữ số hàng chục phai vào nền), chọn màu bất kỳ là mất hiệu ứng; đồng hồ hiện mờ
+  dần khi dựng lại gradient. Trên (lề 70 / 30dp): ngày "EEEE  dd" Lato 18sp · vạch dọc 0,5dp · icon thông báo 18dp, thẻ thông báo mới
+  (icon trong ô tròn màu 18dp, tiêu đề 16sp / nội dung 15sp tối 40%) thay dòng đó; dưới (lề 40dp): trình phát (tên 16sp / nghệ sĩ 15sp
+  tối 40%, phát · tới, thanh tiến trình) + chữ pin tối 40% (mờ 0,8 khi không sạc). Lato của Google Fonts thiếu tiếng Việt, app đã có Lato
+  2.015 (latofonts) bản Regular. Đọc đủ 2026-10-28, đã làm thành Phai (`FADE`): khối trên / dưới bị ẩn (INVISIBLE) vẫn
+  giữ chỗ nên đồng hồ không đổi cỡ (khối trên 179,8dp, khối dưới 188,5dp trên màn 873dp), chữ pin "72%" / "72%  ·  Charging" / "Charged",
+  khối trên / dưới cùng số đo với `jul21` (Rẻ quạt); Lato Thin / Light / Bold 2.015 lấy ở google/fonts `ofl/lato` (bản Thin cùng hình chữ số
+  với Hairline 1.104 của app mẫu). Bên mình: mặc định Đậm + gradient Trời pastel dọc, phai là công tắc chạy với mọi màu, chữ số đổi mờ chéo,
+  hiện thông báo mới + trình phát cùng lúc, màn ngang số giữa màn chữ hai bên, không ghi nhớ / sự kiện / nét vẽ (user duyệt). **15 · Samsung Like** (`Jul22Screen`, `jul22_screen_layout` dọc + ngang): "HH" trên "mm" Nunito 90sp ×
+  cỡ (70–130), phút lấn lên 20dp, Clock Weight ExtraLight / Regular (mặc định) / Bold; dưới số (lề 20 / 40dp) một dòng pin 15dp + "%" ·
+  ngày "EEE dd" in hoa · icon 17dp (Nunito Medium 13sp giãn 0,05, chấm 10sp cách 12dp), thông báo mới (icon 17dp + một dòng in hoa 12,5sp)
+  thay dòng đó; trình phát neo đáy (lề 40dp): tên in hoa Nunito Bold 13sp / nghệ sĩ 11,5sp giãn 0,2 em, thanh 1,5dp, lùi 38 · phát 45 · tới
+  38dp cách 40dp; ngang: 5% · cột số + dòng tin 45% · cột trình phát 45% neo đáy cách 60dp. Màu Hour, Minute, Notification, Controls (nghệ
+  sĩ tối 30%) đều trắng. Nunito có trên Google Fonts, đủ tiếng Việt; tên mẫu là thương hiệu. **2 · Default** (`Jun21Screen`, dọc + ngang):
+  "HH ❖ mm" một hàng Rubik 30 + 0,7 × cỡ sp (mặc định cỡ 30), ký hiệu 15–50% cỡ đồng hồ cách 10dp, chọn 1 trong 27 ký hiệu (đa số emoji
+  màu, không tô được), 4 độ đậm, ngày "EEEE, dd MMMM" 16sp dưới, khối 0,35 trên màn; Rubik thiếu tiếng Việt.
+  Không đề xuất: **19 · Concentric** (`ConcentricClock`) cùng cấu trúc Bán nguyệt (vòng giây 00–55 ngoài, vòng phút trong, cùng xoay để giá
+  trị hiện tại chỉ sang phải, "HH" 0,46r giữa, "mm" trong viên viền 0,51r kéo tới mép phải), chỉ khác là cả đĩa ở giữa màn (nền đen 30%);
+  **18 · Pixel Default** "HH" / "mm" xếp chồng Google Sans Clock (không có trên Google Fonts); **41 · Pixel Width** lưới 2 × 2 như Chồng số,
+  đặc trưng là thanh trượt wdth 25–150 / wght 100–800 qua `setFontVariation` (cấm, bản tĩnh thì cần hàng trăm file); **7 · Retro** "HH:mm"
+  căn trái font Pixeboy (không có trên Google Fonts); **5 · Text Clock** là giờ bằng chữ (`b.k0`, để sau).
 - ~~**12 · Vertical Clock**~~ (`VerticalTextView`, `apr22_screen_layout` + bản ngang, đọc 2026-10-26, đọc lại đủ 2026-10-27, đã làm thành Gáy
   sách 2026-10-27): "HH:mm" Josefin Sans Regular cỡ 25–60sp (mặc định 40) xoay −90° (đọc từ dưới lên, nét chữ căn giữa dòng), ngày "EEE, dd MMMM" in
   hoa nửa cỡ trên giờ cùng trục cách 30dp; cột cách mép trái 18dp, đáy giờ cách đáy 45dp (ngang 30dp). Dọc: phần trên cột chia 0,25 trống /

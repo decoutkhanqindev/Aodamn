@@ -53,7 +53,7 @@ STATIC_FONTS = {
     "anton": [400],
     "zalando_sans_expanded": [600],
     "krona_one": [400],
-    "lato": [400],
+    "lato": [100, 300, 400, 700],
 }
 
 

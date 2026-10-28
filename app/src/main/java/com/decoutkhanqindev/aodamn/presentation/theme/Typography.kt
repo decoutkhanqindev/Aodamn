@@ -97,7 +97,10 @@ val FontFamilyGoogleSansFlexRounded = FontFamily(
 )
 
 val FontFamilyLato = FontFamily(
+    Font(R.font.lato_thin, FontWeight.Thin),
+    Font(R.font.lato_light, FontWeight.Light),
     Font(R.font.lato_regular, FontWeight.Normal),
+    Font(R.font.lato_bold, FontWeight.Bold),
 )
 
 private val MaterialTypeScale = androidx.compose.material3.Typography()

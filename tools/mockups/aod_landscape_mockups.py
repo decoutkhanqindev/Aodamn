@@ -3749,6 +3749,182 @@ clip = [
 ]
 
 
+# ================================================================== PHAI (Gradient của Muviz Edge; số đo lấy từ May21Screen và layout may21_screen_layout (chỉ có
+# bản dọc) trong APK, không từ ảnh chụp). Giờ "HH" trên phút "mm" Lato (Clock Weight Thin / Light / Regular / Bold), mỗi số là một ô chữ tự co giãn
+# (tối đa 250 sp) cao Cỡ / 2 (30–100, mặc định 60) phần giữa màn, phút lấn lên 15 dp; cỡ chữ = cao ô / khung chữ của font mẫu (Lato 1.104 có đệm font:
+# yMax − yMin), giờ neo đáy ô, phút neo đỉnh ô. Phần giữa = cả màn trừ khối trên (đệm 70 dp hai đầu + dòng ngày / thẻ thông báo) và khối dưới (trình
+# phát lề 40 dp + dòng pin cách đáy 30 dp); khối ẩn vẫn giữ chỗ nên đồng hồ không đổi cỡ. Mỗi số tô LinearGradient trong suốt → màu chéo từ (trái, đỉnh
+# dòng) tới (đầu chữ số sau + 0,25 em, đỉnh dòng + 1 em), nội suy chưa nhân alpha nên độ sáng ~ t². Khối trên / dưới giống hệt Rẻ quạt (cùng đời layout
+# với jul21) nên dùng lại sc_row / sc_latest / sc_player / sc_battery. Màn ngang tự dựng (app mẫu dùng chung layout dọc, số còn 11 sp).
+GR_REF = {"thin": (.88, .19), "light": (.8945, .186), "regular": (.9185, .1825), "bold": (.937, .1805)}  # yMax, −yMin / em của Lato 1.104 (app mẫu)
+GR_ADV, GR_CAP = .58, .708
+GR_TOP, GR_BOTTOM, GR_OVERLAP = 179.8, 188.5, 15.0
+GR_GRADS = {"sky": ("#A9C9FF", "#CEC4F7", "#FFBBEC"), "sunset": ("#FFCC70", "#C850C0", "#4158D0")}  # màu nhấn: Trời pastel, dọc
+GR_COLORS = {"hour": "sky", "minute": "sky", "date": "#E4E4E4", "noti": "#E4E4E4", "media": "#E4E4E4", "battery": "#9A9A9A", "weather": G}
+GR_REFC = {**GR_COLORS, "hour": "#FFFFFF", "minute": "#FFFFFF", "date": "#E6E6E6", "noti": "#E6E6E6", "media": "#E6E6E6", "battery": "#999999"}
+GR_CSS_WEIGHT = {"thin": 100, "light": 300, "regular": 400, "bold": 700}
+GR_FONTS = ('<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@100;300;400;700&display=swap">'
+            '<style>.scl{font-family:"Lato";font-weight:400}.grl{font-family:"Lato";font-kerning:none}</style>')
+GR_N = [0]
+
+
+def gr_defs():
+    """Dải phai gốc (alpha t², 11 nấc) và các gradient màu gốc; mỗi số chỉ thêm toạ độ, kế thừa nấc bằng href."""
+    fade = "".join(f'<stop offset="{t / 10:.1f}" stop-color="#fff" stop-opacity="{(t / 10) ** 2:.2f}"/>' for t in range(11))
+    colors = "".join(f'<linearGradient id="grg{name}">' + "".join(f'<stop offset="{i / 2:.1f}" stop-color="{c}"/>' for i, c in enumerate(stops))
+                     + "</linearGradient>" for name, stops in GR_GRADS.items())
+    return f'<linearGradient id="grFade">{fade}</linearGradient>{colors}'
+
+
+def gr_number(x, top, em, text, weight, color, fade=True):
+    """Một số hai chữ số như ô chữ của app mẫu: đỉnh dòng = top, gốc chữ = top + yMax × em. Màu một màu hoặc gradient dọc theo khung dòng; phai dần là
+    mặt nạ alpha t² (trong suốt → màu nội suy chưa nhân alpha) chéo từ (trái, đỉnh dòng) tới (đầu chữ số sau + 0,25 em, đỉnh dòng + 1 em)."""
+    GR_N[0] += 1
+    n = GR_N[0]
+    asc, bot = GR_REF[weight]
+    defs, fill = "", color
+    if color in GR_GRADS:
+        defs += (f'<linearGradient id="grc{n}" href="#grg{color}" gradientUnits="userSpaceOnUse" x1="0" y1="{f(top)}" x2="0" '
+                 f'y2="{f(top + (asc + bot) * em)}"/>')
+        fill = f"url(#grc{n})"
+    body = (f'<text class="grl" x="{f(x)}" y="{f(top + asc * em)}" font-size="{f(em)}" font-weight="{GR_CSS_WEIGHT[weight]}" fill="{fill}">'
+            f'{text}</text>')
+    if fade:
+        box = f'x="{f(x - em)}" y="{f(top - em)}" width="{f(4 * em)}" height="{f(4 * em)}"'
+        defs += (f'<linearGradient id="grf{n}" href="#grFade" gradientUnits="userSpaceOnUse" x1="{f(x)}" y1="{f(top)}" '
+                 f'x2="{f(x + (GR_ADV + .25) * em)}" y2="{f(top + em)}"/><mask id="grm{n}" style="mask-type:alpha" maskUnits="userSpaceOnUse" {box}>'
+                 f'<rect {box} fill="url(#grf{n})"/></mask>')
+        body = f'<g mask="url(#grm{n})">{body}</g>'
+    return (f"<defs>{defs}</defs>" if defs else "") + body
+
+
+def gr_clock(cx, hour_top, minute_top, em, weight, colors, fade, hh, mm):
+    x = cx - GR_ADV * em
+    return (gr_number(x, hour_top, em, f"{hh:02d}", weight, colors["hour"], fade)
+            + gr_number(x, minute_top, em, f"{mm:02d}", weight, colors["minute"], fade))
+
+
+def gr_portrait(hh=10, mm=8, size=60, weight="bold", colors=GR_COLORS, fade=True, date=True, weather=False, n=3, latest=False, media=False,
+                paused=False, charging=False, fw=PW, fh=PH):
+    """Layout dọc của app mẫu (cũng là màn dọc bên mình): phần giữa (cao màn − 179,8 − 188,5 dp, + 15 dp lấn) chia trống (1 − cỡ) / 2 · giờ cỡ / 2 ·
+    phút cỡ / 2 · trống; khối trên, dưới như Rẻ quạt; thông báo mới nhất hiện dưới dòng ngày, nằm trong phần đệm 70 dp nên không đẩy đồng hồ."""
+    cx = fw / 2
+    asc, bot = GR_REF[weight]
+    tot = fh - GR_TOP - GR_BOTTOM + GR_OVERLAP
+    box = size / 200 * tot
+    em = min(box / (asc + bot), 250)
+    hour_bottom = GR_TOP + (1 - size / 100) / 2 * tot + box
+    s = gr_clock(cx, hour_bottom - (asc + bot) * em, hour_bottom - GR_OVERLAP, em, weight, colors, fade, hh, mm)
+    rw, row = sc_row(colors, date, weather, n)
+    row_h = SC_LH * 18 if rw else 0
+    if rw:
+        s += row(cx - rw / 2, 80 + row_h / 2)
+    if latest:
+        lw, lh, ldraw = sc_latest(colors, fw - 80)
+        s += ldraw(cx - lw / 2, 70 + (row_h + 26 if rw else 0))
+    bat_h = SC_LH * 14
+    if media:
+        ph, player = sc_player(40, 0, fw - 80, colors["media"], paused)
+        s += f'<g transform="translate(0 {f(fh - 30 - bat_h - 40 - ph)})">{player}</g>'
+    return s + sc_battery(cx, fh - 30 - bat_h, colors["battery"], charging)
+
+
+def gr_landscape(hh=10, mm=8, size=60, weight="bold", colors=GR_COLORS, fade=True, date=True, weather=False, n=3, latest=False, media=False,
+                 paused=False, charging=False):
+    """Màn ngang tự dựng: giờ trên phút giữa màn, cỡ chữ như màn dọc (xoay máy không đổi cỡ), lớn quá thì thu cho nét số vừa cao màn trừ 24 dp mỗi
+    đầu; vùng trái (lề 40 dp tới cách số 36 dp), vùng phải đối xứng, mỗi vùng căn giữa chiều cao. Có nhạc: trái dòng ngày | icon (hẹp thì xuống dòng)
+    + thông báo mới nhất, phải trình phát + pin; không nhạc: trái ngày + thời tiết, phải icon + thông báo mới nhất + pin cho hai bên cân."""
+    asc, bot = GR_REF[weight]
+    lb = asc + bot
+    tot = PH - GR_TOP - GR_BOTTOM + GR_OVERLAP
+    reach = 2 * lb - (asc - GR_CAP) - bot
+    em = min(size / 200 * tot / lb, 250, (H - 48 + GR_OVERLAP) / reach)
+    hour_top = CY - (reach * em - GR_OVERLAP) / 2 - (asc - GR_CAP) * em
+    s = gr_clock(W / 2, hour_top, hour_top + lb * em - GR_OVERLAP, em, weight, colors, fade, hh, mm)
+    half = GR_ADV * em
+    lz0, lz1, rz0, rz1 = 40, W / 2 - half - 36, W / 2 + half + 36, W - 40
+
+    def stack(blocks, x0, x1, gap):
+        cx, out = (x0 + x1) / 2, ""
+        top = CY - (sum(b[0] for b in blocks) + gap * (len(blocks) - 1)) / 2
+        for bh, fn in blocks:
+            out += fn(cx, top)
+            top += bh + gap
+        return out
+
+    def row_blocks(width):
+        rw, row = sc_row(colors, date, weather, n)
+        if rw <= width:
+            return [(SC_LH * 18, lambda cx, top: row(cx - rw / 2, top + SC_LH * 9))] if rw else []
+        out = []
+        dw, drow = sc_row(colors, date, weather, 0)
+        if dw:
+            out.append((SC_LH * 18, lambda cx, top: drow(cx - dw / 2, top + SC_LH * 9)))
+        iw, irow = sc_row(colors, False, False, n)
+        out.append((18, lambda cx, top: irow(cx - iw / 2, top + 9)))
+        return out
+
+    def latest_block(width):
+        lw, lh, ldraw = sc_latest(colors, width)
+        return lh, lambda cx, top: ldraw(cx - lw / 2, top)
+
+    bat_h = SC_LH * 14
+    battery = (bat_h, lambda cx, top: sc_battery(cx, top, colors["battery"], charging))
+    if media:
+        ph, player = sc_player(rz0, 0, rz1 - rz0, colors["media"], paused)
+        left = row_blocks(lz1 - lz0) + ([latest_block(lz1 - lz0)] if latest else [])
+        right = [(ph + 10, lambda cx, top: f'<g transform="translate(0 {f(top)})">{player}</g>'), battery]
+    else:
+        dw, drow = sc_row(colors, date, weather, 0)
+        iw, irow = sc_row(colors, False, False, n)
+        left = [(SC_LH * 18, lambda cx, top: drow(cx - dw / 2, top + SC_LH * 9))] if dw else []
+        right = (([(18, lambda cx, top: irow(cx - iw / 2, top + 9))] if n else []) + ([latest_block(rz1 - rz0)] if latest else [])
+                 + [battery])
+    return s + stack(left, lz0, lz1, 14) + stack(right, rz0, rz1, 18)
+
+
+def gr_strip():
+    k, s = 0.4, ""
+    for i, (label, kw) in enumerate((("Mặc định: Đậm, phai, Trời pastel", {}),
+                                      ("App mẫu: Mảnh, phai, trắng", {"weight": "thin", "colors": GR_REFC}),
+                                      ("Nhẹ, Hoàng hôn, cỡ 100%", {"weight": "light", "size": 100, "hh": 7, "mm": 21,
+                                                                    "colors": {**GR_COLORS, "hour": "sunset", "minute": "sunset"}}),
+                                      ("Thường, tắt phai, cỡ 30%", {"weight": "regular", "fade": False, "size": 30, "hh": 4, "mm": 38,
+                                                                     "colors": {**GR_COLORS, "hour": GE, "minute": GE}}))):
+        x = 36 + i * 212
+        s += (f'<g transform="translate({x} 14) scale({k})"><rect width="{PW}" height="{PH}" rx="34" fill="#000" stroke="#333" stroke-width="2"/>'
+              + gr_portrait(**kw) + "</g>" + txt(x + PW * k / 2, 14 + PH * k + 22, label, 13, DM, 400, "middle"))
+    return (f'<p style="font-size:13px;color:var(--text-secondary);margin:1.25rem 0 6px">Mặc định (Đậm, phai dần, gradient Trời pastel dọc: xanh → tím nhạt → hồng, phần sáng nhất ở góc dưới phải nên ra hồng) · màu app mẫu (Mảnh, '
+            f'trắng, phai) · gradient Hoàng hôn, Nhẹ, cỡ lớn nhất (phai chạy với mọi màu, app mẫu chọn màu là mất phai) · tắt phai, Thường, cỡ nhỏ nhất'
+            f'</p><svg viewBox="0 0 {W} 400" width="100%" role="img" aria-label="Kiểu và màu" '
+            f'style="display:block;font-family:\'Plus Jakarta Sans\',sans-serif" fill="{G}"><rect width="{W}" height="400" rx="20" fill="#111"/>'
+            f'{s}</svg>')
+
+
+fade = [
+    GR_FONTS,
+    gr_strip(),
+    '<div style="font-size:0">',
+    frame_portrait("D1 · Dọc, mặc định 10:08 (cũng là thẻ ở lưới chủ đề): ngày | icon thông báo trên, pin dưới",
+                   gr_portrait()),
+    frame_portrait("D2 · Dọc, 08:30, thời tiết sau ngày, thông báo mới nhất dưới dòng ngày, đang phát nhạc",
+                   gr_portrait(8, 30, weather=True, latest=True, n=2, media=True)),
+    frame_portrait("D3 · Dọc, 21:47, Mảnh như app mẫu, cỡ 100%, đang sạc, nhạc đang dừng",
+                   gr_portrait(21, 47, 100, "thin", charging=True, media=True, paused=True, n=1)),
+    frame_portrait("D4 · Dọc, 05:59, Thường, tắt phai, giờ / phút một màu, cỡ 40%, tắt ngày, không thông báo",
+                   gr_portrait(5, 59, 40, "regular", {**GR_COLORS, "hour": GE, "minute": "#A9C9FF"}, fade=False, date=False, n=0)),
+    '</div>',
+    frame("N1 · Ngang, mặc định, không nhạc: ngày + thời tiết bên trái, icon thông báo + pin bên phải; số giữa màn cỡ như màn dọc",
+          gr_landscape(weather=True)),
+    frame("N2 · Ngang, 08:30, đang phát nhạc, thông báo mới nhất: ngày | icon + thông báo trái, trình phát + pin phải",
+          gr_landscape(8, 30, weather=True, latest=True, n=2, media=True)),
+    frame("N3 · Ngang, 21:47, cỡ 100% (thu cho nét số vừa chiều cao), đang sạc, không nhạc: icon + thông báo mới nhất + pin bên phải",
+          gr_landscape(21, 47, 100, latest=True, n=1, charging=True)),
+    frame("N4 · Để so: app mẫu ở màn ngang dùng chung layout dọc, phần giữa còn 25 dp nên số chỉ cao 11 sp",
+          gr_portrait(weight="thin", colors=GR_REFC, fw=W, fh=H)),
+]
+
+
 for name, summary, defs, frames in [
     ("w_classic", "Bảy bố cục ngang của chủ đề Cổ điển theo các khối đang bật", classic_defs, classic),
     ("w_jersey", "Bố cục ngang của chủ đề Số áo: ngày, bốn chữ số một hàng, dòng pin", jersey_defs, jersey),
@@ -3768,6 +3944,7 @@ for name, summary, defs, frames in [
     ("w_sector", "Chủ đề Rẻ quạt (Nike): màu và cỡ, bốn khung dọc và bốn khung ngang", sc_defs(), sector),
     ("w_spine", "Chủ đề Gáy sách (Vertical Clock): màu và cỡ, bốn khung dọc và bốn khung ngang", sp_defs(), spine),
     ("w_clip", "Chủ đề Kẹp giấy (Paper Clip): màu và cỡ, bốn khung dọc và bốn khung ngang", pc_defs(), clip),
+    ("w_fade", "Chủ đề Phai (Gradient): độ đậm, phai dần và màu, bốn khung dọc và bốn khung ngang", gr_defs(), fade),
 ]:
     code = widget(summary, defs, frames)
     OUT.mkdir(parents=True, exist_ok=True)

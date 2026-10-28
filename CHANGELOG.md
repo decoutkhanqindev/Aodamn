@@ -7,6 +7,55 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-10-28 – Chủ đề Phai
+
+Build được, unit test pass (thêm test chặn Phai có lại khối đã bỏ hay thiếu tuỳ chọn của app mẫu; test nội dung thông báo cho phép Phai),
+`tools/check-rules.sh` ra 0 vi phạm, thư mục các chủ đề cũ không đổi dòng nào. Chưa test trên máy.
+
+User duyệt mock: "Duyệt, code" (trả lời câu hỏi duyệt nêu các mục đổi: mặc định Đậm thay Mảnh, tách màu Theme theo phần, phai thành công tắc
+chạy với mọi màu, hiện thông báo mới + trình phát cùng lúc, chữ số đổi mờ chéo, màn ngang tự dựng, bỏ ghi nhớ / sự kiện / nét vẽ, thêm ba độ
+đậm vào `FontFamilyLato` và `make_static_fonts.py`).
+
+### Thêm
+
+- Chủ đề Phai (Gradient của Muviz Edge; số đo lấy từ `May21Screen` và layout `may21_screen_layout` dịch ngược, app mẫu chỉ có bản dọc; mock
+  duyệt trước khi code). Giờ "HH" (12 / 24 giờ theo máy) trên phút "mm" chữ Lato rất to giữa màn: như ô chữ tự co giãn của app mẫu, mỗi số
+  cao cỡ / 2 phần giữa màn (cỡ 30–100, mặc định 60), phần giữa = cả màn trừ khối trên 179,8dp và khối dưới 188,5dp (app mẫu giữ chỗ cho khối
+  đang ẩn nên đồng hồ không đổi cỡ khi có nhạc / thông báo), cộng 15dp phút lấn lên giờ; cỡ chữ = cao ô / khung chữ của font mẫu (Lato 1.104
+  có đệm font: 1,07 em ở Thin tới 1,1175 em ở Bold), giờ neo đáy ô, phút neo đỉnh ô, tối đa 250sp. Mỗi số tô màu rồi phai chéo như
+  `LinearGradient` trong suốt → màu của app mẫu: từ góc trên trái chữ số đầu tới đầu chữ số sau + 0,25 em, xuống 1 em, độ sáng t² (nội suy
+  chưa nhân alpha), làm bằng mặt nạ `DstIn` trên lớp riêng nên phần phai để lộ ảnh nền. App mẫu chỉ phai khi để màu mặc định, chọn màu là
+  mất; bên mình phai là công tắc "Phai dần" (mặc định bật) chạy với mọi màu kể cả gradient (nâng cấp). Đồng hồ hiện mờ dần 500ms lúc AOD
+  hiện như app mẫu; chữ số đổi mờ chéo 300ms mỗi phút (app mẫu nhảy, nâng cấp).
+- Bố cục dọc như layout mẫu (khối trên / dưới cùng số đo với Rẻ quạt, cùng đời layout): ngày "EEEE  dd" Lato 18sp, thời tiết cách 14dp, vạch
+  0,5dp cách 12dp, icon thông báo 18dp căn giữa trong đệm 70 / 30dp + 10dp; thông báo mới nhất dưới dòng đó (`AodBadgeLatest`: icon trong ô
+  tròn 28dp, tiêu đề 16sp / nội dung 15sp tối 40%, tối đa 2 dòng), nằm trong đệm 70dp nên không đẩy đồng hồ; trình phát lề 40dp
+  (`AodCompactPlayer`: tên 16sp / nghệ sĩ 15sp tối 40%, phát 22dp, tới 16dp, thanh 1dp cách 20dp) trên chữ pin 14sp cách đáy 30dp ("72%",
+  "72%  ·  Đang sạc", "72%  ·  Đã sạc đầy", mờ 0,8 khi không sạc). App mẫu thay dòng ngày bằng thẻ thông báo một lúc và hiện trình phát theo
+  hẹn giờ; bên mình hiện cùng lúc (user duyệt). Màn ngang tự dựng (app mẫu dùng chung layout dọc nên phần giữa còn 25dp, số cao 11sp): giờ
+  trên phút giữa màn cỡ như màn dọc, lớn quá thì thu cho nét số vừa chiều cao màn trừ 24dp mỗi đầu; không nhạc thì ngày + thời tiết giữa
+  vùng trái, icon thông báo, thông báo mới nhất, pin giữa vùng phải; có nhạc thì ngày | icon (hẹp thì xuống dòng) + thông báo mới nhất trái,
+  trình phát + pin phải (user duyệt).
+- Tuỳ chọn đủ như app mẫu: cỡ (Clock Size 30–100, mặc định 60), độ đậm (Clock Weight: Mảnh / Nhẹ / Thường / Đậm = Thin / Light / Regular /
+  Bold), màu giờ, phút (Hour / Minute), ngày, thông báo, nhạc (Controls, nghệ sĩ tối 40%), pin (Battery Status); màu chủ đạo (Theme Color)
+  bỏ, mỗi phần một màu (user duyệt). Mặc định: Đậm (app mẫu Mảnh: thẻ nhỏ ở lưới nét tóc gần như mất) (user duyệt), giờ và phút gradient Trời
+  pastel dọc (xanh → tím nhạt → hồng, chưa chủ đề nào dùng làm mặc định; phần sáng nhất ra hồng), ngày / thông báo / nhạc `GreyE4`, pin
+  `Grey9A` (trắng tối 10% / 40% của app mẫu). Màu nào cũng tô được gradient. App mẫu không có dạng tiết kiệm.
+- Phai có ngày, thời tiết (cạnh ngày), pin, thông báo (kèm thông báo mới nhất, `hasNotificationContent = true`), nhạc; không có ghi nhớ, sự
+  kiện, nét vẽ: hai số khổng lồ chiếm phần giữa (cỡ 100% lấp kín), khối trên / dưới giữ chỗ cố định như app mẫu, màn ngang hai vùng bên đã đủ
+  chữ. Font: Lato Thin / Light / Bold bản Google Fonts 2.015 (google/fonts `ofl/lato`) chép nguyên file như Lato Regular đã có vì tên dành
+  riêng "Lato" (bản 1.104 trong app mẫu thiếu tiếng Việt; bản Thin cùng hình chữ số với Hairline của app mẫu), APK nặng thêm khoảng 1,9 MB.
+  Mock của chủ đề ở `tools/mockups/aod_landscape_mockups.py` (`w_fade`, chữ số vẽ bằng Lato tải từ Google Fonts).
+
+### Thay đổi
+
+- Chỉ thêm, không đổi chủ đề đang có: mục `FADE` ở `AodThemeValue`, nhánh `when` ở `AodPortrait` / `AodLandscape` / `AodMediaControls`,
+  chuỗi vi / en `theme_fade`, `theme_opt_weight`, `theme_opt_fade`, `font_weight_*`, `aod_fade_battery_*`, mẫu `aod_fade_date_pattern`; dùng
+  lại nhãn cỡ, giờ / phút / ngày / thông báo / pin / nhạc, `AodCompactPlayer`, `AodBadgeLatest`, `AodStatusLine`, `AodWeather` có sẵn, không
+  sửa khối dùng chung.
+- `FontFamilyLato` thêm Thin / Light / Bold (user duyệt); Rẻ quạt chỉ dùng độ đậm thường nên vẫn vẽ bằng `lato_regular` như cũ.
+  `make_static_fonts.py` chép thêm `lato_thin`, `lato_light`, `lato_bold` từ `tools/fonts/static/` (`lato_regular` không đổi byte).
+
 ## [Chưa phát hành] – 2026-10-28 – Chủ đề Kẹp giấy
 
 Build được, unit test pass (thêm test chặn Kẹp giấy có lại khối đã bỏ hay thiếu tuỳ chọn của app mẫu; test nội dung thông báo cho phép Kẹp

@@ -70,6 +70,7 @@
     <string name="theme_sector">Rẻ quạt</string>
     <string name="theme_spine">Gáy sách</string>
     <string name="theme_clip">Kẹp giấy</string>
+    <string name="theme_fade">Phai</string>
     <string name="aod_jersey_date_first_pattern">dd</string>
     <string name="aod_jersey_date_second_pattern">MM</string>
     <string name="aod_bezel_weekday_pattern">EEEE</string>
@@ -135,6 +136,12 @@
     <string name="theme_opt_digit_style">Kiểu số</string>
     <string name="theme_opt_hand_style">Kiểu kim giờ</string>
     <string name="theme_opt_card_background">Nền thẻ</string>
+    <string name="theme_opt_weight">Độ đậm</string>
+    <string name="theme_opt_fade">Phai dần</string>
+    <string name="font_weight_thin">Mảnh</string>
+    <string name="font_weight_light">Nhẹ</string>
+    <string name="font_weight_regular">Thường</string>
+    <string name="font_weight_bold">Đậm</string>
     <string name="card_background_tinted">Nền mờ</string>
     <string name="card_background_outline">Viền</string>
     <string name="card_background_none">Không</string>
@@ -374,6 +381,8 @@
     <string name="aod_chain_battery_full">Đã sạc đầy</string>
     <string name="aod_sector_battery_charging">"%1$d%%  ·  Đang sạc"</string>
     <string name="aod_sector_battery_full">"%1$d%%  ·  Đã sạc đầy"</string>
+    <string name="aod_fade_battery_charging">"%1$d%%  ·  Đang sạc"</string>
+    <string name="aod_fade_battery_full">"%1$d%%  ·  Đã sạc đầy"</string>
     <string name="aod_notification_content_hidden">Nội dung đã ẩn</string>
     <string name="aod_event_all_day">Cả ngày</string>
     <string name="aod_drawing">Hình vẽ</string>

@@ -77,6 +77,7 @@
     <string name="theme_sector">Sector</string>
     <string name="theme_spine">Spine</string>
     <string name="theme_clip">Clip</string>
+    <string name="theme_fade">Fade</string>
     <string name="theme_in_use">In use</string>
     <string name="theme_edit">Edit</string>
     <string name="theme_saved">Theme saved</string>
@@ -139,6 +140,12 @@
     <string name="theme_opt_digit_style">Digit style</string>
     <string name="theme_opt_hand_style">Hour hand style</string>
     <string name="theme_opt_card_background">Card background</string>
+    <string name="theme_opt_weight">Weight</string>
+    <string name="theme_opt_fade">Fade</string>
+    <string name="font_weight_thin">Thin</string>
+    <string name="font_weight_light">Light</string>
+    <string name="font_weight_regular">Regular</string>
+    <string name="font_weight_bold">Bold</string>
     <string name="card_background_tinted">Tinted</string>
     <string name="card_background_outline">Outline</string>
     <string name="card_background_none">None</string>
@@ -378,6 +385,7 @@
     <string name="aod_sector_date_pattern" translatable="false">"EEEE  dd"</string>
     <string name="aod_spine_date_pattern" translatable="false">EEE, dd MMMM</string>
     <string name="aod_clip_date_pattern" translatable="false">dd MMMM yyyy</string>
+    <string name="aod_fade_date_pattern" translatable="false">"EEEE  dd"</string>
     <string name="aod_date_weekday_pattern" translatable="false">EEEE</string>
     <string name="aod_date_day_pattern" translatable="false">d MMMM</string>
     <string name="aod_date_full_pattern" translatable="false">EEEE, d MMMM</string>
@@ -427,6 +435,8 @@
     <string name="aod_chain_battery_full">Charged</string>
     <string name="aod_sector_battery_charging">"%1$d%%  ·  Charging"</string>
     <string name="aod_sector_battery_full">"%1$d%%  ·  Charged"</string>
+    <string name="aod_fade_battery_charging">"%1$d%%  ·  Charging"</string>
+    <string name="aod_fade_battery_full">"%1$d%%  ·  Charged"</string>
     <string name="aod_notification_content_hidden">Contents hidden</string>
     <string name="aod_weather_temperature" translatable="false">%1$d°</string>
     <string name="aod_event_all_day">All day</string>
