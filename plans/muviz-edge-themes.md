@@ -51,6 +51,7 @@ code dịch ngược, không lấy asset (font, ảnh, Lottie) từ APK. APK và
 | Bốn số (`QUARTERS`) | **24 · Apr23 "Android 14 Analog Clock"** | làm từ danh mục này (2026-10-26), số đo lấy từ layout `apr23_screen_layout` dọc / ngang / `PixelAnalogClock` / `PilotBold2Tick` |
 | Rẻ quạt (`SECTOR`) | **3 · Jul21 "Nike"** | làm từ danh mục này (2026-10-27), số đo lấy từ layout `jul21_screen_layout` / `AnalogueClock1` / `PieClock` |
 | Gáy sách (`SPINE`) | **12 · Apr22 "Vertical Clock"** | làm từ danh mục này (2026-10-27), số đo lấy từ layout `apr22_screen_layout` dọc / ngang / `VerticalTextView` |
+| Kẹp giấy (`CLIP`) | **13 · May22 "Paper Clip"** | làm từ danh mục này (2026-10-28), số đo lấy từ layout `may22_screen_layout` dọc / ngang / `PaperClipClock` |
 
 ## Danh mục đủ 44 chủ đề
 
@@ -71,7 +72,7 @@ text view chung) hoặc font dùng trong code; "chữ (font layout)" nghĩa là 
 | 10 | Feb22 | Box Clock | Clock Size, Theme Color | Clock, Date, Notification, Controls | chữ (font layout) | – | chưa có |
 | 11 | Mar22 | Eclipse | Clock Color, Shadow Color, Rotation, Peek, Character Color, Controls Color | – | Eclipse | – | chưa có |
 | 12 | Apr22 | Vertical Clock | Clock Size, Theme Color | Clock, Date, Notification, Controls | VerticalTextView | – | **Gáy sách** (`SPINE`) |
-| 13 | May22 | Paper Clip | Clock Size, Second Color, Theme Color | Hour, Minute, Controls | PaperClipClock | – | chưa có |
+| 13 | May22 | Paper Clip | Clock Size, Second Color, Theme Color | Hour, Minute, Controls | PaperClipClock | – | **Kẹp giấy** (`CLIP`) |
 | 14 | Jun22 | Solar System | Clock Size, Digital Clock, Hour Color, Minute Color, Second Color, Clock Color, Controls Color | – | SolarSystemClock | – | chưa có |
 | 15 | Jul22 | Samsung Like | Clock Weight, Clock Size, Hour Color, Minute Color, Notification Color, Controls Color | – | chữ: nunito | – | chưa có |
 | 16 | Aug22 | Quotes | Text, Text Size, Text Style, Text Color, Text Align, Notification Color, Controls Color | – | chữ: 12 font (arvo, bangers, caveat, pacifico…) | ô nhập chữ | chưa có |
@@ -187,11 +188,23 @@ mỗi phút (`AodViewModel`), nên phần chạy theo giây của app mẫu ph�
   16sp / nghệ sĩ 15sp, phát + tới 22dp, thanh tiến trình) và dòng pin. Màu: giờ, phút trắng, giây #FF0A54, nền quạt #121218, Theme trắng
   (ngày, thông báo, nhạc tối 10%, pin tối 40%). Tiết kiệm: ẩn kim giây, quạt sang đen (bỏ, user duyệt). Không có layout ngang (bên mình tự dựng); tên mẫu là thương hiệu nên
   đặt tên khác.
-- **13 · Paper Clip** (`PaperClipClock`, `may22_screen_layout` + bản ngang, đọc 2026-10-26): r = cỡ (60–100, mặc định 80) / 110 × nửa cạnh
-  ngắn; kim giờ / phút là viên **chỉ viền** (nét 0,021r, cao 0,14r, lùi sau tâm 0,07r) tới 0,55r / 0,85r như kẹp giấy, kim giờ có bóng
-  #444444; chấm tâm 0,021r màu Second #4AEDC6; không kim giây, kim chỉ đổi mỗi phút. Cụm dưới cách đáy 60dp: ngày "dd MMMM yyyy" Poppins
-  SemiBold 15sp, dòng pin · icon thông báo (thông báo mới thay dòng này một lúc), trình phát (lùi 40dp · tên / nghệ sĩ · tới 40dp) thay chỗ
-  theo hẹn giờ. Màu: Theme trắng, chữ phụ tối 30%.
+- ~~**13 · Paper Clip**~~ (`PaperClipClock`, `may22_screen_layout` + bản ngang, đọc 2026-10-26, đọc lại đủ 2026-10-28, đã làm thành Kẹp giấy
+  2026-10-28):
+  r = cỡ (60–100, mặc định 80) / 110 × nửa cạnh ngắn; kim giờ / phút là viên **chỉ viền** (nét 0,021r, cao 0,14r, bo tròn hết, lùi sau tâm
+  0,07r) tới 0,55r / 0,85r như kẹp giấy; vẽ chấm tâm 0,021r (màu Second #4AEDC6) trước, rồi kim phút, rồi kim giờ có bóng #444444 bán kính
+  0,07r không lệch; không vạch, số, kim giây; `setTime` chỉ gọi khi đổi phút nên kim nhảy mỗi phút (kim giờ trôi theo phút). Cụm dưới cách
+  đáy 60dp, cùng họ layout với `may23` (La bàn): ngày "dd MMMM yyyy" in hoa Poppins SemiBold 15sp giãn 0,25 em, cách 10dp dòng pin 15,5dp +
+  "72%" Medium 14sp · chấm 11sp (cách 12dp) · icon thông báo 17dp (cách 10dp); thông báo mới (icon 17dp + một dòng in hoa 13sp giãn 0,1 em)
+  thay hàng icon một lúc; trình phát (lùi / tới 40dp cách mép 40dp, tên in hoa SemiBold 13sp / nghệ sĩ Regular 11,5sp, giãn 0,25 em, không
+  thanh tiến trình) thay cả cụm theo hẹn giờ. Màu: Theme trắng; Hour, Minute theo Theme; Controls tô ngày, tên bài, nút, còn nghệ sĩ, pin,
+  thông báo tối 30%. Ngang: lề trên / dưới 30dp, đồng hồ vuông cạnh = chiều cao còn lại ở phần trên, cụm chữ dưới (chữ nhỏ hơn 1sp). Không có
+  dạng tiết kiệm. Poppins (Google Fonts 4.004) thiếu dấu tiếng Việt (ạ, ầ, ơ, ư…), gần nhất trong app là Plus Jakarta Sans. Bên mình: kim
+  lướt sang phút mới, kim phút + chấm tâm ngọc mặc định, mỗi phần một màu, hiện thông báo mới + trình phát cùng lúc, màn ngang kim giữa
+  màn chữ hai bên, không ghi nhớ / sự kiện / nét vẽ (user duyệt).
+- Đọc lướt 2026-10-28 (không đề xuất): **10 · Box Clock** "HH" / vạch 1dp / "mm" Josefin Sans 65sp (cỡ 50–100) trong khung chữ nhật viền 1dp
+  góc vuông, màn chia 0,25 / 0,5 / 0,25; **31 · Space Mono** "HH" trên "mm" căn giữa 160sp × cỡ (60–100, mặc định 80), thêm một kiểu xếp
+  chồng; **35 · Text HyperOS** "HH mm" / "EEEE" / "d/M" chữ rất to Neumatic Black, **36 · Big Retro** "HH:mm" MT Pixel Display, **42 · Pixel
+  Growth Rotation** font Growth / Rotation của Pixel: cả ba font không có trên Google Fonts, đặc trưng nằm ở font.
 - ~~**12 · Vertical Clock**~~ (`VerticalTextView`, `apr22_screen_layout` + bản ngang, đọc 2026-10-26, đọc lại đủ 2026-10-27, đã làm thành Gáy
   sách 2026-10-27): "HH:mm" Josefin Sans Regular cỡ 25–60sp (mặc định 40) xoay −90° (đọc từ dưới lên, nét chữ căn giữa dòng), ngày "EEE, dd MMMM" in
   hoa nửa cỡ trên giờ cùng trục cách 30dp; cột cách mép trái 18dp, đáy giờ cách đáy 45dp (ngang 30dp). Dọc: phần trên cột chia 0,25 trống /

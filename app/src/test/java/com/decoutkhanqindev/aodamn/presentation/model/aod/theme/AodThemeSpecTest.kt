@@ -5,6 +5,7 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.AodGradient
 import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.GradientSwatchValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.bigoverlap.AodBigOverlapStyleValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.bigoverlap.BigOverlapThemeSpec
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.clip.ClipThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.compass.AodCompassStyleValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.compass.CompassThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.component.AodComponentValue
@@ -19,7 +20,9 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.spine.SpineTheme
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.tick.TickThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
 import com.decoutkhanqindev.aodamn.presentation.theme.Amber
+import com.decoutkhanqindev.aodamn.presentation.theme.Aquamarine
 import com.decoutkhanqindev.aodamn.presentation.theme.Cream
+import com.decoutkhanqindev.aodamn.presentation.theme.GreyB4
 import com.decoutkhanqindev.aodamn.presentation.theme.GreyCE
 import com.decoutkhanqindev.aodamn.presentation.theme.GreyE4
 import com.decoutkhanqindev.aodamn.presentation.theme.GreyED
@@ -67,6 +70,7 @@ class AodThemeSpecTest {
                     AodThemeValue.QUARTERS,
                     AodThemeValue.SECTOR,
                     AodThemeValue.SPINE,
+                    AodThemeValue.CLIP,
                 )
             assertEquals("${theme.id}: ghi nhớ", isChain, AodBlockValue.MEMO in theme.spec.ownBlocks)
             assertEquals("${theme.id}: sự kiện", isChain, AodBlockValue.EVENTS in theme.spec.ownBlocks)
@@ -383,6 +387,44 @@ class AodThemeSpecTest {
                 SpineThemeSpec.DateColor,
                 SpineThemeSpec.StatusColor,
                 SpineThemeSpec.MediaColor,
+            ),
+            spec.options,
+        )
+    }
+
+    @Test
+    fun `clip keeps the reference size and center dot with one color per part and no memo, events or drawing`() {
+        val spec = AodThemeValue.CLIP.spec
+        assertEquals(
+            setOf(
+                AodComponentValue.DATE,
+                AodComponentValue.BATTERY,
+                AodComponentValue.WEATHER,
+                AodComponentValue.NOTIFICATIONS,
+                AodComponentValue.MEDIA,
+            ),
+            spec.components,
+        )
+        assertEquals(setOf(AodBlockValue.DATE, AodBlockValue.STATUS, AodBlockValue.MEDIA), spec.ownBlocks)
+        assertEquals(true, spec.hasNotificationContent)
+        assertEquals(false, spec.isLiveInPreview)
+        assertEquals(60..100, ClipThemeSpec.Size.range)
+        assertEquals(80, ClipThemeSpec.Size.default)
+        assertEquals(GreyED, ClipThemeSpec.HourColor.default)
+        assertEquals(Aquamarine, ClipThemeSpec.MinuteColor.default)
+        assertEquals(Aquamarine, ClipThemeSpec.DotColor.default)
+        assertEquals(GreyE4, ClipThemeSpec.DateColor.default)
+        assertEquals(GreyB4, ClipThemeSpec.StatusColor.default)
+        assertEquals(GreyE4, ClipThemeSpec.MediaColor.default)
+        assertEquals(
+            listOf(
+                ClipThemeSpec.Size,
+                ClipThemeSpec.HourColor,
+                ClipThemeSpec.MinuteColor,
+                ClipThemeSpec.DotColor,
+                ClipThemeSpec.DateColor,
+                ClipThemeSpec.StatusColor,
+                ClipThemeSpec.MediaColor,
             ),
             spec.options,
         )

@@ -7,6 +7,47 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-10-28 – Chủ đề Kẹp giấy
+
+Build được, unit test pass (thêm test chặn Kẹp giấy có lại khối đã bỏ hay thiếu tuỳ chọn của app mẫu; test nội dung thông báo cho phép Kẹp
+giấy), `tools/check-rules.sh` ra 0 vi phạm, thư mục các chủ đề cũ không đổi dòng nào. Chưa test trên máy.
+
+User duyệt mock: "Duyệt, bắt đầu code" (trả lời câu hỏi duyệt nêu 5 mục đổi: font, tách màu Theme / Controls theo phần, hiện thông báo mới +
+trình phát cùng lúc, màn ngang kim giữa màn chữ hai bên, kim phút màu ngọc làm mặc định).
+
+### Thêm
+
+- Chủ đề Kẹp giấy (Paper Clip của Muviz Edge; số đo lấy từ `PaperClipClock`, `May22Screen` và layout `may22_screen_layout` dọc / ngang dịch
+  ngược; mock duyệt trước khi code). Kim phủ giữa màn, r = cỡ / 110 × nửa cạnh ngắn như app mẫu; kim giờ / phút là viên chỉ có viền (nét
+  0,021r, cao 0,14r, bo tròn hết) từ 0,07r sau tâm tới 0,55r / 0,85r như cái kẹp giấy; vẽ chấm tâm 0,021r trước (lộ ra trong đầu tròn của hai
+  viên), rồi kim phút, rồi kim giờ có bóng #444444 bán kính 0,07r không lệch đè lên kim phút; không vạch, không số, không kim giây. App mẫu
+  đổi kim mỗi phút (nhảy), bên mình kim lướt sang phút mới trong 400ms theo đường ngắn nhất (nâng cấp). Kim vẽ bằng `Paint` với
+  `setShadowLayer`, gradient chạy dọc kim và xoay cùng kim; kim rỗng nên thấy ảnh nền qua lòng kim.
+- Bố cục dọc như layout mẫu: khối chữ căn giữa cách đáy 60dp: ngày "dd MMMM yyyy" in hoa SemiBold 15sp giãn 0,25 em (thời tiết cách 12dp),
+  cách 10dp dòng pin 15,5dp + "72%" · icon thông báo (`AodStatusLine`, khoảng cách × 0,6 cho gần layout mẫu), thông báo mới nhất (icon 17dp +
+  một dòng in hoa 13sp giãn 0,1 em chạy chữ, `AodLatestLine`) dưới dòng pin, rồi trình phát cách 24dp (`AodTextPlayer` như La bàn: lùi / tới
+  40dp hai đầu cách mép 40dp, tên in hoa SemiBold 13sp / nghệ sĩ 11,5sp tối hơn 30%, giãn 0,25 em, không thanh tiến trình, chạm tên để phát /
+  dừng, dừng thì mờ 0,6). App mẫu thay hàng icon bằng thông báo mới một lúc và thay cả khối chữ bằng trình phát theo hẹn giờ; bên mình hiện
+  cùng lúc (user duyệt). Màn ngang: kim giữa màn cỡ như màn dọc, hai nhóm giữa hai vùng bên (từ mép tới đầu kim phút): không nhạc thì ngày +
+  thời tiết trái, pin · thông báo phải; có nhạc thì ngày, pin, thông báo trái, trình phát phải; ngày ngang 14sp như layout ngang mẫu (app mẫu
+  thu kim lên phần trên, khối chữ dưới, hai bên trống) (user duyệt).
+- Tuỳ chọn đủ như app mẫu: cỡ (Clock Size 60–100, mặc định 80, giữ nguyên số), màu kim giờ, kim phút (Hour / Minute Color), chấm tâm (Second
+  Color của app mẫu chỉ tô chấm tâm nên nhãn là "Chấm tâm"), ngày, pin & thông báo, nhạc (Controls Color của app mẫu tô cả bốn phần, chữ phụ
+  tối 30%); màu chủ đạo (Theme Color) bỏ, mỗi phần một màu (user duyệt). Mặc định: kim giờ `GreyED`, kim phút và chấm tâm `Aquamarine`
+  (#4AEDC6, chấm tâm mặc định của app mẫu, chưa chủ đề nào dùng; app mẫu để kim trắng) (user duyệt), ngày / nhạc `GreyE4`, pin & thông báo
+  `GreyB4` (gần trắng tối 30% của app mẫu). Màu nào cũng tô được gradient. App mẫu không có dạng tiết kiệm.
+- Kẹp giấy có ngày, thời tiết (cạnh ngày), pin, thông báo (kèm thông báo mới nhất, `hasNotificationContent = true`), nhạc; không có ghi nhớ,
+  sự kiện, nét vẽ: kim quét cả giữa màn, khối chữ dưới đã tới bốn dòng, màn ngang hai vùng bên không còn chỗ cân (như La bàn, Vành). Font:
+  Poppins của app mẫu (Google Fonts 4.004) thiếu dấu tiếng Việt (ạ, ầ, ơ, ư…) nên dùng Plus Jakarta Sans có sẵn, gần nhất về cao chữ thường
+  và bề rộng dòng ngày (user duyệt). Mock của chủ đề ở `tools/mockups/aod_landscape_mockups.py` (`w_clip`).
+
+### Thay đổi
+
+- Chỉ thêm, không đổi chủ đề đang có: mục `CLIP` ở `AodThemeValue`, nhánh `when` ở `AodPortrait` / `AodLandscape` / `AodMediaControls`, màu
+  `Aquamarine`, chuỗi vi / en `theme_clip`, `theme_color_center_dot`, mẫu `aod_clip_date_pattern`, `aod_clip_notification`; dùng lại nhãn cỡ,
+  kim giờ / kim phút / ngày / pin & thông báo / nhạc, họ font `FontFamilyPlusJakartaSans`, `AodTextPlayer`, `AodLatestLine`, `AodStatusLine`
+  có sẵn, không sửa code dùng chung.
+
 ## [Chưa phát hành] – 2026-10-27 – Chủ đề Gáy sách
 
 Build được, unit test pass (thêm test chặn Gáy sách có lại khối đã bỏ hay thiếu tuỳ chọn của app mẫu; test nội dung thông báo cho phép Gáy

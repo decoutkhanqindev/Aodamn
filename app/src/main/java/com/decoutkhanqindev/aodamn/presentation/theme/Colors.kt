@@ -41,6 +41,8 @@ val Cream = Color(0xFFFEF7EB)
 val Ruby = Color(0xFFFF0A54)
 val Grey44 = Color(0xFF444444)
 
+val Aquamarine = Color(0xFF4AEDC6)
+
 val YoutubeRed = Color(0xFFFF0033)
 val SoundcloudOrange = Color(0xFFFF5500)
 val AmazonOrange = Color(0xFFFF9900)

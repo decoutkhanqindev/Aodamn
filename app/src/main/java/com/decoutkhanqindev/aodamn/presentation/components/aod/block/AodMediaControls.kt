@@ -45,6 +45,7 @@ import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.bigoverlap.
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.capsule.AodCapsuleMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.card.AodCardMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.chain.AodChainMedia
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.clip.AodClipMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.compass.AodCompassMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.gradientline.AodGradientLineMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.halfmoon.AodHalfMoonMedia
@@ -102,6 +103,7 @@ fun AodMediaControls(
                 AodThemeValue.QUARTERS -> AodQuartersMedia(media = target, config = theme.config, onIntent = onIntent)
                 AodThemeValue.SECTOR -> AodSectorMedia(media = target, config = theme.config, onIntent = onIntent)
                 AodThemeValue.SPINE -> AodSpineMedia(media = target, config = theme.config, onIntent = onIntent)
+                AodThemeValue.CLIP -> AodClipMedia(media = target, config = theme.config, onIntent = onIntent)
             }
         }
     }

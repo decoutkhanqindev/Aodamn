@@ -69,6 +69,7 @@
     <string name="theme_quarters">Bốn số</string>
     <string name="theme_sector">Rẻ quạt</string>
     <string name="theme_spine">Gáy sách</string>
+    <string name="theme_clip">Kẹp giấy</string>
     <string name="aod_jersey_date_first_pattern">dd</string>
     <string name="aod_jersey_date_second_pattern">MM</string>
     <string name="aod_bezel_weekday_pattern">EEEE</string>
@@ -128,6 +129,7 @@
     <string name="theme_color_minute_hand">Kim phút</string>
     <string name="theme_color_second_hand">Kim giây</string>
     <string name="theme_color_sector">Hình quạt</string>
+    <string name="theme_color_center_dot">Chấm tâm</string>
     <string name="big_overlap_style_filled_round">Đặc bo tròn</string>
     <string name="big_overlap_style_outline_round">Viền bo tròn</string>
     <string name="theme_opt_digit_style">Kiểu số</string>

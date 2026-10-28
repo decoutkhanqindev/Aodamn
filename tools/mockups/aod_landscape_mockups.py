@@ -3532,6 +3532,223 @@ spine = [
 ]
 
 
+# ================================================================== KẸP GIẤY (Paper Clip của Muviz Edge; số đo lấy từ PaperClipClock, May22Screen và layout
+# may22_screen_layout dọc / ngang trong APK, không từ ảnh chụp). r = Cỡ (60–100, mặc định 80) / 110 × nửa cạnh ngắn, tâm giữa màn. Kim giờ / phút là viên
+# chỉ có viền (nét 0,021r, cao 0,14r, bo tròn hết) từ 0,07r sau tâm tới 0,55r / 0,85r; vẽ chấm tâm 0,021r trước, rồi kim phút, rồi kim giờ có bóng
+# #444444 bán kính 0,07r; không vạch, không số, không kim giây, kim đổi mỗi phút. Khối dưới cách đáy 60 dp như layout mẫu (cùng họ layout với La bàn):
+# ngày "dd MMMM yyyy" in hoa 15 sp SemiBold giãn 0,25 em (+ thời tiết), cách 10 dp dòng pin 15,5 dp · icon thông báo, thông báo mới nhất (icon 17 dp cách
+# 10 dp, chữ in hoa 13 sp giãn 0,1 em), trình phát (lùi / tới 40 dp cách mép 40 dp, tên in hoa 13 sp SemiBold / nghệ sĩ 11,5 sp tối 30%, giãn 0,25 em).
+# Poppins của app mẫu thiếu tiếng Việt nên dùng Plus Jakarta Sans (gần nhất trong app). Màn ngang: kim giữa màn cỡ như màn dọc, hai nhóm giữa hai vùng
+# bên (layout ngang mẫu thu kim lên trên, khối chữ dưới; chữ nhỏ hơn 1 sp, giữ cỡ chữ đó).
+PC_VAR = ROOT / "tools/fonts/variable/plus_jakarta_sans_variable.ttf"
+PC_SEMI = BzFont(instancer.instantiateVariableFont(TTFont(PC_VAR), {"wght": 600}, inplace=False), "pcs")
+PC_MED = BzFont(instancer.instantiateVariableFont(TTFont(PC_VAR), {"wght": 500}, inplace=False), "pcm")
+PC_REG = BzFont(instancer.instantiateVariableFont(TTFont(PC_VAR), {"wght": 400}, inplace=False), "pcr")
+PC_FONTS = ('<style>.pcs{font-family:"Plus Jakarta Sans";font-weight:600}.pcm{font-family:"Plus Jakarta Sans";font-weight:500}'
+            '.pcr{font-family:"Plus Jakarta Sans";font-weight:400}</style>')
+PC_ASC = PC_SEMI.font["hhea"].ascent / PC_SEMI.upm
+PC_LH = (PC_SEMI.font["hhea"].ascent - PC_SEMI.font["hhea"].descent) / PC_SEMI.upm
+PC_AQUA = "#4AEDC6"  # màu nhấn: chấm tâm mặc định của app mẫu, chưa chủ đề nào dùng
+PC_COLORS = {"hour": GE, "minute": PC_AQUA, "dot": PC_AQUA, "date": "#E4E4E4", "status": G, "media": "#E4E4E4"}
+PC_REF = {"hour": "#FFFFFF", "minute": "#FFFFFF", "dot": PC_AQUA, "date": "#FFFFFF", "status": "#B3B3B3", "media": "#FFFFFF"}
+PC_SUNSET = {**PC_COLORS, "minute": "url(#pcSunset)", "dot": "#FFCC70"}
+PC_DATE = "26 THÁNG 10 2026"
+PC_N = [0]
+
+
+def pc_defs():
+    return ('<linearGradient id="pcSunset" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#4158D0"/><stop offset=".5" '
+            'stop-color="#C850C0"/><stop offset="1" stop-color="#FFCC70"/></linearGradient>'
+            '<linearGradient id="pcWall" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2E6B5A"/><stop offset=".55" '
+            'stop-color="#3B2C66"/><stop offset="1" stop-color="#7A3E5C"/></linearGradient>')
+
+
+def pc_hand(cx, cy, r, deg, length, color, shadow=""):
+    """PaperClipClock.onDraw: viên viền từ tâm − 0,07r tới tâm + length × r, cao 0,14r, nét 0,021r, xoay (góc − 90°) quanh tâm. Gradient (nếu có)
+    trải theo khung của viên nên chạy dọc kim, xoay cùng kim."""
+    k = .07 * r
+    return (f'<g transform="rotate({f(deg - 90)} {f(cx)} {f(cy)})"{shadow}><rect x="{f(cx - k)}" y="{f(cy - k)}" width="{f(k + length * r)}" '
+            f'height="{f(2 * k)}" rx="{f(k)}" fill="none" stroke="{color}" stroke-width="{.3 * k:.2f}"/></g>')
+
+
+def pc_clock(cx, cy, r, hh, mm, colors):
+    """Chấm tâm, kim phút, rồi kim giờ có bóng #444444 (bán kính 0,07r, không lệch) đè lên kim phút."""
+    PC_N[0] += 1
+    sid = f"pc{PC_N[0]}"
+    hour, minute = (hh % 12 + mm / 60) * 30, mm * 6
+    return (f'<filter id="{sid}f" x="-60%" y="-60%" width="220%" height="220%"><feDropShadow dx="0" dy="0" stdDeviation="{.04 * r:.2f}" '
+            f'flood-color="#444444"/></filter>'
+            f'<circle cx="{f(cx)}" cy="{f(cy)}" r="{.021 * r:.2f}" fill="{colors["dot"]}"/>'
+            + pc_hand(cx, cy, r, minute, .85, colors["minute"])
+            + pc_hand(cx, cy, r, hour, .55, colors["hour"], f' filter="url(#{sid}f)"'))
+
+
+def pc_date(x, top, size=15, weather=False, color="#E4E4E4", anchor="middle"):
+    """date_tv: "dd MMMM yyyy" in hoa SemiBold giãn 0,25 em; thời tiết cách 12 dp cùng cỡ, cùng màu."""
+    base = top + PC_ASC * size
+    wd = cp_width(PC_SEMI, PC_DATE, size, .25)
+    ww = 12 + 2.05 * size + PC_SEMI.width("24°", size) if weather else 0
+    x = bz_anchor(x, wd + ww, anchor)
+    s = cp_text(PC_SEMI, x, base, PC_DATE, size, color, ls=.25)
+    if weather:
+        wx = x + wd + 12
+        s += cloud(wx - 1, base - .05 * size, .04 * size, color, 1.7) + PC_SEMI.text(wx + 2.05 * size, base, "24°", size, color)
+    return s
+
+
+def pc_status(x, cy, color, n=2, charging=False, anchor="middle"):
+    """AodStatusLine: pin 15,5 dp + "72%" Medium 0,915 cỡ pin, chấm, icon thông báo 0,978 cỡ pin; khoảng cách × 0,6 cho gần layout mẫu (5 / 12 / 12 /
+    10 dp)."""
+    g, gs = 15.5, .6
+    fs = .915 * g
+    tw = PC_MED.width("72%", fs)
+    w = .522 * g + .717 * g * gs + tw + ((1.13 + 1.065) * g * gs + .228 * g + n * .978 * g + (n - 1) * 1.13 * g * gs if n else 0)
+    x = bz_anchor(x, w, anchor)
+    s = bz_battery(x, cy - g / 2, g, color, charging) + PC_MED.text(x + .522 * g + .717 * g * gs, cy + .34 * fs, "72%", fs, color)
+    if n:
+        dx = x + .522 * g + .717 * g * gs + tw + 1.13 * g * gs
+        s += f'<circle cx="{f(dx + .114 * g)}" cy="{f(cy)}" r="{f(.114 * g)}" fill="{color}"/>'
+        ix = dx + .228 * g + 1.065 * g * gs
+        shapes = icon_shapes(color)
+        s += "".join(shapes[i % 3](ix + i * (.978 + 1.13 * gs) * g, cy - .489 * g, .978 * g) for i in range(n))
+    return s
+
+
+def pc_latest(x, cy, w, color, anchor="middle", text="MAI: TỐI NAY ĐI ĂN NHÉ, NHỚ MANG Ô"):
+    """notify_lt (AodLatestLine): icon 17 dp, cách 10 dp, một dòng in hoa 13 sp giãn 0,1 em chạy chữ (mock cắt …)."""
+    while cp_width(PC_REG, text, 13, .1) > w - 27 and len(text) > 1:
+        text = text[:-2].rstrip() + "…"
+    tw = 27 + cp_width(PC_REG, text, 13, .1)
+    x = bz_anchor(x, tw, anchor)
+    return icon_shapes(color)[0](x, cy - 8.5, 17) + cp_text(PC_REG, x + 27, cy + .36 * 13, text, 13, color, ls=.1)
+
+
+def pc_player(x, top, w, color, paused=False, land=False, title="THAT COOL SONG", artist="IT'S ARTIST"):
+    """media_widget_lt (AodTextPlayer): lùi / tới 40 dp (icon 12 dp) ở hai đầu, tên in hoa SemiBold 13 sp (ngang 12) cách 4 dp nghệ sĩ Regular 11,5 sp
+    (ngang 11) tối 30%, giãn 0,25 em, giữa hai nút; dừng thì mờ 0,6. Cao 40 dp."""
+    ts, as_ = (12, 11) if land else (13, 11.5)
+    op = .6 if paused else 1.0
+    s = ""
+    for bx, d in ((x + 20, -1), (x + w - 20, 1)):
+        s += (f'<path d="M{f(bx - 4 * d)},{f(top + 14)} L{f(bx + 3 * d)},{f(top + 20)} L{f(bx - 4 * d)},{f(top + 26)} Z" fill="{color}" '
+              f'stroke="{color}" stroke-width="1" stroke-linejoin="round"/>'
+              f'<rect x="{f(bx + 4 * d - (1.6 if d < 0 else 0))}" y="{f(top + 14)}" width="1.6" height="12" rx=".8" fill="{color}"/>')
+    tw = w - 100
+    t = title
+    while cp_width(PC_SEMI, t, ts, .25) > tw and len(t) > 1:
+        t = t[:-2].rstrip() + "…"
+    th = PC_LH * ts + 4 + PC_LH * as_
+    ct = top + (40 - th) / 2
+    s += cp_text(PC_SEMI, x + w / 2, ct + PC_ASC * ts, t, ts, color, "middle", .25, op)
+    return s + cp_text(PC_REG, x + w / 2, ct + PC_LH * ts + 4 + PC_ASC * as_, artist, as_, color, "middle", .25, .7 * op)
+
+
+def pc_items(colors, date=True, weather=False, status=True, n=2, charging=False, latest=False, w=300, land=False):
+    """Khối chữ (cao, khoảng sau, hàm vẽ theo (x giữa, đỉnh)): ngày, cách 10 dp dòng pin, cách 10 dp thông báo mới nhất."""
+    ds = 14 if land else 15
+    items = []
+    if date:
+        items.append((PC_LH * ds, 10, lambda x, t: pc_date(x, t, ds, weather, colors["date"])))
+    if status:
+        items.append((17, 10, lambda x, t: pc_status(x, t + 8.5, colors["status"], n, charging)))
+    if latest:
+        items.append((17, 10, lambda x, t: pc_latest(x, t + 8.5, w, colors["status"])))
+    return items
+
+
+def pc_music(colors, w, paused=False, land=False):
+    return [(40, 0, lambda x, t: pc_player(x - w / 2, t, w, colors["media"], paused, land))]
+
+
+def pc_stack(x, top, items):
+    s, y = "", top
+    for i, (h, gap, draw) in enumerate(items):
+        s += draw(x, y)
+        y += h + (gap if i < len(items) - 1 else 0)
+    return s
+
+
+def pc_stack_h(items):
+    return sum(h for h, _, _ in items) + sum(g for _, g, _ in items[:-1])
+
+
+def pc_portrait(hh=10, mm=8, size=80, colors=PC_COLORS, media=False, paused=False, **kw):
+    """Màn dọc như layout mẫu: kim giữa màn; khối chữ thẳng đáy cách đáy 60 dp, có nhạc thì trình phát dưới cùng cách 24 dp (khối lớn lên phía trên)."""
+    s = pc_clock(PW / 2, PH / 2, size / 110 * PW / 2, hh, mm, colors)
+    items = pc_items(colors, w=PW - 60, **kw)
+    if media:
+        if items:
+            h, _, d = items[-1]
+            items[-1] = (h, 24, d)
+        items += pc_music(colors, PW, paused)
+    return s + pc_stack(PW / 2, PH - 60 - pc_stack_h(items), items)
+
+
+def pc_landscape(left, right, hh=10, mm=8, size=80, colors=PC_COLORS):
+    """Màn ngang: kim giữa màn, r theo nửa cạnh ngắn như màn dọc; hai nhóm căn giữa hai vùng bên (từ mép tới đầu kim phút), giữa chiều cao."""
+    r = size / 110 * H / 2
+    zone = W / 2 - .85 * r
+    s = pc_clock(W / 2, CY, r, hh, mm, colors)
+    for x, items in ((zone / 2, left), (W - zone / 2, right)):
+        if items:
+            s += pc_stack(x, CY - pc_stack_h(items) / 2, items)
+    return s
+
+
+def pc_reference_land(hh=10, mm=8, colors=PC_REF):
+    """Layout ngang mẫu: lề trên / dưới 30 dp, đồng hồ vuông cạnh = chiều cao còn lại (333 dp) giữa phần trên, khối chữ (chữ nhỏ hơn 1 sp) dưới cùng."""
+    items = pc_items(colors, n=2, land=True)
+    bh = pc_stack_h(items)
+    box = H - 60 - 30 - bh
+    return pc_clock(W / 2, 30 + box / 2, (H - 60) / 2 * 80 / 110, hh, mm, colors) + pc_stack(W / 2, H - 30 - bh, items)
+
+
+PC_ZONE = W / 2 - .85 * 80 / 110 * H / 2 - 48
+PC_ZONE_FULL = W / 2 - .85 * 100 / 110 * H / 2 - 48
+
+
+def pc_strip():
+    k, s = 0.4, ""
+    for i, (label, kw, wall) in enumerate((("Mặc định", {}, False),
+                                            ("Màu app mẫu, cỡ 100%", {"colors": PC_REF, "size": 100, "hh": 7, "mm": 21}, False),
+                                            ("Kim phút gradient, cỡ 60%", {"colors": PC_SUNSET, "size": 60, "hh": 4, "mm": 22}, False),
+                                            ("Trên ảnh nền: kim rỗng", {"hh": 2, "mm": 50}, True))):
+        x = 36 + i * 212
+        bg = (f'<rect width="{PW}" height="{PH}" rx="34" fill="url(#pcWall)"/>' if wall else
+              f'<rect width="{PW}" height="{PH}" rx="34" fill="#000" stroke="#333" stroke-width="2"/>')
+        s += (f'<g transform="translate({x} 14) scale({k})">{bg}' + pc_portrait(**kw) + "</g>"
+              + txt(x + PW * k / 2, 14 + PH * k + 22, label, 13, DM, 400, "middle"))
+    return (f'<p style="font-size:13px;color:var(--text-secondary);margin:1.25rem 0 6px">Mặc định (kim giờ xám trắng, kim phút + chấm tâm ngọc) · màu '
+            f'app mẫu (trắng, chấm ngọc), cỡ lớn nhất · kim phút gradient Hoàng hôn, chấm vàng, cỡ nhỏ nhất (màu nào cũng có thể là gradient, chạy dọc '
+            f'kim) · kim chỉ có viền nên thấy ảnh nền</p><svg viewBox="0 0 {W} 400" width="100%" role="img" aria-label="Màu và cỡ" '
+            f'style="display:block;font-family:\'Plus Jakarta Sans\',sans-serif" fill="{G}"><rect width="{W}" height="400" rx="20" fill="#111"/>'
+            f'{s}</svg>')
+
+
+clip = [
+    PC_FONTS,
+    pc_strip(),
+    '<div style="font-size:0">',
+    frame_portrait("D1 · Dọc, mặc định 10:08 (cũng là thẻ ở lưới chủ đề): ngày, dòng pin · icon thông báo cách đáy 60 dp",
+                   pc_portrait()),
+    frame_portrait("D2 · Dọc, 08:30, thời tiết cạnh ngày, thông báo mới nhất dưới dòng pin, đang phát nhạc",
+                   pc_portrait(8, 30, weather=True, latest=True, n=2, media=True)),
+    frame_portrait("D3 · Dọc, 21:47, cỡ 100%, kim gần chồng nhau (kim giờ có bóng đè lên kim phút), đang sạc, nhạc đang dừng",
+                   pc_portrait(21, 47, 100, charging=True, media=True, paused=True, n=1)),
+    frame_portrait("D4 · Dọc, 05:59, kim phút gradient, cỡ 60%, tắt ngày, không thông báo",
+                   pc_portrait(5, 59, 60, PC_SUNSET, date=False, n=0)),
+    '</div>',
+    frame("N1 · Ngang, mặc định, không nhạc: ngày + thời tiết bên trái, pin · thông báo bên phải; kim giữa màn",
+          pc_landscape(pc_items(PC_COLORS, weather=True, status=False, land=True), pc_items(PC_COLORS, date=False, land=True))),
+    frame("N2 · Ngang, 08:30, đang phát nhạc, thông báo mới nhất: ngày + pin + thông báo trái, trình phát phải",
+          pc_landscape(pc_items(PC_COLORS, weather=True, latest=True, w=PC_ZONE, land=True), pc_music(PC_COLORS, PC_ZONE, land=True), 8, 30)),
+    frame("N3 · Ngang, 21:47, cỡ 100%, đang sạc, nhạc đang dừng",
+          pc_landscape(pc_items(PC_COLORS, n=1, charging=True, land=True), pc_music(PC_COLORS, PC_ZONE_FULL, True, land=True), 21, 47, 100)),
+    frame("N4 · Để so: layout ngang của app mẫu, kim thu nhỏ ở phần trên, khối chữ dưới cùng, hai bên trống",
+          pc_reference_land()),
+]
+
+
 for name, summary, defs, frames in [
     ("w_classic", "Bảy bố cục ngang của chủ đề Cổ điển theo các khối đang bật", classic_defs, classic),
     ("w_jersey", "Bố cục ngang của chủ đề Số áo: ngày, bốn chữ số một hàng, dòng pin", jersey_defs, jersey),
@@ -3550,6 +3767,7 @@ for name, summary, defs, frames in [
     ("w_quarters", "Chủ đề Bốn số (Android 14 Analog Clock): kiểu số, kiểu kim và màu, bốn khung dọc và bốn khung ngang", quarters_defs, quarters),
     ("w_sector", "Chủ đề Rẻ quạt (Nike): màu và cỡ, bốn khung dọc và bốn khung ngang", sc_defs(), sector),
     ("w_spine", "Chủ đề Gáy sách (Vertical Clock): màu và cỡ, bốn khung dọc và bốn khung ngang", sp_defs(), spine),
+    ("w_clip", "Chủ đề Kẹp giấy (Paper Clip): màu và cỡ, bốn khung dọc và bốn khung ngang", pc_defs(), clip),
 ]:
     code = widget(summary, defs, frames)
     OUT.mkdir(parents=True, exist_ok=True)
