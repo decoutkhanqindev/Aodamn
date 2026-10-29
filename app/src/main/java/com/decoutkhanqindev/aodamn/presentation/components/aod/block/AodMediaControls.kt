@@ -57,6 +57,7 @@ import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.sector.AodS
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.spine.AodSpineMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.tick.AodTickMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.tower.AodTowerMedia
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.words.AodWordsMedia
 import com.decoutkhanqindev.aodamn.presentation.components.onClick
 import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.ClockFontValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.info.MediaProgressUiModel
@@ -106,6 +107,7 @@ fun AodMediaControls(
                 AodThemeValue.SPINE -> AodSpineMedia(media = target, config = theme.config, onIntent = onIntent)
                 AodThemeValue.CLIP -> AodClipMedia(media = target, config = theme.config, onIntent = onIntent)
                 AodThemeValue.FADE -> AodFadeMedia(media = target, config = theme.config, onIntent = onIntent)
+                AodThemeValue.WORDS -> AodWordsMedia(media = target, config = theme.config, onIntent = onIntent)
             }
         }
     }

@@ -20,6 +20,8 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.ripple.RippleThe
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.sector.SectorThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.spine.SpineThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.tick.TickThemeSpec
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.words.AodWordsWeightValue
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.words.WordsThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
 import com.decoutkhanqindev.aodamn.presentation.theme.Amber
 import com.decoutkhanqindev.aodamn.presentation.theme.Aquamarine
@@ -75,6 +77,7 @@ class AodThemeSpecTest {
                     AodThemeValue.SPINE,
                     AodThemeValue.CLIP,
                     AodThemeValue.FADE,
+                    AodThemeValue.WORDS,
                 )
             assertEquals("${theme.id}: ghi nhớ", isChain, AodBlockValue.MEMO in theme.spec.ownBlocks)
             assertEquals("${theme.id}: sự kiện", isChain, AodBlockValue.EVENTS in theme.spec.ownBlocks)
@@ -476,6 +479,52 @@ class AodThemeSpecTest {
                 FadeThemeSpec.NotificationsColor,
                 FadeThemeSpec.BatteryColor,
                 FadeThemeSpec.MediaColor,
+            ),
+            spec.options,
+        )
+    }
+
+    @Test
+    fun `words keeps the reference line size and four weights with a lilac sea minute line and no memo, events or drawing`() {
+        val spec = AodThemeValue.WORDS.spec
+        assertEquals(
+            setOf(
+                AodComponentValue.DATE,
+                AodComponentValue.BATTERY,
+                AodComponentValue.WEATHER,
+                AodComponentValue.NOTIFICATIONS,
+                AodComponentValue.MEDIA,
+            ),
+            spec.components,
+        )
+        assertEquals(setOf(AodBlockValue.DATE, AodBlockValue.STATUS, AodBlockValue.MEDIA), spec.ownBlocks)
+        assertEquals(true, spec.hasNotificationContent)
+        assertEquals(false, spec.isLiveInPreview)
+        assertEquals(30..60, WordsThemeSpec.Size.range)
+        assertEquals(40, WordsThemeSpec.Size.default)
+        assertEquals(
+            listOf(AodWordsWeightValue.THIN, AodWordsWeightValue.LIGHT, AodWordsWeightValue.REGULAR, AodWordsWeightValue.BOLD),
+            WordsThemeSpec.Weight.entries,
+        )
+        assertEquals(AodWordsWeightValue.BOLD, WordsThemeSpec.Weight.default)
+        assertEquals(GreyED, WordsThemeSpec.HourColor.default)
+        assertEquals(true, WordsThemeSpec.HourColor.isGradientAllowed)
+        assertEquals(GradientSwatchValue.LILAC_SEA.gradient, WordsThemeSpec.MinuteColor.defaultGradient)
+        assertEquals(AodGradientDirection.HORIZONTAL, WordsThemeSpec.MinuteColor.defaultGradient?.direction)
+        assertEquals(GreyE4, WordsThemeSpec.DateColor.default)
+        assertEquals(GreyE4, WordsThemeSpec.NotificationsColor.default)
+        assertEquals(Grey9A, WordsThemeSpec.BatteryColor.default)
+        assertEquals(GreyE4, WordsThemeSpec.MediaColor.default)
+        assertEquals(
+            listOf(
+                WordsThemeSpec.Size,
+                WordsThemeSpec.Weight,
+                WordsThemeSpec.HourColor,
+                WordsThemeSpec.MinuteColor,
+                WordsThemeSpec.DateColor,
+                WordsThemeSpec.NotificationsColor,
+                WordsThemeSpec.BatteryColor,
+                WordsThemeSpec.MediaColor,
             ),
             spec.options,
         )

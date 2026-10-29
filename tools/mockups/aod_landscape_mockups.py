@@ -3925,6 +3925,266 @@ fade = [
 ]
 
 
+# ================================================================== LỜI (Text Clock của Muviz Edge; số đo lấy từ Sep21Screen và layout sep21_screen_layout dọc /
+# ngang trong APK, không từ ảnh chụp). Giờ (luôn 12 giờ) trên phút đọc thành chữ, căn trái lề 40 dp; mỗi dòng là ô chữ tự co giãn một dòng cao Cỡ dp (30–60,
+# mặc định 40): cỡ chữ lớn nhất để khung chữ có đệm font (Lato 1.104 của app mẫu) vừa cao ô và chữ vừa bề rộng, chữ sát đỉnh ô; phút 00 ẩn dòng phút. Tiếng
+# Anh viết hoa mỗi từ ("Twenty Seven"), tiếng khác đọc bằng ICU viết hoa đầu câu ("Hai mươi bảy"). Ngày "EEEE, dd LLLL" ô 20 dp cách 12 dp; cụm thông báo
+# đệm trên 40 dp: hàng icon 18 dp, thẻ thông báo mới nhất (ô tròn 28 dp, tiêu đề 16 sp, nội dung 15 sp tối 40% cách 7 dp, tối đa 2 dòng) giữa hai vạch 1 px
+# #3E3E3E cách 15 dp; trình phát lề 40 dp cách 30 dp trên chữ pin 14 sp cách đáy 30 dp. Khối chữ bắt đầu ở 0,25 phần màn trên khối dưới + 20 dp. Lato
+# 2.015 có tiếng Việt tải từ gói npm lato-font (Lato trên Google Fonts thiếu dấu).
+LW_WEIGHTS = {"thin": 100, "light": 300, "regular": 400, "bold": 700}
+LW_FONT = {w: BzFont(TTFont(ROOT / f"tools/fonts/static/lato_{w}.ttf"), f"lw{c}") for w, c in LW_WEIGHTS.items()}
+LW_REG = LW_FONT["regular"]
+LW_ASC = LW_REG.font["hhea"].ascent / LW_REG.upm
+LW_LH = (LW_REG.font["hhea"].ascent - LW_REG.font["hhea"].descent) / LW_REG.upm
+LW_SEA = ("#D8B5FF", "#63A4B6", "#1EAE98")  # màu nhấn: gradient Tím biển ngang, chưa chủ đề nào dùng
+LW_SUNSET = ("#FFCC70", "#C850C0", "#4158D0")
+LW_COLORS = {"hour": GE, "minute": LW_SEA, "date": "#E4E4E4", "noti": "#E4E4E4", "media": "#E4E4E4", "battery": "#9A9A9A", "weather": G,
+             "rule": "#3A3A3A"}
+LW_REFC = {"hour": "#FFFFFF", "minute": "#FFFFFF", "date": "#E6E6E6", "noti": "#E6E6E6", "media": "#E6E6E6", "battery": "#999999", "weather": G,
+           "rule": "#3E3E3E"}
+LW_DATE = {"vi": "Thứ Năm, 29 tháng 10", "en": "Thursday, 29 October"}
+LW_CHARGING = {"vi": "Đang sạc", "en": "Charging"}
+LW_EN = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen",
+         "Sixteen", "Seventeen", "Eighteen", "Nineteen"]
+LW_EN_TENS = ["", "", "Twenty", "Thirty", "Forty", "Fifty"]
+LW_VI = ["", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín"]
+LW_LX, LW_LW = W * .05 / 1.05 + 40, W * .5 / 1.05 - 80
+LW_RX, LW_RW = W * .55 / 1.05 + 40, W * .45 / 1.05 - 80
+LW_N = [0]
+
+
+def lw_vi(n):
+    if n < 10:
+        s = LW_VI[n]
+    elif n < 20:
+        s = "mười" + ("" if n == 10 else " " + ("lăm" if n % 10 == 5 else LW_VI[n % 10]))
+    else:
+        s = LW_VI[n // 10] + " mươi" + ("" if n % 10 == 0 else " " + {1: "mốt", 4: "tư", 5: "lăm"}.get(n % 10, LW_VI[n % 10]))
+    return s[:1].upper() + s[1:]
+
+
+def lw_en(n):
+    return LW_EN[n] if n < 20 else LW_EN_TENS[n // 10] + (" " + LW_EN[n % 10] if n % 10 else "")
+
+
+def lw_words(hh, mm, lang):
+    word = lw_vi if lang == "vi" else lw_en
+    return word(hh % 12 or 12), (word(mm) if mm else None)
+
+
+def lw_paint(font, x, base, text, size, color, anchor="start"):
+    """Chữ một màu hoặc gradient ngang trải đúng bề rộng chữ."""
+    if not isinstance(color, tuple):
+        return font.text(x, base, text, size, color, anchor)
+    LW_N[0] += 1
+    w = font.width(text, size)
+    x0 = x - (w / 2 if anchor == "middle" else 0)
+    stops = "".join(f'<stop offset="{i / 2:.1f}" stop-color="{c}"/>' for i, c in enumerate(color))
+    return (f'<defs><linearGradient id="lwg{LW_N[0]}" gradientUnits="userSpaceOnUse" x1="{f(x0)}" y1="0" x2="{f(x0 + w)}" y2="0">{stops}'
+            f'</linearGradient></defs>' + font.text(x, base, text, size, f"url(#lwg{LW_N[0]})", anchor))
+
+
+def lw_line(x, top, slot, maxw, text, weight, color):
+    """Ô chữ tự co giãn một dòng (AppCompatTextView autoSizeTextType uniform, maxLines 1): khung chữ có đệm font vừa cao ô, chữ vừa bề rộng."""
+    asc, bot = GR_REF[weight]
+    font = LW_FONT[weight]
+    em = min(slot / (asc + bot), maxw / font.width(text, 1))
+    return lw_paint(font, x, top + asc * em, text, em, color)
+
+
+def lw_clock(x, top, size, weight, colors, hh, mm, lang, maxw):
+    hour, minute = lw_words(hh, mm, lang)
+    s = lw_line(x, top, size, maxw, hour, weight, colors["hour"])
+    if minute:
+        s += lw_line(x, top + size, size, maxw, minute, weight, colors["minute"])
+    return size * (2 if minute else 1), s
+
+
+def lw_date(x, top, maxw, colors, lang, weather=False):
+    """date_tv: ô 20 dp tự co giãn, Lato Regular; thời tiết (bên mình thêm) cách 14 dp cùng cỡ."""
+    text = LW_DATE[lang]
+    asc, bot = GR_REF["regular"]
+    em = 20 / (asc + bot)
+    ww = 14 + 29 * em / 14 + LW_REG.width("24°", em) if weather else 0
+    em = min(em, (maxw - ww) / LW_REG.width(text, 1))
+    base = top + asc * em
+    s = lw_paint(LW_REG, x, base, text, em, colors["date"])
+    if weather:
+        wx, k = x + LW_REG.width(text, em) + 14, em / 14
+        s += cloud(wx - 1, base + 1, .62 * k, colors["weather"], 1.6) + LW_REG.text(wx + 29 * k, base, "24°", em, colors["weather"])
+    return s
+
+
+def lw_wrap(text, size, w, lines=2):
+    out, cur = [], ""
+    for word in text.split():
+        nxt = (cur + " " + word).strip()
+        if LW_REG.width(nxt, size) <= w or not cur:
+            cur = nxt
+        else:
+            out.append(cur)
+            cur = word
+    out.append(cur)
+    if len(out) > lines:
+        out = out[:lines - 1] + [LW_REG.fit(" ".join(out[lines - 1:]) + " ", size, w)]
+    return out
+
+
+def lw_card(x, top, w, colors, title="Mai", text="Tối nay đi ăn nhé, nhớ mang ô"):
+    """notification_lt: vạch 1 px, 15 dp, ô tròn 28 dp màu thông báo (icon đen 18 dp) cách 12 dp cột tiêu đề 16 sp / nội dung 15 sp tối 40% cách 7 dp
+    (tối đa 2 dòng), 15 dp, vạch. Trả về (cao, hình)."""
+    lines = lw_wrap(text, 15, w - 40)
+    col_h = LW_LH * 16 + 7 + LW_LH * 15 * len(lines)
+    h = max(28.0, col_h)
+    rule = lambda y: f'<rect x="{f(x)}" y="{f(y)}" width="{f(w)}" height=".5" fill="{colors["rule"]}"/>'
+    y = top + 15.5
+    cy, ct = y + h / 2, y + (h - col_h) / 2
+    s = (rule(top) + f'<circle cx="{f(x + 14)}" cy="{f(cy)}" r="14" fill="{colors["noti"]}"/>' + icon_shapes("#000")[0](x + 5, cy - 9, 18)
+         + lw_paint(LW_REG, x + 40, ct + LW_ASC * 16, title, 16, colors["noti"]))
+    for i, t in enumerate(lines):
+        s += lw_paint(LW_REG, x + 40, ct + LW_LH * 16 + 7 + LW_LH * 15 * i + LW_ASC * 15, t, 15, bo_dark(colors["noti"], .4))
+    return h + 31, s + rule(y + h + 15)
+
+
+def lw_player(x, top, w, color, paused=False, title="That Cool Song", artist="It's Artist"):
+    """media_widget_lt: tên 16 sp / nghệ sĩ 15 sp tối 40% (cách 8 dp) bên trái, nút phát 22 dp + tới 16 dp (đệm 10, cách 10), thanh 1 dp cách 20 dp."""
+    tw = w - 98
+    row_h = LW_LH * 16 + 8 + LW_LH * 15
+    cy = top + row_h / 2
+    s = (LW_REG.text(x, top + LW_ASC * 16, LW_REG.fit(title, 16, tw), 16, color)
+         + LW_REG.text(x, top + LW_LH * 16 + 8 + LW_ASC * 15, LW_REG.fit(artist, 15, tw), 15, bo_dark(color, .4)))
+    px, nx = x + tw + 31, x + tw + 80
+    if paused:
+        s += f'<path d="M{f(px - 7)},{f(cy - 9)} L{f(px + 9)},{f(cy)} L{f(px - 7)},{f(cy + 9)} Z" fill="{color}"/>'
+    else:
+        s += (f'<rect x="{f(px - 7)}" y="{f(cy - 9)}" width="5" height="18" rx="1.2" fill="{color}"/>'
+              f'<rect x="{f(px + 2)}" y="{f(cy - 9)}" width="5" height="18" rx="1.2" fill="{color}"/>')
+    s += (f'<path d="M{f(nx - 6)},{f(cy - 6.5)} L{f(nx + 4)},{f(cy)} L{f(nx - 6)},{f(cy + 6.5)} Z" fill="{color}"/>'
+          f'<rect x="{f(nx + 4.5)}" y="{f(cy - 6.5)}" width="2" height="13" rx="1" fill="{color}"/>')
+    by = top + row_h + 20
+    s += (f'<rect x="{f(x)}" y="{f(by)}" width="{f(w)}" height="1" fill="{color}" fill-opacity=".3"/>'
+          f'<rect x="{f(x)}" y="{f(by)}" width="{f(w * .35)}" height="1" fill="{color}"/>')
+    return row_h + 21, s
+
+
+def lw_battery(x, top, color, charging=False, lang="vi", anchor="middle"):
+    """bottom_tv: chữ pin 14 sp ("72%", đang sạc thêm "  ·  Đang sạc"), mờ 0,8 khi không sạc."""
+    t = "72%" + (f"  ·  {LW_CHARGING[lang]}" if charging else "")
+    return f'<g opacity="{1 if charging else .8}">{LW_REG.text(x, top + LW_ASC * 14, t, 14, color, anchor)}</g>'
+
+
+def lw_portrait(hh=8, mm=30, size=40, weight="bold", colors=LW_COLORS, lang="vi", date=True, weather=False, n=3, latest=False, media=False,
+                paused=False, charging=False, ref=False):
+    """Layout dọc của app mẫu: khối chữ bắt đầu ở 0,25 phần màn trên khối dưới + 20 dp (bên mình cố định theo lúc không nhạc nên đồng hồ không nhảy khi
+    trình phát hiện), cụm thông báo đệm trên 40 dp: bên mình hiện cả hàng icon lẫn thẻ thông báo mới nhất (app mẫu: thẻ thay hàng icon một lúc)."""
+    x, w = 40, PW - 80
+    bat_h = LW_LH * 14
+    ph, player = lw_player(x, 0, w, colors["media"], paused) if media else (0, "")
+    top = (PH - bat_h - 30 - (ph + 30 if media and ref else 0)) * .25 + 20
+    ch, s = lw_clock(x, top, size, weight, colors, hh, mm, lang, w)
+    y = top + ch
+    if date:
+        s += lw_date(x, y + 12, w, colors, lang, weather)
+        y += 32
+    y += 40
+    if ref and latest:
+        s += lw_card(x, y, w, colors)[1]
+    elif n:
+        s += bo_icons(x, y + 9, n, colors["noti"])
+        y += 33
+    if latest and not ref:
+        s += lw_card(x, y, w, colors)[1]
+    if media:
+        s += f'<g transform="translate(0 {f(PH - 60 - bat_h - ph)})">{player}</g>'
+    return s + lw_battery(PW / 2, PH - 30 - bat_h, colors["battery"], charging, lang)
+
+
+def lw_landscape(hh=8, mm=30, size=40, weight="bold", colors=LW_COLORS, lang="vi", date=True, weather=False, n=3, latest=False, media=False,
+                 paused=False, charging=False):
+    """Màn ngang: hai cột như layout ngang mẫu (5% · cột chữ 50% · cột trình phát 45% · 5%, lề 40 dp), mỗi cột căn giữa chiều cao; cột phải gom hàng icon,
+    thông báo mới nhất, trình phát và pin cho hai bên cân (app mẫu: cột chữ neo trên, pin giữa đáy, không nhạc thì nửa phải trống)."""
+    lh = size * (2 if mm else 1) + (32 if date else 0)
+    top = CY - lh / 2
+    ch, s = lw_clock(LW_LX, top, size, weight, colors, hh, mm, lang, LW_LW)
+    if date:
+        s += lw_date(LW_LX, top + ch + 12, LW_LW, colors, lang, weather)
+    items = []
+    if n:
+        items.append((18, 15, lambda y: bo_icons(LW_RX, y + 9, n, colors["noti"])))
+    if latest:
+        items.append((lw_card(LW_RX, 0, LW_RW, colors)[0], 24, lambda y: lw_card(LW_RX, y, LW_RW, colors)[1]))
+    if media:
+        ph, player = lw_player(LW_RX, 0, LW_RW, colors["media"], paused)
+        items.append((ph, 20, lambda y: f'<g transform="translate(0 {f(y)})">{player}</g>'))
+    items.append((LW_LH * 14, 0, lambda y: lw_battery(LW_RX, y, colors["battery"], charging, lang, "start")))
+    y = CY - (sum(h for h, _, _ in items) + sum(g for _, g, _ in items[:-1])) / 2
+    for h, gap, fn in items:
+        s += fn(y)
+        y += h + gap
+    return s
+
+
+def lw_reference_land(hh=9, mm=45, colors=LW_REFC, lang="vi"):
+    """Layout ngang của app mẫu: cột chữ neo trên (30 + 20 dp), thẻ thông báo thay hàng icon, trình phát neo đáy cột phải, pin giữa đáy cách 20 dp."""
+    bat_h = LW_LH * 14
+    ch, s = lw_clock(LW_LX, 50, 40, "light", colors, hh, mm, lang, LW_LW)
+    s += lw_date(LW_LX, 50 + ch + 12, LW_LW, colors, lang)
+    s += lw_card(LW_LX, 50 + ch + 72, LW_LW, colors)[1]
+    ph, player = lw_player(LW_RX, 0, LW_RW, colors["media"])
+    s += f'<g transform="translate(0 {f(H - bat_h - 60 - ph)})">{player}</g>'
+    return s + lw_battery(W / 2, H - 20 - bat_h, colors["battery"])
+
+
+def lw_strip():
+    k, s = 0.4, ""
+    for i, (label, kw) in enumerate((("Mặc định: Đậm, phút Tím biển", {}),
+                                      ("App mẫu: Nhẹ, trắng", {"weight": "light", "colors": LW_REFC, "hh": 9, "mm": 45}),
+                                      ("Mảnh, cỡ 60, tiếng Anh", {"weight": "thin", "size": 60, "hh": 12, "mm": 27, "lang": "en"}),
+                                      ("Thường, cỡ 30, Hoàng hôn", {"weight": "regular", "size": 30, "hh": 7, "mm": 21,
+                                                                     "colors": {**LW_COLORS, "hour": LW_SUNSET, "minute": LW_SUNSET}}))):
+        x = 36 + i * 212
+        s += (f'<g transform="translate({x} 14) scale({k})"><rect width="{PW}" height="{PH}" rx="34" fill="#000" stroke="#333" stroke-width="2"/>'
+              + lw_portrait(**kw) + "</g>" + txt(x + PW * k / 2, 14 + PH * k + 22, label, 13, DM, 400, "middle"))
+    return (f'<p style="font-size:13px;color:var(--text-secondary);margin:1.25rem 0 6px">Mặc định (Đậm, giờ GreyED, phút gradient Tím biển ngang trải theo bề '
+            f'rộng chữ) · màu app mẫu (Nhẹ, trắng) · Mảnh cỡ lớn nhất, app để tiếng Anh · Thường cỡ nhỏ nhất, giờ và phút Hoàng hôn</p>'
+            f'<svg viewBox="0 0 {W} 400" width="100%" role="img" aria-label="Kiểu và màu" '
+            f'style="display:block;font-family:\'Plus Jakarta Sans\',sans-serif" fill="{G}"><rect width="{W}" height="400" rx="20" fill="#111"/>'
+            f'{s}</svg>')
+
+
+def lw_fonts():
+    """Lato 2.015 đủ dấu tiếng Việt từ gói npm lato-font (Lato của Google Fonts thiếu dấu); Thin của app = Hairline của bản gốc."""
+    files = {100: "hairline", 300: "light", 400: "normal", 700: "bold"}
+    faces = "".join(f'@font-face{{font-family:LatoVN;font-weight:{w};src:url(https://cdn.jsdelivr.net/npm/lato-font@3.0.0/fonts/lato-{n}/'
+                    f'lato-{n}.woff2) format("woff2")}}' for w, n in files.items())
+    return "<style>" + faces + "".join(f'.lw{c}{{font-family:LatoVN;font-weight:{c};font-kerning:none}}' for c in LW_WEIGHTS.values()) + "</style>"
+
+
+words = [
+    lw_fonts(),
+    lw_strip(),
+    '<div style="font-size:0">',
+    frame_portrait("D1 · Dọc, mặc định 08:30 (cũng là thẻ ở lưới chủ đề): ngày, hàng icon thông báo, pin dưới",
+                   lw_portrait()),
+    frame_portrait("D2 · Dọc, 10:27, thời tiết sau ngày, icon + thông báo mới nhất giữa hai vạch, đang phát nhạc",
+                   lw_portrait(10, 27, weather=True, latest=True, n=2, media=True)),
+    frame_portrait("D3 · Dọc, 12:00 (phút 00 ẩn dòng phút như app mẫu), Mảnh, cỡ 60, đang sạc, nhạc đang dừng",
+                   lw_portrait(12, 0, 60, "thin", charging=True, media=True, paused=True, n=1)),
+    frame_portrait("D4 · Để so: app mẫu 09:45 (Nhẹ, trắng): thẻ thông báo thay hàng icon, trình phát hiện thì khối chữ dịch lên",
+                   lw_portrait(9, 45, 40, "light", LW_REFC, latest=True, media=True, ref=True)),
+    '</div>',
+    frame("N1 · Ngang, mặc định 08:30, không nhạc: chữ + ngày + thời tiết cột trái, hàng icon + pin cột phải, mỗi cột giữa chiều cao",
+          lw_landscape(weather=True)),
+    frame("N2 · Ngang, 10:27, đang phát nhạc, thông báo mới nhất: cột phải icon, thẻ thông báo, trình phát, pin",
+          lw_landscape(10, 27, latest=True, n=2, media=True)),
+    frame("N3 · Ngang, 12:27, app để tiếng Anh, Nhẹ, cỡ 60 (dòng dài thu theo bề rộng cột), đang sạc, thông báo mới nhất, không nhạc",
+          lw_landscape(12, 27, 60, "light", lang="en", latest=True, n=1, charging=True)),
+    frame("N4 · Để so: layout ngang app mẫu, cột chữ neo trên, trình phát neo đáy cột phải, pin giữa đáy",
+          lw_reference_land()),
+]
+
+
 for name, summary, defs, frames in [
     ("w_classic", "Bảy bố cục ngang của chủ đề Cổ điển theo các khối đang bật", classic_defs, classic),
     ("w_jersey", "Bố cục ngang của chủ đề Số áo: ngày, bốn chữ số một hàng, dòng pin", jersey_defs, jersey),
@@ -3945,6 +4205,7 @@ for name, summary, defs, frames in [
     ("w_spine", "Chủ đề Gáy sách (Vertical Clock): màu và cỡ, bốn khung dọc và bốn khung ngang", sp_defs(), spine),
     ("w_clip", "Chủ đề Kẹp giấy (Paper Clip): màu và cỡ, bốn khung dọc và bốn khung ngang", pc_defs(), clip),
     ("w_fade", "Chủ đề Phai (Gradient): độ đậm, phai dần và màu, bốn khung dọc và bốn khung ngang", gr_defs(), fade),
+    ("w_words", "Chủ đề Lời (Text Clock): giờ đọc thành chữ, độ đậm, cỡ và màu, bốn khung dọc và bốn khung ngang", "", words),
 ]:
     code = widget(summary, defs, frames)
     OUT.mkdir(parents=True, exist_ok=True)

@@ -53,6 +53,7 @@ code dịch ngược, không lấy asset (font, ảnh, Lottie) từ APK. APK và
 | Gáy sách (`SPINE`) | **12 · Apr22 "Vertical Clock"** | làm từ danh mục này (2026-10-27), số đo lấy từ layout `apr22_screen_layout` dọc / ngang / `VerticalTextView` |
 | Kẹp giấy (`CLIP`) | **13 · May22 "Paper Clip"** | làm từ danh mục này (2026-10-28), số đo lấy từ layout `may22_screen_layout` dọc / ngang / `PaperClipClock` |
 | Phai (`FADE`) | **1 · May21 "Gradient"** | làm từ danh mục này (2026-10-28), số đo lấy từ layout `may21_screen_layout` (chỉ có bản dọc) / `May21Screen` / font Lato 1.104 trong APK |
+| Lời (`WORDS`) | **5 · Sep21 "Text Clock"** | làm từ danh mục này (2026-10-29), số đo lấy từ layout `sep21_screen_layout` dọc / ngang / `Sep21Screen` / font Lato 1.104 trong APK |
 
 ## Danh mục đủ 44 chủ đề
 
@@ -65,7 +66,7 @@ text view chung) hoặc font dùng trong code; "chữ (font layout)" nghĩa là 
 | 2 | Jun21 | Default | Symbol, Clock Weight, Symbol Size, Clock Size, Theme Color | Hour, Minute, Date, Notification, Controls, Battery Status | chữ: rubik | chọn ký hiệu | chưa có |
 | 3 | Jul21 | Nike | Clock Size, Hour Color, Minute Color, Second Color, Clock Background Color, Theme Color | Date, Notification, Controls, Battery Status | AnalogueClock1, PieClock | – | **Rẻ quạt** (`SECTOR`) |
 | 4 | Aug21 | Android 12 | Clock Style, Clock Size, Hour Color, Minute Color, Second Color, Date Color, Theme Color | Clock Background, Controls, Controls Background, Notification, Battery Status | Android12Clock2, Android12ClockBg2 | – | **Gợn sóng** (`RIPPLE`) |
-| 5 | Sep21 | Text Clock | Clock Weight, Clock Size, Theme Color | Hour, Minute, Date, Notification, Controls, Battery Status | chữ: lato | – | chưa có |
+| 5 | Sep21 | Text Clock | Clock Weight, Clock Size, Theme Color | Hour, Minute, Date, Notification, Controls, Battery Status | chữ: lato | – | **Lời** (`WORDS`) |
 | 6 | Oct21 | Visualizer | Clock Size, Viz Height, Viz Spread, Viz Speed, Theme Color | Viz 1, Viz 2, Viz 3, Hour, Minute, Date, Notification, Controls, Battery Status | chữ (font layout) | quyền RECORD_AUDIO | chưa có |
 | 7 | Nov21 | Retro | Clock Size, Theme Color | Clock, Date, Notification, Controls | chữ (font layout) | – | chưa có |
 | 8 | Dec21 | Blinky | Character Size, Clock Size, Theme Color | Character, Clock | BlinkyCharacter | – | chưa có |
@@ -230,6 +231,24 @@ mỗi phút (`AodViewModel`), nên phần chạy theo giây của app mẫu ph�
   **18 · Pixel Default** "HH" / "mm" xếp chồng Google Sans Clock (không có trên Google Fonts); **41 · Pixel Width** lưới 2 × 2 như Chồng số,
   đặc trưng là thanh trượt wdth 25–150 / wght 100–800 qua `setFontVariation` (cấm, bản tĩnh thì cần hàng trăm file); **7 · Retro** "HH:mm"
   căn trái font Pixeboy (không có trên Google Fonts); **5 · Text Clock** là giờ bằng chữ (`b.k0`, để sau).
+- Đọc 2026-10-29 (bước 0 sau Phai), đề xuất: ~~**5 · Text Clock**~~ (`Sep21Screen`, `sep21_screen_layout` dọc + ngang; đã làm thành Lời
+  2026-10-29): giờ (luôn 12 giờ, `calendar.get(10)`) trên phút đọc thành chữ, căn trái lề 40dp; mỗi dòng là `AppCompatTextView` tự co giãn
+  một dòng cao Clock Size dp (30–60, mặc định 40), Lato, Clock Weight Thin / Light (mặc định) / Regular / Bold; phút 00 thì chuỗi rỗng, ẩn
+  dòng phút; tiếng Anh dùng bảng riêng viết hoa mỗi từ ("Twenty Seven"), ngôn ngữ khác dùng ICU4J `RuleBasedNumberFormat` spellout với
+  `CAPITALIZATION_FOR_BEGINNING_OF_SENTENCE` ("Hai mươi bảy") theo ngôn ngữ máy. Ngày "EEEE, dd LLLL" ô 20dp cách 12dp; cụm thông báo đệm
+  trên 40dp: hàng icon 18dp cách 10dp (tối đa 5 icon rồi chấm), thẻ thông báo mới (ô tròn 28dp, tiêu đề 16sp, nội dung 15sp tối 40% cách
+  7dp, tối đa 2 dòng) giữa hai vạch 1px #3E3E3E cách 15dp, thay hàng icon một lúc; trình phát lề 40dp cách 30dp trên chữ pin 14sp cách đáy
+  30dp (cùng số đo trình phát của `may21`); khối chữ chiếm 0,75 phần còn lại dưới 0,25 trống nên dịch lên khi trình phát hiện. Ngang: 5% ·
+  cột chữ 50% neo trên (30 + 20dp) · cột trình phát 45% neo đáy · 5%, pin giữa đáy cách 20dp. Màu: Theme trắng, Hour / Minute theo Theme,
+  Date / Notification / Controls tối 10%, Battery tối 40%. Android không mở `RuleBasedNumberFormat` trong SDK, bên mình dùng
+  `android.icu.text.MessageFormat` `{0,spellout}` (chạy RBNF bên trong) rồi tự viết hoa. Bên mình: mặc định Đậm, phút gradient Tím biển,
+  theo ngôn ngữ app, hiện icon + thông báo mới + trình phát cùng lúc, khối chữ không dịch, màn ngang hai cột căn giữa, không ghi nhớ / sự
+  kiện / nét vẽ (user duyệt). **10 · Box Clock** (`Feb22Screen`, dọc + ngang): "HH" / vạch 1dp cách 5dp / "mm" Josefin Sans Regular
+  65sp (cỡ 50–100) trong khung chữ nhật viền 1dp góc vuông nền trong suốt (`bg_white_stroke`), đệm 20 / 15dp; màn dọc 0,25 / 0,5 / 0,25:
+  trên ngày "EEEE dd" 24sp cách 18dp dòng pin 15,5dp + "%" 16sp · chấm 12sp · icon 18dp (thông báo mới: icon 18dp + một dòng 17sp thay
+  hàng icon), dưới trình phát lùi 35dp · tên 18sp / nghệ sĩ 15sp Light · tới 35dp cách mép 30dp, không thanh tiến trình; màu Clock (khung,
+  vạch, số), Date, Notification, Controls; ngang 10% · cột 40% (ngày, dòng trạng thái, khung số) · cột trình phát. **2 · Default** như ghi ở
+  trên. Không đề xuất lần này: **15 · Samsung Like** ("HH" trên "mm" như Phai vừa làm).
 - ~~**12 · Vertical Clock**~~ (`VerticalTextView`, `apr22_screen_layout` + bản ngang, đọc 2026-10-26, đọc lại đủ 2026-10-27, đã làm thành Gáy
   sách 2026-10-27): "HH:mm" Josefin Sans Regular cỡ 25–60sp (mặc định 40) xoay −90° (đọc từ dưới lên, nét chữ căn giữa dòng), ngày "EEE, dd MMMM" in
   hoa nửa cỡ trên giờ cùng trục cách 30dp; cột cách mép trái 18dp, đáy giờ cách đáy 45dp (ngang 30dp). Dọc: phần trên cột chia 0,25 trống /
@@ -241,8 +260,7 @@ mỗi phút (`AodViewModel`), nên phần chạy theo giây của app mẫu ph�
 - **43 · MIUI Doodle** ⭐ (`Nov24Screen`): giờ, phút, thứ, tháng, ngày là **ảnh vẽ tay** (24 + 60 + 7 + 12 + 31 hình), không phải
   font; không được lấy ảnh của app mẫu, phải tự vẽ cả bộ, nên để sau.
 
-Để sau: 33 Dual Timezone (cần control chọn múi giờ), 16 / 22 (cần ô nhập chữ), chủ đề giờ bằng chữ (ô "Twelve Twenty
-Seven", phải đổi số thành chữ cả vi + en), 6 Visualizer (cần quyền `RECORD_AUDIO`, phải hỏi trước), 8 / 9 / 11 / 14 / 21 (hiệu ứng, hạt, lật số: công sức
+Để sau: 33 Dual Timezone (cần control chọn múi giờ), 16 / 22 (cần ô nhập chữ), ~~chủ đề giờ bằng chữ~~ (đã làm thành Lời bằng ICU spellout có sẵn), 6 Visualizer (cần quyền `RECORD_AUDIO`, phải hỏi trước), 8 / 9 / 11 / 14 / 21 (hiệu ứng, hạt, lật số: công sức
 lớn), 17 / 26 / 27 (cần chọn font mở thay font độc quyền). 18 / 41 dùng Google Sans: font này nay có trên Google Fonts (OFL, Vành
 dùng bản Bold), Google Sans Flex cũng có, nên không còn vướng font.
 

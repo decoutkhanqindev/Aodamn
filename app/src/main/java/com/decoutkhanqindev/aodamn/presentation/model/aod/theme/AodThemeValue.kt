@@ -23,6 +23,7 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.sector.SectorThe
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.spine.SpineThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.tick.TickThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.tower.TowerThemeSpec
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.words.WordsThemeSpec
 
 @Immutable
 enum class AodThemeValue(
@@ -48,7 +49,8 @@ enum class AodThemeValue(
     SECTOR(id = "sector", nameRes = R.string.theme_sector, spec = SectorThemeSpec),
     SPINE(id = "spine", nameRes = R.string.theme_spine, spec = SpineThemeSpec),
     CLIP(id = "clip", nameRes = R.string.theme_clip, spec = ClipThemeSpec),
-    FADE(id = "fade", nameRes = R.string.theme_fade, spec = FadeThemeSpec);
+    FADE(id = "fade", nameRes = R.string.theme_fade, spec = FadeThemeSpec),
+    WORDS(id = "words", nameRes = R.string.theme_words, spec = WordsThemeSpec);
 
     companion object {
         val DEFAULT = CLASSIC

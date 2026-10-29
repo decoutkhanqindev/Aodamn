@@ -71,6 +71,7 @@
     <string name="theme_spine">Gáy sách</string>
     <string name="theme_clip">Kẹp giấy</string>
     <string name="theme_fade">Phai</string>
+    <string name="theme_words">Lời</string>
     <string name="aod_jersey_date_first_pattern">dd</string>
     <string name="aod_jersey_date_second_pattern">MM</string>
     <string name="aod_bezel_weekday_pattern">EEEE</string>
@@ -383,6 +384,8 @@
     <string name="aod_sector_battery_full">"%1$d%%  ·  Đã sạc đầy"</string>
     <string name="aod_fade_battery_charging">"%1$d%%  ·  Đang sạc"</string>
     <string name="aod_fade_battery_full">"%1$d%%  ·  Đã sạc đầy"</string>
+    <string name="aod_words_battery_charging">"%1$d%%  ·  Đang sạc"</string>
+    <string name="aod_words_battery_full">"%1$d%%  ·  Đã sạc đầy"</string>
     <string name="aod_notification_content_hidden">Nội dung đã ẩn</string>
     <string name="aod_event_all_day">Cả ngày</string>
     <string name="aod_drawing">Hình vẽ</string>

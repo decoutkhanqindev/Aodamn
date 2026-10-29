@@ -39,6 +39,8 @@ import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.tick.AodTic
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.tick.AodTickPortrait
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.tower.AodTowerLandscape
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.tower.AodTowerPortrait
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.words.AodWordsLandscape
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.words.AodWordsPortrait
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeValue
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodIntent
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
@@ -68,6 +70,7 @@ fun AodPortrait(
         AodThemeValue.SPINE -> AodSpinePortrait(state = state, onIntent = onIntent)
         AodThemeValue.CLIP -> AodClipPortrait(state = state, onIntent = onIntent)
         AodThemeValue.FADE -> AodFadePortrait(state = state, onIntent = onIntent)
+        AodThemeValue.WORDS -> AodWordsPortrait(state = state, onIntent = onIntent)
     }
 }
 
@@ -96,5 +99,6 @@ fun AodLandscape(
         AodThemeValue.SPINE -> AodSpineLandscape(state = state, onIntent = onIntent)
         AodThemeValue.CLIP -> AodClipLandscape(state = state, onIntent = onIntent)
         AodThemeValue.FADE -> AodFadeLandscape(state = state, onIntent = onIntent)
+        AodThemeValue.WORDS -> AodWordsLandscape(state = state, onIntent = onIntent)
     }
 }

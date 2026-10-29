@@ -7,6 +7,49 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-10-29 – Chủ đề Lời
+
+Build được, unit test pass (thêm test chặn Lời có lại khối đã bỏ hay thiếu tuỳ chọn của app mẫu; test nội dung thông báo cho phép Lời),
+`tools/check-rules.sh` ra 0 vi phạm, thư mục các chủ đề cũ không đổi dòng nào. Chưa test trên máy.
+
+User duyệt mock: "Duyệt, code" (trả lời câu hỏi duyệt nêu các mục đổi: mặc định Đậm thay Nhẹ, đọc số theo ngôn ngữ app thay ngôn ngữ máy,
+hiện icon + thông báo mới cùng lúc, trình phát hiện suốt khi có nhạc, khối chữ không dịch lên khi trình phát hiện, màn ngang hai cột căn giữa
+chiều cao, tách màu Theme theo phần, bỏ ghi nhớ / sự kiện / nét vẽ).
+
+### Thêm
+
+- Chủ đề Lời (Text Clock của Muviz Edge; số đo lấy từ `Sep21Screen` và layout `sep21_screen_layout` dọc / ngang dịch ngược; mock duyệt
+  trước khi code). Giờ (luôn 12 giờ như app mẫu) trên phút đọc thành chữ, căn trái lề 40dp: mỗi dòng như ô chữ tự co giãn một dòng của app
+  mẫu, cao cỡ dp (30–60, mặc định 40), cỡ chữ = cao ô / khung chữ có đệm font của Lato 1.104 (1,07 em ở Thin tới 1,1175 em ở Bold), chữ sát
+  đỉnh ô, dòng dài quá bề rộng thì nhỏ lại cho vừa; phút 00 ẩn dòng phút. Số đọc bằng ICU như app mẫu (`android.icu.text.MessageFormat`
+  `{0,spellout}` có sẵn trong Android, không thêm thư viện): tiếng Anh viết hoa mỗi từ, bỏ gạch nối ("Twenty Seven"), tiếng khác viết hoa
+  đầu câu ("Hai mươi bảy"); theo ngôn ngữ đã chọn trong app (app mẫu theo ngôn ngữ máy) (user duyệt). Dòng chữ đổi mờ dần 300ms mỗi phút,
+  dòng phút thu lại / mở ra khi qua phút 00 (app mẫu nhảy, nâng cấp); gradient trải đúng bề rộng từng dòng chữ.
+- Bố cục dọc như layout mẫu: khối chữ bắt đầu ở 0,25 phần màn trên khối dưới + 20dp: giờ, phút, ngày "EEEE, dd LLLL" (ô 20dp tự co giãn,
+  Lato Regular) cách 12dp, thời tiết sau ngày cách 14dp, cách 40dp hàng icon thông báo 18dp, thông báo mới nhất giữa hai vạch 1px `Grey3A`
+  (#3E3E3E của app mẫu) cách 15dp (`AodBadgeLatest`: icon trong ô tròn 28dp, tiêu đề 16sp / nội dung 15sp tối 40% cách 7dp, tối đa 2 dòng);
+  trình phát lề 40dp cách 30dp trên chữ pin (`AodCompactPlayer` cùng số đo Phai) và chữ pin 14sp cách đáy 30dp ("72%", "72%  ·  Đang sạc",
+  "72%  ·  Đã sạc đầy", mờ 0,8 khi không sạc). App mẫu thay hàng icon bằng thẻ thông báo một lúc, hiện trình phát theo hẹn giờ và dịch khối chữ
+  lên khi trình phát hiện; bên mình hiện cùng lúc, khối chữ đứng yên (user duyệt). Màn ngang theo hai cột của layout ngang mẫu (5% · 50% ·
+  45% · 5%, lề 40dp), mỗi cột căn giữa chiều cao: giờ, phút, ngày + thời tiết trái; icon, thông báo mới nhất, trình phát, pin phải (app mẫu:
+  cột chữ neo trên, pin giữa đáy, không nhạc thì nửa phải trống) (user duyệt).
+- Tuỳ chọn đủ như app mẫu: cỡ (Clock Size 30–60, mặc định 40), độ đậm (Clock Weight: Mảnh / Nhẹ / Thường / Đậm), màu giờ, phút (Hour /
+  Minute), ngày, thông báo, nhạc (Controls, nghệ sĩ tối 40%), pin (Battery Status); màu chủ đạo (Theme Color) bỏ, mỗi phần một màu (user
+  duyệt). Mặc định: Đậm (app mẫu Nhẹ) (user duyệt), giờ `GreyED`, phút gradient Tím biển ngang (tím nhạt → xanh lam → xanh ngọc, chưa chủ đề
+  nào dùng làm mặc định), ngày / thông báo / nhạc `GreyE4`, pin `Grey9A` (trắng tối 10% / 40% của app mẫu). Màu nào cũng tô được gradient.
+  App mẫu không có dạng tiết kiệm.
+- Lời có ngày, thời tiết (cạnh ngày), pin, thông báo (kèm thông báo mới nhất, `hasNotificationContent = true`), nhạc; không có ghi nhớ, sự
+  kiện, nét vẽ: màn ngang hai cột đã đầy chữ, không đặt cân được (user duyệt). Font: dùng lại bốn độ đậm Lato 2.015 đã có từ Phai, APK không
+  nặng thêm. Mock của chủ đề ở `tools/mockups/aod_landscape_mockups.py` (`w_words`, chữ vẽ bằng Lato 2.015 đủ dấu tiếng Việt tải từ gói npm
+  `lato-font` trên jsDelivr vì Lato của Google Fonts thiếu dấu).
+
+### Thay đổi
+
+- Chỉ thêm, không đổi chủ đề đang có: mục `WORDS` ở `AodThemeValue`, nhánh `when` ở `AodPortrait` / `AodLandscape` / `AodMediaControls`,
+  chuỗi vi / en `theme_words`, `aod_words_battery_*`, mẫu `aod_words_date_pattern`, `aod_words_spellout_pattern`; dùng lại nhãn cỡ, độ đậm,
+  giờ / phút / ngày / thông báo / pin / nhạc, `FontFamilyLato`, `AodCompactPlayer`, `AodBadgeLatest`, `AodStatusLine`, `AodWeather` có sẵn,
+  không sửa khối dùng chung.
+
 ## [Chưa phát hành] – 2026-10-28 – Chủ đề Phai
 
 Build được, unit test pass (thêm test chặn Phai có lại khối đã bỏ hay thiếu tuỳ chọn của app mẫu; test nội dung thông báo cho phép Phai),

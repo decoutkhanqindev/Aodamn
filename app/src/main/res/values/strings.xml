@@ -78,6 +78,7 @@
     <string name="theme_spine">Spine</string>
     <string name="theme_clip">Clip</string>
     <string name="theme_fade">Fade</string>
+    <string name="theme_words">Words</string>
     <string name="theme_in_use">In use</string>
     <string name="theme_edit">Edit</string>
     <string name="theme_saved">Theme saved</string>
@@ -386,6 +387,8 @@
     <string name="aod_spine_date_pattern" translatable="false">EEE, dd MMMM</string>
     <string name="aod_clip_date_pattern" translatable="false">dd MMMM yyyy</string>
     <string name="aod_fade_date_pattern" translatable="false">"EEEE  dd"</string>
+    <string name="aod_words_date_pattern" translatable="false">"EEEE, dd LLLL"</string>
+    <string name="aod_words_spellout_pattern" translatable="false">"{0,spellout}"</string>
     <string name="aod_date_weekday_pattern" translatable="false">EEEE</string>
     <string name="aod_date_day_pattern" translatable="false">d MMMM</string>
     <string name="aod_date_full_pattern" translatable="false">EEEE, d MMMM</string>
@@ -437,6 +440,8 @@
     <string name="aod_sector_battery_full">"%1$d%%  ·  Charged"</string>
     <string name="aod_fade_battery_charging">"%1$d%%  ·  Charging"</string>
     <string name="aod_fade_battery_full">"%1$d%%  ·  Charged"</string>
+    <string name="aod_words_battery_charging">"%1$d%%  ·  Charging"</string>
+    <string name="aod_words_battery_full">"%1$d%%  ·  Charged"</string>
     <string name="aod_notification_content_hidden">Contents hidden</string>
     <string name="aod_weather_temperature" translatable="false">%1$d°</string>
     <string name="aod_event_all_day">All day</string>
