@@ -11,6 +11,7 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.compass.CompassT
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.component.AodComponentValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.fade.AodFadeWeightValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.fade.FadeThemeSpec
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.frame.FrameThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.gradientline.GradientLineThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.halfmoon.HalfMoonThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.pebble.AodTileStyleValue
@@ -78,6 +79,7 @@ class AodThemeSpecTest {
                     AodThemeValue.CLIP,
                     AodThemeValue.FADE,
                     AodThemeValue.WORDS,
+                    AodThemeValue.FRAME,
                 )
             assertEquals("${theme.id}: ghi nhớ", isChain, AodBlockValue.MEMO in theme.spec.ownBlocks)
             assertEquals("${theme.id}: sự kiện", isChain, AodBlockValue.EVENTS in theme.spec.ownBlocks)
@@ -526,6 +528,39 @@ class AodThemeSpecTest {
                 WordsThemeSpec.BatteryColor,
                 WordsThemeSpec.MediaColor,
             ),
+            spec.options,
+        )
+    }
+
+    @Test
+    fun `frame keeps the reference size with a diagonal orchid gold box and no drawing`() {
+        val spec = AodThemeValue.FRAME.spec
+        assertEquals(
+            setOf(
+                AodComponentValue.DATE,
+                AodComponentValue.BATTERY,
+                AodComponentValue.WEATHER,
+                AodComponentValue.EVENTS,
+                AodComponentValue.MEMO,
+                AodComponentValue.NOTIFICATIONS,
+                AodComponentValue.MEDIA,
+            ),
+            spec.components,
+        )
+        assertEquals(setOf(AodBlockValue.DATE, AodBlockValue.STATUS, AodBlockValue.MEDIA), spec.ownBlocks)
+        assertEquals(true, spec.hasNotificationContent)
+        assertEquals(false, spec.isLiveInPreview)
+        assertEquals(50..100, FrameThemeSpec.Size.range)
+        assertEquals(65, FrameThemeSpec.Size.default)
+        assertEquals(
+            GradientSwatchValue.ORCHID_GOLD.gradient.copy(direction = AodGradientDirection.DIAGONAL_DOWN),
+            FrameThemeSpec.ClockColor.defaultGradient,
+        )
+        assertEquals(GreyE4, FrameThemeSpec.DateColor.default)
+        assertEquals(GreyB4, FrameThemeSpec.StatusColor.default)
+        assertEquals(GreyE4, FrameThemeSpec.MediaColor.default)
+        assertEquals(
+            listOf(FrameThemeSpec.Size, FrameThemeSpec.ClockColor, FrameThemeSpec.DateColor, FrameThemeSpec.StatusColor, FrameThemeSpec.MediaColor),
             spec.options,
         )
     }

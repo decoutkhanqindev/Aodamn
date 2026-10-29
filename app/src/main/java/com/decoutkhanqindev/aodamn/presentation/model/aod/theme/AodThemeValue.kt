@@ -13,6 +13,7 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.classic.ClassicT
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.clip.ClipThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.compass.CompassThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.fade.FadeThemeSpec
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.frame.FrameThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.gradientline.GradientLineThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.halfmoon.HalfMoonThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.jersey.JerseyThemeSpec
@@ -50,7 +51,8 @@ enum class AodThemeValue(
     SPINE(id = "spine", nameRes = R.string.theme_spine, spec = SpineThemeSpec),
     CLIP(id = "clip", nameRes = R.string.theme_clip, spec = ClipThemeSpec),
     FADE(id = "fade", nameRes = R.string.theme_fade, spec = FadeThemeSpec),
-    WORDS(id = "words", nameRes = R.string.theme_words, spec = WordsThemeSpec);
+    WORDS(id = "words", nameRes = R.string.theme_words, spec = WordsThemeSpec),
+    FRAME(id = "frame", nameRes = R.string.theme_frame, spec = FrameThemeSpec);
 
     companion object {
         val DEFAULT = CLASSIC

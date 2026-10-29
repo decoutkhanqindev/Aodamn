@@ -72,6 +72,7 @@
     <string name="theme_clip">Kẹp giấy</string>
     <string name="theme_fade">Phai</string>
     <string name="theme_words">Lời</string>
+    <string name="theme_frame">Khung</string>
     <string name="aod_jersey_date_first_pattern">dd</string>
     <string name="aod_jersey_date_second_pattern">MM</string>
     <string name="aod_bezel_weekday_pattern">EEEE</string>

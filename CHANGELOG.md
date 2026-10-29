@@ -7,6 +7,44 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-10-29 – Chủ đề Khung
+
+Build được, unit test pass (thêm test chặn Khung có lại nét vẽ hay thiếu tuỳ chọn của app mẫu; test nội dung thông báo cho phép Khung),
+`tools/check-rules.sh` ra 0 vi phạm, thư mục các chủ đề cũ không đổi dòng nào. Chưa test trên máy.
+
+User duyệt mock: "Duyệt, code" (trả lời câu hỏi duyệt nêu các mục đổi: tách màu Theme theo phần, gradient Lan vàng làm mặc định, hiện dòng
+pin + thông báo mới cùng lúc với nội dung "tiêu đề: nội dung", bỏ chạm dòng pin để bật thông báo, trình phát nút cố định hai đầu và hiện suốt
+khi có nhạc, màn ngang khung số giữa màn, thêm sự kiện + ghi nhớ, bỏ nét vẽ).
+
+### Thêm
+
+- Chủ đề Khung (Box Clock của Muviz Edge; số đo lấy từ `Feb22Screen` và layout `feb22_screen_layout` dọc / ngang dịch ngược; mock duyệt trước
+  khi code). Giờ "HH" (12 / 24 giờ theo máy) / vạch 1dp / phút "mm" chữ Josefin Sans Regular cỡ 50–100sp (mặc định 65) trong khung chữ nhật
+  viền 1dp góc vuông nền trong suốt: đệm 20 / 15dp, mỗi số là ô chữ có đệm font lùi lên 12dp, vạch lề 5dp; khoảng cách tính theo khung chữ của
+  Josefin trong APK (yMax 1,096 / yMin −0,233 em; bản trong app cùng hình chữ số nhưng khung cao hơn vì có dấu tiếng Việt), khung cao 17dp +
+  2,658 em, rộng = số rộng nhất + 40dp. Khung co giãn mượt khi bề rộng số đổi, số đổi mờ dần 300ms (app mẫu nhảy, nâng cấp); gradient trải cả
+  khung (viền, vạch, số chung một dải).
+- Bố cục dọc như layout mẫu (0,25 / 0,5 / 0,25, mỗi phần căn giữa): trên ngày "EEEE dd" 24sp (thời tiết sau ngày cách 14dp), cách 18dp dòng pin ·
+  icon thông báo (`AodStatusLine`), thông báo mới nhất dưới đó (`AodLatestLine`: icon 18dp cách 10dp, một dòng 17sp "tiêu đề: nội dung");
+  giữa khung số; dưới sự kiện, ghi nhớ (khối dùng chung, bên mình thêm) rồi trình phát (`AodTextPlayer`: lùi / tới 35dp cách mép 30dp, tên bài
+  18sp / nghệ sĩ 15sp Josefin Light cách 4dp, không thanh tiến trình, chạm tên bài để phát / dừng, dừng thì chữ mờ 0,6). App mẫu thay dòng pin
+  bằng dòng thông báo một lúc (chạm dòng pin để bật / tắt), chỉ hiện tiêu đề, hiện trình phát theo hẹn giờ với hàng ôm sát tên bài; bên mình hiện
+  cùng lúc (user duyệt). Màn ngang: khung số giữa màn cỡ như màn dọc, vùng trái ngày + thời tiết, sự kiện, ghi nhớ; vùng phải dòng pin · icon,
+  thông báo mới nhất, trình phát (app mẫu: khung ở cột trái dưới ngày + dòng pin, trình phát cột phải, không nhạc thì nửa phải trống) (user duyệt).
+- Tuỳ chọn đủ như app mẫu: cỡ (Clock Size 50–100, mặc định 65), màu đồng hồ (Clock: khung, vạch, số), ngày, pin & thông báo (Notification),
+  nhạc (Controls); màu chủ đạo (Theme Color) bỏ, mỗi phần một màu (user duyệt). Mặc định: đồng hồ gradient Lan vàng chéo (tím → vàng nhạt →
+  vàng, chưa chủ đề nào dùng làm mặc định), ngày / nhạc `GreyE4`, pin & thông báo `GreyB4` (app mẫu trắng hết). Màu nào cũng tô được gradient.
+  App mẫu không có dạng tiết kiệm.
+- Khung có ngày, thời tiết, pin, thông báo (kèm thông báo mới nhất, `hasNotificationContent = true`), sự kiện, ghi nhớ, nhạc; không có nét vẽ:
+  khung số giữ phần giữa, vùng trên / dưới chỉ là dải chữ, không có chỗ cân (user duyệt). Font: Josefin Sans Regular / Light đã có, APK không
+  nặng thêm. Mock ở `tools/mockups/aod_landscape_mockups.py` (`w_frame`).
+
+### Thay đổi
+
+- Chỉ thêm, không đổi chủ đề đang có: mục `FRAME` ở `AodThemeValue`, nhánh `when` ở `AodPortrait` / `AodLandscape` / `AodMediaControls`,
+  chuỗi vi / en `theme_frame`, mẫu `aod_frame_date_pattern`, `aod_frame_notification`; dùng lại nhãn cỡ, đồng hồ / ngày / pin & thông báo / nhạc,
+  `FontFamilyJosefinSans`, `AodTextPlayer`, `AodLatestLine`, `AodStatusLine`, `AodWeather`, `AodPanelBlock` có sẵn, không sửa khối dùng chung.
+
 ## [Chưa phát hành] – 2026-10-29 – Chủ đề Lời
 
 Build được, unit test pass (thêm test chặn Lời có lại khối đã bỏ hay thiếu tuỳ chọn của app mẫu; test nội dung thông báo cho phép Lời),

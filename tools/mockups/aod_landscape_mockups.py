@@ -4161,6 +4161,215 @@ def lw_fonts():
     return "<style>" + faces + "".join(f'.lw{c}{{font-family:LatoVN;font-weight:{c};font-kerning:none}}' for c in LW_WEIGHTS.values()) + "</style>"
 
 
+# ================================================================== KHUNG (Box Clock của Muviz Edge; số đo lấy từ Feb22Screen và layout feb22_screen_layout dọc /
+# ngang trong APK, không từ ảnh chụp). "HH" / vạch 1 dp (lề 5 dp) / "mm" Josefin Sans Regular cỡ Cỡ sp (50–100, mặc định 65) trong khung chữ nhật viền 1 dp
+# góc vuông nền trong suốt (bg_white_stroke), đệm 20 / 15 dp, mỗi số là TextView có đệm font (khung chữ Josefin trong APK: yMax 1,096 / yMin −0,233 em) lùi
+# lên 12 dp; khung ôm số rộng hơn nên đổi bề rộng theo chữ số. Màn dọc chia 0,25 / 0,5 / 0,25: trên ngày "EEEE dd" 24 sp cách 18 dp dòng pin 15,5 dp +
+# "72%" 16 sp · chấm 12 sp (cách 12 dp) · icon 18 dp (cách 10 dp); thông báo mới (icon 18 dp + một dòng 17 sp) thay dòng đó một lúc; giữa khung số;
+# dưới trình phát lùi 35 dp · tên 18 sp / nghệ sĩ 15 sp Light (cách 4 dp, rộng tối đa 200 dp) · tới 35 dp, cách nhau 30 dp, không thanh tiến trình.
+FR_ASC, FR_LB = 1.096, 1.329
+FR_ORCHID = ("#B474FF", "#D9D99E", "#CAB525")  # màu nhấn: gradient Lan vàng chéo, chưa chủ đề nào dùng
+FR_SUNSET = ("#FFCC70", "#C850C0", "#4158D0")
+FR_COLORS = {"clock": FR_ORCHID, "date": "#E4E4E4", "noti": "#B4B4B4", "media": "#E4E4E4", "weather": G}
+FR_REFC = {"clock": "#FFFFFF", "date": "#FFFFFF", "noti": "#FFFFFF", "media": "#FFFFFF", "weather": G}
+FR_DATE = "Thứ Năm 29"
+FR_N = [0]
+
+
+def fr_fill(color, x0, y0, x1, y1):
+    """Màu một màu hoặc gradient chéo trải đúng khung (x0, y0)–(x1, y1). Trả về (defs, fill)."""
+    if not isinstance(color, tuple):
+        return "", color
+    FR_N[0] += 1
+    stops = "".join(f'<stop offset="{i / 2:.1f}" stop-color="{c}"/>' for i, c in enumerate(color))
+    return (f'<defs><linearGradient id="frg{FR_N[0]}" gradientUnits="userSpaceOnUse" x1="{f(x0)}" y1="{f(y0)}" x2="{f(x1)}" y2="{f(y1)}">{stops}'
+            f'</linearGradient></defs>', f"url(#frg{FR_N[0]})")
+
+
+def fr_box_size(em, hh, mm):
+    tw = max(SP_REG.width(f"{hh:02d}", em), SP_REG.width(f"{mm:02d}", em))
+    return 40 + tw, 17 + 2 * FR_LB * em
+
+
+def fr_box(cx, cy, em, hh, mm, color):
+    """clock_frame_lt: khung ôm hai số (đệm 20 / 15 dp), số lùi lên 12 dp, vạch 1 dp lề 5 dp giữa hai số; gradient trải cả khung."""
+    bw, bh = fr_box_size(em, hh, mm)
+    x0, y0 = cx - bw / 2, cy - bh / 2
+    defs, fill = fr_fill(color, x0, y0, x0 + bw, y0 + bh)
+    sep = y0 + 3 + FR_LB * em + 5
+    return defs + (f'<rect x="{f(x0 + .5)}" y="{f(y0 + .5)}" width="{f(bw - 1)}" height="{f(bh - 1)}" fill="none" stroke="{fill}"/>'
+                   f'<rect x="{f(x0 + 25)}" y="{f(sep)}" width="{f(bw - 50)}" height="1" fill="{fill}"/>'
+                   + SP_REG.text(cx, y0 + 3 + FR_ASC * em, f"{hh:02d}", em, fill, "middle")
+                   + SP_REG.text(cx, y0 + 2 + FR_LB * em + FR_ASC * em, f"{mm:02d}", em, fill, "middle"))
+
+
+def fr_date(cx, top, size, colors, weather=False):
+    """date_tv: "EEEE dd" Josefin Regular, TextView có đệm font (cao 1,329 em); thời tiết (bên mình thêm) cách 14 dp. Trả về (cao, hình)."""
+    dw = SP_REG.width(FR_DATE, size)
+    ws = size * .8
+    ww = 14 + 25 * ws / 15 + SP_REG.width("24°", ws) if weather else 0
+    x = cx - (dw + ww) / 2
+    base = top + FR_ASC * size
+    s = SP_REG.text(x, base, FR_DATE, size, colors["date"])
+    if weather:
+        wx, k = x + dw + 14, ws / 15
+        s += cloud(wx - 1, base + 1, .55 * k, colors["weather"], 1.5) + SP_REG.text(wx + 25 * k, base, "24°", ws, colors["weather"])
+    return FR_LB * size, s
+
+
+def fr_status(cx, cy, colors, n=3, charging=False):
+    """icons_lt: pin 15,5 dp (cách 5 dp) + "72%" 16 sp · chấm 12 sp cách 12 dp · icon 18 dp cách 10 dp, căn giữa. Trả về (cao, hình)."""
+    c = colors["noti"]
+    tw = SP_REG.width("72%", 16)
+    w = 20.5 + tw + ((24 + SP_REG.width("•", 12) + n * 28 - 10) if n else 0)
+    x = cx - w / 2
+    s = sp_battery(x, cy, c, charging) + SP_REG.text(x + 20.5, cy + .36 * 16, "72%", 16, c)
+    if n:
+        x += 20.5 + tw
+        s += SP_REG.text(x + 12, cy + .36 * 12, "•", 12, c)
+        x += 24 + SP_REG.width("•", 12)
+        s += "".join(icon_shapes(c)[i % 3](x + i * 28, cy - 9, 18) for i in range(n))
+    return 18, s
+
+
+def fr_latest(cx, cy, w, color, text="Mai: Tối nay đi ăn nhé, nhớ mang ô"):
+    """notify_lt (AodLatestLine): icon 18 dp cách 10 dp + một dòng 17 sp chạy chữ, căn giữa. Trả về (cao, hình)."""
+    t = SP_REG.fit(text, 17, w - 28)
+    x = cx - (28 + SP_REG.width(t, 17)) / 2
+    return 20, icon_shapes(color)[0](x, cy - 9, 18) + SP_REG.text(x + 28, cy + .36 * 17, t, 17, color)
+
+
+def fr_player(x, top, w, color, paused=False, hug=False, title="That Cool Song", artist="It's Artist"):
+    """media_widget_lt (AodTextPlayer): lùi 35 dp (icon 15) · tên 18 sp / nghệ sĩ 15 sp Light cách 4 dp · tới 35 dp, cách 30 dp; bên mình nút cố định
+    ở hai đầu, dừng thì chữ mờ (app mẫu: hàng ôm tên bài, căn giữa). Trả về (cao, hình)."""
+    text_h = SP_LH * 18 + 4 + SP_LH * 15
+    h = max(35.0, text_h)
+    tw = min(max(SP_REG.width(title, 18), SP_LIGHT.width(artist, 15)), 200)
+    if hug:
+        x, w = x + w / 2 - (tw + 190) / 2, tw + 190
+    cy, ct, mid = top + h / 2, top + (h - text_h) / 2, x + w / 2
+    op = .6 if paused else 1
+    nxt = lambda bx, flip: (f'<g transform="translate({f(bx + 17.5)} {f(cy)}) scale({-1 if flip else 1} 1)">'
+                            f'<path d="M-5,-6.5 L4,0 L-5,6.5 Z" fill="{color}"/><rect x="4.5" y="-6.5" width="2" height="13" rx="1" fill="{color}"/></g>')
+    bx0, bx1 = (x + 30, x + w - 65) if hug else (x, x + w - 35)
+    s = nxt(bx0, True) + nxt(bx1, False)
+    s += (f'<g opacity="{op}">' + SP_REG.text(mid, ct + SP_ASC * 18, SP_REG.fit(title, 18, tw), 18, color, "middle")
+          + SP_LIGHT.text(mid, ct + SP_LH * 18 + 4 + SP_ASC * 15, SP_LIGHT.fit(artist, 15, tw), 15, color, "middle") + "</g>")
+    return h, s
+
+
+def fr_extras(cx, top):
+    """Sự kiện + ghi nhớ dùng chung (bên mình thêm), khối căn giữa. Trả về (cao, hình)."""
+    return 70, f'<g transform="translate({f(cx - 105)} {f(top + 13)})">{events_list(2)}<g transform="translate(0 58)">{memo_icon()}</g></g>'
+
+
+def fr_stack(cx, cy, items):
+    """Xếp các khối (cao, khoảng cách sau, hàm vẽ theo (cx, đỉnh)) căn giữa quanh cy."""
+    total = sum(h for h, _, _ in items) + sum(g for _, g, _ in items[:-1])
+    top, s = cy - total / 2, ""
+    for h, gap, fn in items:
+        s += fn(cx, top)
+        top += h + gap
+    return s
+
+
+def fr_portrait(hh=8, mm=30, size=65, colors=FR_COLORS, date=True, weather=False, n=3, latest=False, media=False, paused=False,
+                charging=False, extras=False, ref=False):
+    """Layout dọc của app mẫu (0,25 / 0,5 / 0,25, mỗi vùng căn giữa): bên mình hiện cả dòng pin · icon lẫn thông báo mới nhất, thêm sự kiện + ghi nhớ
+    trên trình phát ở vùng dưới."""
+    s = fr_box(PW / 2, PH / 2, size, hh, mm, colors["clock"])
+    top = []
+    if date:
+        top.append((FR_LB * 24, 18, lambda cx, t: fr_date(cx, t, 24, colors, weather)[1]))
+    if ref and latest:
+        top.append((20, 0, lambda cx, t: fr_latest(cx, t + 10, PW - 40, colors["noti"])[1]))
+    else:
+        top.append((18, 10, lambda cx, t: fr_status(cx, t + 9, colors, n, charging)[1]))
+        if latest:
+            top.append((20, 0, lambda cx, t: fr_latest(cx, t + 10, PW - 40, colors["noti"])[1]))
+    s += fr_stack(PW / 2, PH * .125, top)
+    bottom = []
+    if extras:
+        bottom.append((70, 24, lambda cx, t: fr_extras(cx, t)[1]))
+    if media:
+        ph = fr_player(30, 0, PW - 60, colors["media"], paused, ref)[0]
+        bottom.append((ph, 0, lambda cx, t: fr_player(30, t, PW - 60, colors["media"], paused, ref)[1]))
+    return s + (fr_stack(PW / 2, PH * .875, bottom) if bottom else "")
+
+
+def fr_landscape(hh=8, mm=30, size=65, colors=FR_COLORS, date=True, weather=False, n=3, latest=False, media=False, paused=False,
+                 charging=False, extras=False):
+    """Màn ngang: khung số giữa màn cỡ như màn dọc; vùng trái (lề 40 dp tới cách khung 36 dp) ngày + thời tiết, sự kiện, ghi nhớ; vùng phải dòng pin ·
+    icon, thông báo mới nhất, trình phát; mỗi vùng căn giữa (app mẫu: khung + ngày + dòng pin ở cột trái, trình phát cột phải, không nhạc thì phải trống)."""
+    bw, _ = fr_box_size(size, hh, mm)
+    s = fr_box(W / 2, CY, size, hh, mm, colors["clock"])
+    lz0, lz1, rz0, rz1 = 40, W / 2 - bw / 2 - 36, W / 2 + bw / 2 + 36, W - 40
+    left = []
+    if date:
+        left.append((FR_LB * 24, 24, lambda cx, t: fr_date(cx, t, 24, colors, weather)[1]))
+    if extras:
+        left.append((70, 0, lambda cx, t: fr_extras(cx, t)[1]))
+    right = [(18, 14, lambda cx, t: fr_status(cx, t + 9, colors, n, charging)[1])]
+    if latest:
+        right.append((20, 24, lambda cx, t: fr_latest(cx, t + 10, rz1 - rz0, colors["noti"])[1]))
+    if media:
+        ph = fr_player(rz0, 0, rz1 - rz0, colors["media"], paused)[0]
+        right.append((ph, 0, lambda cx, t: fr_player(rz0, t, rz1 - rz0, colors["media"], paused)[1]))
+    return s + (fr_stack((lz0 + lz1) / 2, CY, left) if left else "") + fr_stack((rz0 + rz1) / 2, CY, right)
+
+
+def fr_reference_land(hh=8, mm=30, colors=FR_REFC):
+    """Layout ngang của app mẫu: lề trên / dưới 30 dp; 10% · cột 40% (ngày 22 sp cách 12 dp, dòng pin · icon ở trên, khung số giữa phần còn lại) · cột 40%
+    trình phát giữa chiều cao · 10%."""
+    c0, c1 = W * .1, W * .5
+    cx = (c0 + c1) / 2
+    s = fr_date(cx, 30, 22, colors)[1] + fr_status(cx, 30 + FR_LB * 22 + 12 + 9, colors, 3)[1]
+    below = 30 + FR_LB * 22 + 12 + 18
+    s += fr_box(cx, (below + H - 30) / 2, 65, hh, mm, colors["clock"])
+    ph, _ = fr_player(W * .5, 0, W * .4, colors["media"], hug=True)
+    return s + fr_player(W * .5, CY - ph / 2, W * .4, colors["media"], hug=True)[1]
+
+
+def fr_strip():
+    k, s = 0.4, ""
+    for i, (label, kw) in enumerate((("Mặc định: Lan vàng chéo, cỡ 65", {}),
+                                      ("App mẫu: trắng", {"colors": FR_REFC}),
+                                      ("Cỡ 100, Hoàng hôn", {"size": 100, "hh": 7, "mm": 21, "colors": {**FR_COLORS, "clock": FR_SUNSET}}),
+                                      ("Cỡ 50, một màu", {"size": 50, "hh": 4, "mm": 38, "colors": {**FR_COLORS, "clock": GE}}))):
+        x = 36 + i * 212
+        s += (f'<g transform="translate({x} 14) scale({k})"><rect width="{PW}" height="{PH}" rx="34" fill="#000" stroke="#333" stroke-width="2"/>'
+              + fr_portrait(**kw) + "</g>" + txt(x + PW * k / 2, 14 + PH * k + 22, label, 13, DM, 400, "middle"))
+    return (f'<p style="font-size:13px;color:var(--text-secondary);margin:1.25rem 0 6px">Mặc định (khung, vạch, số chung gradient Lan vàng chéo: tím → '
+            f'vàng nhạt → vàng, trải cả khung) · màu app mẫu (trắng) · cỡ lớn nhất, Hoàng hôn · cỡ nhỏ nhất, một màu</p>'
+            f'<svg viewBox="0 0 {W} 400" width="100%" role="img" aria-label="Kiểu và màu" '
+            f'style="display:block;font-family:\'Plus Jakarta Sans\',sans-serif" fill="{G}"><rect width="{W}" height="400" rx="20" fill="#111"/>'
+            f'{s}</svg>')
+
+
+frame_theme = [
+    SP_FONTS,
+    fr_strip(),
+    '<div style="font-size:0">',
+    frame_portrait("D1 · Dọc, mặc định 08:30 (cũng là thẻ ở lưới chủ đề): ngày, dòng pin · icon trên, khung số giữa",
+                   fr_portrait()),
+    frame_portrait("D2 · Dọc, 10:27, thời tiết sau ngày, thông báo mới nhất dưới dòng pin, sự kiện + ghi nhớ, đang phát nhạc",
+                   fr_portrait(10, 27, weather=True, latest=True, n=2, media=True, extras=True)),
+    frame_portrait("D3 · Dọc, 21:47, cỡ 100, đang sạc, nhạc đang dừng (chữ mờ), tắt ngày",
+                   fr_portrait(21, 47, 100, date=False, charging=True, media=True, paused=True, n=1)),
+    frame_portrait("D4 · Để so: app mẫu 08:30 (trắng): thông báo mới thay dòng pin · icon, trình phát ôm tên bài giữa vùng dưới",
+                   fr_portrait(colors=FR_REFC, latest=True, media=True, ref=True)),
+    '</div>',
+    frame("N1 · Ngang, mặc định 08:30, không nhạc: khung số giữa màn; ngày + thời tiết vùng trái, dòng pin · icon vùng phải",
+          fr_landscape(weather=True)),
+    frame("N2 · Ngang, 10:27, đang phát nhạc, thông báo mới nhất, sự kiện + ghi nhớ: ngày, sự kiện, ghi nhớ trái; pin · icon, thông báo, trình phát phải",
+          fr_landscape(10, 27, latest=True, n=2, media=True, extras=True)),
+    frame("N3 · Ngang, 21:47, cỡ 100 (khung vẫn vừa chiều cao), đang sạc, thông báo mới nhất, không nhạc",
+          fr_landscape(21, 47, 100, latest=True, n=1, charging=True)),
+    frame("N4 · Để so: layout ngang app mẫu, ngày + dòng pin trên cột trái, khung số giữa phần còn lại, trình phát cột phải",
+          fr_reference_land()),
+]
+
+
 words = [
     lw_fonts(),
     lw_strip(),
@@ -4206,6 +4415,7 @@ for name, summary, defs, frames in [
     ("w_clip", "Chủ đề Kẹp giấy (Paper Clip): màu và cỡ, bốn khung dọc và bốn khung ngang", pc_defs(), clip),
     ("w_fade", "Chủ đề Phai (Gradient): độ đậm, phai dần và màu, bốn khung dọc và bốn khung ngang", gr_defs(), fade),
     ("w_words", "Chủ đề Lời (Text Clock): giờ đọc thành chữ, độ đậm, cỡ và màu, bốn khung dọc và bốn khung ngang", "", words),
+    ("w_frame", "Chủ đề Khung (Box Clock): giờ / phút trong khung viền, cỡ và màu, bốn khung dọc và bốn khung ngang", "", frame_theme),
 ]:
     code = widget(summary, defs, frames)
     OUT.mkdir(parents=True, exist_ok=True)

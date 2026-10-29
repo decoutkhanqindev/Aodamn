@@ -53,6 +53,7 @@ code dịch ngược, không lấy asset (font, ảnh, Lottie) từ APK. APK và
 | Gáy sách (`SPINE`) | **12 · Apr22 "Vertical Clock"** | làm từ danh mục này (2026-10-27), số đo lấy từ layout `apr22_screen_layout` dọc / ngang / `VerticalTextView` |
 | Kẹp giấy (`CLIP`) | **13 · May22 "Paper Clip"** | làm từ danh mục này (2026-10-28), số đo lấy từ layout `may22_screen_layout` dọc / ngang / `PaperClipClock` |
 | Phai (`FADE`) | **1 · May21 "Gradient"** | làm từ danh mục này (2026-10-28), số đo lấy từ layout `may21_screen_layout` (chỉ có bản dọc) / `May21Screen` / font Lato 1.104 trong APK |
+| Khung (`FRAME`) | **10 · Feb22 "Box Clock"** | làm từ danh mục này (2026-10-29), số đo lấy từ layout `feb22_screen_layout` dọc / ngang / `Feb22Screen` / font Josefin Sans trong APK |
 | Lời (`WORDS`) | **5 · Sep21 "Text Clock"** | làm từ danh mục này (2026-10-29), số đo lấy từ layout `sep21_screen_layout` dọc / ngang / `Sep21Screen` / font Lato 1.104 trong APK |
 
 ## Danh mục đủ 44 chủ đề
@@ -71,7 +72,7 @@ text view chung) hoặc font dùng trong code; "chữ (font layout)" nghĩa là 
 | 7 | Nov21 | Retro | Clock Size, Theme Color | Clock, Date, Notification, Controls | chữ (font layout) | – | chưa có |
 | 8 | Dec21 | Blinky | Character Size, Clock Size, Theme Color | Character, Clock | BlinkyCharacter | – | chưa có |
 | 9 | Jan22 | Flip Clock | Clock Style, Clock Size, Character Size, Clock Color, Character Color | – | FlipClock | – | chưa có |
-| 10 | Feb22 | Box Clock | Clock Size, Theme Color | Clock, Date, Notification, Controls | chữ (font layout) | – | chưa có |
+| 10 | Feb22 | Box Clock | Clock Size, Theme Color | Clock, Date, Notification, Controls | chữ (font layout) | – | **Khung** (`FRAME`) |
 | 11 | Mar22 | Eclipse | Clock Color, Shadow Color, Rotation, Peek, Character Color, Controls Color | – | Eclipse | – | chưa có |
 | 12 | Apr22 | Vertical Clock | Clock Size, Theme Color | Clock, Date, Notification, Controls | VerticalTextView | – | **Gáy sách** (`SPINE`) |
 | 13 | May22 | Paper Clip | Clock Size, Second Color, Theme Color | Hour, Minute, Controls | PaperClipClock | – | **Kẹp giấy** (`CLIP`) |
@@ -243,7 +244,10 @@ mỗi phút (`AodViewModel`), nên phần chạy theo giây của app mẫu ph�
   Date / Notification / Controls tối 10%, Battery tối 40%. Android không mở `RuleBasedNumberFormat` trong SDK, bên mình dùng
   `android.icu.text.MessageFormat` `{0,spellout}` (chạy RBNF bên trong) rồi tự viết hoa. Bên mình: mặc định Đậm, phút gradient Tím biển,
   theo ngôn ngữ app, hiện icon + thông báo mới + trình phát cùng lúc, khối chữ không dịch, màn ngang hai cột căn giữa, không ghi nhớ / sự
-  kiện / nét vẽ (user duyệt). **10 · Box Clock** (`Feb22Screen`, dọc + ngang): "HH" / vạch 1dp cách 5dp / "mm" Josefin Sans Regular
+  kiện / nét vẽ (user duyệt). ~~**10 · Box Clock**~~ (`Feb22Screen`, dọc + ngang; đã làm thành Khung 2026-10-29, số đo khung chữ Josefin
+  trong APK yMax 1,096 / yMin −0,233 em, cùng hình chữ số với bản trong app; bên mình: gradient Lan vàng chéo cả khung, khung co giãn mượt,
+  số đổi mờ dần, hiện dòng pin + thông báo mới cùng lúc, trình phát nút cố định hai đầu, dừng thì mờ, thêm sự kiện + ghi nhớ, màn ngang khung
+  giữa màn, bỏ nét vẽ; user duyệt): "HH" / vạch 1dp cách 5dp / "mm" Josefin Sans Regular
   65sp (cỡ 50–100) trong khung chữ nhật viền 1dp góc vuông nền trong suốt (`bg_white_stroke`), đệm 20 / 15dp; màn dọc 0,25 / 0,5 / 0,25:
   trên ngày "EEEE dd" 24sp cách 18dp dòng pin 15,5dp + "%" 16sp · chấm 12sp · icon 18dp (thông báo mới: icon 18dp + một dòng 17sp thay
   hàng icon), dưới trình phát lùi 35dp · tên 18sp / nghệ sĩ 15sp Light · tới 35dp cách mép 30dp, không thanh tiến trình; màu Clock (khung,
