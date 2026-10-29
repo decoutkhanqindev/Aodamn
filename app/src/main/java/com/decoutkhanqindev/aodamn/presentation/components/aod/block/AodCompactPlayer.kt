@@ -40,9 +40,20 @@ fun AodCompactPlayer(
     val color = config[colorOption]
     val brush = config.brushOf(colorOption)
     val gradientBrush = config.gradientOf(colorOption)?.toBrush()
-    val progress = media.progress
+    val progress = media.progress?.takeIf { style.isProgressShown }
 
     Column(modifier = modifier.fillMaxWidth()) {
+        if (progress != null && style.isProgressOnTop) {
+            AodFlatProgress(
+                progress = progress,
+                color = color,
+                brush = brush,
+                trackHeight = style.trackHeight,
+                trackAlpha = style.trackAlpha,
+                modifier = Modifier.padding(bottom = style.progressGap),
+            )
+        }
+
         Row(verticalAlignment = Alignment.CenterVertically) {
             AnimatedContent(
                 targetState = media.title to media.artist,
@@ -52,11 +63,18 @@ fun AodCompactPlayer(
                 label = "AodCompactPlayerTrack",
             ) { (title, artist) ->
                 Column(modifier = Modifier.fillMaxWidth()) {
-                    CompactPlayerText(text = title, brush = brush, fontSize = style.titleSize, fontWeight = null, style = style, iterations = 2)
+                    CompactPlayerText(
+                        text = if (style.isUppercase) title.uppercase() else title,
+                        brush = brush,
+                        fontSize = style.titleSize,
+                        fontWeight = null,
+                        style = style,
+                        iterations = 2,
+                    )
 
                     artist?.let {
                         CompactPlayerText(
-                            text = artist,
+                            text = if (style.isUppercase) artist.uppercase() else artist,
                             brush = config.darkBrushOf(colorOption, style.artistDarken),
                             fontSize = style.artistSize,
                             fontWeight = style.artistWeight,
@@ -66,6 +84,19 @@ fun AodCompactPlayer(
                         )
                     }
                 }
+            }
+
+            style.previousButton?.let { size ->
+                AodPlayerButton(
+                    iconRes = R.drawable.ic_skip_back_fill,
+                    contentDescription = stringResource(R.string.aod_media_previous),
+                    isEnabled = media.canSkipToPrevious,
+                    color = color,
+                    gradient = gradientBrush,
+                    size = size,
+                    iconSize = style.previousIcon,
+                    onClick = { onIntent(AodIntent.SkipToPreviousTrack) },
+                )
             }
 
             AodPlayerButton(
@@ -93,7 +124,7 @@ fun AodCompactPlayer(
             )
         }
 
-        if (progress != null && style.isProgressShown) {
+        if (progress != null && !style.isProgressOnTop) {
             AodFlatProgress(
                 progress = progress,
                 color = color,

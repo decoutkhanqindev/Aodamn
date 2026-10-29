@@ -27,6 +27,8 @@ import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.halfmoon.Ao
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.halfmoon.AodHalfMoonPortrait
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.jersey.AodJerseyLandscape
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.jersey.AodJerseyPortrait
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.mono.AodMonoLandscape
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.mono.AodMonoPortrait
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.pebble.AodPebbleLandscape
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.pebble.AodPebblePortrait
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.quarters.AodQuartersLandscape
@@ -74,6 +76,7 @@ fun AodPortrait(
         AodThemeValue.FADE -> AodFadePortrait(state = state, onIntent = onIntent)
         AodThemeValue.WORDS -> AodWordsPortrait(state = state, onIntent = onIntent)
         AodThemeValue.FRAME -> AodFramePortrait(state = state, onIntent = onIntent)
+        AodThemeValue.MONO -> AodMonoPortrait(state = state, onIntent = onIntent)
     }
 }
 
@@ -104,5 +107,6 @@ fun AodLandscape(
         AodThemeValue.FADE -> AodFadeLandscape(state = state, onIntent = onIntent)
         AodThemeValue.WORDS -> AodWordsLandscape(state = state, onIntent = onIntent)
         AodThemeValue.FRAME -> AodFrameLandscape(state = state, onIntent = onIntent)
+        AodThemeValue.MONO -> AodMonoLandscape(state = state, onIntent = onIntent)
     }
 }

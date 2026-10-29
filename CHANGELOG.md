@@ -7,6 +7,48 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-10-29 – Chủ đề Đơn cách
+
+Build được, unit test pass (thêm test chặn Đơn cách có lại nét vẽ hay thiếu tuỳ chọn của app mẫu; test nội dung thông báo cho phép Đơn cách),
+`tools/check-rules.sh` ra 0 vi phạm, thư mục các chủ đề cũ không đổi dòng nào. Chưa test trên máy.
+
+User chọn: "làm 31 nhé, bỏ qua default vì nó là classic của chúng ta đã làm". User duyệt mock: "Duyệt, code" (trả lời câu hỏi "Duyệt mock Đơn
+cách và cho mở rộng AodCompactPlayer?" nêu các mục đổi: tách màu Theme theo phần, giờ Mùa thu làm mặc định, hiện dòng pin + thông báo mới cùng
+lúc với nội dung "tiêu đề: nội dung", trình phát hiện suốt khi có nhạc, cột phải màn ngang căn giữa, thêm thời tiết / sự kiện / ghi nhớ, bỏ nét
+vẽ, thêm ba thuộc tính vào `AodCompactPlayerStyle`).
+
+### Thêm
+
+- Chủ đề Đơn cách (Space Mono của Muviz Edge; số đo lấy từ `Nov23Screen`, `NoPadTextView` và layout `nov23_screen_layout` dọc / ngang dịch
+  ngược; mock duyệt trước khi code). Giờ "HH" (12 / 24 giờ theo máy) trên phút "mm" chữ Space Mono 160sp × cỡ (60–100, mặc định 80; màn ngang
+  × 0,9 như app mẫu), mỗi số là ô chữ ôm sát nét chữ của chuỗi như `NoPadTextView` (khung = nét chữ, nét sát đỉnh khung; bên mình đo khung nét
+  bằng `Paint.getTextBounds` như app mẫu), cách nhau 28dp; ngày "EEEE, dd MMM" in hoa 20sp × cỡ cách 28dp; cả khối căn giữa 0,7 phần trên (lề 40dp). Số đổi mờ dần
+  300ms (app mẫu nhảy, nâng cấp); gradient trải đúng khung nét của từng số.
+- Bố cục dọc như layout mẫu: thời tiết một dòng dưới ngày (bên mình thêm); khối dưới neo đáy cách 35dp (lề 40dp): sự kiện, ghi nhớ (bên mình
+  thêm), dòng pin · icon thông báo (`AodStatusLine`), thông báo mới nhất (`AodLatestLine`: icon 18dp cách 10dp, một dòng 16sp in hoa "tiêu đề:
+  nội dung"), cách 25dp trình phát (`AodCompactPlayer`: thanh 1,5dp ở trên cách 15dp, tên 16sp / nghệ sĩ 14sp in hoa tối 30% trái, lùi 43dp ·
+  phát 48dp cách 10dp · tới 43dp, hàng lấn lề phải 13dp). App mẫu thay dòng pin bằng dòng thông báo một lúc, chỉ hiện tiêu đề, hiện trình phát
+  theo hẹn giờ; bên mình hiện cùng lúc (user duyệt). Màn ngang theo hai cột của layout ngang mẫu (cột số 45%, cột phải 55%, lề 40dp) nhưng cột
+  phải căn giữa chiều cao thay vì neo đáy (user duyệt); cột phải trống thì thu lại mượt và khối số ra giữa màn như app mẫu.
+- Tuỳ chọn đủ như app mẫu: cỡ (Clock Size 60–100, mặc định 80), màu giờ, phút (Hour / Minute, có gradient như app mẫu), ngày, pin & thông báo
+  (Notification), nhạc (Controls, nghệ sĩ tối 30%); màu chủ đạo (Theme Color) bỏ, mỗi phần một màu (user duyệt). Mặc định: giờ gradient Mùa thu
+  ngang (đỏ → cam → vàng, chưa chủ đề nào dùng làm mặc định), phút `GreyED`, ngày / thông báo / nhạc `GreyE4` (app mẫu: số trắng, phần còn lại
+  #F5F5F5). Màu nào cũng tô được gradient. App mẫu không có dạng tiết kiệm.
+- Đơn cách có ngày, thời tiết, pin, thông báo (kèm thông báo mới nhất, `hasNotificationContent = true`), sự kiện, ghi nhớ, nhạc; không có nét
+  vẽ: khối số chiếm 70% trên, khối dưới đã đầy chữ, không có chỗ cân (user duyệt). Font: Space Mono Regular bản Google Fonts 1.003 (google/fonts
+  `ofl/spacemono`, chỉ có bản tĩnh, đủ tiếng Việt, cùng hình chữ số với bản trong app mẫu) chép nguyên file vào `tools/fonts/static/`, giấy phép
+  `licenses/SpaceMono-OFL.txt`, `FontFamilySpaceMono`; APK nặng thêm khoảng 100 KB. Mock ở `tools/mockups/aod_landscape_mockups.py` (`w_mono`).
+
+### Thay đổi
+
+- `AodCompactPlayerStyle` thêm `previousButton` / `previousIcon` (nút lùi trước nút phát, mặc định không có), `isProgressOnTop` (thanh tiến
+  trình trên hàng chữ, mặc định dưới), `isUppercase` (tên bài / nghệ sĩ in hoa, mặc định không) (user duyệt); `AodCompactPlayer` đọc ba thuộc
+  tính này, mặc định giữ đúng hành vi cũ nên trình phát của Phai, Rẻ quạt, Lời, Chồng số, 4 góc, Gáy sách không đổi.
+- Chỉ thêm, không đổi chủ đề đang có: mục `MONO` ở `AodThemeValue`, nhánh `when` ở `AodPortrait` / `AodLandscape` / `AodMediaControls`, chuỗi
+  vi / en `theme_mono`, mẫu `aod_mono_date_pattern`, `aod_mono_notification`; `make_static_fonts.py` chép thêm `space_mono_regular`; dùng lại nhãn
+  cỡ, giờ / phút / ngày / pin & thông báo / nhạc, `AodLatestLine`, `AodStatusLine`, `AodWeather`, `AodPanelBlock` có sẵn.
+- Danh mục Muviz: 2 · Default không làm, user chốt là trùng chủ đề Cổ điển đã có.
+
 ## [Chưa phát hành] – 2026-10-29 – Chủ đề Khung
 
 Build được, unit test pass (thêm test chặn Khung có lại nét vẽ hay thiếu tuỳ chọn của app mẫu; test nội dung thông báo cho phép Khung),

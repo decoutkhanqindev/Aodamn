@@ -53,6 +53,7 @@ code dịch ngược, không lấy asset (font, ảnh, Lottie) từ APK. APK và
 | Gáy sách (`SPINE`) | **12 · Apr22 "Vertical Clock"** | làm từ danh mục này (2026-10-27), số đo lấy từ layout `apr22_screen_layout` dọc / ngang / `VerticalTextView` |
 | Kẹp giấy (`CLIP`) | **13 · May22 "Paper Clip"** | làm từ danh mục này (2026-10-28), số đo lấy từ layout `may22_screen_layout` dọc / ngang / `PaperClipClock` |
 | Phai (`FADE`) | **1 · May21 "Gradient"** | làm từ danh mục này (2026-10-28), số đo lấy từ layout `may21_screen_layout` (chỉ có bản dọc) / `May21Screen` / font Lato 1.104 trong APK |
+| Đơn cách (`MONO`) | **31 · Nov23 "Space Mono"** | làm từ danh mục này (2026-10-29), số đo lấy từ layout `nov23_screen_layout` dọc / ngang / `Nov23Screen` / `NoPadTextView` / font Space Mono trong APK |
 | Khung (`FRAME`) | **10 · Feb22 "Box Clock"** | làm từ danh mục này (2026-10-29), số đo lấy từ layout `feb22_screen_layout` dọc / ngang / `Feb22Screen` / font Josefin Sans trong APK |
 | Lời (`WORDS`) | **5 · Sep21 "Text Clock"** | làm từ danh mục này (2026-10-29), số đo lấy từ layout `sep21_screen_layout` dọc / ngang / `Sep21Screen` / font Lato 1.104 trong APK |
 
@@ -64,7 +65,7 @@ text view chung) hoặc font dùng trong code; "chữ (font layout)" nghĩa là 
 | # | Class | Tên | Tuỳ chọn chính | Advanced | Vẽ bằng | Cần thêm | Bên mình |
 |---|---|---|---|---|---|---|---|
 | 1 | May21 | Gradient | Clock Weight, Clock Size, Theme Color | Hour, Minute, Date, Notification, Controls, Battery Status | chữ: lato | – | **Phai** (`FADE`) |
-| 2 | Jun21 | Default | Symbol, Clock Weight, Symbol Size, Clock Size, Theme Color | Hour, Minute, Date, Notification, Controls, Battery Status | chữ: rubik | chọn ký hiệu | chưa có |
+| 2 | Jun21 | Default | Symbol, Clock Weight, Symbol Size, Clock Size, Theme Color | Hour, Minute, Date, Notification, Controls, Battery Status | chữ: rubik | chọn ký hiệu | bỏ (trùng Cổ điển, user chốt) |
 | 3 | Jul21 | Nike | Clock Size, Hour Color, Minute Color, Second Color, Clock Background Color, Theme Color | Date, Notification, Controls, Battery Status | AnalogueClock1, PieClock | – | **Rẻ quạt** (`SECTOR`) |
 | 4 | Aug21 | Android 12 | Clock Style, Clock Size, Hour Color, Minute Color, Second Color, Date Color, Theme Color | Clock Background, Controls, Controls Background, Notification, Battery Status | Android12Clock2, Android12ClockBg2 | – | **Gợn sóng** (`RIPPLE`) |
 | 5 | Sep21 | Text Clock | Clock Weight, Clock Size, Theme Color | Hour, Minute, Date, Notification, Controls, Battery Status | chữ: lato | – | **Lời** (`WORDS`) |
@@ -93,7 +94,7 @@ text view chung) hoặc font dùng trong code; "chữ (font layout)" nghĩa là 
 | 28 | Aug23 | Bullet List | Clock Size, Theme Color | Clock, Date, Battery Status, Notification, Controls | Aug23Clock | – | **Chuỗi** (`CHAIN`) |
 | 29 | Sep23 | Gradient Line Clock | Clock Size, Dash Color, Theme Color | Position, Clock, Battery Status, Notification, Controls | Sep23Clock | – | **Dải màu** (`GRADIENT_LINE`) |
 | 30 | Oct23 | Coum Face Clock ⭐ | Clock Size, Ring Color, Clock Color, Controls Color | – | CoumTick | – | **Nhịp giây** (`TICK`) |
-| 31 | Nov23 | Space Mono | Clock Size, Hour Color, Minute Color, Theme Color | Date, Notification, Controls | chữ (font layout) | – | chưa có |
+| 31 | Nov23 | Space Mono | Clock Size, Hour Color, Minute Color, Theme Color | Date, Notification, Controls | chữ (font layout) | – | **Đơn cách** (`MONO`) |
 | 32 | Dec23 | Flex Round | Clock Style, Color 1, Color 2, Clock Size | – | chữ (font layout) | – | **Viên nang** (`CAPSULE`) |
 | 33 | Jan24 | Dual Timezone | Time Zone, Clock Style, Color 1, Color 2 | – | SimpleAnalogClock | chọn múi giờ | chưa có |
 | 34 | Feb24 | Long HyperOS | Clock Style, Clock Size, Hour Color, Minute Color, Date Color, Controls Color | – | chữ (font layout) | – | **Tháp** (`TOWER`) |
@@ -253,6 +254,15 @@ mỗi phút (`AodViewModel`), nên phần chạy theo giây của app mẫu ph�
   hàng icon), dưới trình phát lùi 35dp · tên 18sp / nghệ sĩ 15sp Light · tới 35dp cách mép 30dp, không thanh tiến trình; màu Clock (khung,
   vạch, số), Date, Notification, Controls; ngang 10% · cột 40% (ngày, dòng trạng thái, khung số) · cột trình phát. **2 · Default** như ghi ở
   trên. Không đề xuất lần này: **15 · Samsung Like** ("HH" trên "mm" như Phai vừa làm).
+- Đọc 2026-10-29 (bước 0 sau Khung): ~~**31 · Space Mono**~~ (`Nov23Screen`, dọc + ngang; đã làm thành Đơn cách 2026-10-29): "HH" trên "mm"
+  Space Mono 160sp × cỡ (60–100, mặc định 80; ngang × 0,9), mỗi số là `NoPadTextView` (khung = nét chữ của chuỗi, nét sát đỉnh khung) cách
+  28dp, ngày "EEEE, dd MMM" in hoa 20sp × cỡ cách 28dp, khối căn giữa 0,7 phần trên (lề 40dp); 0,3 phần dưới neo đáy cách 35dp: dòng pin
+  16dp + "%" 16sp · chấm · icon 17dp (thông báo mới: icon 18dp + một dòng 16sp in hoa thay dòng đó), cách 25dp trình phát (thanh 1,5dp, 15dp,
+  tên 16sp / nghệ sĩ 14sp in hoa tối 30% trái, lùi 43 · phát 48 cách 10 · tới 43dp, lấn lề phải 13dp); ngang cột số 45% căn giữa, cột phải
+  55% neo đáy (ẩn khi trống). Giờ / phút cho gradient (`xc.b.C0`). Font Space Mono của Google Fonts cùng hình chữ số, đủ tiếng Việt. Bên
+  mình: giờ gradient Mùa thu, số đổi mờ dần, thời tiết dưới ngày, sự kiện + ghi nhớ đầu khối dưới, hiện dòng pin + thông báo mới cùng lúc,
+  cột phải ngang căn giữa, bỏ nét vẽ; `AodCompactPlayer` thêm nút lùi, thanh tiến trình ở trên, chữ in hoa (user duyệt). **2 · Default**
+  bỏ: user chốt là trùng chủ đề Cổ điển đã có.
 - ~~**12 · Vertical Clock**~~ (`VerticalTextView`, `apr22_screen_layout` + bản ngang, đọc 2026-10-26, đọc lại đủ 2026-10-27, đã làm thành Gáy
   sách 2026-10-27): "HH:mm" Josefin Sans Regular cỡ 25–60sp (mặc định 40) xoay −90° (đọc từ dưới lên, nét chữ căn giữa dòng), ngày "EEE, dd MMMM" in
   hoa nửa cỡ trên giờ cùng trục cách 30dp; cột cách mép trái 18dp, đáy giờ cách đáy 45dp (ngang 30dp). Dọc: phần trên cột chia 0,25 trống /

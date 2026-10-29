@@ -54,6 +54,7 @@ STATIC_FONTS = {
     "zalando_sans_expanded": [600],
     "krona_one": [400],
     "lato": [100, 300, 400, 700],
+    "space_mono": [400],
 }
 
 

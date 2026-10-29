@@ -14,6 +14,7 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.fade.FadeThemeSp
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.frame.FrameThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.gradientline.GradientLineThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.halfmoon.HalfMoonThemeSpec
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.mono.MonoThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.pebble.AodTileStyleValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.quarters.AodQuartersDigitStyleValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.quarters.QuartersThemeSpec
@@ -80,6 +81,7 @@ class AodThemeSpecTest {
                     AodThemeValue.FADE,
                     AodThemeValue.WORDS,
                     AodThemeValue.FRAME,
+                    AodThemeValue.MONO,
                 )
             assertEquals("${theme.id}: ghi nhớ", isChain, AodBlockValue.MEMO in theme.spec.ownBlocks)
             assertEquals("${theme.id}: sự kiện", isChain, AodBlockValue.EVENTS in theme.spec.ownBlocks)
@@ -561,6 +563,45 @@ class AodThemeSpecTest {
         assertEquals(GreyE4, FrameThemeSpec.MediaColor.default)
         assertEquals(
             listOf(FrameThemeSpec.Size, FrameThemeSpec.ClockColor, FrameThemeSpec.DateColor, FrameThemeSpec.StatusColor, FrameThemeSpec.MediaColor),
+            spec.options,
+        )
+    }
+
+    @Test
+    fun `mono keeps the reference size with an autumn hour and no drawing`() {
+        val spec = AodThemeValue.MONO.spec
+        assertEquals(
+            setOf(
+                AodComponentValue.DATE,
+                AodComponentValue.BATTERY,
+                AodComponentValue.WEATHER,
+                AodComponentValue.EVENTS,
+                AodComponentValue.MEMO,
+                AodComponentValue.NOTIFICATIONS,
+                AodComponentValue.MEDIA,
+            ),
+            spec.components,
+        )
+        assertEquals(setOf(AodBlockValue.DATE, AodBlockValue.STATUS, AodBlockValue.MEDIA), spec.ownBlocks)
+        assertEquals(true, spec.hasNotificationContent)
+        assertEquals(false, spec.isLiveInPreview)
+        assertEquals(60..100, MonoThemeSpec.Size.range)
+        assertEquals(80, MonoThemeSpec.Size.default)
+        assertEquals(GradientSwatchValue.AUTUMN.gradient, MonoThemeSpec.HourColor.defaultGradient)
+        assertEquals(GreyED, MonoThemeSpec.MinuteColor.default)
+        assertEquals(true, MonoThemeSpec.MinuteColor.isGradientAllowed)
+        assertEquals(GreyE4, MonoThemeSpec.DateColor.default)
+        assertEquals(GreyE4, MonoThemeSpec.StatusColor.default)
+        assertEquals(GreyE4, MonoThemeSpec.MediaColor.default)
+        assertEquals(
+            listOf(
+                MonoThemeSpec.Size,
+                MonoThemeSpec.HourColor,
+                MonoThemeSpec.MinuteColor,
+                MonoThemeSpec.DateColor,
+                MonoThemeSpec.StatusColor,
+                MonoThemeSpec.MediaColor,
+            ),
             spec.options,
         )
     }

@@ -14,6 +14,8 @@ Mỗi dòng là một lỗi đã xảy ra thật; kiểm từng dòng trước k
   pha vẽ, mẫu `AodSectorDial`), phần theo phút recompose bằng `derivedStateOf`. Không cấp phát brush / path mỗi khung: dựng trong
   `drawWithCache`.
 - **Hằng số trong file Compose**: không `val` / `const val` cấp file (check-rules chặn); số đo vào `<Chủ đề>Metrics`.
+- **Khung nét chữ** (Đơn cách): `TextLayoutResult.getPathForRange` trả khung vùng chọn cả dòng (cao bằng dòng), không phải nét chữ;
+  ô chữ ôm sát nét như `NoPadTextView` đo bằng `Paint.getTextBounds` với typeface từ `resolveTypeface`, cộng `firstBaseline` của layout.
 - **`min` / `max` với `Dp`**: dùng `androidx.compose.ui.unit.min/max`, không phải `kotlin.math`.
 
 ## Dùng lại

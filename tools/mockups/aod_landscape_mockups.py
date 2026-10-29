@@ -4370,6 +4370,204 @@ frame_theme = [
 ]
 
 
+# ================================================================== ĐƠN CÁCH (Space Mono của Muviz Edge; số đo lấy từ Nov23Screen và layout nov23_screen_layout dọc /
+# ngang trong APK, không từ ảnh chụp). "HH" trên "mm" Space Mono 160 sp × Cỡ (60–100, mặc định 80; ngang × 0,9), mỗi số là NoPadTextView (khung = nét chữ của
+# chuỗi, nét chữ sát đỉnh khung) cách 28 dp, ngày "EEEE, dd MMM" in hoa 20 sp × Cỡ cách 28 dp; cả khối căn giữa 0,7 phần trên (lề 40 dp). 0,3 phần dưới neo
+# đáy cách 35 dp: dòng pin 16 dp + "%" 16 sp · chấm · icon 17 dp cách 10 dp (thông báo mới: icon 18 dp + một dòng 16 sp in hoa thay dòng đó), cách 25 dp
+# trình phát: thanh 1,5 dp, 15 dp, tên 16 sp / nghệ sĩ 14 sp in hoa tối 30% bên trái, lùi 43 dp (icon 17) · phát 48 dp (icon 28, cách 10) · tới 43 dp, hàng
+# lấn ra lề phải 13 dp. Ngang: cột số 45% căn giữa, cột phải 55% neo đáy (ẩn khi trống, số ra giữa màn).
+SM_REG = BzFont(TTFont(ROOT / "tools/fonts/static/space_mono_regular.ttf"), "smr")
+SM_FONTS = ('<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono&display=swap">'
+            '<style>.smr{font-family:"Space Mono";font-weight:400}</style>')
+SM_ASC, SM_LB = 1.12, 1.481
+SM_AUTUMN = ("#D24C4C", "#D47C3A", "#E1B500")  # màu nhấn: gradient Mùa thu ngang cho giờ, chưa chủ đề nào dùng
+SM_SUNSET = ("#FFCC70", "#C850C0", "#4158D0")
+SM_COLORS = {"hour": SM_AUTUMN, "minute": GE, "date": "#E4E4E4", "noti": "#E4E4E4", "media": "#E4E4E4", "weather": G}
+SM_REFC = {"hour": "#FFFFFF", "minute": "#FFFFFF", "date": "#F5F5F5", "noti": "#F5F5F5", "media": "#F5F5F5", "weather": G}
+SM_DATE = "THỨ NĂM, 29 THG 10"
+SM_N = [0]
+
+
+def sm_number(cx, top, em, text, color):
+    """NoPadTextView: khung = nét chữ của chuỗi, nét chữ sát đỉnh khung, khung căn giữa (rộng tới mép phải nét chữ). Trả về (cao, hình)."""
+    l, t, r, b = SM_REG.ink(text, em)
+    x = cx - r / 2
+    fill = color
+    s = ""
+    if isinstance(color, tuple):
+        SM_N[0] += 1
+        stops = "".join(f'<stop offset="{i / 2:.1f}" stop-color="{c}"/>' for i, c in enumerate(color))
+        s = (f'<defs><linearGradient id="smg{SM_N[0]}" gradientUnits="userSpaceOnUse" x1="{f(x + l)}" y1="0" x2="{f(x + r)}" y2="0">{stops}'
+             f'</linearGradient></defs>')
+        fill = f"url(#smg{SM_N[0]})"
+    return b - t, s + SM_REG.text(x, top - t, text, em, fill)
+
+
+def sm_clock(cx, top, k, colors, hh, mm, date=True, weather=False):
+    """Khối số + ngày (+ thời tiết một dòng riêng dưới ngày, bên mình thêm). Trả về (cao, hình)."""
+    em = 160 * k
+    h1, s1 = sm_number(cx, top, em, f"{hh:02d}", colors["hour"])
+    y = top + h1 + 28
+    h2, s2 = sm_number(cx, y, em, f"{mm:02d}", colors["minute"])
+    y += h2
+    s = s1 + s2
+    if date:
+        ds = 20 * k
+        y += 28
+        s += SM_REG.text(cx, y + SM_ASC * ds, SM_DATE, ds, colors["date"], "middle")
+        y += SM_LB * ds
+    if weather:
+        y += 10
+        s += cloud(cx - 30, y + 17, .6, colors["weather"], 1.5) + SM_REG.text(cx - 2, y + 16, "24°", 16, colors["weather"])
+        y += 22
+    return y - top, s
+
+
+def sm_status(cx, cy, colors, n=3, charging=False):
+    """icons_lt: pin 16 dp (cách 5 dp) + "72%" 16 sp · chấm 16 sp cách 12 dp · icon 17 dp cách 10 dp, căn giữa."""
+    c = colors["noti"]
+    tw = SM_REG.width("72%", 16)
+    w = 21 + tw + ((24 + SM_REG.width("•", 16) + n * 27 - 10) if n else 0)
+    x = cx - w / 2
+    s = sp_battery(x, cy, c, charging) + SM_REG.text(x + 21, cy + .36 * 16, "72%", 16, c)
+    if n:
+        x += 21 + tw
+        s += SM_REG.text(x + 12, cy + .36 * 16, "•", 16, c)
+        x += 24 + SM_REG.width("•", 16)
+        s += "".join(icon_shapes(c)[i % 3](x + i * 27, cy - 8.5, 17) for i in range(n))
+    return s
+
+
+def sm_latest(cx, cy, w, color, text="MAI: TỐI NAY ĐI ĂN NHÉ, NHỚ MANG Ô"):
+    """notify_lt (AodLatestLine): icon 18 dp cách 10 dp + một dòng 16 sp in hoa, căn giữa."""
+    t = SM_REG.fit(text, 16, w - 28)
+    x = cx - (28 + SM_REG.width(t, 16)) / 2
+    return icon_shapes(color)[0](x, cy - 9, 18) + SM_REG.text(x + 28, cy + .36 * 16, t, 16, color)
+
+
+def sm_player(x, top, w, color, paused=False, title="THAT COOL SONG", artist="IT'S ARTIST"):
+    """media_widget_lt: thanh 1,5 dp, 15 dp, tên 16 sp / nghệ sĩ 14 sp in hoa tối 30% trái; lùi 43 dp · phát 48 dp (cách 10 dp) · tới 43 dp, lấn phải 13 dp.
+    Trả về (cao, hình)."""
+    s = (f'<rect x="{f(x)}" y="{f(top)}" width="{f(w)}" height="1.5" fill="{color}" fill-opacity=".3"/>'
+         f'<rect x="{f(x)}" y="{f(top)}" width="{f(w * .35)}" height="1.5" fill="{color}"/>')
+    rt, cy = top + 16.5, top + 16.5 + 24
+    right = x + w + 13
+    nx, px, bx = right - 21.5, right - 43 - 10 - 24, right - 43 - 20 - 48 - 21.5
+    tw = bx - 21.5 - x - 8
+    th = SM_LB * 16 + SM_LB * 14
+    s += (SM_REG.text(x, cy - th / 2 + SM_ASC * 16, SM_REG.fit(title, 16, tw), 16, color)
+          + SM_REG.text(x, cy - th / 2 + SM_LB * 16 + SM_ASC * 14, SM_REG.fit(artist, 14, tw), 14, bo_dark(color, .3)))
+    s += (f'<g transform="translate({f(bx)} {f(cy)}) scale(-1 1)"><path d="M-5.5,-7 L4,0 L-5.5,7 Z" fill="{color}"/>'
+          f'<rect x="4.5" y="-7" width="2" height="14" rx="1" fill="{color}"/></g>')
+    if paused:
+        s += f'<path d="M{f(px - 9)},{f(cy - 12)} L{f(px + 12)},{f(cy)} L{f(px - 9)},{f(cy + 12)} Z" fill="{color}"/>'
+    else:
+        s += (f'<rect x="{f(px - 9)}" y="{f(cy - 12)}" width="6.5" height="24" rx="1.5" fill="{color}"/>'
+              f'<rect x="{f(px + 2.5)}" y="{f(cy - 12)}" width="6.5" height="24" rx="1.5" fill="{color}"/>')
+    s += (f'<g transform="translate({f(nx)} {f(cy)})"><path d="M-5.5,-7 L4,0 L-5.5,7 Z" fill="{color}"/>'
+          f'<rect x="4.5" y="-7" width="2" height="14" rx="1" fill="{color}"/></g>')
+    return 64.5, s
+
+
+def sm_info(colors, x0, w, n=3, latest=False, media=False, paused=False, charging=False, extras=False, ref=False):
+    """Khối dưới: (sự kiện + ghi nhớ, bên mình thêm), dòng pin · icon, thông báo mới nhất, cách 25 dp trình phát. Trả về [(cao, khoảng cách sau, hàm)]."""
+    cx = x0 + w / 2
+    items = []
+    if extras:
+        items.append((70, 20, lambda t: fr_extras(cx, t)[1]))
+    if ref and latest:
+        items.append((22, 25, lambda t: sm_latest(cx, t + 11, w, colors["noti"])))
+    else:
+        items.append((22, 25 if not latest else 8, lambda t: sm_status(cx, t + 11, colors, n, charging)))
+        if latest:
+            items.append((22, 25, lambda t: sm_latest(cx, t + 11, w, colors["noti"])))
+    if media:
+        items.append((64.5, 0, lambda t: sm_player(x0, t, w, colors["media"], paused)[1]))
+    return items
+
+
+def sm_place(items, top):
+    s = ""
+    for h, gap, fn in items:
+        s += fn(top)
+        top += h + gap
+    return s
+
+
+def sm_height(items):
+    return sum(h for h, _, _ in items) + sum(g for _, g, _ in items[:-1])
+
+
+def sm_portrait(hh=8, mm=30, size=80, colors=SM_COLORS, date=True, weather=False, n=3, latest=False, media=False, paused=False,
+                charging=False, extras=False, ref=False):
+    """Layout dọc của app mẫu: khối số + ngày giữa 0,7 phần trên (trừ 35 dp lề đáy), khối dưới neo đáy cách 35 dp lề 40 dp; bên mình thêm thời tiết dưới
+    ngày, sự kiện + ghi nhớ đầu khối dưới, hiện cả dòng pin lẫn thông báo mới nhất."""
+    k = size / 100
+    ch, _ = sm_clock(0, 0, k, colors, hh, mm, date, weather)
+    _, s = sm_clock(PW / 2, (PH - 35) * .7 / 2 - ch / 2, k, colors, hh, mm, date, weather)
+    items = sm_info(colors, 40, PW - 80, n, latest, media, paused, charging, extras, ref)
+    return s + sm_place(items, PH - 35 - sm_height(items))
+
+
+def sm_landscape(hh=8, mm=30, size=80, colors=SM_COLORS, date=True, weather=False, n=3, latest=False, media=False, paused=False,
+                 charging=False, extras=False):
+    """Màn ngang: cột số 45% (cỡ × 0,9 như app mẫu) căn giữa chiều cao; cột phải 55% (lề 40 dp) căn giữa chiều cao thay vì neo đáy: sự kiện, ghi nhớ, dòng
+    pin, thông báo mới nhất, trình phát (app mẫu: cột phải neo đáy, chỉ dòng pin + trình phát)."""
+    k = size / 100 * .9
+    ch, _ = sm_clock(0, 0, k, colors, hh, mm, date, weather)
+    _, s = sm_clock(W * .225, CY - ch / 2, k, colors, hh, mm, date, weather)
+    items = sm_info(colors, W * .45 + 40, W * .55 - 80, n, latest, media, paused, charging, extras)
+    return s + sm_place(items, CY - sm_height(items) / 2)
+
+
+def sm_reference_land(hh=8, mm=30, colors=SM_REFC):
+    k = .72
+    ch, _ = sm_clock(0, 0, k, colors, hh, mm)
+    _, s = sm_clock(W * .225, CY - ch / 2, k, colors, hh, mm)
+    items = sm_info(colors, W * .45 + 40, W * .55 - 80, 3, media=True)
+    return s + sm_place(items, H - 35 - sm_height(items))
+
+
+def sm_strip():
+    k, s = 0.4, ""
+    for i, (label, kw) in enumerate((("Mặc định: giờ Mùa thu, cỡ 80", {}),
+                                      ("App mẫu: trắng", {"colors": SM_REFC}),
+                                      ("Cỡ 100, Hoàng hôn", {"size": 100, "hh": 7, "mm": 21, "colors": {**SM_COLORS, "hour": SM_SUNSET, "minute": SM_SUNSET}}),
+                                      ("Cỡ 60, một màu", {"size": 60, "hh": 4, "mm": 38, "colors": {**SM_COLORS, "hour": GE}}))):
+        x = 36 + i * 212
+        s += (f'<g transform="translate({x} 14) scale({k})"><rect width="{PW}" height="{PH}" rx="34" fill="#000" stroke="#333" stroke-width="2"/>'
+              + sm_portrait(**kw) + "</g>" + txt(x + PW * k / 2, 14 + PH * k + 22, label, 13, DM, 400, "middle"))
+    return (f'<p style="font-size:13px;color:var(--text-secondary);margin:1.25rem 0 6px">Mặc định (giờ gradient Mùa thu ngang: đỏ → cam → vàng, phút '
+            f'GreyED) · màu app mẫu (trắng) · cỡ lớn nhất, Hoàng hôn · cỡ nhỏ nhất, một màu</p>'
+            f'<svg viewBox="0 0 {W} 400" width="100%" role="img" aria-label="Kiểu và màu" '
+            f'style="display:block;font-family:\'Plus Jakarta Sans\',sans-serif" fill="{G}"><rect width="{W}" height="400" rx="20" fill="#111"/>'
+            f'{s}</svg>')
+
+
+mono = [
+    SM_FONTS,
+    sm_strip(),
+    '<div style="font-size:0">',
+    frame_portrait("D1 · Dọc, mặc định 08:30 (cũng là thẻ ở lưới chủ đề): giờ trên phút, ngày; dòng pin · icon neo đáy",
+                   sm_portrait()),
+    frame_portrait("D2 · Dọc, 10:27, thời tiết dưới ngày, sự kiện + ghi nhớ, thông báo mới nhất dưới dòng pin, đang phát nhạc",
+                   sm_portrait(10, 27, weather=True, latest=True, n=2, media=True, extras=True)),
+    frame_portrait("D3 · Dọc, 21:47, cỡ 100, đang sạc, nhạc đang dừng, tắt ngày",
+                   sm_portrait(21, 47, 100, date=False, charging=True, media=True, paused=True, n=1)),
+    frame_portrait("D4 · Để so: app mẫu 08:30 (trắng): thông báo mới thay dòng pin · icon, trình phát",
+                   sm_portrait(colors=SM_REFC, latest=True, media=True, ref=True)),
+    '</div>',
+    frame("N1 · Ngang, mặc định 08:30, không nhạc: cột số 45% (cỡ × 0,9 như app mẫu), dòng pin · icon giữa cột phải",
+          sm_landscape()),
+    frame("N2 · Ngang, 10:27, đang phát nhạc, thông báo mới nhất, sự kiện + ghi nhớ, thời tiết dưới ngày",
+          sm_landscape(10, 27, weather=True, latest=True, n=2, media=True, extras=True)),
+    frame("N3 · Ngang, 21:47, cỡ 100, đang sạc, thông báo mới nhất, không nhạc",
+          sm_landscape(21, 47, 100, latest=True, n=1, charging=True)),
+    frame("N4 · Để so: layout ngang app mẫu, cột phải neo đáy (dòng pin + trình phát)",
+          sm_reference_land()),
+]
+
+
 words = [
     lw_fonts(),
     lw_strip(),
@@ -4416,6 +4614,7 @@ for name, summary, defs, frames in [
     ("w_fade", "Chủ đề Phai (Gradient): độ đậm, phai dần và màu, bốn khung dọc và bốn khung ngang", gr_defs(), fade),
     ("w_words", "Chủ đề Lời (Text Clock): giờ đọc thành chữ, độ đậm, cỡ và màu, bốn khung dọc và bốn khung ngang", "", words),
     ("w_frame", "Chủ đề Khung (Box Clock): giờ / phút trong khung viền, cỡ và màu, bốn khung dọc và bốn khung ngang", "", frame_theme),
+    ("w_mono", "Chủ đề Đơn cách (Space Mono): giờ trên phút chữ đơn cách, cỡ và màu, bốn khung dọc và bốn khung ngang", "", mono),
 ]:
     code = widget(summary, defs, frames)
     OUT.mkdir(parents=True, exist_ok=True)

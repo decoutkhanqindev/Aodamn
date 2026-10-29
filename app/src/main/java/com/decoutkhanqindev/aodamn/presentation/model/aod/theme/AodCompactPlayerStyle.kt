@@ -27,4 +27,8 @@ data class AodCompactPlayerStyle(
     val nextStartGap: Dp = 0.dp,
     val artistWeight: FontWeight? = null,
     val isProgressShown: Boolean = true,
+    val previousButton: Dp? = null,
+    val previousIcon: Dp = 0.dp,
+    val isProgressOnTop: Boolean = false,
+    val isUppercase: Boolean = false,
 )

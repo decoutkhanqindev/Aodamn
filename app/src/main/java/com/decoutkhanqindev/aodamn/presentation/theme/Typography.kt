@@ -103,6 +103,10 @@ val FontFamilyLato = FontFamily(
     Font(R.font.lato_bold, FontWeight.Bold),
 )
 
+val FontFamilySpaceMono = FontFamily(
+    Font(R.font.space_mono_regular, FontWeight.Normal),
+)
+
 private val MaterialTypeScale = androidx.compose.material3.Typography()
 
 val DisplaySmall = MaterialTypeScale.displaySmall.copy(fontFamily = FontFamilyPlusJakartaSans)
