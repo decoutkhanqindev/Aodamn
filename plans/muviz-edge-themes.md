@@ -53,6 +53,7 @@ code dịch ngược, không lấy asset (font, ảnh, Lottie) từ APK. APK và
 | Gáy sách (`SPINE`) | **12 · Apr22 "Vertical Clock"** | làm từ danh mục này (2026-10-27), số đo lấy từ layout `apr22_screen_layout` dọc / ngang / `VerticalTextView` |
 | Kẹp giấy (`CLIP`) | **13 · May22 "Paper Clip"** | làm từ danh mục này (2026-10-28), số đo lấy từ layout `may22_screen_layout` dọc / ngang / `PaperClipClock` |
 | Phai (`FADE`) | **1 · May21 "Gradient"** | làm từ danh mục này (2026-10-28), số đo lấy từ layout `may21_screen_layout` (chỉ có bản dọc) / `May21Screen` / font Lato 1.104 trong APK |
+| Quỹ đạo (`ORBIT`) | **14 · Jun22 "Solar System"** | làm từ danh mục này (2026-10-30), số đo lấy từ layout `jun22_screen_layout` dọc / ngang / `SolarSystemClock` / `Jun22Screen` |
 | Đơn cách (`MONO`) | **31 · Nov23 "Space Mono"** | làm từ danh mục này (2026-10-29), số đo lấy từ layout `nov23_screen_layout` dọc / ngang / `Nov23Screen` / `NoPadTextView` / font Space Mono trong APK |
 | Khung (`FRAME`) | **10 · Feb22 "Box Clock"** | làm từ danh mục này (2026-10-29), số đo lấy từ layout `feb22_screen_layout` dọc / ngang / `Feb22Screen` / font Josefin Sans trong APK |
 | Lời (`WORDS`) | **5 · Sep21 "Text Clock"** | làm từ danh mục này (2026-10-29), số đo lấy từ layout `sep21_screen_layout` dọc / ngang / `Sep21Screen` / font Lato 1.104 trong APK |
@@ -77,7 +78,7 @@ text view chung) hoặc font dùng trong code; "chữ (font layout)" nghĩa là 
 | 11 | Mar22 | Eclipse | Clock Color, Shadow Color, Rotation, Peek, Character Color, Controls Color | – | Eclipse | – | chưa có |
 | 12 | Apr22 | Vertical Clock | Clock Size, Theme Color | Clock, Date, Notification, Controls | VerticalTextView | – | **Gáy sách** (`SPINE`) |
 | 13 | May22 | Paper Clip | Clock Size, Second Color, Theme Color | Hour, Minute, Controls | PaperClipClock | – | **Kẹp giấy** (`CLIP`) |
-| 14 | Jun22 | Solar System | Clock Size, Digital Clock, Hour Color, Minute Color, Second Color, Clock Color, Controls Color | – | SolarSystemClock | – | chưa có |
+| 14 | Jun22 | Solar System | Clock Size, Digital Clock, Hour Color, Minute Color, Second Color, Clock Color, Controls Color | – | SolarSystemClock | – | **Quỹ đạo** (`ORBIT`) |
 | 15 | Jul22 | Samsung Like | Clock Weight, Clock Size, Hour Color, Minute Color, Notification Color, Controls Color | – | chữ: nunito | – | chưa có |
 | 16 | Aug22 | Quotes | Text, Text Size, Text Style, Text Color, Text Align, Notification Color, Controls Color | – | chữ: 12 font (arvo, bangers, caveat, pacifico…) | ô nhập chữ | chưa có |
 | 17 | Sep22 | Nothing(1) | Clock Size, Theme Color | Hour, Minute, Second, Date, Notification, Controls, Battery Status | chữ: ndot47, ndot55 | font độc quyền | chưa có |
@@ -263,6 +264,17 @@ mỗi phút (`AodViewModel`), nên phần chạy theo giây của app mẫu ph�
   mình: giờ gradient Mùa thu, số đổi mờ dần, thời tiết dưới ngày, sự kiện + ghi nhớ đầu khối dưới, hiện dòng pin + thông báo mới cùng lúc,
   cột phải ngang căn giữa, bỏ nét vẽ; `AodCompactPlayer` thêm nút lùi, thanh tiến trình ở trên, chữ in hoa (user duyệt). **2 · Default**
   bỏ: user chốt là trùng chủ đề Cổ điển đã có.
+- Đọc 2026-10-29 (bước 0 sau Đơn cách): ~~**14 · Solar System**~~ (`SolarSystemClock`, `Jun22Screen`, dọc + ngang; đã làm thành Quỹ đạo
+  2026-10-30): r = cỡ (65–90, mặc định 80) / 110 × nửa bề ngang của view (dọc cả màn, ngang ô vuông cạnh ngắn), đĩa đen 30%, ba quỹ đạo nét
+  1dp × cỡ / 110 ở r − 0,44r / r − 0,22r / r (màu Clock alpha 150 / 100 / 50), hành tinh giờ 0,22r / 3 trên quỹ đạo trong, phút 0,22r / 4,5
+  giữa, giây 0,22r / 7,5 ngoài, góc theo giờ thật tới mili giây nhưng màn vẽ lại mỗi giây (`ib.w` căn đầu giây); chế độ tiết kiệm ẩn hành
+  tinh giây; Digital Clock Hiện / Ẩn: "HH:mm" Josefin Regular 28sp × cỡ / 110 giãn 0,2 em giữa màn; khối chữ dưới cách đáy 60dp cùng họ với
+  `may22` (Kẹp giấy): ngày "dd MMMM yyyy" in hoa Poppins SemiBold 15sp giãn 0,25 em, dòng pin · icon 17dp, thông báo mới một dòng in hoa
+  13sp, trình phát lùi / tới 40dp cách mép 40dp, tên 13sp / nghệ sĩ 11,5sp in hoa; ngang: lề 30dp, đĩa ô vuông cạnh ngắn của màn (tràn lên
+  khối chữ). Màu: giờ #CA5353, phút #76AEA1, giây #9E9E9E, Clock trắng, Controls #CED4DA (ngày, nhạc; pin, thông báo, nghệ sĩ tối 30%).
+  Bên mình: hành tinh chạy mượt mỗi khung hình (`isLiveInPreview`), Controls tách ngày / pin & thông báo / nhạc, hiện tất cả cùng lúc, sự kiện
+  + ghi nhớ giữa vùng trống trên đĩa, màn ngang đĩa giữa màn, Plus Jakarta Sans thay Poppins, bỏ chế độ tiết kiệm và nét vẽ (user duyệt).
+  Không đề xuất lần này: **9 · Flip Clock** (`FlipClock`: hai thẻ lật 220dp, 9 font, lật 400ms; ba font không có trên Google Fonts).
 - ~~**12 · Vertical Clock**~~ (`VerticalTextView`, `apr22_screen_layout` + bản ngang, đọc 2026-10-26, đọc lại đủ 2026-10-27, đã làm thành Gáy
   sách 2026-10-27): "HH:mm" Josefin Sans Regular cỡ 25–60sp (mặc định 40) xoay −90° (đọc từ dưới lên, nét chữ căn giữa dòng), ngày "EEE, dd MMMM" in
   hoa nửa cỡ trên giờ cùng trục cách 30dp; cột cách mép trái 18dp, đáy giờ cách đáy 45dp (ngang 30dp). Dọc: phần trên cột chia 0,25 trống /

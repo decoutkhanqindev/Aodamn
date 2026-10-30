@@ -13,10 +13,32 @@ Mỗi dòng là một lỗi đã xảy ra thật; kiểm từng dòng trước k
 - **Chuyển động theo giây**: vòng / chấm giây tự chạy đồng hồ mỗi khung hình (`rememberLiveClockMillis`, đọc `longValue` ở
   pha vẽ, mẫu `AodSectorDial`), phần theo phút recompose bằng `derivedStateOf`. Không cấp phát brush / path mỗi khung: dựng trong
   `drawWithCache`.
+- **Một nguồn giờ cho cả mặt số** (Quỹ đạo): mọi thứ thuộc mặt số chạy theo giờ thật (kim, hành tinh, vòng số và cả chữ như đồng hồ số
+  giữa đĩa) đọc cùng giờ thật đó khi `state.isClockLive`; lấy `state.nowMillis` là giờ mẫu 08:30 ở màn chủ đề / Tùy chỉnh, lệch với phần
+  đang chạy. Các khối ngoài mặt số (ngày, pin…) vẫn theo giờ mẫu. Kiểm ở màn chủ đề: mọi chữ số trên mặt số khớp kim / hành tinh.
 - **Hằng số trong file Compose**: không `val` / `const val` cấp file (check-rules chặn); số đo vào `<Chủ đề>Metrics`.
+- **Gradient trải theo khung của chính phần được tô** (hành tinh Quỹ đạo, chấm dòng Chuỗi, chấm tâm Bốn số): brush trải theo khung
+  lớn hơn (cả đĩa, cả mặt số, cả hàng; `toBrush()` không truyền khung là trải theo cả vùng vẽ của composable, `toLineShader(from, to)` theo
+  hai điểm truyền vào) thì phần nhỏ chỉ lấy một dải, trông như một màu. Mỗi phần (chấm, vạch, chữ, kim) dựng brush theo khung riêng của
+  nó; phần chạy thì dựng một lần quanh gốc toạ độ (`Rect(center = Offset.Zero, radius = r)`) rồi `translate` tới vị trí mỗi khung hình.
+  Cố ý trải chung nhiều phần (khung + vạch + số của Khung) thì nêu trong mock. Kiểm: chọn một gradient tương phản (Hoàng hôn) cho từng
+  màu của chủ đề, nhìn từng phần có đủ dải màu không.
 - **Khung nét chữ** (Đơn cách): `TextLayoutResult.getPathForRange` trả khung vùng chọn cả dòng (cao bằng dòng), không phải nét chữ;
   ô chữ ôm sát nét như `NoPadTextView` đo bằng `Paint.getTextBounds` với typeface từ `resolveTypeface`, cộng `firstBaseline` của layout.
 - **`min` / `max` với `Dp`**: dùng `androidx.compose.ui.unit.min/max`, không phải `kotlin.math`.
+
+## Bố cục
+
+- **Khoảng cách giữ chỗ khi khối kề bên ẩn** (Khung, Đơn cách, Quỹ đạo; rà lại cả Vành, Viên nang, Thẻ, Tháp, Chuỗi, La bàn, Phai,
+  Bán nguyệt, Rẻ quạt, Nhịp giây, Lời): `AnimatedVisibility` ẩn hẳn thì không dựng node nào, nên `padding` trên modifier của nó mất theo; lỗi
+  nằm ở `padding` trên node vẫn dựng: khung bọc luôn có (`Row` / `Column` chứa các `AnimatedVisibility` như dòng ngày + thời tiết, dòng
+  pin + đèn pin, danh sách của Chuỗi) hoặc khối đang hiện mang khoảng hướng về khối kề bên đã ẩn (trình phát cách dòng pin khi tắt pin).
+  Khi đó cụm căn giữa (vùng màn ngang, phần tư của Khung) lệch nửa khoảng, cụm neo đáy bị đẩy lên cả khoảng. Khoảng giữa hai khối chỉ
+  đặt khi cả hai đều hiện: viết `has<ChủĐề>Status()` / `is<ChủĐề>BatteryShown()`… theo đúng điều kiện hiện của khối (`AodPanelBlock`:
+  sự kiện `events.isNotEmpty()`, ghi nhớ `extras.memo.isNotBlank()`; `AodStatusLine`: pin bật, đèn pin, icon; thông báo mới nhất;
+  `AodWeather`: `weather != null`, rỗng thì vẫn dựng một ô 0dp) và dùng lại cho cả quyết định ẩn cột / thu vùng. Lề mép màn (khoảng
+  tới đáy, tới đỉnh) không thuộc luật này. Kiểm: tắt lần lượt ngày, pin, thông báo, nhạc, lịch, ghi nhớ ở cả dọc lẫn ngang, cụm còn
+  lại vẫn căn đúng.
 
 ## Dùng lại
 
@@ -50,5 +72,6 @@ Mỗi dòng là một lỗi đã xảy ra thật; kiểm từng dòng trước k
 - Không dùng `git stash`: các worktree dùng chung một stash. Cần cất file thì chép ra scratchpad rồi `git restore`.
 - `git merge` / `git rebase` bị chặn vì cần chính user cho phép (CLAUDE.md): hỏi user, không tìm đường vòng.
 - Không stage `local.properties`, `.idea/*`, `app/build.gradle.kts` hay file không phải của mình.
-- Script sửa file giữ đúng kiểu xuống dòng (CRLF / LF) của file: đọc bytes, nhận diện `\r\n`, ghi lại cùng kiểu.
+- Script sửa file giữ đúng kiểu xuống dòng (CRLF / LF) của file: đọc bytes, nhận diện `\r\n`, ghi lại cùng kiểu bằng `write_bytes`
+  (`Path.write_text` trên Windows tự đổi `\n` thành `\r\n`, file LF như CHANGELOG thành CRLF).
 - In chữ Việt từ Python trên console Windows: `python -I -X utf8` (hoặc `sys.stdout.reconfigure(encoding="utf-8")`).

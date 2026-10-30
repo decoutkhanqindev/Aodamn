@@ -62,7 +62,7 @@ fun AodBezelPortrait(
         ) {
             BezelDateRow(state = state)
 
-            BezelStatus(state = state, modifier = Modifier.padding(top = BezelMetrics.GroupGap))
+            BezelStatus(state = state, modifier = Modifier.padding(top = if (state.isBezelDateRowShown()) BezelMetrics.GroupGap else 0.dp))
         }
 
         Box(modifier = Modifier.anchorAt(x = centerX, centerY = bottomCenter, anchor = 0.5f)) {
@@ -92,7 +92,7 @@ fun AodBezelLandscape(
                     Column(modifier = Modifier.anchorAt(x = start, centerY = centerY, anchor = 0f)) {
                         BezelDateRow(state = state)
 
-                        BezelStatus(state = state, modifier = Modifier.padding(top = BezelMetrics.GroupGap))
+                        BezelStatus(state = state, modifier = Modifier.padding(top = if (state.isBezelDateRowShown()) BezelMetrics.GroupGap else 0.dp))
                     }
 
                     Box(modifier = Modifier.anchorAt(x = end, centerY = centerY, anchor = 1f)) {
@@ -190,6 +190,9 @@ private fun BezelStatus(
         modifier = modifier,
     )
 }
+
+private fun AodState.isBezelDateRowShown(): Boolean =
+    extras.isDateEnabled || (weather != null && AodComponentValue.WEATHER in appearance.theme.value.spec.components)
 
 private fun Modifier.anchorAt(x: Dp, centerY: Dp, anchor: Float): Modifier = layout { measurable, constraints ->
     val placeable = measurable.measure(constraints.copy(minWidth = 0, minHeight = 0))

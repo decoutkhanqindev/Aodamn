@@ -24,6 +24,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.decoutkhanqindev.aodamn.R
 import com.decoutkhanqindev.aodamn.presentation.components.aod.AodPanelBlock
@@ -167,7 +168,7 @@ private fun MonoInfo(
     ) {
         AnimatedVisibility(visible = state.hasMonoExtras()) {
             Column(
-                modifier = Modifier.padding(bottom = MonoMetrics.ExtrasGap),
+                modifier = Modifier.padding(bottom = if (state.hasMonoStatus() || state.isMonoMediaShown()) MonoMetrics.ExtrasGap else 0.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 AodPanelBlock(block = AodPanelBlockValue.EVENTS, state = state, onIntent = onIntent)
@@ -181,7 +182,7 @@ private fun MonoInfo(
         AnimatedVisibility(visible = state.isMonoMediaShown()) {
             Box(
                 modifier = Modifier
-                    .padding(top = MonoMetrics.PlayerGap)
+                    .padding(top = if (state.hasMonoStatus()) MonoMetrics.PlayerGap else 0.dp)
                     .overhangEnd(MonoMetrics.PlayerEndOverhang),
             ) {
                 AodPanelBlock(block = AodPanelBlockValue.MEDIA, state = state, onIntent = onIntent)
@@ -249,18 +250,15 @@ private fun AodState.isMonoMediaShown(): Boolean =
 
 private fun AodState.hasMonoExtras(): Boolean {
     val components = appearance.theme.value.spec.components
-    val hasEvents = AodComponentValue.EVENTS in components && extras.isCalendarEnabled && events.isNotEmpty()
+    val hasEvents = AodComponentValue.EVENTS in components && events.isNotEmpty()
     val hasMemo = AodComponentValue.MEMO in components && extras.memo.isNotBlank()
     return hasEvents || hasMemo
 }
 
-private fun AodState.hasMonoInfo(): Boolean =
-    (battery != null && extras.isBatteryEnabled) ||
-        isFlashlightOn ||
-        notifications.icons.isNotEmpty() ||
-        notifications.latest != null ||
-        isMonoMediaShown() ||
-        hasMonoExtras()
+private fun AodState.hasMonoStatus(): Boolean =
+    (battery != null && extras.isBatteryEnabled) || isFlashlightOn || notifications.icons.isNotEmpty() || notifications.latest != null
+
+private fun AodState.hasMonoInfo(): Boolean = hasMonoStatus() || isMonoMediaShown() || hasMonoExtras()
 
 @Preview(widthDp = 393, heightDp = 873)
 @Composable

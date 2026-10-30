@@ -25,12 +25,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
@@ -50,6 +52,7 @@ import com.decoutkhanqindev.aodamn.presentation.components.rememberFormatter
 import com.decoutkhanqindev.aodamn.presentation.components.rememberTimeFormatter
 import com.decoutkhanqindev.aodamn.presentation.components.rememberZonedDateTime
 import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.AodAppearanceUiModel
+import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.AodGradient
 import com.decoutkhanqindev.aodamn.presentation.model.aod.info.AodNotificationsUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.info.BatteryUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.info.CalendarEventUiModel
@@ -71,6 +74,7 @@ fun AodChainList(
     isStatusShown: Boolean,
     isExtrasShown: Boolean,
     modifier: Modifier = Modifier,
+    topGap: Dp = 0.dp,
 ) {
     val config = state.appearance.theme.config
     val components = state.appearance.theme.value.spec.components
@@ -84,16 +88,16 @@ fun AodChainList(
     val last = listOf(isDateShown, isBatteryShown, isNotificationsShown, isMemoShown, isEventsShown).lastIndexOf(true)
     val titleCenter = rememberTitleDotCenter()
 
-    Column(modifier = modifier) {
+    Column(modifier = modifier.padding(top = if (last >= 0) topGap else 0.dp)) {
         val dateColor = config[ChainThemeSpec.DateColor]
         val dateBrush = config.gradientOf(ChainThemeSpec.DateColor)?.toBrush()
-        ChainRow(isVisible = isDateShown, isLast = last == 0, color = dateColor, brush = dateBrush, dotCenter = titleCenter) {
+        ChainRow(isVisible = isDateShown, isLast = last == 0, color = dateColor, gradient = config.gradientOf(ChainThemeSpec.DateColor), dotCenter = titleCenter) {
             ChainDate(state = state, color = dateColor, brush = dateBrush, isWeatherShown = isWeatherShown)
         }
 
         val batteryColor = config[ChainThemeSpec.BatteryColor]
         val batteryBrush = config.gradientOf(ChainThemeSpec.BatteryColor)?.toBrush()
-        ChainRow(isVisible = isBatteryShown, isLast = last == 1, color = batteryColor, brush = batteryBrush, dotCenter = titleCenter) {
+        ChainRow(isVisible = isBatteryShown, isLast = last == 1, color = batteryColor, gradient = config.gradientOf(ChainThemeSpec.BatteryColor), dotCenter = titleCenter) {
             ChainBattery(battery = battery, isFlashlightOn = state.isFlashlightOn, color = batteryColor, brush = batteryBrush)
         }
 
@@ -103,7 +107,7 @@ fun AodChainList(
             isVisible = isNotificationsShown,
             isLast = last == 2,
             color = notificationsColor,
-            brush = notificationsBrush,
+            gradient = config.gradientOf(ChainThemeSpec.NotificationsColor),
             dotCenter = if (state.notifications.latest != null) titleCenter else ChainMetrics.IconSize / 2,
         ) {
             ChainNotifications(notifications = state.notifications, color = notificationsColor, brush = notificationsBrush)
@@ -111,7 +115,7 @@ fun AodChainList(
 
         val memoColor = config[ChainThemeSpec.MemoColor]
         val memoBrush = config.gradientOf(ChainThemeSpec.MemoColor)?.toBrush()
-        ChainRow(isVisible = isMemoShown, isLast = last == 3, color = memoColor, brush = memoBrush, dotCenter = rememberIconRowDotCenter()) {
+        ChainRow(isVisible = isMemoShown, isLast = last == 3, color = memoColor, gradient = config.gradientOf(ChainThemeSpec.MemoColor), dotCenter = rememberIconRowDotCenter()) {
             ChainIconBlock(
                 iconRes = R.drawable.ic_note_pencil_fill,
                 title = stringResource(R.string.aod_memo_label),
@@ -124,7 +128,7 @@ fun AodChainList(
 
         val eventsColor = config[ChainThemeSpec.EventsColor]
         val eventsBrush = config.gradientOf(ChainThemeSpec.EventsColor)?.toBrush()
-        ChainRow(isVisible = isEventsShown, isLast = last == 4, color = eventsColor, brush = eventsBrush, dotCenter = rememberIconRowDotCenter()) {
+        ChainRow(isVisible = isEventsShown, isLast = last == 4, color = eventsColor, gradient = config.gradientOf(ChainThemeSpec.EventsColor), dotCenter = rememberIconRowDotCenter()) {
             ChainEvents(events = state.events, color = eventsColor, brush = eventsBrush)
         }
     }
@@ -141,7 +145,7 @@ private fun ChainRow(
     isVisible: Boolean,
     isLast: Boolean,
     color: Color,
-    brush: Brush?,
+    gradient: AodGradient?,
     dotCenter: Dp,
     content: @Composable () -> Unit,
 ) {
@@ -156,24 +160,20 @@ private fun ChainRow(
         Box(
             modifier = Modifier
                 .heightIn(min = if (isLast) ChainMetrics.LastRowMinHeight else ChainMetrics.RowMinHeight)
-                .drawBehind {
+                .drawWithCache {
                     val radius = ChainMetrics.Dot.toPx() / 2f
                     val center = Offset(radius, dotCenter.toPx())
-                    if (brush != null) {
-                        drawCircle(brush = brush, radius = radius, center = center)
-                    } else {
-                        drawCircle(color = color, radius = radius, center = center)
-                    }
-
                     val lineTop = center.y + radius + ChainMetrics.LineTop.toPx()
                     val lineWidth = ChainMetrics.Line.toPx()
-                    if (lineAlpha > 0f && size.height > lineTop) {
-                        val topLeft = Offset(center.x - lineWidth / 2f, lineTop)
-                        val lineSize = Size(lineWidth, size.height - lineTop)
-                        if (brush != null) {
-                            drawRect(brush = brush, topLeft = topLeft, size = lineSize, alpha = lineAlpha)
-                        } else {
-                            drawRect(color = color, topLeft = topLeft, size = lineSize, alpha = lineAlpha)
+                    val lineTopLeft = Offset(center.x - lineWidth / 2f, lineTop)
+                    val lineSize = Size(lineWidth, (size.height - lineTop).coerceAtLeast(0f))
+                    val dotBrush = gradient?.toBrush(Rect(center = center, radius = radius)) ?: SolidColor(color)
+                    val lineBrush = gradient?.toBrush(Rect(offset = lineTopLeft, size = lineSize)) ?: SolidColor(color)
+
+                    onDrawBehind {
+                        drawCircle(brush = dotBrush, radius = radius, center = center)
+                        if (lineAlpha > 0f && lineSize.height > 0f) {
+                            drawRect(brush = lineBrush, topLeft = lineTopLeft, size = lineSize, alpha = lineAlpha)
                         }
                     }
                 }

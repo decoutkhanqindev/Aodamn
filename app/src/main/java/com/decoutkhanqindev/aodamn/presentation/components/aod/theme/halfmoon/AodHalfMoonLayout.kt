@@ -121,7 +121,7 @@ fun AodHalfMoonLandscape(
                     state = state,
                     width = minOf(HalfMoonMetrics.LandscapePlayerWidth, inner),
                     onIntent = onIntent,
-                    modifier = Modifier.padding(top = HalfMoonMetrics.LandscapePlayerGap),
+                    modifier = Modifier.padding(top = if (state.hasHalfMoonColumn()) HalfMoonMetrics.LandscapePlayerGap else 0.dp),
                 )
             }
         }
@@ -275,6 +275,14 @@ private fun HalfMoonPlayer(
         }
     }
 }
+
+private fun AodState.hasHalfMoonColumn(): Boolean =
+    extras.isDateEnabled ||
+        (weather != null && AodComponentValue.WEATHER in appearance.theme.value.spec.components) ||
+        (battery != null && extras.isBatteryEnabled) ||
+        isFlashlightOn ||
+        notifications.icons.isNotEmpty() ||
+        notifications.latest != null
 
 @Preview(widthDp = 393, heightDp = 873)
 @Composable

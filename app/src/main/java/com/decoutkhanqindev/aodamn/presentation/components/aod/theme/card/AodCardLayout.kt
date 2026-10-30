@@ -157,7 +157,7 @@ private fun CardClockAndDate(
         AodCardClock(nowMillis = state.nowMillis, config = config, glyphs = glyphs, unit = unit)
 
         Row(
-            modifier = Modifier.padding(top = unit * CardMetrics.DATE_TOP),
+            modifier = Modifier.padding(top = if (state.extras.isDateEnabled || (isWeatherShown && state.weather != null)) unit * CardMetrics.DATE_TOP else 0.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             AnimatedVisibility(visible = state.extras.isDateEnabled) {

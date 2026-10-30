@@ -49,7 +49,7 @@ fun AodFramePortrait(
                 modifier = Modifier.padding(horizontal = FrameMetrics.ZonePadding),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                FrameDateLine(state = state, gap = FrameMetrics.DateGap)
+                FrameDateLine(state = state, gap = if (state.hasFrameStatus()) FrameMetrics.DateGap else 0.dp)
 
                 FrameStatus(state = state, latestGap = FrameMetrics.LatestGap)
             }
@@ -66,7 +66,11 @@ fun AodFramePortrait(
                 FramePlayer(
                     state = state,
                     onIntent = onIntent,
-                    modifier = Modifier.padding(start = FrameMetrics.PlayerMargin, top = FrameMetrics.ExtrasGap, end = FrameMetrics.PlayerMargin),
+                    modifier = Modifier.padding(
+                        start = FrameMetrics.PlayerMargin,
+                        top = if (state.hasFrameExtras()) FrameMetrics.ExtrasGap else 0.dp,
+                        end = FrameMetrics.PlayerMargin,
+                    ),
                 )
             }
         }
@@ -91,7 +95,7 @@ fun AodFrameLandscape(
             contentAlignment = Alignment.Center,
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                FrameDateLine(state = state, gap = FrameMetrics.LandscapePlayerGap)
+                FrameDateLine(state = state, gap = if (state.hasFrameExtras()) FrameMetrics.LandscapePlayerGap else 0.dp)
 
                 FrameExtras(state = state, onIntent = onIntent)
             }
@@ -112,7 +116,11 @@ fun AodFrameLandscape(
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 FrameStatus(state = state, latestGap = FrameMetrics.LandscapeItemGap)
 
-                FramePlayer(state = state, onIntent = onIntent, modifier = Modifier.padding(top = FrameMetrics.LandscapePlayerGap))
+                FramePlayer(
+                    state = state,
+                    onIntent = onIntent,
+                    modifier = Modifier.padding(top = if (state.hasFrameStatus()) FrameMetrics.LandscapePlayerGap else 0.dp),
+                )
             }
         }
     }
@@ -238,6 +246,14 @@ private fun FramePlayer(
             AodPanelBlock(block = AodPanelBlockValue.MEDIA, state = state, onIntent = onIntent)
         }
     }
+}
+
+private fun AodState.hasFrameStatus(): Boolean =
+    (battery != null && extras.isBatteryEnabled) || isFlashlightOn || notifications.icons.isNotEmpty() || notifications.latest != null
+
+private fun AodState.hasFrameExtras(): Boolean {
+    val components = appearance.theme.value.spec.components
+    return (AodComponentValue.EVENTS in components && events.isNotEmpty()) || (AodComponentValue.MEMO in components && extras.memo.isNotBlank())
 }
 
 @Preview(widthDp = 393, heightDp = 873)

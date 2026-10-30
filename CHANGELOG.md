@@ -7,6 +7,74 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-10-30 – Sửa sau khi rà các chủ đề mới
+
+User yêu cầu: "check lại toàn bộ theme vừa làm với các theme khác ? xem có bị các lỗi nào khác không? sưa hết 1 lần và update generic vào
+pitfalls". Build được, unit test và lint pass, `tools/check-rules.sh` ra 0 vi phạm. Chưa test trên máy.
+
+### Sửa
+
+- Khung, Đơn cách, Quỹ đạo: khoảng cách giữa hai khối chỉ còn khi cả hai cùng hiện (trước đây khoảng trên trình phát, quanh sự kiện / ghi
+  nhớ, dưới ngày vẫn giữ chỗ khi khối kề bên ẩn, cụm căn giữa ở màn ngang và phần tư của Khung lệch nửa khoảng). Mỗi chủ đề có
+  `has…Status()` / `has…Extras()` theo đúng điều kiện hiện của `AodStatusLine` / `AodPanelBlock`; Đơn cách dùng điều kiện sự kiện giống
+  `AodPanelBlock` (`events.isNotEmpty()`).
+- Rà thêm mọi chủ đề đang có theo cùng lỗi (user: "tiện thể rà toàn bộ thêm đang có lun nhé"), khoảng chỉ còn khi khối kề bên hiện:
+  - Vành: khoảng trên dòng pin / icon khi tắt ngày và không có thời tiết.
+  - Viên nang, Thẻ, Tháp: khoảng dưới đồng hồ của dòng ngày khi tắt ngày và không có thời tiết (dòng luôn dựng nên khối bên dưới bị
+    đẩy xuống, màn ngang lệch nửa khoảng).
+  - Chuỗi: khoảng dưới đồng hồ khi danh sách không còn dòng nào (`AodChainList` nhận `topGap`, chỉ đặt khi có dòng hiện).
+  - La bàn: khoảng trên trình phát ở phần dưới màn dọc khi không có dòng pin / icon.
+  - Bán nguyệt: khoảng trên trình phát ở màn ngang khi cột ngày / pin / thông báo trống.
+  - Phai, Rẻ quạt, Nhịp giây, Lời: khoảng giữa trình phát và dòng pin, và khoảng trên dòng pin ở màn ngang của Phai / Lời, khi tắt pin (dòng pin
+    luôn dựng nên trình phát bị đẩy lên, cụm màn ngang lệch).
+  - Gợn sóng, Kẹp giấy, Gáy sách, Sỏi, Số áo, Cổ điển, Chồng số, Dải màu: không có lỗi này (khoảng nằm trên `AnimatedVisibility` nên mất khi
+    ẩn, hoặc là lề mép màn).
+- Chuỗi: chấm và vạch đầu mỗi dòng tô gradient theo khung của chính chấm / vạch (trước trải theo cả hàng nên chấm 6dp chỉ ra màu đầu).
+- Bốn số: chấm tâm tô gradient theo bán kính chấm (trước trải theo cả mặt số nên chỉ ra màu giữa).
+- Skill `aodamn-aod-theme-ref` › pitfalls: thêm luật chung về gradient theo khung của chính phần được tô, một nguồn giờ cho cả mặt số,
+  khoảng cách giữ chỗ khi khối kề bên ẩn (padding trên `AnimatedVisibility` mất khi ẩn, lỗi là padding trên node vẫn dựng), ghi file bằng `write_bytes` để giữ kiểu xuống dòng.
+
+## [Chưa phát hành] – 2026-10-30 – Chủ đề Quỹ đạo
+
+Build được, unit test pass (thêm test chặn Quỹ đạo có lại nét vẽ hay thiếu tuỳ chọn của app mẫu; test nội dung thông báo và xem trước theo giờ
+thật cho phép Quỹ đạo), `tools/check-rules.sh` ra 0 vi phạm, thư mục các chủ đề cũ không đổi dòng nào. Chưa test trên máy.
+
+User duyệt mock: "Duyệt, code" (trả lời câu hỏi duyệt nêu các mục đổi: hành tinh chạy mượt mỗi khung hình, tách màu Controls theo phần, hiện
+thông báo mới + trình phát cùng lúc, Plus Jakarta Sans thay Poppins, màn ngang đĩa giữa màn, thêm sự kiện + ghi nhớ trên đĩa, bỏ chế độ tiết kiệm
+và nét vẽ).
+
+### Thêm
+
+- Chủ đề Quỹ đạo (Solar System của Muviz Edge; số đo lấy từ `SolarSystemClock`, `Jun22Screen` và layout `jun22_screen_layout` dọc / ngang dịch
+  ngược; mock duyệt trước khi code). Đĩa giữa màn r = cỡ (65–90, mặc định 80) / 110 × nửa cạnh ngắn: đĩa đen 30% (thấy khi có ảnh nền), ba quỹ
+  đạo nét 1dp × cỡ / 110 ở 0,56r / 0,78r / r với độ mờ 150 / 100 / 50 của màu đồng hồ, hành tinh giờ (0,0733r) trên quỹ đạo trong, phút
+  (0,0489r) quỹ đạo giữa, giây (0,0293r) quỹ đạo ngoài, góc theo giờ thật. App mẫu vẽ lại mỗi giây nên hành tinh nhảy; bên mình chạy mượt mỗi
+  khung hình (`rememberLiveClockMillis`) và màn chủ đề / Tùy chỉnh cũng chạy theo giờ thật (`isLiveInPreview`, nâng cấp). Đồng hồ số "HH:mm"
+  Josefin Regular 28sp × cỡ / 110 giãn 0,2 em giữa đĩa, bật / tắt như Digital Clock của app mẫu, đọc cùng nguồn giờ với hành tinh (ở màn chủ đề /
+  Tùy chỉnh cũng theo giờ thật, đổi mỗi phút qua `derivedStateOf`, không theo giờ mẫu 08:30). Gradient của quỹ đạo trải theo cả đĩa, của mỗi hành tinh trải trên chính hành
+  tinh đó (brush dựng một lần quanh gốc toạ độ, mỗi khung hình chỉ dời tới vị trí hành tinh).
+- Bố cục dọc như layout mẫu (cùng họ với Kẹp giấy): khối chữ cách đáy 60dp: ngày "dd MMMM yyyy" in hoa SemiBold 15sp giãn 0,25 em (thời tiết cách
+  12dp), dòng pin · icon (`AodStatusLine`), thông báo mới nhất (`AodLatestLine` in hoa 13sp giãn 0,1 em), cách 24dp trình phát (`AodTextPlayer`:
+  lùi / tới 40dp cách mép 40dp, tên 13sp / nghệ sĩ 11,5sp in hoa giãn 0,25 em, nghệ sĩ tối 30%, chạm tên để phát / dừng, dừng thì mờ). App mẫu
+  thay dòng pin bằng thông báo một lúc và thay cả khối bằng trình phát theo hẹn giờ; bên mình hiện cùng lúc (user duyệt). Sự kiện + ghi nhớ
+  (khối dùng chung, bên mình thêm) giữa vùng trống phía trên đĩa. Màn ngang: đĩa giữa màn cỡ như màn dọc (app mẫu vẽ đĩa trong ô vuông cạnh
+  ngắn của màn nên tràn lên khối chữ), vùng trái ngày + thời tiết, sự kiện, ghi nhớ; vùng phải dòng pin, thông báo mới nhất, trình phát (user duyệt).
+- Tuỳ chọn đủ như app mẫu: cỡ (Clock Size 65–90, mặc định 80), đồng hồ số (Digital Clock, mặc định bật), màu hành tinh giờ, phút, giây (Hour /
+  Minute / Second), đồng hồ (Clock: quỹ đạo + đồng hồ số), ngày, pin & thông báo, nhạc (Controls tách ba phần, user duyệt). Mặc định giữ màu app
+  mẫu (chưa chủ đề nào dùng): giờ `Brick` #CA5353, phút `Sage` #76AEA1 (hai token mới), giây `Grey9A`, đồng hồ `GreyED`, ngày / nhạc `GreyE4`, pin
+  & thông báo `GreyB4`. Màu nào cũng tô được gradient. Chế độ tiết kiệm (ẩn hành tinh giây) bỏ, hành tinh giây luôn hiện (user duyệt).
+- Quỹ đạo có ngày, thời tiết, pin, thông báo (kèm thông báo mới nhất, `hasNotificationContent = true`), sự kiện, ghi nhớ, nhạc; không có nét vẽ:
+  đĩa giữ giữa màn, vùng trên dành cho sự kiện / ghi nhớ (user duyệt). Font: Plus Jakarta Sans thay Poppins (thiếu dấu tiếng Việt) như Kẹp giấy,
+  Josefin Sans cho đồng hồ số, đều đã có; APK không nặng thêm. Mock ở `tools/mockups/aod_landscape_mockups.py` (`w_orbit`, hai khung chạy theo
+  giờ thật).
+
+### Thay đổi
+
+- Chỉ thêm, không đổi chủ đề đang có: mục `ORBIT` ở `AodThemeValue`, nhánh `when` ở `AodPortrait` / `AodLandscape` / `AodMediaControls`, màu
+  `Brick`, `Sage`, chuỗi vi / en `theme_orbit`, `theme_opt_digital_clock`, mẫu `aod_orbit_date_pattern`, `aod_orbit_notification`; dùng lại nhãn cỡ,
+  giờ / phút / giây / đồng hồ / ngày / pin & thông báo / nhạc, `rememberLiveClockMillis`, `AodTextPlayer`, `AodLatestLine`, `AodStatusLine`,
+  `AodWeather`, `AodPanelBlock` có sẵn, không sửa khối dùng chung.
+
 ## [Chưa phát hành] – 2026-10-29 – Chủ đề Đơn cách
 
 Build được, unit test pass (thêm test chặn Đơn cách có lại nét vẽ hay thiếu tuỳ chọn của app mẫu; test nội dung thông báo cho phép Đơn cách),

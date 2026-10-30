@@ -170,7 +170,7 @@ private fun TowerClockAndDate(
         AodTowerClock(nowMillis = state.nowMillis, config = config, glyphs = glyphs, unit = unit)
 
         Row(
-            modifier = Modifier.padding(top = dateGap),
+            modifier = Modifier.padding(top = if (state.extras.isDateEnabled || (isWeatherShown && state.weather != null)) dateGap else 0.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             AnimatedVisibility(visible = state.extras.isDateEnabled) {

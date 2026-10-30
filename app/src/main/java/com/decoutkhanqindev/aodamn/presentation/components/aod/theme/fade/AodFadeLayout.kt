@@ -90,7 +90,16 @@ fun AodFadePortrait(
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            FadePlayer(state = state, onIntent = onIntent, modifier = Modifier.padding(FadeMetrics.PlayerMargin))
+            FadePlayer(
+                state = state,
+                onIntent = onIntent,
+                modifier = Modifier.padding(
+                    start = FadeMetrics.PlayerMargin,
+                    top = FadeMetrics.PlayerMargin,
+                    end = FadeMetrics.PlayerMargin,
+                    bottom = if (state.isFadeBatteryShown()) FadeMetrics.PlayerMargin else 0.dp,
+                ),
+            )
 
             FadeBattery(state = state, modifier = Modifier.padding(bottom = FadeMetrics.BatteryBottom))
         }
@@ -138,7 +147,11 @@ fun AodFadeLandscape(
                 FadeZone(width = zone, start = FadeMetrics.LandscapeGap, end = FadeMetrics.LandscapeMargin) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         if (isMediaShown) {
-                            FadePlayer(state = state, onIntent = onIntent, modifier = Modifier.padding(bottom = FadeMetrics.LandscapePlayerGap))
+                            FadePlayer(
+                                state = state,
+                                onIntent = onIntent,
+                                modifier = Modifier.padding(bottom = if (state.isFadeBatteryShown()) FadeMetrics.LandscapePlayerGap else 0.dp),
+                            )
                         } else {
                             FadeIcons(state = state)
 
@@ -152,7 +165,7 @@ fun AodFadeLandscape(
                         FadeBattery(
                             state = state,
                             modifier = Modifier.padding(
-                                top = if (!isMediaShown && state.hasFadeStatus()) FadeMetrics.LandscapeBlockGap else 0.dp,
+                                top = if (!isMediaShown && state.hasFadeStatus() && state.isFadeBatteryShown()) FadeMetrics.LandscapeBlockGap else 0.dp,
                             ),
                         )
                     }
@@ -377,6 +390,8 @@ private fun AodState.hasFadeDateLine(): Boolean = extras.isDateEnabled || isFade
 private fun AodState.hasFadeRow(): Boolean = hasFadeDateLine() || notifications.icons.isNotEmpty()
 
 private fun AodState.hasFadeStatus(): Boolean = notifications.icons.isNotEmpty() || notifications.latest != null
+
+private fun AodState.isFadeBatteryShown(): Boolean = (battery != null && extras.isBatteryEnabled) || isFlashlightOn
 
 @Preview(widthDp = 393, heightDp = 873)
 @Composable

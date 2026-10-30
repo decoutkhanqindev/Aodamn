@@ -4568,6 +4568,146 @@ mono = [
 ]
 
 
+# ================================================================== QUỸ ĐẠO (Solar System của Muviz Edge; số đo lấy từ SolarSystemClock, Jun22Screen và layout
+# jun22_screen_layout dọc / ngang trong APK, không từ ảnh chụp). r = Cỡ (65–90, mặc định 80) / 110 × nửa bề ngang (ngang: nửa cạnh ngắn), tâm giữa màn: đĩa đen
+# 30%, ba quỹ đạo nét 1 dp × cỡ / 110 ở 0,56r / 0,78r / r (màu đồng hồ alpha 150 / 100 / 50), hành tinh giờ (0,0733r) trên quỹ đạo trong, phút (0,0489r) giữa,
+# giây (0,0293r) ngoài, góc theo giờ thật (app mẫu vẽ lại mỗi giây). Đồng hồ số "HH:mm" Josefin Regular 28 sp × cỡ / 110 giãn 0,2 em giữa đĩa (Hiện / Ẩn).
+# Khối chữ dưới cách đáy 60 dp cùng họ layout với Kẹp giấy (may22) nên dùng lại pc_items / pc_music (Plus Jakarta Sans thay Poppins thiếu tiếng Việt).
+SS_BRICK, SS_SAGE, SS_GREY = "#CA5353", "#76AEA1", "#9A9A9A"
+SS_COLORS = {"hour": SS_BRICK, "minute": SS_SAGE, "second": SS_GREY, "clock": GE, "date": "#E4E4E4", "status": G, "media": "#E4E4E4"}
+SS_REFC = {"hour": SS_BRICK, "minute": SS_SAGE, "second": "#9E9E9E", "clock": "#FFFFFF", "date": "#CED4DA", "status": "#909499", "media": "#CED4DA"}
+SS_SUNSET = {**SS_COLORS, "hour": "#FFCC70", "minute": "#C850C0", "second": "#4158D0", "clock": "#C850C0"}
+SS_LIVE = []
+SS_N = [0]
+
+
+def ss_clock(cx, cy, r, k, hh, mm, ss, colors, digital=True, live=False):
+    """SolarSystemClock.onDraw: đĩa đen 30%, ba quỹ đạo, ba hành tinh quay quanh tâm (nhóm xoay theo góc để khung live chỉ đổi transform)."""
+    SS_N[0] += 1
+    sid = f"ss{SS_N[0]}"
+    if live:
+        SS_LIVE.append((sid, cx, cy))
+    s = f'<circle cx="{f(cx)}" cy="{f(cy)}" r="{f(r)}" fill="#000" fill-opacity=".3"/>'
+    for rr, a in ((r * .56, 150), (r * .78, 100), (r, 50)):
+        s += f'<circle cx="{f(cx)}" cy="{f(cy)}" r="{f(rr)}" fill="none" stroke="{colors["clock"]}" stroke-opacity="{a / 255:.2f}" stroke-width="{f(max(k, .8))}"/>'
+    sec = ss + 0.0
+    mins = mm + sec / 60
+    hrs = hh % 12 + mins / 60
+    for key, deg, orbit, pr in (("h", hrs * 30, r * .56, r * .0733), ("m", mins * 6, r * .78, r * .0489), ("s", sec * 6, r, r * .0293)):
+        s += (f'<g id="{sid}{key}" transform="rotate({f(deg)} {f(cx)} {f(cy)})">'
+              f'<circle cx="{f(cx)}" cy="{f(cy - orbit)}" r="{f(pr)}" fill="{colors[{"h": "hour", "m": "minute", "s": "second"}[key]]}"/></g>')
+    if digital:
+        ds = 28 * k
+        s += cp_text(SP_REG, cx, cy + .43 * ds, f"{hh:02d}:{mm:02d}", ds, colors["clock"], "middle", .2).replace("<text ", f'<text id="{sid}t" ', 1)
+    return s
+
+
+def ss_live_script():
+    """Khung live: ba hành tinh chạy liên tục theo đồng hồ của máy xem mock, đồng hồ số theo giờ thật."""
+    ids = ",".join(f'"{sid}"' for sid, _, _ in SS_LIVE)
+    centers = ",".join(f"[{f(cx)},{f(cy)}]" for _, cx, cy in SS_LIVE)
+    return ('<script>(function(){var ids=[' + ids + '],c=[' + centers + '];function t(){var d=new Date(),s=d.getSeconds()+d.getMilliseconds()/1e3,'
+            'm=d.getMinutes()+s/60,h=d.getHours()%12+m/60,a={h:h*30,m:m*6,s:s*6},z=function(n){return(n<10?"0":"")+n};ids.forEach(function(id,i){'
+            '["h","m","s"].forEach(function(k){var g=document.getElementById(id+k);if(g)g.setAttribute("transform","rotate("+a[k].toFixed(2)+" "+c[i][0]+" "'
+            '+c[i][1]+")");});var x=document.getElementById(id+"t");if(x)x.textContent=z(d.getHours())+":"+z(d.getMinutes());});requestAnimationFrame(t);}'
+            't();})();</script>')
+
+
+def ss_portrait(hh=8, mm=30, ss=42, size=80, colors=SS_COLORS, digital=True, media=False, paused=False, extras=False, live=False, ref=False,
+                **kw):
+    """Layout dọc của app mẫu: đĩa giữa màn, khối chữ cách đáy 60 dp (ngày, dòng pin, thông báo mới nhất; có nhạc thì trình phát dưới cùng cách 24 dp);
+    bên mình thêm sự kiện + ghi nhớ giữa vùng trống phía trên đĩa."""
+    k = size / 110
+    r = k * PW / 2
+    s = ss_clock(PW / 2, PH / 2, r, k, hh, mm, ss, colors, digital, live)
+    if extras:
+        s += fr_extras(PW / 2, (PH / 2 - r) / 2 - 35)[1]
+    items = pc_items(colors, w=PW - 60, **kw)
+    if media:
+        if items:
+            h, _, d = items[-1]
+            items[-1] = (h, 24, d)
+        items += pc_music(colors, PW, paused)
+    return s + pc_stack(PW / 2, PH - 60 - pc_stack_h(items), items)
+
+
+def ss_landscape(hh=8, mm=30, ss=42, size=80, colors=SS_COLORS, digital=True, date=True, weather=False, n=2, charging=False, latest=False,
+                 media=False, paused=False, extras=False, live=False):
+    """Màn ngang: đĩa giữa màn cỡ như màn dọc (r theo nửa cạnh ngắn); vùng trái ngày + thời tiết, sự kiện, ghi nhớ; vùng phải dòng pin, thông báo mới
+    nhất, trình phát; mỗi vùng căn giữa (app mẫu: đĩa vuông cạnh ngắn của màn tràn lên khối chữ dưới)."""
+    k = size / 110
+    r = k * H / 2
+    s = ss_clock(W / 2, CY, r, k, hh, mm, ss, colors, digital, live)
+    lz0, lz1, rz0, rz1 = 40, W / 2 - r - 36, W / 2 + r + 36, W - 40
+    left = pc_items(colors, date=date, weather=weather, status=False, w=lz1 - lz0, land=True)
+    if extras:
+        if left:
+            h, _, d = left[-1]
+            left[-1] = (h, 24, d)
+        left.append((70, 0, lambda x, t: fr_extras(x, t)[1]))
+    right = pc_items(colors, date=False, n=n, charging=charging, latest=latest, w=rz1 - rz0, land=True)
+    if media:
+        if right:
+            h, _, d = right[-1]
+            right[-1] = (h, 24, d)
+        right += pc_music(colors, rz1 - rz0, paused, land=True)
+    for x, items in (((lz0 + lz1) / 2, left), ((rz0 + rz1) / 2, right)):
+        if items:
+            s += pc_stack(x, CY - pc_stack_h(items) / 2, items)
+    return s
+
+
+def ss_reference_land(hh=8, mm=30, ss=42, colors=SS_REFC):
+    """Layout ngang mẫu: lề trên / dưới 30 dp, khối chữ dưới (chữ nhỏ hơn 1 sp); đĩa vẽ trong ô vuông cạnh ngắn của màn đặt giữa phần trên nên tràn
+    lên khối chữ."""
+    items = pc_items(colors, n=2, land=True)
+    bh = pc_stack_h(items)
+    top_h = H - 60 - 30 - bh
+    k = 80 / 110
+    return ss_clock(W / 2, 30 + top_h / 2, k * H / 2, k, hh, mm, ss, colors) + pc_stack(W / 2, H - 30 - bh, items)
+
+
+def ss_strip():
+    k, s = 0.4, ""
+    for i, (label, kw) in enumerate((("Mặc định = màu app mẫu, cỡ 80", {}),
+                                      ("Ẩn đồng hồ số", {"digital": False, "hh": 10, "mm": 10, "ss": 30}),
+                                      ("Cỡ 90, màu Hoàng hôn", {"size": 90, "hh": 7, "mm": 21, "ss": 5, "colors": SS_SUNSET}),
+                                      ("Cỡ 65", {"size": 65, "hh": 4, "mm": 38, "ss": 50}))):
+        x = 36 + i * 212
+        s += (f'<g transform="translate({x} 14) scale({k})"><rect width="{PW}" height="{PH}" rx="34" fill="#000" stroke="#333" stroke-width="2"/>'
+              + ss_portrait(**kw) + "</g>" + txt(x + PW * k / 2, 14 + PH * k + 22, label, 13, DM, 400, "middle"))
+    return (f'<p style="font-size:13px;color:var(--text-secondary);margin:1.25rem 0 6px">Mặc định (hành tinh giờ đỏ gạch #CA5353, phút xanh rêu #76AEA1, '
+            f'giây xám như app mẫu; quỹ đạo và đồng hồ số GreyED) · ẩn đồng hồ số · cỡ lớn nhất, màu khác · cỡ nhỏ nhất</p>'
+            f'<svg viewBox="0 0 {W} 400" width="100%" role="img" aria-label="Kiểu và màu" '
+            f'style="display:block;font-family:\'Plus Jakarta Sans\',sans-serif" fill="{G}"><rect width="{W}" height="400" rx="20" fill="#111"/>'
+            f'{s}</svg>')
+
+
+orbit = [
+    SP_FONTS + PC_FONTS,
+    ss_strip(),
+    '<div style="font-size:0">',
+    frame_portrait("D1 · Dọc, mặc định (cũng là thẻ ở lưới chủ đề), khung này chạy theo giờ thật: đĩa giữa màn, ngày + dòng pin cách đáy 60 dp",
+                   ss_portrait(live=True)),
+    frame_portrait("D2 · Dọc, 10:27, thời tiết sau ngày, thông báo mới nhất, sự kiện + ghi nhớ trên đĩa, đang phát nhạc",
+                   ss_portrait(10, 27, 15, weather=True, latest=True, n=2, media=True, extras=True)),
+    frame_portrait("D3 · Dọc, 21:47, cỡ 90, ẩn đồng hồ số, đang sạc, nhạc đang dừng (chữ mờ), tắt ngày",
+                   ss_portrait(21, 47, 55, 90, digital=False, date=False, charging=True, media=True, paused=True, n=1)),
+    frame_portrait("D4 · Để so: app mẫu 08:30 (màu mặc định, ngày + điều khiển #CED4DA, pin / thông báo tối 30%)",
+                   ss_portrait(colors=SS_REFC, n=2)),
+    '</div>',
+    frame("N1 · Ngang, mặc định, chạy theo giờ thật: đĩa giữa màn cỡ như màn dọc; ngày + thời tiết vùng trái, dòng pin · icon vùng phải",
+          ss_landscape(weather=True, live=True)),
+    frame("N2 · Ngang, 10:27, đang phát nhạc, thông báo mới nhất, sự kiện + ghi nhớ: ngày, sự kiện, ghi nhớ trái; pin · icon, thông báo, trình phát phải",
+          ss_landscape(10, 27, 15, latest=True, media=True, extras=True)),
+    frame("N3 · Ngang, 21:47, cỡ 90, ẩn đồng hồ số, đang sạc, thông báo mới nhất, không nhạc",
+          ss_landscape(21, 47, 55, 90, digital=False, latest=True, n=1, charging=True)),
+    frame("N4 · Để so: layout ngang app mẫu, đĩa vẽ trong ô vuông cạnh ngắn của màn nên tràn lên khối chữ dưới",
+          ss_reference_land()),
+]
+orbit.append(ss_live_script())
+
+
 words = [
     lw_fonts(),
     lw_strip(),
@@ -4615,6 +4755,7 @@ for name, summary, defs, frames in [
     ("w_words", "Chủ đề Lời (Text Clock): giờ đọc thành chữ, độ đậm, cỡ và màu, bốn khung dọc và bốn khung ngang", "", words),
     ("w_frame", "Chủ đề Khung (Box Clock): giờ / phút trong khung viền, cỡ và màu, bốn khung dọc và bốn khung ngang", "", frame_theme),
     ("w_mono", "Chủ đề Đơn cách (Space Mono): giờ trên phút chữ đơn cách, cỡ và màu, bốn khung dọc và bốn khung ngang", "", mono),
+    ("w_orbit", "Chủ đề Quỹ đạo (Solar System): ba hành tinh quay theo giờ thật, cỡ và màu, bốn khung dọc và bốn khung ngang", "", orbit),
 ]:
     code = widget(summary, defs, frames)
     OUT.mkdir(parents=True, exist_ok=True)

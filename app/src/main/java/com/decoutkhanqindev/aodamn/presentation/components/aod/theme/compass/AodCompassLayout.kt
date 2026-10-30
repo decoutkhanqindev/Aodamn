@@ -76,7 +76,7 @@ fun AodCompassPortrait(
                     state = state,
                     width = playerWidth,
                     onIntent = onIntent,
-                    modifier = Modifier.padding(top = CompassMetrics.MediaGap),
+                    modifier = Modifier.padding(top = if (state.hasCompassStatus()) CompassMetrics.MediaGap else 0.dp),
                 )
             }
         }
@@ -278,6 +278,9 @@ private fun CompassPlayer(
 
 private fun AodState.isDateRowShown(): Boolean =
     extras.isDateEnabled || (weather != null && AodComponentValue.WEATHER in appearance.theme.value.spec.components)
+
+private fun AodState.hasCompassStatus(): Boolean =
+    (battery != null && extras.isBatteryEnabled) || isFlashlightOn || notifications.icons.isNotEmpty() || notifications.latest != null
 
 @Preview(widthDp = 393, heightDp = 873)
 @Composable

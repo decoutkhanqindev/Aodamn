@@ -52,6 +52,7 @@ import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.frame.AodFr
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.gradientline.AodGradientLineMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.halfmoon.AodHalfMoonMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.mono.AodMonoMedia
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.orbit.AodOrbitMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.pebble.AodPebbleMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.quarters.AodQuartersMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.ripple.AodRippleMedia
@@ -112,6 +113,7 @@ fun AodMediaControls(
                 AodThemeValue.WORDS -> AodWordsMedia(media = target, config = theme.config, onIntent = onIntent)
                 AodThemeValue.FRAME -> AodFrameMedia(media = target, config = theme.config, onIntent = onIntent)
                 AodThemeValue.MONO -> AodMonoMedia(media = target, config = theme.config, onIntent = onIntent)
+                AodThemeValue.ORBIT -> AodOrbitMedia(media = target, config = theme.config, onIntent = onIntent)
             }
         }
     }

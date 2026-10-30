@@ -15,6 +15,7 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.frame.FrameTheme
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.gradientline.GradientLineThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.halfmoon.HalfMoonThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.mono.MonoThemeSpec
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.orbit.OrbitThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.pebble.AodTileStyleValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.quarters.AodQuartersDigitStyleValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.quarters.QuartersThemeSpec
@@ -27,6 +28,7 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.words.WordsTheme
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
 import com.decoutkhanqindev.aodamn.presentation.theme.Amber
 import com.decoutkhanqindev.aodamn.presentation.theme.Aquamarine
+import com.decoutkhanqindev.aodamn.presentation.theme.Brick
 import com.decoutkhanqindev.aodamn.presentation.theme.Cream
 import com.decoutkhanqindev.aodamn.presentation.theme.Grey9A
 import com.decoutkhanqindev.aodamn.presentation.theme.GreyB4
@@ -37,6 +39,7 @@ import com.decoutkhanqindev.aodamn.presentation.theme.Ink
 import com.decoutkhanqindev.aodamn.presentation.theme.Orchid
 import com.decoutkhanqindev.aodamn.presentation.theme.Peach
 import com.decoutkhanqindev.aodamn.presentation.theme.Ruby
+import com.decoutkhanqindev.aodamn.presentation.theme.Sage
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -82,6 +85,7 @@ class AodThemeSpecTest {
                     AodThemeValue.WORDS,
                     AodThemeValue.FRAME,
                     AodThemeValue.MONO,
+                    AodThemeValue.ORBIT,
                 )
             assertEquals("${theme.id}: ghi nhớ", isChain, AodBlockValue.MEMO in theme.spec.ownBlocks)
             assertEquals("${theme.id}: sự kiện", isChain, AodBlockValue.EVENTS in theme.spec.ownBlocks)
@@ -607,6 +611,50 @@ class AodThemeSpecTest {
     }
 
     @Test
+    fun `orbit keeps the reference size, digital clock and planet colors, runs live and has no drawing`() {
+        val spec = AodThemeValue.ORBIT.spec
+        assertEquals(
+            setOf(
+                AodComponentValue.DATE,
+                AodComponentValue.BATTERY,
+                AodComponentValue.WEATHER,
+                AodComponentValue.EVENTS,
+                AodComponentValue.MEMO,
+                AodComponentValue.NOTIFICATIONS,
+                AodComponentValue.MEDIA,
+            ),
+            spec.components,
+        )
+        assertEquals(setOf(AodBlockValue.DATE, AodBlockValue.STATUS, AodBlockValue.MEDIA), spec.ownBlocks)
+        assertEquals(true, spec.hasNotificationContent)
+        assertEquals(true, spec.isLiveInPreview)
+        assertEquals(65..90, OrbitThemeSpec.Size.range)
+        assertEquals(80, OrbitThemeSpec.Size.default)
+        assertEquals(true, OrbitThemeSpec.Digital.default)
+        assertEquals(Brick, OrbitThemeSpec.HourColor.default)
+        assertEquals(Sage, OrbitThemeSpec.MinuteColor.default)
+        assertEquals(Grey9A, OrbitThemeSpec.SecondColor.default)
+        assertEquals(GreyED, OrbitThemeSpec.ClockColor.default)
+        assertEquals(GreyE4, OrbitThemeSpec.DateColor.default)
+        assertEquals(GreyB4, OrbitThemeSpec.StatusColor.default)
+        assertEquals(GreyE4, OrbitThemeSpec.MediaColor.default)
+        assertEquals(
+            listOf(
+                OrbitThemeSpec.Size,
+                OrbitThemeSpec.Digital,
+                OrbitThemeSpec.HourColor,
+                OrbitThemeSpec.MinuteColor,
+                OrbitThemeSpec.SecondColor,
+                OrbitThemeSpec.ClockColor,
+                OrbitThemeSpec.DateColor,
+                OrbitThemeSpec.StatusColor,
+                OrbitThemeSpec.MediaColor,
+            ),
+            spec.options,
+        )
+    }
+
+    @Test
     fun `only themes with real time motion run in real time in previews`() {
         val liveThemes = setOf(
             AodThemeValue.COMPASS,
@@ -615,6 +663,7 @@ class AodThemeSpecTest {
             AodThemeValue.TICK,
             AodThemeValue.QUARTERS,
             AodThemeValue.SECTOR,
+            AodThemeValue.ORBIT,
         )
         AodThemeValue.entries.forEach { theme ->
             assertEquals("${theme.id}: xem trước theo giờ thật", theme in liveThemes, theme.spec.isLiveInPreview)

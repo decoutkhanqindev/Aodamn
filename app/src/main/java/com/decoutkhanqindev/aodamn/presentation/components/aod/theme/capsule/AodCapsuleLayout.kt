@@ -111,7 +111,7 @@ private fun CapsuleClockAndDate(
         AodCapsuleClock(nowMillis = state.nowMillis, config = config, unit = unit)
 
         Row(
-            modifier = Modifier.padding(top = unit * CapsuleMetrics.DATE_TOP),
+            modifier = Modifier.padding(top = if (state.extras.isDateEnabled || (isWeatherShown && state.weather != null)) unit * CapsuleMetrics.DATE_TOP else 0.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             AnimatedVisibility(visible = state.extras.isDateEnabled) {

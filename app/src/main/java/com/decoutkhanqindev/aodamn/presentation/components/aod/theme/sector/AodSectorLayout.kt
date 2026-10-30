@@ -90,7 +90,16 @@ fun AodSectorPortrait(
                     .sectorFade(isVertical = true, isReversed = true),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                SectorPlayer(state = state, onIntent = onIntent, modifier = Modifier.padding(SectorMetrics.PlayerMargin))
+                SectorPlayer(
+                    state = state,
+                    onIntent = onIntent,
+                    modifier = Modifier.padding(
+                        start = SectorMetrics.PlayerMargin,
+                        top = SectorMetrics.PlayerMargin,
+                        end = SectorMetrics.PlayerMargin,
+                        bottom = if (state.isSectorBatteryShown()) SectorMetrics.PlayerMargin else 0.dp,
+                    ),
+                )
 
                 SectorBattery(state = state, modifier = Modifier.padding(bottom = SectorMetrics.BatteryBottom))
             }
@@ -155,7 +164,7 @@ fun AodSectorLandscape(
                             SectorPlayer(
                                 state = state,
                                 onIntent = onIntent,
-                                modifier = Modifier.padding(bottom = SectorMetrics.LandscapePlayerGap),
+                                modifier = Modifier.padding(bottom = if (state.isSectorBatteryShown()) SectorMetrics.LandscapePlayerGap else 0.dp),
                             )
                         }
 
@@ -337,6 +346,8 @@ private fun SectorPlayer(
         }
     }
 }
+
+private fun AodState.isSectorBatteryShown(): Boolean = (battery != null && extras.isBatteryEnabled) || isFlashlightOn
 
 private fun Modifier.sectorFade(isVertical: Boolean, isReversed: Boolean): Modifier = drawWithCache {
     val stops = arrayOf(0f to BlackAlpha50, SectorMetrics.FADE_MIDDLE to BlackAlpha20, 1f to Color.Transparent)

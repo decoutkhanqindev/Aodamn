@@ -81,6 +81,7 @@
     <string name="theme_words">Words</string>
     <string name="theme_frame">Frame</string>
     <string name="theme_mono">Mono</string>
+    <string name="theme_orbit">Orbit</string>
     <string name="theme_in_use">In use</string>
     <string name="theme_edit">Edit</string>
     <string name="theme_saved">Theme saved</string>
@@ -145,6 +146,7 @@
     <string name="theme_opt_card_background">Card background</string>
     <string name="theme_opt_weight">Weight</string>
     <string name="theme_opt_fade">Fade</string>
+    <string name="theme_opt_digital_clock">Digital clock</string>
     <string name="font_weight_thin">Thin</string>
     <string name="font_weight_light">Light</string>
     <string name="font_weight_regular">Regular</string>
@@ -393,6 +395,7 @@
     <string name="aod_words_spellout_pattern" translatable="false">"{0,spellout}"</string>
     <string name="aod_frame_date_pattern" translatable="false">"EEEE dd"</string>
     <string name="aod_mono_date_pattern" translatable="false">"EEEE, dd MMM"</string>
+    <string name="aod_orbit_date_pattern" translatable="false">dd MMMM yyyy</string>
     <string name="aod_date_weekday_pattern" translatable="false">EEEE</string>
     <string name="aod_date_day_pattern" translatable="false">d MMMM</string>
     <string name="aod_date_full_pattern" translatable="false">EEEE, d MMMM</string>
@@ -429,6 +432,7 @@
     <string name="aod_clip_notification" translatable="false">%1$s: %2$s</string>
     <string name="aod_frame_notification" translatable="false">%1$s: %2$s</string>
     <string name="aod_mono_notification" translatable="false">%1$s: %2$s</string>
+    <string name="aod_orbit_notification" translatable="false">%1$s: %2$s</string>
     <string name="aod_hint">Double-tap to exit</string>
     <string name="aod_battery" translatable="false">%1$d%%</string>
     <string name="aod_battery_charging">Charging · %1$d%%</string>

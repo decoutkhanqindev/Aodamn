@@ -155,8 +155,8 @@ private fun QuartersHands(
             val minute = handPaint(minuteColors, middle, minuteTip, shadow, Paint.Style.STROKE, QuartersMetrics.MINUTE_WIDTH * radius)
             val secondTip = Offset(middle.x, middle.y - QuartersMetrics.SECOND_LENGTH * radius)
             val second = handPaint(secondColors, middle, secondTip, shadow, Paint.Style.STROKE, QuartersMetrics.SECOND_WIDTH * radius)
-            val dot = handPaint(secondColors, Offset(middle.x, middle.y - radius), Offset(middle.x, middle.y + radius), 0f, Paint.Style.FILL, 0f)
             val dotRadius = QuartersMetrics.DOT_RADIUS * radius
+            val dot = handPaint(secondColors, Offset(middle.x, middle.y - dotRadius), Offset(middle.x, middle.y + dotRadius), 0f, Paint.Style.FILL, 0f)
 
             onDrawBehind {
                 val millis = epochMillis()

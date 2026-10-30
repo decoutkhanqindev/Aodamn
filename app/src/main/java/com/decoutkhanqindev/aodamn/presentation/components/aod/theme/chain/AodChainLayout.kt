@@ -57,7 +57,7 @@ fun AodChainPortrait(
                     state = state,
                     isStatusShown = true,
                     isExtrasShown = true,
-                    modifier = Modifier.padding(top = ChainMetrics.ClockGap),
+                    topGap = ChainMetrics.ClockGap,
                 )
             }
 
@@ -123,7 +123,7 @@ private fun ChainHero(
             state = state,
             isStatusShown = true,
             isExtrasShown = false,
-            modifier = Modifier.padding(top = ChainMetrics.ClockGap),
+            topGap = ChainMetrics.ClockGap,
         )
     }
 }

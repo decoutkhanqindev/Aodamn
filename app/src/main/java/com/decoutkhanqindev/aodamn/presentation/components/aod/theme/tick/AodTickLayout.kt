@@ -221,11 +221,13 @@ private fun TickPlayer(
         visible = state.media != null && AodComponentValue.MEDIA in state.appearance.theme.value.spec.components,
         modifier = modifier,
     ) {
-        Box(modifier = Modifier.padding(bottom = TickMetrics.PlayerGap)) {
+        Box(modifier = Modifier.padding(bottom = if (state.isTickBatteryShown()) TickMetrics.PlayerGap else 0.dp)) {
             AodPanelBlock(block = AodPanelBlockValue.MEDIA, state = state, onIntent = onIntent)
         }
     }
 }
+
+private fun AodState.isTickBatteryShown(): Boolean = (battery != null && extras.isBatteryEnabled) || isFlashlightOn
 
 @Preview(widthDp = 393, heightDp = 873)
 @Composable

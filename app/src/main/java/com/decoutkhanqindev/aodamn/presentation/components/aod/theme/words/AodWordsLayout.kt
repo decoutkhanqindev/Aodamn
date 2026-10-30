@@ -83,7 +83,7 @@ fun AodWordsPortrait(
             WordsPlayer(
                 state = state,
                 onIntent = onIntent,
-                modifier = Modifier.padding(start = WordsMetrics.SideMargin, end = WordsMetrics.SideMargin, bottom = WordsMetrics.PlayerGap),
+                modifier = Modifier.padding(start = WordsMetrics.SideMargin, end = WordsMetrics.SideMargin, bottom = if (state.isWordsBatteryShown()) WordsMetrics.PlayerGap else 0.dp),
             )
 
             WordsBattery(state = state, modifier = Modifier.padding(bottom = WordsMetrics.BatteryBottom))
@@ -103,6 +103,11 @@ fun AodWordsLandscape(
         hasLatest -> WordsMetrics.LandscapeLatestGap
         hasIcons -> WordsMetrics.LandscapeIconsGap
         else -> 0.dp
+    }
+    val batteryGap = when {
+        !state.isWordsBatteryShown() -> 0.dp
+        hasMedia -> WordsMetrics.LandscapePlayerGap
+        else -> playerGap
     }
 
     Row(modifier = Modifier.fillMaxSize()) {
@@ -135,7 +140,7 @@ fun AodWordsLandscape(
 
             WordsBattery(
                 state = state,
-                modifier = Modifier.padding(top = if (hasMedia) WordsMetrics.LandscapePlayerGap else playerGap),
+                modifier = Modifier.padding(top = batteryGap),
             )
         }
 
@@ -305,6 +310,8 @@ private fun AodState.isWordsWeatherShown(): Boolean =
 
 private fun AodState.isWordsMediaShown(): Boolean =
     media != null && AodComponentValue.MEDIA in appearance.theme.value.spec.components
+
+private fun AodState.isWordsBatteryShown(): Boolean = (battery != null && extras.isBatteryEnabled) || isFlashlightOn
 
 @Preview(widthDp = 393, heightDp = 873)
 @Composable
