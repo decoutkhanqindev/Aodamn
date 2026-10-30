@@ -13,7 +13,7 @@ Play đang làm, kể cả việc dùng quyền "Hiển thị trên ứng dụng
 
 Tài liệu khác:
 
-- [CLAUDE.md](CLAUDE.md): rule kiến trúc và quy ước code của project. Claude Code tự đọc file này.
+- [Kiro steering](.kiro/steering/aodamn.md): rule kiến trúc và quy ước code của project. Kiro tự đọc file này.
 - [CHANGELOG.md](CHANGELOG.md): các thay đổi, kể cả lịch sử của FakeAOD.
 - [COMPARISON.md](COMPARISON.md): so sánh kỹ thuật và tính năng với Always On AMOLED.
 
@@ -1395,7 +1395,7 @@ Log của app đi qua Timber nên chỉ có ở bản debug. Cách đọc log:
   kiện vừa thêm hiện ở lần AOD sau, hoặc sau tối đa 15 phút nếu đồng hồ đang hiện.
 - **Hình vẽ nhanh** chỉ có một màu và không xoá từng nét; mở lại khung vẽ là vẽ hình mới.
 - **Form consent có thể hiện trên AOD** nếu nó tải xong đúng lúc AOD đang mở (rất hiếm), xem
-  CLAUDE.md › Ads.
+  .kiro/steering/aodamn.md › Ads.
 
 ## targetSdk 37
 

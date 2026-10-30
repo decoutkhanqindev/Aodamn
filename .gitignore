@@ -16,8 +16,9 @@
 .cxx
 local.properties
 .kotlin
-# Claude Code: quyền cục bộ của từng máy; cache của script trong skill
+# Agent tool local permissions; local script cache
 .claude/settings.local.json
+.kiro/settings.local.json
 __pycache__/
 # Ảnh chụp app tham khảo (của bên thứ ba): chỉ để đọc khi làm, không đưa lên repo
 /reference/
