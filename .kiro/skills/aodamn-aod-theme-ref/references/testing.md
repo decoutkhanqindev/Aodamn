@@ -100,7 +100,8 @@ android emulator start Pixel_7_Pro
 adb devices -l
 ```
 
-Có thể đổi serial bằng `AOD_TEST_SERIAL`, nhưng AVD vẫn phải là `Pixel_7_Pro`. Quyền Xiaomi riêng của ROM vẫn kiểm tay trên máy Xiaomi.
+Có thể đổi serial bằng `AOD_TEST_SERIAL` và AVD bằng `AOD_TEST_AVD`. Mặc định vẫn là `emulator-5554` và `Pixel_7_Pro`.
+Quyền Xiaomi riêng của ROM vẫn kiểm tay trên máy Xiaomi.
 
 ## Lệnh
 

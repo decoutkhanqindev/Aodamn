@@ -25,7 +25,7 @@ J=app/src/main/java/com/decoutkhanqindev/aodamn/presentation
 TEST_ROOT=app/src/androidTest/java/com/decoutkhanqindev/aodamn/testing
 DEBUG_TEST_ROOT=app/src/debug/java/com/decoutkhanqindev/aodamn/testing
 SERIAL="${AOD_TEST_SERIAL:-emulator-5554}"
-AVD_NAME="Pixel_7_Pro"
+AVD_NAME="${AOD_TEST_AVD:-Pixel_7_Pro}"
 TEST_PACKAGE="com.decoutkhanqindev.aodamn.test"
 RUN_ID="$(date -u +%Y%m%dT%H%M%SZ)-$PKG-$MODE"
 REPORT="build/theme-tests/$RUN_ID"
@@ -233,8 +233,9 @@ mark_group() {
   printf '%s\n' "$hash" > "$CACHE/$group.sha256"
 }
 passed_theme_groups() {
-  local xml="app/build/outputs/androidTest-results/connected/debug/TEST-Pixel_7_Pro(AVD) - 17.xml"
-  [ -f "$xml" ] || return
+  local xml
+  xml="$(find app/build/outputs/androidTest-results/connected/debug -maxdepth 1 -type f -name 'TEST-*.xml' -print -quit 2>/dev/null)"
+  [ -n "$xml" ] || return
   "$PYTHON" -I -X utf8 - "$xml" "$@" <<'PY'
 import sys
 from xml.etree import ElementTree
