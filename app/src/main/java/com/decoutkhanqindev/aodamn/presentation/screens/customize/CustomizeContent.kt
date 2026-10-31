@@ -56,7 +56,6 @@ fun CustomizeContent(
     state: CustomizeState,
     onIntent: (CustomizeIntent) -> Unit,
     bannerAd: @Composable () -> Unit,
-    onPeekingChange: (Boolean) -> Unit = {},
 ) {
     val preview = rememberAodPreview(
         draft = state.draft,
@@ -75,10 +74,6 @@ fun CustomizeContent(
 
     SideEffect(state.guideStep) {
         state.guideStep?.let { step -> lastGuideStep = step }
-    }
-
-    SideEffect(isPeeking) {
-        onPeekingChange(isPeeking)
     }
 
     Box(

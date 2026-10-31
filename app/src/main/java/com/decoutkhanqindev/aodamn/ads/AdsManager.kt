@@ -66,8 +66,28 @@ class AdsManager : KoinComponent, Application.ActivityLifecycleCallbacks, Tag {
         BannerAdUnit(floors = listOf(BuildConfig.BANNER_SPLASH_ALL_ID to "banner_splash_all"))
     }
 
-    val bannerOnboarding: BannerAdUnit by lazy {
-        BannerAdUnit(floors = listOf(BuildConfig.BANNER_ONBOARDING_ALL_ID to "banner_onboarding_all"))
+    val bannerOnboardingLanguage: BannerAdUnit by lazy {
+        BannerAdUnit(
+            floors = listOf(
+                BuildConfig.BANNER_ONBOARDING_LANGUAGE_ALL_ID to "banner_onboarding_language_all"
+            )
+        )
+    }
+
+    val bannerOnboardingCustomize: BannerAdUnit by lazy {
+        BannerAdUnit(
+            floors = listOf(
+                BuildConfig.BANNER_ONBOARDING_CUSTOMIZE_ALL_ID to "banner_onboarding_customize_all"
+            )
+        )
+    }
+
+    val bannerOnboardingPermission: BannerAdUnit by lazy {
+        BannerAdUnit(
+            floors = listOf(
+                BuildConfig.BANNER_ONBOARDING_PERMISSION_ALL_ID to "banner_onboarding_permission_all"
+            )
+        )
     }
 
     val bannerMain: BannerAdUnit by lazy {

@@ -88,7 +88,17 @@ android {
             )
             buildConfigField(
                 "String",
-                "BANNER_ONBOARDING_ALL_ID",
+                "BANNER_ONBOARDING_LANGUAGE_ALL_ID",
+                "\"ca-app-pub-3940256099942544/9214589741\""
+            )
+            buildConfigField(
+                "String",
+                "BANNER_ONBOARDING_CUSTOMIZE_ALL_ID",
+                "\"ca-app-pub-3940256099942544/9214589741\""
+            )
+            buildConfigField(
+                "String",
+                "BANNER_ONBOARDING_PERMISSION_ALL_ID",
                 "\"ca-app-pub-3940256099942544/9214589741\""
             )
             buildConfigField(
@@ -122,7 +132,17 @@ android {
             )
             buildConfigField(
                 "String",
-                "BANNER_ONBOARDING_ALL_ID",
+                "BANNER_ONBOARDING_LANGUAGE_ALL_ID",
+                "\"ca-app-pub-3940256099942544/9214589741\""
+            )
+            buildConfigField(
+                "String",
+                "BANNER_ONBOARDING_CUSTOMIZE_ALL_ID",
+                "\"ca-app-pub-3940256099942544/9214589741\""
+            )
+            buildConfigField(
+                "String",
+                "BANNER_ONBOARDING_PERMISSION_ALL_ID",
                 "\"ca-app-pub-3940256099942544/9214589741\""
             )
             buildConfigField(

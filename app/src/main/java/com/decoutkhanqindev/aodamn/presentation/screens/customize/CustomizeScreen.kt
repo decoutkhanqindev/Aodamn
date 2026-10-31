@@ -55,7 +55,6 @@ fun CustomizeScreen(
     backStack: NavBackStack<NavKey>,
     isFirstOpen: Boolean,
     rootBackStack: NavBackStack<NavKey> = backStack,
-    onPeekingChange: (Boolean) -> Unit = {},
 ) {
     val context = LocalContext.current
     val resources = LocalResources.current
@@ -194,8 +193,17 @@ fun CustomizeScreen(
         CustomizeContent(
             state = state,
             onIntent = viewModel::onIntent,
-            bannerAd = { if (!isFirstOpen) BannerAdView(adUnit = { adsManager.bannerCustomize }) },
-            onPeekingChange = onPeekingChange,
+            bannerAd = {
+                BannerAdView(
+                    adUnit = {
+                        if (isFirstOpen) {
+                            adsManager.bannerOnboardingCustomize
+                        } else {
+                            adsManager.bannerCustomize
+                        }
+                    }
+                )
+            },
         )
 
         AppToastHost(

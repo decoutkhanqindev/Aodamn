@@ -207,8 +207,7 @@ bắt buộc (compiler không chặn hộ):
   trong `AppNavDisplay` (hàm bọc `entry`, tự cấp `LocalTag` = tên class của destination;
   `AodActivity` tự cấp `"AodScreen"`). `NavDisplay` phải đủ 2 decorator (saveable state holder +
   ViewModel store).
-- Onboarding lần đầu = `OnboardingDestination` → `OnboardingNavDisplay`: back stack riêng (Ngôn ngữ → Tùy chỉnh → Quyền), banner
-  chung ở đáy (tiêu thụ inset thanh điều hướng cho màn bên trong, slot banner chừa); Screen trong đó nhận `backStack` (onboarding)
+- Onboarding lần đầu = `OnboardingDestination` → `OnboardingNavDisplay`: back stack riêng (Ngôn ngữ → Tùy chỉnh → Quyền), mỗi Screen tự giữ banner riêng và slot tự chừa thanh điều hướng; Screen trong đó nhận `backStack` (onboarding)
   + `rootBackStack` (gốc: vào Main, màn chủ đề). Ngôn ngữ / Tùy chỉnh mở từ Cài đặt / Main vẫn là destination gốc.
 - Main = `MainNavDisplay` (theo mẫu `AppNavDisplay`): `Scaffold` chứa thanh trên chung của tab
   (`MainTopBar`: tiêu đề theo tab, IAP / Share xử lý ngay đó), `NavDisplay` của các tab và thanh tab (`AppEditorTab` như thanh tab của màn sửa);
@@ -278,10 +277,9 @@ bắt buộc (compiler không chặn hộ):
 
 ## Ads
 
-Placement: `interSplash` + `bannerSplash` (Splash, banner chỉ tải khi đã có kết quả consent), banner đáy màn `bannerOnboarding`
-(3 màn onboarding chung, đặt ở `OnboardingNavDisplay` ngoài `NavDisplay` nên chuyển màn không tải lại), `bannerMain` (3 tab chung),
+Placement: `interSplash` + `bannerSplash` (Splash, banner chỉ tải khi đã có kết quả consent), banner đáy từng màn onboarding: `bannerOnboardingLanguage`, `bannerOnboardingCustomize`, `bannerOnboardingPermission`, `bannerMain` (3 tab chung),
 `bannerThemeEditor` (xem + sửa), `bannerCustomize` (Tùy chỉnh mở từ tab AOD); id đang là test id Google.
-Banner: Screen truyền slot `bannerAd` xuống Content (màn trong onboarding không tự đặt banner), màn có thanh dưới
+Banner: Screen truyền slot `bannerAd` xuống Content, kể cả từng màn onboarding; màn có thanh dưới
 qua `AppBottomAdSlot` đặt dưới thanh (slot tự chừa thanh điều hướng nên thanh bên trên không chừa nữa; ẩn tạm thì
 `isHidden`, không bỏ khỏi composition kẻo banner tải lại).
 

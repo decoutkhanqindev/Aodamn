@@ -210,8 +210,7 @@ app xin, nên không có trong danh sách trên: `AodTileService` (`BIND_QUICK_S
 - **Mở app:** Splash xin consent (form UMP, chỉ hiện khi cần) rồi hiện quảng cáo xen kẽ (đang là id
   test của Google), sau đó vào màn hình chính. Splash cần mạng; mất mạng thì hộp thoại "Không có kết
   nối Internet" chặn màn hình.
-- **Banner** (id test của Google) ở đáy: Splash (khi đã có kết quả consent), 3 màn onboarding (ngôn ngữ, Tùy chỉnh, quyền: một
-  banner chung ở `OnboardingNavDisplay`, chuyển màn không tải lại; ngôn ngữ mở từ Cài đặt thì không có), 3 tab chính (dưới thanh tab, một banner chung), màn chủ đề (cả lúc xem lẫn lúc sửa, một banner), Tùy chỉnh mở
+- **Banner** (id test của Google) ở đáy: Splash (khi đã có kết quả consent), 3 màn onboarding (Ngôn ngữ, Tùy chỉnh, Quyền: mỗi màn có một banner và một placement riêng; Ngôn ngữ mở từ Cài đặt thì không có), 3 tab chính (dưới thanh tab, một banner chung), màn chủ đề (cả lúc xem lẫn lúc sửa, một banner), Tùy chỉnh mở
   từ tab AOD. Nhấn giữ khung xem trước để xem toàn màn hình thì banner trượt xuống cùng các thanh. Không bao giờ có quảng cáo
   trên đồng hồ AOD.
 - **Lần đầu mở app:** sau Splash là màn chọn ngôn ngữ, đã chọn sẵn ngôn ngữ của máy (ngôn ngữ của

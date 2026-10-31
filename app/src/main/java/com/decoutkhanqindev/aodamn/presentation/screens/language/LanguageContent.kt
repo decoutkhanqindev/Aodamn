@@ -39,6 +39,7 @@ import kotlinx.collections.immutable.persistentListOf
 fun LanguageContent(
     state: LanguageState,
     onIntent: (LanguageIntent) -> Unit,
+    bannerAd: @Composable () -> Unit = {},
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -59,6 +60,7 @@ fun LanguageContent(
                 actionLabel = stringResource(if (state.isFirstOpen) R.string.action_continue else R.string.action_done),
                 isActionEnabled = state.isConfirmEnabled,
                 onAction = { onIntent(LanguageIntent.ConfirmLanguage) },
+                ad = bannerAd,
             )
         },
     ) { innerPadding ->

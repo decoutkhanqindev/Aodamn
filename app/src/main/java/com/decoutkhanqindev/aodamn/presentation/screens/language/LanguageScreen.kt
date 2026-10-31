@@ -5,6 +5,8 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
+import com.decoutkhanqindev.aodamn.ads.AdsManager
+import com.decoutkhanqindev.aodamn.ads.composables.BannerAdView
 import com.decoutkhanqindev.aodamn.presentation.components.LocalTag
 import com.decoutkhanqindev.aodamn.presentation.effects.LaunchedWithLifecycleEffect
 import com.decoutkhanqindev.aodamn.presentation.navigation.CustomizeDestination
@@ -12,6 +14,7 @@ import com.decoutkhanqindev.aodamn.presentation.screens.language.state.LanguageE
 import com.decoutkhanqindev.aodamn.utils.collectCatching
 import com.decoutkhanqindev.aodamn.utils.navigateBack
 import com.decoutkhanqindev.aodamn.utils.navigateTo
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import timber.log.Timber
@@ -23,6 +26,7 @@ fun LanguageScreen(
 ) {
     val tag = LocalTag.current
     val viewModel: LanguageViewModel = koinViewModel { parametersOf(isFirstOpen) }
+    val adsManager: AdsManager = koinInject()
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     LaunchedWithLifecycleEffect {
@@ -43,5 +47,10 @@ fun LanguageScreen(
     LanguageContent(
         state = state,
         onIntent = viewModel::onIntent,
+        bannerAd = {
+            if (isFirstOpen) {
+                BannerAdView(adUnit = { adsManager.bannerOnboardingLanguage })
+            }
+        },
     )
 }
