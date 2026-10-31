@@ -11,7 +11,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
@@ -71,13 +70,15 @@ fun AodCompassDial(
     if (isLive) {
         LaunchedEffect(hasSeconds) {
             while (true) {
-                if (hasSeconds) {
-                    withFrameMillis { clockMillis.longValue = System.currentTimeMillis() }
-                } else {
-                    val now = System.currentTimeMillis()
-                    clockMillis.longValue = now
-                    delay(CompassTime.millisToNextMinute(now))
-                }
+                val now = System.currentTimeMillis()
+                clockMillis.longValue = now
+                delay(
+                    if (hasSeconds) {
+                        100L - now % 100L
+                    } else {
+                        CompassTime.millisToNextMinute(now)
+                    }
+                )
             }
         }
     }

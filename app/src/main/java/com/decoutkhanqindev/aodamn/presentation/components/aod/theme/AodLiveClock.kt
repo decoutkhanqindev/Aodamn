@@ -5,7 +5,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableLongState
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.withFrameMillis
+import kotlinx.coroutines.delay
 
 @Composable
 fun rememberLiveClockMillis(isLive: Boolean): MutableLongState {
@@ -14,7 +14,9 @@ fun rememberLiveClockMillis(isLive: Boolean): MutableLongState {
     if (isLive) {
         LaunchedEffect(Unit) {
             while (true) {
-                withFrameMillis { clockMillis.longValue = System.currentTimeMillis() }
+                val now = System.currentTimeMillis()
+                clockMillis.longValue = now
+                delay(100L - now % 100L)
             }
         }
     }
