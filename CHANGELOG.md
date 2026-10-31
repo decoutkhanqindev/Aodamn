@@ -7,6 +7,67 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-10-31 – Test tự động chủ đề AOD
+
+Thêm Dropshots 0.6.0 và bộ test dùng chung. Contract JVM chọn đúng theme `flip` pass; test theme cuối trên AVD `Pixel_7_Pro` API 37 pass
+5/5 lớp (mở từ lưới, đổi / reset / apply / mở lại, tám ảnh toàn màn, option board, ba khung motion); test block chung pass 30/30. Không
+chạy full suite / lint vì đó là cổng trước phát hành. `tools/check-rules.sh` ra 0 vi phạm.
+
+### Thêm
+
+- `ThemeExpectation` dùng chung ở debug source: mỗi theme chỉ thêm một mục gồm option key, component, own block, cờ nội dung thông báo / live
+  preview và mốc chuyển động. `ThemeOptionCases` đọc `ThemeSpec` để tự sinh mọi Choice, Range thấp / mặc định / cao, Toggle tắt / bật, Color
+  solid / gradient và mọi cặp option; JVM kiểm từng option đổi config, reset về mặc định và chuỗi lưu đọc lại giữ nguyên.
+- `ThemeTestActivity` gọi thẳng `AodContent`; mỗi hướng mở một Activity rồi đổi bốn profile REFERENCE / MINIMUM / DEFAULT / MAXIMUM, nên tám
+  ảnh chỉ mở hai Activity. `AodThemeOptionScreenshotTest` gom mọi giá trị option vào một ảnh lưới; `AodThemeMotionTest` so Dropshots đúng khung
+  0 / 400 / 800ms; motion cho phép tối đa 16 pixel chống lệch khử răng cưa trên hơn 4 triệu pixel.
+- `AodThemeFlowTest` mở đúng theme từ `AodTabContent`. `AodThemeEditorBehaviorTest` đổi option, reset, apply, chờ DataStore phát giá trị mới,
+  tạo ViewModel mới rồi kiểm theme và config đã lưu. Dữ liệu lịch, thông báo, nhạc, thời tiết, nét vẽ đều giả và có chuỗi dài.
+- `AodSharedBlockScreenshotTest` sinh 30 ảnh cho mọi layout block chung, chỉ chạy khi block đổi. `ThemeDeviceRule` cấp quyền, đặt
+  `isFirstOpen=false`, tắt AOD, khóa 24h / font scale / animation scale đúng một lần cho cả process. Test host không tạo `AdsManager`, nên
+  không sửa `canRequestAds` của app thật.
+- `check_theme.sh` có Fast / Theme / Shared / Full: lọc đúng `themeId`, dùng JUnit suite một class, record riêng theme, block riêng, full trước
+  phát hành; dừng trước máy nếu test rẻ lỗi; khóa đúng một `Pixel_7_Pro` (`emulator-5554`, API 37, 1440 × 3120, 560dpi); cờ record luôn xóa;
+  mỗi lần có run ID, log và báo cáo riêng ở `build/theme-tests/`.
+
+### Thay đổi
+
+- `app` có test runner và plugin Dropshots. Ảnh chuẩn nằm ở `app/src/androidTest/screenshots/`: tám ảnh Thẻ lật, một option board, ba ảnh
+  motion và 30 ảnh block chung. Skill `aodamn-aod-theme-ref` bắt buộc dùng đúng một expectation, test lọc + gộp, không bỏ bằng chứng và không
+  record ảnh lỗi thành ảnh chuẩn.
+
+## [Chưa phát hành] – 2026-10-31 – Chủ đề Thẻ lật
+
+Build được, unit test ép chạy lại và lint pass, `tools/check-rules.sh` ra 0 vi phạm. Chưa test trên máy.
+
+User duyệt mock đầy đủ rồi bảo: "bắt đầu code". Mock chốt giữ đủ năm tuỳ chọn, đổi bốn font không dùng được sang font mở, cho màu thẻ / số
+có gradient, thêm ngày + thời tiết và pin + icon thông báo, bỏ nội dung thông báo mới nhất, sự kiện, ghi nhớ, nét vẽ và nhạc.
+
+### Thêm
+
+- Chủ đề Thẻ lật (Flip Clock số 9 của Muviz Edge; số đo lấy từ `Jan22Screen`, `FlipClock`, `HalfTextView`, hai listener animation và
+  `jan22_screen_layout` dọc / ngang dịch ngược). Hai thẻ vuông giờ / phút giữa màn, dọc xếp trên dưới, ngang xếp trái phải, cách 25dp; cạnh
+  thẻ = min(80% bề ngang, 40% chiều cao) × cỡ ở dọc và đảo hai tỉ lệ ở ngang. Mỗi thẻ chia hai nửa bằng khe 4dp, góc ngoài 20dp, góc sát
+  khe 2dp, nền mặc định Midnight #1C1D25, số GreyED.
+- Khi số đổi, nửa trên cũ gập 0 → −90° trong 400ms, rồi nửa dưới mới mở 90 → 0° trong 400ms; giờ chỉ lật khi đổi giờ, phút lật mỗi phút,
+  theo 12 / 24 giờ của máy. Màn chủ đề và Tùy chỉnh chạy giờ thật, thẻ ở tab AOD vẫn đứng ở 08:30. Brush, path, khung chữ và shader nằm
+  trong cache vẽ; góc xoay và lớp tối chỉ đọc ở pha layer / vẽ, không recompose mỗi khung animation.
+- Tuỳ chọn đủ như app mẫu: Kiểu chữ (9), cỡ thẻ 50–100 (mặc định 65), cỡ số 35–75 (mặc định 55), màu thẻ, màu số; hai màu đều tô được
+  gradient, gradient của mỗi thẻ và số trải liền qua hai nửa. 9 kiểu: Bebas Neue, Big Shoulders Regular thay Hamurz, Big Shoulders Light,
+  Big Shoulders viền đôi thay Metropolis, Tomorrow, Google Sans thay Rubik Light, Fraunces thay Made Canvas, Anton, Rajdhani.
+- Thẻ lật có ngày, thời tiết, pin và icon thông báo bằng khối dùng chung; không có nội dung thông báo mới nhất, sự kiện, ghi nhớ, nét vẽ,
+  nhạc. Ngày + thời tiết ở trên, pin + icon ở dưới; layout đo hai nhóm trước rồi tự giới hạn cỡ thẻ nên kiểu khối cao không chồng thẻ ở
+  cỡ 100. App mẫu chỉ có hai thẻ và tắt mọi cờ block; bốn khối gọn được thêm vì vừa cả hai hướng, các khối lớn bị bỏ vì màn ngang chỉ còn
+  79dp chiều cao khi thẻ ở cỡ 100.
+- Font Bebas Neue Regular, Tomorrow Medium, Rajdhani Bold tĩnh từ Google Fonts, giấy phép OFL riêng; hai font không có tiếng Việt chỉ vẽ
+  chữ số. Dùng lại Big Shoulders Display, Google Sans, Fraunces, Anton. APK thêm khoảng 508KB font.
+
+### Thay đổi
+
+- Chỉ thêm mục `FLIP` ở `AodThemeValue`, nhánh dọc / ngang ở `AodThemeLayout`, nhánh không vẽ nhạc ở `AodMediaControls`, ảnh xem trước
+  chín kiểu bằng chính `AodFlipCard` ở `AodChoicePreview`, màu `Midnight`, ba họ font và chuỗi en / vi; không đổi cách vẽ chủ đề cũ.
+- Mock đầy đủ ở `tools/mockups/aod_landscape_mockups.py` (`w_flip`): chín kiểu chữ, ba bước lật, bốn khung dọc và bốn khung ngang.
+
 ## [Chưa phát hành] – 2026-10-30 – Sửa sau khi rà các chủ đề mới
 
 User yêu cầu: "check lại toàn bộ theme vừa làm với các theme khác ? xem có bị các lỗi nào khác không? sưa hết 1 lần và update generic vào

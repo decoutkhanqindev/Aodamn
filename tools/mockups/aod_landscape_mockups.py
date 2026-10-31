@@ -4708,6 +4708,159 @@ orbit = [
 orbit.append(ss_live_script())
 
 
+# ================================================================== THẺ LẬT
+FC_PANEL = "#1C1D25"
+FC_DIGIT = GE
+FC_STYLES = [
+    ("Bebas Neue", "Bebas Neue", 400, 1.05),
+    ("Big Shoulders Regular*", "Big Shoulders Display", 400, 1.0),
+    ("Big Shoulders Light", "Big Shoulders Display", 300, 0.92),
+    ("Viền đôi*", "Big Shoulders Display", 400, 0.92),
+    ("Tomorrow", "Tomorrow", 500, 0.64),
+    ("Google Sans*", "Google Sans", 400, 0.72),
+    ("Fraunces*", "Fraunces", 400, 0.78),
+    ("Anton", "Anton", 400, 0.8),
+    ("Rajdhani", "Rajdhani", 700, 0.84),
+]
+FC_FONTS = ('<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Big+Shoulders+Display:wght@300;400'
+            '&family=Fraunces:opsz,wght@9..144,400&family=Google+Sans:wght@400&family=Rajdhani:wght@700&family=Tomorrow:wght@500&display=swap">')
+FC_DEFS = ('<linearGradient id="fcPanelGradient" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#283048"/>'
+           '<stop offset=".5" stop-color="#4B3F72"/><stop offset="1" stop-color="#1C1D25"/></linearGradient>'
+           '<linearGradient id="fcDigitGradient" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#F6D365"/>'
+           '<stop offset=".5" stop-color="#FDA085"/><stop offset="1" stop-color="#F6D365"/></linearGradient>')
+FC_N = [0]
+
+
+def fc_piece(x, y, w, h, rtl, rtr, rbr, rbl, fill):
+    d = (f'M{f(x + rtl)},{f(y)}H{f(x + w - rtr)}Q{f(x + w)},{f(y)} {f(x + w)},{f(y + rtr)}V{f(y + h - rbr)}'
+         f'Q{f(x + w)},{f(y + h)} {f(x + w - rbr)},{f(y + h)}H{f(x + rbl)}Q{f(x)},{f(y + h)} {f(x)},{f(y + h - rbl)}'
+         f'V{f(y + rtl)}Q{f(x)},{f(y)} {f(x + rtl)},{f(y)}Z')
+    return f'<path d="{d}" fill="{fill}"/>'
+
+
+def fc_card(cx, cy, size, value, character=55, style=0, panel=FC_PANEL, digit=FC_DIGIT, top_value=None, bottom_value=None):
+    FC_N[0] += 1
+    clip = f"fcc{FC_N[0]}"
+    x, y, gap = cx - size / 2, cy - size / 2, 4.0
+    half = (size - gap) / 2
+    outer, inner = min(20.0, size * .1), min(2.0, size * .02)
+    family, weight, factor = FC_STYLES[style][1:]
+    fs = size * 1.12 * character / 55 * factor / 1.05
+    top_text = value if top_value is None else top_value
+    bottom_text = value if bottom_value is None else bottom_value
+    attrs = (f'x="{f(cx)}" y="{f(cy + fs * .025)}" font-size="{f(fs)}" font-family="{family}" '
+             f'font-weight="{weight}" text-anchor="middle" dominant-baseline="central"')
+    pieces = (fc_piece(x, y, size, half, outer, outer, inner, inner, panel)
+              + fc_piece(x, y + half + gap, size, half, inner, inner, outer, outer, panel))
+    clips = (f'<defs><clipPath id="{clip}t"><rect x="{f(x)}" y="{f(y)}" width="{f(size)}" height="{f(half)}"/></clipPath>'
+             f'<clipPath id="{clip}b"><rect x="{f(x)}" y="{f(y + half + gap)}" width="{f(size)}" height="{f(half)}"/></clipPath></defs>')
+
+    def glyph(text, part):
+        if style != 3:
+            return f'<text {attrs} fill="{digit}" clip-path="url(#{clip}{part})">{text}</text>'
+        return (f'<text {attrs} fill="none" stroke="{digit}" stroke-width="{f(size * .038)}" clip-path="url(#{clip}{part})">{text}</text>'
+                f'<text {attrs} fill="none" stroke="{panel}" stroke-width="{f(size * .016)}" clip-path="url(#{clip}{part})">{text}</text>')
+
+    return clips + pieces + glyph(top_text, "t") + glyph(bottom_text, "b")
+
+
+def fc_status(cx, cy, n=3, charging=False):
+    w = 22 + 6 + 30 + (16 + n * 23 - 8 if n else 0)
+    x = cx - w / 2
+    battery_color = MINT if charging else G
+    s = battery_h(x, cy - 5.5, battery_color) + txt(x + 28, cy + 5, "72%", 14, battery_color, 500)
+    if charging:
+        s += f'<path d="M{f(x + 11)},{f(cy - 4)}l-4,6h4l-2,6l7,-8h-4l2,-4z" fill="#000"/>'
+    if n:
+        s += f'<circle cx="{f(x + 66)}" cy="{f(cy)}" r="2" fill="{G}"/>' + noti_icons(x + 76, cy, G, n)
+    return s
+
+
+def fc_clock(cx, cy, fw, fh, hh=8, mm=30, size=65, character=55, style=0, panel=FC_PANEL, digit=FC_DIGIT, land=False):
+    card = min(fw * (.4 if land else .8), fh * (.8 if land else .4)) * size / 100
+    gap = 25.0
+    if land:
+        left = cx - (2 * card + gap) / 2
+        s = fc_card(left + card / 2, cy, card, f"{hh:02d}", character, style, panel, digit)
+        s += fc_card(left + card + gap + card / 2, cy, card, f"{mm:02d}", character, style, panel, digit)
+        return card, left, cy - card / 2, left + 2 * card + gap, cy + card / 2, s
+    top = cy - (2 * card + gap) / 2
+    s = fc_card(cx, top + card / 2, card, f"{hh:02d}", character, style, panel, digit)
+    s += fc_card(cx, top + card + gap + card / 2, card, f"{mm:02d}", character, style, panel, digit)
+    return card, cx - card / 2, top, cx + card / 2, top + 2 * card + gap, s
+
+
+def fc_portrait(hh=8, mm=30, size=65, character=55, style=0, panel=FC_PANEL, digit=FC_DIGIT, date=True, weather=False, n=3, charging=False,
+                ref=False):
+    _, _, top, _, bottom, s = fc_clock(PW / 2, PH / 2, PW, PH, hh, mm, size, character, style, panel, digit)
+    if ref:
+        return s
+    if date:
+        s += date_spaced(PW / 2, max(28, top - 34), weather)
+    return s + fc_status(PW / 2, min(PH - 28, bottom + 36), n, charging)
+
+
+def fc_landscape(hh=8, mm=30, size=65, character=55, style=0, panel=FC_PANEL, digit=FC_DIGIT, date=True, weather=False, n=3, charging=False,
+                 ref=False):
+    _, _, top, _, bottom, s = fc_clock(W / 2, CY, W, H, hh, mm, size, character, style, panel, digit, land=True)
+    if ref:
+        return s
+    if date:
+        s += date_spaced(W / 2, max(18, top - 24), weather)
+    return s + fc_status(W / 2, min(H - 18, bottom + 24), n, charging)
+
+
+def fc_font_strip():
+    s = ""
+    for i, (label, _, _, _) in enumerate(FC_STYLES):
+        col, row = i % 3, i // 3
+        cx, cy = 145.5 + col * 291, 66 + row * 132
+        s += fc_card(cx, cy, 88, "08", 55, i)
+        s += txt(cx, cy + 62, f"{i + 1} · {label}", 13, DM, 400, "middle")
+    return (f'<p style="font-size:13px;color:var(--text-secondary);margin:1.25rem 0 6px">9 kiểu chữ: dấu * là font mở gần nhất thay font thiếu giấy phép hoặc thiếu tiếng Việt</p>'
+            f'<svg viewBox="0 0 {W} 404" width="100%" role="img" aria-label="Chín kiểu chữ" '
+            f'style="display:block;font-family:\'Plus Jakarta Sans\',sans-serif" fill="{G}"><rect width="{W}" height="404" rx="20" fill="#111"/>{s}</svg>')
+
+
+def fc_motion_strip():
+    xs = (145.5, 436.5, 727.5)
+    cards = (fc_card(xs[0], 105, 150, "07"), fc_card(xs[1], 105, 150, "08", top_value="08", bottom_value="07"),
+             fc_card(xs[2], 105, 150, "08"))
+    labels = (("0 ms", "07"), ("400 ms", "08 / 07"), ("800 ms", "08"))
+    s = ""
+    for x, card, (time, value) in zip(xs, cards, labels):
+        s += card + txt(x, 210, time, 15, G, 700, "middle") + txt(x, 232, value, 13, DM, 400, "middle")
+    s += txt((xs[0] + xs[1]) / 2, 105, "→", 28, DM, 400, "middle") + txt((xs[1] + xs[2]) / 2, 105, "→", 28, DM, 400, "middle")
+    return (f'<p style="font-size:13px;color:var(--text-secondary);margin:1.25rem 0 6px">Một lần lật: nửa trên cũ gập 400 ms, nửa dưới mới mở 400 ms</p>'
+            f'<svg viewBox="0 0 {W} 252" width="100%" role="img" aria-label="Ba bước lật số" '
+            f'style="display:block;font-family:\'Plus Jakarta Sans\',sans-serif" fill="{G}"><rect width="{W}" height="252" rx="20" fill="#111"/>{s}</svg>')
+
+
+flip = [
+    FC_FONTS,
+    fc_font_strip(),
+    fc_motion_strip(),
+    '<div style="font-size:0">',
+    frame_portrait("D1 · Aodamn mặc định 08:30: thẻ dọc giữa màn, ngày trên, pin + icon thông báo dưới",
+                   fc_portrait()),
+    frame_portrait("D2 · 10:27, kiểu 7, nền và số gradient, thời tiết, đang sạc, hai icon thông báo",
+                   fc_portrait(10, 27, style=6, panel="url(#fcPanelGradient)", digit="url(#fcDigitGradient)", weather=True, n=2, charging=True)),
+    frame_portrait("D3 · 21:47, cỡ 100, chữ 75, kiểu 9, tắt ngày, không thông báo: hai thẻ vẫn giữ đúng tâm",
+                   fc_portrait(21, 47, 100, 75, 8, date=False, n=0)),
+    frame_portrait("D4 · App mẫu 08:30: chỉ hai thẻ, nền #1C1D25, số trắng; không có khối nào khác",
+                   fc_portrait(digit="#FFFFFF", ref=True)),
+    '</div>',
+    frame("N1 · Aodamn ngang, bật thời tiết: hai thẻ nằm ngang giữa màn, ngày + thời tiết trên, pin + icon dưới",
+          fc_landscape(weather=True)),
+    frame("N2 · 10:27, kiểu 5, nền và số gradient, đang sạc, hai icon thông báo",
+          fc_landscape(10, 27, style=4, panel="url(#fcPanelGradient)", digit="url(#fcDigitGradient)", n=2, charging=True)),
+    frame("N3 · 21:47, cỡ 100, chữ 75, kiểu 9, tắt ngày, không thông báo: vẫn vừa đủ chiều cao",
+          fc_landscape(21, 47, 100, 75, 8, date=False, n=0)),
+    frame("N4 · App mẫu ngang 08:30: chỉ hai thẻ 65%, nằm giữa màn, không có khối nào khác",
+          fc_landscape(digit="#FFFFFF", ref=True)),
+]
+
+
 words = [
     lw_fonts(),
     lw_strip(),
@@ -4756,6 +4909,7 @@ for name, summary, defs, frames in [
     ("w_frame", "Chủ đề Khung (Box Clock): giờ / phút trong khung viền, cỡ và màu, bốn khung dọc và bốn khung ngang", "", frame_theme),
     ("w_mono", "Chủ đề Đơn cách (Space Mono): giờ trên phút chữ đơn cách, cỡ và màu, bốn khung dọc và bốn khung ngang", "", mono),
     ("w_orbit", "Chủ đề Quỹ đạo (Solar System): ba hành tinh quay theo giờ thật, cỡ và màu, bốn khung dọc và bốn khung ngang", "", orbit),
+    ("w_flip", "Chủ đề Thẻ lật (Flip Clock): chín kiểu chữ, hai bước lật, bốn khung dọc và bốn khung ngang", FC_DEFS, flip),
 ]:
     code = widget(summary, defs, frames)
     OUT.mkdir(parents=True, exist_ok=True)

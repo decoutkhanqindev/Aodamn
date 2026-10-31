@@ -24,6 +24,7 @@ import com.decoutkhanqindev.aodamn.presentation.components.aod.block.AodStatus
 import com.decoutkhanqindev.aodamn.presentation.components.aod.block.AodWeather
 import com.decoutkhanqindev.aodamn.presentation.components.aod.rememberAodPreviewSamples
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.classic.AodClassicFacePreview
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.flip.AodFlipStylePreview
 import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.ClockFaceValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.ClockFontValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.info.AodNotificationsUiModel
@@ -37,6 +38,7 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.info.WeatherConditionV
 import com.decoutkhanqindev.aodamn.presentation.model.aod.info.WeatherUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeChoice
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeUiModel
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.flip.AodFlipStyleValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.component.AodBatteryLayoutValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.component.AodComponentStyle
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.component.AodComponentValue
@@ -58,6 +60,10 @@ fun aodChoicePreview(entry: AodThemeChoice): (@Composable () -> Unit)? = when (e
 
     is ClockFaceValue -> {
         { AodClassicFacePreview(face = entry) }
+    }
+
+    is AodFlipStyleValue -> {
+        { AodFlipStylePreview(style = entry) }
     }
 
     is AodDateLayoutValue -> {

@@ -11,6 +11,9 @@ import androidx.compose.foundation.LocalOverscrollFactory
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.ComposeUiFlags
 import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.lifecycleScope
 import com.decoutkhanqindev.aodamn.ads.AdsManager
 import com.decoutkhanqindev.aodamn.data.local.datastore.DataStoreManager
@@ -61,6 +64,20 @@ class MainActivity : ComponentActivity() {
         lifecycleScope.launch {
             if (dataStoreManager.isAodEnabled.filterNotNull().first()) {
                 AodService.start(this@MainActivity)
+            }
+        }
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus) hideSystemBar()
+    }
+
+    private fun hideSystemBar() {
+        runCatching {
+            WindowCompat.getInsetsController(window, window.decorView).apply {
+                systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                hide(WindowInsetsCompat.Type.navigationBars())
             }
         }
     }

@@ -11,6 +11,8 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.compass.CompassT
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.component.AodComponentValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.fade.AodFadeWeightValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.fade.FadeThemeSpec
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.flip.AodFlipStyleValue
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.flip.FlipThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.frame.FrameThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.gradientline.GradientLineThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.halfmoon.HalfMoonThemeSpec
@@ -36,6 +38,7 @@ import com.decoutkhanqindev.aodamn.presentation.theme.GreyCE
 import com.decoutkhanqindev.aodamn.presentation.theme.GreyE4
 import com.decoutkhanqindev.aodamn.presentation.theme.GreyED
 import com.decoutkhanqindev.aodamn.presentation.theme.Ink
+import com.decoutkhanqindev.aodamn.presentation.theme.Midnight
 import com.decoutkhanqindev.aodamn.presentation.theme.Orchid
 import com.decoutkhanqindev.aodamn.presentation.theme.Peach
 import com.decoutkhanqindev.aodamn.presentation.theme.Ruby
@@ -66,7 +69,7 @@ class AodThemeSpecTest {
     }
 
     @Test
-    fun `only chain owns memo and events and only themes drawing their latest alert keep notification content with their status line`() {
+    fun `only chain owns memo and events and notification content follows theme support`() {
         AodThemeValue.entries.forEach { theme ->
             val isChain = theme == AodThemeValue.CHAIN
             val drawsLatest = isChain ||
@@ -87,11 +90,12 @@ class AodThemeSpecTest {
                     AodThemeValue.MONO,
                     AodThemeValue.ORBIT,
                 )
+            val hasSharedLatest = AodBlockValue.STATUS !in theme.spec.ownBlocks && theme != AodThemeValue.FLIP
             assertEquals("${theme.id}: ghi nhớ", isChain, AodBlockValue.MEMO in theme.spec.ownBlocks)
             assertEquals("${theme.id}: sự kiện", isChain, AodBlockValue.EVENTS in theme.spec.ownBlocks)
             assertEquals(
                 "${theme.id}: nội dung thông báo",
-                drawsLatest || AodBlockValue.STATUS !in theme.spec.ownBlocks,
+                drawsLatest || hasSharedLatest,
                 theme.spec.hasNotificationContent,
             )
         }
@@ -655,6 +659,55 @@ class AodThemeSpecTest {
     }
 
     @Test
+    fun `flip keeps every reference option and only compact blocks`() {
+        val spec = AodThemeValue.FLIP.spec
+        assertEquals(
+            setOf(
+                AodComponentValue.DATE,
+                AodComponentValue.BATTERY,
+                AodComponentValue.WEATHER,
+                AodComponentValue.NOTIFICATIONS,
+            ),
+            spec.components,
+        )
+        assertEquals(emptySet<AodBlockValue>(), spec.ownBlocks)
+        assertEquals(false, spec.hasNotificationContent)
+        assertEquals(true, spec.isLiveInPreview)
+        assertEquals(
+            listOf(
+                AodFlipStyleValue.BEBAS_NEUE,
+                AodFlipStyleValue.BIG_SHOULDERS_REGULAR,
+                AodFlipStyleValue.BIG_SHOULDERS_LIGHT,
+                AodFlipStyleValue.DOUBLE_OUTLINE,
+                AodFlipStyleValue.TOMORROW,
+                AodFlipStyleValue.GOOGLE_SANS,
+                AodFlipStyleValue.FRAUNCES,
+                AodFlipStyleValue.ANTON,
+                AodFlipStyleValue.RAJDHANI,
+            ),
+            FlipThemeSpec.Style.entries,
+        )
+        assertEquals(AodFlipStyleValue.BEBAS_NEUE, FlipThemeSpec.Style.default)
+        assertEquals(50..100, FlipThemeSpec.Size.range)
+        assertEquals(65, FlipThemeSpec.Size.default)
+        assertEquals(35..75, FlipThemeSpec.CharacterSize.range)
+        assertEquals(55, FlipThemeSpec.CharacterSize.default)
+        assertEquals(Midnight, FlipThemeSpec.CardColor.default)
+        assertEquals(GreyED, FlipThemeSpec.DigitColor.default)
+        assertEquals(true, AodFlipStyleValue.DOUBLE_OUTLINE.isDoubleOutline)
+        assertEquals(
+            listOf(
+                FlipThemeSpec.Style,
+                FlipThemeSpec.Size,
+                FlipThemeSpec.CharacterSize,
+                FlipThemeSpec.CardColor,
+                FlipThemeSpec.DigitColor,
+            ),
+            spec.options,
+        )
+    }
+
+    @Test
     fun `only themes with real time motion run in real time in previews`() {
         val liveThemes = setOf(
             AodThemeValue.COMPASS,
@@ -664,6 +717,7 @@ class AodThemeSpecTest {
             AodThemeValue.QUARTERS,
             AodThemeValue.SECTOR,
             AodThemeValue.ORBIT,
+            AodThemeValue.FLIP,
         )
         AodThemeValue.entries.forEach { theme ->
             assertEquals("${theme.id}: xem trước theo giờ thật", theme in liveThemes, theme.spec.isLiveInPreview)

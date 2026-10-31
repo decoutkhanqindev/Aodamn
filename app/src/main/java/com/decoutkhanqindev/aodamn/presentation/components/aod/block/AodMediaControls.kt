@@ -114,6 +114,7 @@ fun AodMediaControls(
                 AodThemeValue.FRAME -> AodFrameMedia(media = target, config = theme.config, onIntent = onIntent)
                 AodThemeValue.MONO -> AodMonoMedia(media = target, config = theme.config, onIntent = onIntent)
                 AodThemeValue.ORBIT -> AodOrbitMedia(media = target, config = theme.config, onIntent = onIntent)
+                AodThemeValue.FLIP -> Unit
             }
         }
     }

@@ -75,6 +75,7 @@
     <string name="theme_frame">Khung</string>
     <string name="theme_mono">Đơn cách</string>
     <string name="theme_orbit">Quỹ đạo</string>
+    <string name="theme_flip">Thẻ lật</string>
     <string name="aod_jersey_date_first_pattern">dd</string>
     <string name="aod_jersey_date_second_pattern">MM</string>
     <string name="aod_bezel_weekday_pattern">EEEE</string>
@@ -143,6 +144,9 @@
     <string name="theme_opt_weight">Độ đậm</string>
     <string name="theme_opt_fade">Phai dần</string>
     <string name="theme_opt_digital_clock">Đồng hồ số</string>
+    <string name="flip_character_size_value">Cỡ số: %1$d%%</string>
+    <string name="flip_style_big_shoulders_light">Big Shoulders, mảnh</string>
+    <string name="flip_style_double_outline">Viền đôi</string>
     <string name="font_weight_thin">Mảnh</string>
     <string name="font_weight_light">Nhẹ</string>
     <string name="font_weight_regular">Thường</string>

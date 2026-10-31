@@ -55,6 +55,9 @@ STATIC_FONTS = {
     "krona_one": [400],
     "lato": [100, 300, 400, 700],
     "space_mono": [400],
+    "bebas_neue": [400],
+    "tomorrow": [500],
+    "rajdhani": [700],
 }
 
 

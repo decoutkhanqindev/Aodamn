@@ -82,6 +82,7 @@
     <string name="theme_frame">Frame</string>
     <string name="theme_mono">Mono</string>
     <string name="theme_orbit">Orbit</string>
+    <string name="theme_flip">Flip</string>
     <string name="theme_in_use">In use</string>
     <string name="theme_edit">Edit</string>
     <string name="theme_saved">Theme saved</string>
@@ -147,6 +148,16 @@
     <string name="theme_opt_weight">Weight</string>
     <string name="theme_opt_fade">Fade</string>
     <string name="theme_opt_digital_clock">Digital clock</string>
+    <string name="flip_character_size_value">Digit size: %1$d%%</string>
+    <string name="flip_style_bebas_neue" translatable="false">Bebas Neue</string>
+    <string name="flip_style_big_shoulders_regular" translatable="false">Big Shoulders</string>
+    <string name="flip_style_big_shoulders_light">Big Shoulders, light</string>
+    <string name="flip_style_double_outline">Double outline</string>
+    <string name="flip_style_tomorrow" translatable="false">Tomorrow</string>
+    <string name="flip_style_google_sans" translatable="false">Google Sans</string>
+    <string name="flip_style_fraunces" translatable="false">Fraunces</string>
+    <string name="flip_style_anton" translatable="false">Anton</string>
+    <string name="flip_style_rajdhani" translatable="false">Rajdhani</string>
     <string name="font_weight_thin">Thin</string>
     <string name="font_weight_light">Light</string>
     <string name="font_weight_regular">Regular</string>

@@ -59,6 +59,18 @@ val FontFamilyAnton = FontFamily(
     Font(R.font.anton_regular, FontWeight.Normal),
 )
 
+val FontFamilyBebasNeue = FontFamily(
+    Font(R.font.bebas_neue_regular, FontWeight.Normal),
+)
+
+val FontFamilyTomorrow = FontFamily(
+    Font(R.font.tomorrow_medium, FontWeight.Medium),
+)
+
+val FontFamilyRajdhani = FontFamily(
+    Font(R.font.rajdhani_bold, FontWeight.Bold),
+)
+
 val FontFamilyGoogleSans = FontFamily(
     Font(R.font.google_sans_bold, FontWeight.Bold),
 )

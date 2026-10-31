@@ -54,6 +54,7 @@ code dịch ngược, không lấy asset (font, ảnh, Lottie) từ APK. APK và
 | Kẹp giấy (`CLIP`) | **13 · May22 "Paper Clip"** | làm từ danh mục này (2026-10-28), số đo lấy từ layout `may22_screen_layout` dọc / ngang / `PaperClipClock` |
 | Phai (`FADE`) | **1 · May21 "Gradient"** | làm từ danh mục này (2026-10-28), số đo lấy từ layout `may21_screen_layout` (chỉ có bản dọc) / `May21Screen` / font Lato 1.104 trong APK |
 | Quỹ đạo (`ORBIT`) | **14 · Jun22 "Solar System"** | làm từ danh mục này (2026-10-30), số đo lấy từ layout `jun22_screen_layout` dọc / ngang / `SolarSystemClock` / `Jun22Screen` |
+| Thẻ lật (`FLIP`) | **9 · Jan22 "Flip Clock"** | làm từ danh mục này (2026-10-31), số đo lấy từ layout `jan22_screen_layout` dọc / ngang / `FlipClock` / `HalfTextView` |
 | Đơn cách (`MONO`) | **31 · Nov23 "Space Mono"** | làm từ danh mục này (2026-10-29), số đo lấy từ layout `nov23_screen_layout` dọc / ngang / `Nov23Screen` / `NoPadTextView` / font Space Mono trong APK |
 | Khung (`FRAME`) | **10 · Feb22 "Box Clock"** | làm từ danh mục này (2026-10-29), số đo lấy từ layout `feb22_screen_layout` dọc / ngang / `Feb22Screen` / font Josefin Sans trong APK |
 | Lời (`WORDS`) | **5 · Sep21 "Text Clock"** | làm từ danh mục này (2026-10-29), số đo lấy từ layout `sep21_screen_layout` dọc / ngang / `Sep21Screen` / font Lato 1.104 trong APK |
@@ -73,7 +74,7 @@ text view chung) hoặc font dùng trong code; "chữ (font layout)" nghĩa là 
 | 6 | Oct21 | Visualizer | Clock Size, Viz Height, Viz Spread, Viz Speed, Theme Color | Viz 1, Viz 2, Viz 3, Hour, Minute, Date, Notification, Controls, Battery Status | chữ (font layout) | quyền RECORD_AUDIO | chưa có |
 | 7 | Nov21 | Retro | Clock Size, Theme Color | Clock, Date, Notification, Controls | chữ (font layout) | – | chưa có |
 | 8 | Dec21 | Blinky | Character Size, Clock Size, Theme Color | Character, Clock | BlinkyCharacter | – | chưa có |
-| 9 | Jan22 | Flip Clock | Clock Style, Clock Size, Character Size, Clock Color, Character Color | – | FlipClock | – | chưa có |
+| 9 | Jan22 | Flip Clock | Clock Style, Clock Size, Character Size, Clock Color, Character Color | – | FlipClock | – | **Thẻ lật** (`FLIP`) |
 | 10 | Feb22 | Box Clock | Clock Size, Theme Color | Clock, Date, Notification, Controls | chữ (font layout) | – | **Khung** (`FRAME`) |
 | 11 | Mar22 | Eclipse | Clock Color, Shadow Color, Rotation, Peek, Character Color, Controls Color | – | Eclipse | – | chưa có |
 | 12 | Apr22 | Vertical Clock | Clock Size, Theme Color | Clock, Date, Notification, Controls | VerticalTextView | – | **Gáy sách** (`SPINE`) |
@@ -275,6 +276,18 @@ mỗi phút (`AodViewModel`), nên phần chạy theo giây của app mẫu ph�
   Bên mình: hành tinh chạy mượt mỗi khung hình (`isLiveInPreview`), Controls tách ngày / pin & thông báo / nhạc, hiện tất cả cùng lúc, sự kiện
   + ghi nhớ giữa vùng trống trên đĩa, màn ngang đĩa giữa màn, Plus Jakarta Sans thay Poppins, bỏ chế độ tiết kiệm và nét vẽ (user duyệt).
   Không đề xuất lần này: **9 · Flip Clock** (`FlipClock`: hai thẻ lật 220dp, 9 font, lật 400ms; ba font không có trên Google Fonts).
+- Đọc đủ 2026-10-31 (bước 1 sau Quỹ đạo): ~~**9 · Flip Clock**~~ (`Jan22Screen`, `jan22_screen_layout` dọc / ngang, `FlipClock`,
+  `HalfTextView`, hai listener của animation; đã làm thành Thẻ lật 2026-10-31). Hai ô vuông giờ / phút nằm giữa màn: dọc xếp trên dưới, ngang xếp trái phải, cách nhau 25dp;
+  cạnh mỗi ô = min(80% bề ngang, 40% chiều cao) × Cỡ ở dọc, đảo hai tỉ lệ ở ngang, Cỡ 50–100 (mặc định 65). Mỗi ô chia hai nửa bằng khe
+  đen 4dp; góc ngoài 20dp, góc sát khe 2dp; nền mặc định #1C1D25, số trắng. Chữ được cắt chính xác thành hai nửa theo khung nét, cỡ chữ
+  35–75 (mặc định 55) và hệ số riêng của 9 font. Khi số đổi, nửa trên cũ gập 0 → −90° trong 400ms, rồi nửa dưới mới mở 90 → 0° trong
+  400ms; tổng 800ms, phút lật mỗi phút, giờ chỉ lật khi đổi giờ, 12 / 24 giờ theo máy. Tuỳ chọn đủ: Clock Style (9 font), Clock Size,
+  Character Size, Clock Color, Character Color; không có dạng tiết kiệm. 9 kiểu giữ đủ nhưng thay font thiếu giấy phép / tiếng Việt: Hamurz →
+  Big Shoulders Display Regular, Metropolis → Big Shoulders Display Regular vẽ viền đôi, Rubik Light → Google Sans Regular, Made Canvas →
+  Fraunces Regular; Bebas Neue, Big Shoulders Display Light, Tomorrow Medium, Anton Regular, Rajdhani Bold giữ đúng họ font mở. Layout mẫu chỉ có hai `FlipClock`, không có ngày, pin, thông báo,
+  thời tiết, sự kiện, ghi nhớ, nét vẽ hay nhạc; các cờ phần thêm trong `Jan22Screen` đều tắt. Mock đề xuất giữ ngày + thời tiết một dòng phía
+  trên và pin + icon thông báo một dòng phía dưới vì vẫn vừa ở cỡ 100 cả dọc lẫn ngang; bỏ nội dung thông báo mới nhất, sự kiện, ghi nhớ,
+  nét vẽ và nhạc vì ở cỡ 100 màn ngang chỉ còn 79dp theo chiều cao, thêm khối cao sẽ ép hoặc lệch cặp thẻ.
 - ~~**12 · Vertical Clock**~~ (`VerticalTextView`, `apr22_screen_layout` + bản ngang, đọc 2026-10-26, đọc lại đủ 2026-10-27, đã làm thành Gáy
   sách 2026-10-27): "HH:mm" Josefin Sans Regular cỡ 25–60sp (mặc định 40) xoay −90° (đọc từ dưới lên, nét chữ căn giữa dòng), ngày "EEE, dd MMMM" in
   hoa nửa cỡ trên giờ cùng trục cách 30dp; cột cách mép trái 18dp, đáy giờ cách đáy 45dp (ngang 30dp). Dọc: phần trên cột chia 0,25 trống /
@@ -286,7 +299,7 @@ mỗi phút (`AodViewModel`), nên phần chạy theo giây của app mẫu ph�
 - **43 · MIUI Doodle** ⭐ (`Nov24Screen`): giờ, phút, thứ, tháng, ngày là **ảnh vẽ tay** (24 + 60 + 7 + 12 + 31 hình), không phải
   font; không được lấy ảnh của app mẫu, phải tự vẽ cả bộ, nên để sau.
 
-Để sau: 33 Dual Timezone (cần control chọn múi giờ), 16 / 22 (cần ô nhập chữ), ~~chủ đề giờ bằng chữ~~ (đã làm thành Lời bằng ICU spellout có sẵn), 6 Visualizer (cần quyền `RECORD_AUDIO`, phải hỏi trước), 8 / 9 / 11 / 14 / 21 (hiệu ứng, hạt, lật số: công sức
+Để sau: 33 Dual Timezone (cần control chọn múi giờ), 16 / 22 (cần ô nhập chữ), ~~chủ đề giờ bằng chữ~~ (đã làm thành Lời bằng ICU spellout có sẵn), 6 Visualizer (cần quyền `RECORD_AUDIO`, phải hỏi trước), 8 / 11 / 21 (hiệu ứng, hạt: công sức
 lớn), 17 / 26 / 27 (cần chọn font mở thay font độc quyền). 18 / 41 dùng Google Sans: font này nay có trên Google Fonts (OFL, Vành
 dùng bản Bold), Google Sans Flex cũng có, nên không còn vướng font.
 

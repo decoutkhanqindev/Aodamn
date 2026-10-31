@@ -29,6 +29,7 @@ val GreyE0 = Color(0xFFE0E0E0)
 
 val Green = Color(0xFFA6E3A1)
 val Ink = Color(0xFF121218)
+val Midnight = Color(0xFF1C1D25)
 val GreyCE = Color(0xFFCED4DA)
 val GreyAD = Color(0xFFADB5BD)
 val GreyB9 = Color(0xFFB9BEC4)

@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.baselineprofile)
+    alias(libs.plugins.dropshots)
 }
 
 val localProperties = Properties().apply {
@@ -21,6 +22,7 @@ android {
         targetSdk = 37
         versionCode = 1
         versionName = "v1.0.0"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField(
             "String",
