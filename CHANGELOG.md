@@ -2293,3 +2293,18 @@ Thứ tự các bước đã làm, và lý do mỗi bước bị thay thế:
 7. **Nâng SDK:** `minSdk` lên 30, `targetSdk` và `compileSdk` lên 37. Rà các thay đổi hành vi từ
    Android 14 tới 17: không có thay đổi nào chặn cơ chế lõi.
 8. **Chuyển sang Android-Base:** xem mục đầu file.
+
+## [Chưa phát hành] – 2026-11-01 – Chủ đề Pha trăng
+
+Mock cuối được user duyệt. Chưa ghi golden hoặc chạy test máy vì worktree hiện có gitdir trỏ tới đường dẫn không còn tồn tại, nên `check_theme.sh` dừng trước các nhóm kiểm máy.
+
+### Thêm
+
+- Pha trăng (Moon Phase, chủ đề 21 của Muviz Edge) từ `Jan23Screen`, `MoonSpace`, `StarField` và layout `jan23_screen_layout` dịch ngược. Trăng tính pha theo chu kỳ 29,530588853 ngày khi Peek là 0, hoặc dùng mức Peek 1–50; bề mặt, quầng, hạt sao, sao băng, xoay và mọi màu tùy chọn đều vẽ bằng Compose Canvas với cache vẽ.
+- Bố cục dọc cố định: thời gian và ngày ở trên, trăng trên trục giữa, vùng thời tiết, icon và nội dung thông báo, nhạc, pin neo đáy. Bố cục ngang cố định: trăng hero bên trái và một cột chi tiết bên phải. Ẩn block không làm các block khác đổi vị trí.
+- Đủ mười tuỳ chọn nguồn trừ Controls Color đã được user duyệt bỏ: Clock Color, Date Color, Clock Size 80–120 (100), Character Color, Character Size 60–140 (100), Peek 0–50, Rotation 0–359 (45°), Glow Color và Particle Color. Ngày là own block; thời tiết, thông báo, nội dung thông báo mới nhất, nhạc và pin là khối chung.
+- Một `ThemeExpectation` cho `moon_phase`, sinh case option, pairwise, flow, editor, screenshot và motion từ ThemeSpec.
+
+### Thay đổi
+
+- Chỉ thêm đăng ký `MOON_PHASE`, hai nhánh layout, nhánh media dùng trình phát chung và token màu riêng; không thay đổi hành vi hay phần vẽ của chủ đề cũ.

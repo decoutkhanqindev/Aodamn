@@ -79,6 +79,7 @@
     <string name="theme_gentle">Dịu</string>
     <string name="theme_eclipse">Nhật thực</string>
     <string name="theme_blinky">Chớp mắt</string>
+    <string name="theme_moon_phase">Pha trăng</string>
     <string name="aod_jersey_date_first_pattern">dd</string>
     <string name="aod_jersey_date_second_pattern">MM</string>
     <string name="aod_bezel_weekday_pattern">EEEE</string>
@@ -132,6 +133,13 @@
     <string name="theme_color_minute_tag">Phút &amp; AM/PM</string>
     <string name="theme_color_line">Vạch</string>
     <string name="theme_color_face">Mặt số</string>
+    <string name="theme_color_character">Bề mặt trăng</string>
+    <string name="theme_color_glow">Quầng trăng</string>
+    <string name="theme_color_particles">Hạt sao</string>
+    <string name="theme_opt_peek">Pha trăng</string>
+    <string name="theme_opt_rotation">Xoay</string>
+    <string name="theme_character_size_value">Cỡ trăng: %1$d%%</string>
+    <string name="theme_tab_moon">Trăng</string>
     <string name="theme_color_media_background">Nền thẻ nhạc</string>
     <string name="theme_color_ring">Vòng</string>
     <string name="theme_color_shadow">Bóng</string>

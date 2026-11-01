@@ -37,6 +37,8 @@ import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.jersey.AodJ
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.jersey.AodJerseyPortrait
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.mono.AodMonoLandscape
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.mono.AodMonoPortrait
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.moonphase.AodMoonPhaseLandscape
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.moonphase.AodMoonPhasePortrait
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.orbit.AodOrbitLandscape
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.orbit.AodOrbitPortrait
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.pebble.AodPebbleLandscape
@@ -92,6 +94,7 @@ fun AodPortrait(
         AodThemeValue.GENTLE -> AodGentlePortrait(state = state, onIntent = onIntent)
         AodThemeValue.ECLIPSE -> AodEclipsePortrait(state = state, onIntent = onIntent)
         AodThemeValue.BLINKY -> AodBlinkyPortrait(state = state, onIntent = onIntent)
+        AodThemeValue.MOON_PHASE -> AodMoonPhasePortrait(state = state, onIntent = onIntent)
     }
 }
 
@@ -128,5 +131,6 @@ fun AodLandscape(
         AodThemeValue.GENTLE -> AodGentleLandscape(state = state, onIntent = onIntent)
         AodThemeValue.ECLIPSE -> AodEclipseLandscape(state = state, onIntent = onIntent)
         AodThemeValue.BLINKY -> AodBlinkyLandscape(state = state, onIntent = onIntent)
+        AodThemeValue.MOON_PHASE -> AodMoonPhaseLandscape(state = state, onIntent = onIntent)
     }
 }

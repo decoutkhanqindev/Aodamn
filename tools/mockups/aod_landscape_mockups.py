@@ -22,6 +22,7 @@ from fontTools.varLib import instancer
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = Path(sys.argv[1]) if len(sys.argv) > 1 else Path.cwd()
+ONLY = sys.argv[2] if len(sys.argv) > 2 else None
 
 W, H = 873, 393
 CY = H / 2
@@ -5266,7 +5267,200 @@ for name, summary, defs, frames in [
     ("w_eclipse", "Chủ đề Nhật thực (Eclipse): vầng sáng, bốn khung dọc và bốn khung ngang", "", eclipse),
     ("w_blinky", "Chủ đề Chớp mắt (Blinky): mắt chớp theo chu kỳ, màu và cỡ riêng, bốn khung dọc và bốn khung ngang", "", blinky),
 ]:
+    if ONLY not in (None, name):
+        continue
     code = widget(summary, defs, frames)
     OUT.mkdir(parents=True, exist_ok=True)
     (OUT / f"{name}.html").write_text(code, encoding="utf-8")
     print(name, len(code))
+
+MP_CLOCK = "#FFDE59"
+MP_DATE = "#E0E0E0"
+MP_CHARACTER = "#FFFFFF"
+MP_GLOW = "#9575CD"
+MP_PARTICLE = "#FFF3D1"
+MP_CONTROLS = "#BDBDBD"
+MP_LIVE = []
+MP_N = [0]
+
+
+def mp_id():
+    MP_N[0] += 1
+    return f"mp{MP_N[0]}"
+
+
+def mp_stars(gid, w, h, particle=MP_PARTICLE, glow=MP_GLOW):
+    s = f'<g id="{gid}stars">'
+    for i in range(78):
+        x = 11 + ((i * 47) % int(w - 22))
+        y = 9 + ((i * 73) % int(h - 18))
+        r = 0.75 + (i % 4) * 0.35
+        if i % 9 == 0:
+            s += (f'<path class="mp-twinkle" d="M{f(x)},{f(y - r * 3)} L{f(x + r)},{f(y - r)} L{f(x + r * 3)},{f(y)} '
+                  f'L{f(x + r)},{f(y + r)} L{f(x)},{f(y + r * 3)} L{f(x - r)},{f(y + r)} '
+                  f'L{f(x - r * 3)},{f(y)} L{f(x - r)},{f(y - r)} Z" fill="{glow}"/>')
+        else:
+            s += f'<circle class="mp-twinkle" cx="{f(x)}" cy="{f(y)}" r="{f(r)}" fill="{particle}" opacity="{f(.35 + (i % 5) * .12)}"/>'
+    s += f'<g id="{gid}shoot" opacity=".92"><path d="M0,0 l-42,24" stroke="{glow}" stroke-width="3" stroke-linecap="round"/>'
+    return s + f'<circle cx="0" cy="0" r="3" fill="{particle}"/></g></g>'
+
+
+def mp_moon(gid, cx, cy, r, phase, rotation, character=MP_CHARACTER, glow=MP_GLOW):
+    shadow_x = cx + 2 * r * phase
+    craters = ((-.40, -.42, .09), (-.68, -.42, .13), (-.16, -.23, .13), (.34, -.23, .07), (.30, .27, .15), (-.44, .42, .12), (.00, .56, .09))
+    s = (f'<defs><filter id="{gid}glow" x="-90%" y="-90%" width="280%" height="280%"><feGaussianBlur stdDeviation="{f(r * .085)}"/></filter>'
+         f'<clipPath id="{gid}clip"><circle cx="{f(cx)}" cy="{f(cy)}" r="{f(r)}"/></clipPath></defs>'
+         f'<circle cx="{f(cx)}" cy="{f(cy)}" r="{f(r * 1.1)}" fill="{glow}" opacity=".28" filter="url(#{gid}glow)"/>'
+         f'<g id="{gid}moon" transform="rotate({f(rotation)} {f(cx)} {f(cy)})"><circle cx="{f(cx)}" cy="{f(cy)}" r="{f(r)}" fill="{character}"/>'
+         f'<g clip-path="url(#{gid}clip)">')
+    for ox, oy, rr in craters:
+        s += f'<circle cx="{f(cx + ox * r)}" cy="{f(cy + oy * r)}" r="{f(rr * r)}" fill="#16131E" opacity=".25"/>'
+    s += f'<circle cx="{f(shadow_x)}" cy="{f(cy)}" r="{f(r)}" fill="#000"/>'
+    return s + '</g></g>'
+
+
+def mp_header(cx, top, clock=MP_CLOCK, date=MP_DATE, hour="10.08HRS", show_date=True, weather=False):
+    s = txt(cx, top + 33, hour, 29, clock, 500, "middle", 'letter-spacing="12.4"')
+    if show_date:
+        s += txt(cx, top + 66, "THỨ BA, 13 THG 10", 14, date, 500, "middle", 'letter-spacing="2.8"')
+    if weather:
+        s += cloud(cx - 54, top + 88, .55, date, 1.4) + txt(cx - 29, top + 93, "24°  NHIỀU MÂY", 11.5, date, 500, "start", 'letter-spacing=".8"')
+    return s
+
+
+def mp_notifications(cx, cy, color=MP_CONTROLS, n=3, latest=False):
+    s = noti_icons(cx - (n * 23 - 8) / 2, cy, color, n, 15, 8) if n else ""
+    if latest:
+        s += (f'<circle cx="{f(cx - 132)}" cy="{f(cy + 40)}" r="10" fill="none" stroke="{color}" stroke-width="1.4"/>'
+              + txt(cx - 113, cy + 45, "LAN  ·  TỐI NAY ĐI ĂN NHÉ", 12, color, 600, "start", 'letter-spacing="1.2"'))
+    return s
+
+
+def mp_media(cx, top, width, color=MP_CONTROLS, paused=False):
+    alpha = .55 if paused else 1
+    s = (txt(cx, top + 14, "THAT COOL SONG", 13, color, 700, "middle", f'letter-spacing="3.25" opacity="{alpha}"')
+         + txt(cx, top + 34, "IT'S ARTIST", 11.5, color, 400, "middle", f'letter-spacing="2.8" opacity="{alpha * .7}"'))
+    lx, rx = cx - width / 2 + 14, cx + width / 2 - 14
+    s += (f'<path d="M{f(lx + 4)},{f(top + 8)} L{f(lx - 4)},{f(top + 14)} L{f(lx + 4)},{f(top + 20)} Z M{f(lx - 6)},{f(top + 8)} v12" fill="{color}"/>'
+          f'<path d="M{f(rx - 4)},{f(top + 8)} L{f(rx + 4)},{f(top + 14)} L{f(rx - 4)},{f(top + 20)} Z M{f(rx + 6)},{f(top + 8)} v12" fill="{color}"/>')
+    return s
+
+
+def mp_status(cx, cy, color=MP_CONTROLS, charging=False):
+    return battery_h(cx - 39, cy - 5.5, color) + txt(cx - 10, cy + 5, "72%" + ("  ·  ĐANG SẠC" if charging else ""), 14, color, 500)
+
+
+def mp_scene(cx, cy, w, h, phase=.72, rotation=45, moon_size=1, character=MP_CHARACTER, glow=MP_GLOW, particle=MP_PARTICLE, live=False):
+    gid = mp_id()
+    r = min(w, h) * .255 * moon_size
+    s = mp_stars(gid, w, h, particle, glow) + mp_moon(gid, cx, cy, r, phase, rotation, character, glow)
+    if live:
+        MP_LIVE.append((gid, cx, cy, rotation, w, h))
+    return s
+
+
+def mp_portrait(hour="10.08HRS", phase=.72, rotation=45, moon_size=1, character=MP_CHARACTER, glow=MP_GLOW, particle=MP_PARTICLE,
+                clock=MP_CLOCK, date=MP_DATE, controls=MP_CONTROLS, show_date=True, weather=False, n=3, latest=False, media=False,
+                paused=False, charging=False, live=False):
+    detail_y = 608 if latest else 642
+    s = mp_scene(PW / 2, PH * .51, PW, PH, phase, rotation, moon_size, character, glow, particle, live)
+    s += mp_header(PW / 2, 54, clock, date, hour, show_date, weather)
+    s += mp_notifications(PW / 2, detail_y, controls, n, latest)
+    if media:
+        s += mp_media(PW / 2, 706, PW - 80, controls, paused)
+    return s + mp_status(PW / 2, 810, controls, charging)
+
+
+def mp_landscape_header(cx, top, clock=MP_CLOCK, date=MP_DATE, hour="10.08HRS", weather=False):
+    s = txt(cx, top + 28, hour, 25, clock, 500, "middle", 'letter-spacing="10"')
+    s += txt(cx, top + 51, "THỨ BA, 13 THG 10", 11.5, date, 600, "middle", 'letter-spacing="1.7"')
+    if weather:
+        s += cloud(cx - 48, top + 70, .46, date, 1.2) + txt(cx - 26, top + 74, "24°  NHIỀU MÂY", 10, date, 500, "start", 'letter-spacing=".5"')
+    return s
+
+
+def mp_landscape(hour="10.08HRS", phase=.72, rotation=45, moon_size=1, character=MP_CHARACTER, glow=MP_GLOW, particle=MP_PARTICLE,
+                 clock=MP_CLOCK, date=MP_DATE, controls=MP_CONTROLS, weather=False, n=3, latest=False, media=False, paused=False,
+                 charging=False, live=False):
+    moon_x, content_x = W * .24, W * .76
+    details_y = 168 if weather else 148
+    media_y = 238 if latest else 202
+    status_y = 346 if media else details_y + (57 if latest else 42)
+    s = mp_scene(moon_x, CY, W, H, phase, rotation, moon_size, character, glow, particle, live)
+    s += mp_landscape_header(content_x, 28, clock, date, hour, weather)
+    s += mp_notifications(content_x, details_y, controls, n, latest)
+    if media:
+        s += mp_media(content_x, media_y, 252, controls, paused)
+    return s + mp_status(content_x, status_y, controls, charging)
+
+
+def mp_reference_landscape():
+    s = mp_stars("mpreference", W, H) + mp_moon("mpreference", 196, CY, 98, .72, 45)
+    s += mp_header(618, 45, hour="10.08HRS") + mp_notifications(618, 242)
+    return s + mp_media(618, 287, 290) + mp_status(618, 354)
+
+
+def mp_phase_strip():
+    phases = (("Trăng non", .02), ("Bán nguyệt", .5), ("Trăng tròn", 1), ("Khuyết", .72))
+    s = ""
+    for i, (label, phase) in enumerate(phases):
+        cx = 110 + i * 218
+        s += mp_moon(f"mps{i}", cx, 145, 61, phase, 45) + txt(cx, 245, label, 14, G, 500, "middle")
+    return (f'<p style="font-size:13px;color:var(--text-secondary);margin:1.25rem 0 6px">Pha trăng, xoay, phát sáng và hạt sao</p>'
+            f'<svg viewBox="0 0 {W} 280" width="100%" role="img" aria-label="Pha trăng và hạt sao" style="display:block;font-family:\'Plus Jakarta Sans\',sans-serif" fill="{G}">'
+            f'<rect width="{W}" height="280" rx="20" fill="#000"/>{mp_stars("mpstrip", W, 280)}{s}</svg>')
+
+
+def mp_review():
+    rows = (
+        ("Clock Color", "Giữ", "Màu đồng hồ riêng."),
+        ("Date Color", "Giữ", "Ngày là block riêng của Pha trăng."),
+        ("Clock Size", "Giữ", "80–120, mặc định 100."),
+        ("Character Color", "Giữ", "Màu bề mặt trăng."),
+        ("Character Size", "Giữ", "60–140, mặc định 100."),
+        ("Peek", "Giữ", "0 tự tính pha; 1–50 ép mức hé."),
+        ("Rotation", "Giữ", "0–359°, mặc định 45°."),
+        ("Glow Color", "Giữ", "Quầng mờ quanh trăng."),
+        ("Particle Color", "Giữ", "Sao và sao băng."),
+        ("Controls Color", "Bỏ", "Không có màu Điều khiển chung. Mỗi block dùng chung giữ màu riêng."),
+    )
+    table = "".join(f'<tr><td>{option}</td><td><span class="mp-{decision.lower()}">{decision}</span></td><td>{detail}</td></tr>' for option, decision, detail in rows)
+    return (FONT_LINK + '<style>'
+            'body{margin:0;padding:20px 16px 40px;background:#1e1e1e;color:#ededed;font-family:"Plus Jakarta Sans",sans-serif;--text-secondary:#c3c3c3}'
+            '.mp-review{margin:0 0 24px;padding:24px;border:1px solid #3a3a3a;border-radius:20px;background:#252525}'
+            '.mp-kicker{margin:0 0 8px;color:#ffde59;font-size:12px;font-weight:700;letter-spacing:1.4px}.mp-review h1{margin:0;font-size:28px;line-height:1.2}.mp-review p{margin:12px 0 0;color:#d2d2d2;font-size:14px;line-height:1.55}'
+            '.mp-review h2{margin:24px 0 10px;font-size:17px}.mp-review ul{margin:0;padding-left:20px;color:#d2d2d2;font-size:13px;line-height:1.65}.mp-review table{width:100%;border-collapse:collapse;font-size:12px}.mp-review th,.mp-review td{padding:9px 8px;border-bottom:1px solid #3a3a3a;text-align:left;vertical-align:top}.mp-review th{color:#ffde59;font-weight:700}.mp-giữ{color:#a8e6c3;font-weight:700}.mp-bỏ{color:#f3a6a6;font-weight:700}.mp-section{margin:24px 0 6px;color:var(--text-secondary);font-size:13px}'
+            '</style><section class="mp-review"><p class="mp-kicker">MOON PHASE · REVIEW 03</p><h1>Pha trăng</h1><p>Trăng luôn là điểm nhấn. Mỗi hướng màn hình có một bố cục cố định: dọc theo trục giữa, ngang với trăng trái và một cột đọc phải. Các case chỉ thay dữ liệu, trạng thái, option nguồn và visibility đã duyệt.</p>'
+            '<h2>Quyết định bố cục</h2><ul><li>Dọc: time/date trên cùng, trăng ở giữa, details/media/pin theo trục giữa ở đáy. Vị trí không đổi giữa các case.</li><li>Ngang: hero trăng neo trái; time/date, details và media/pin là một cột neo phải, chung đường căn. Ngày nhỏ nằm trực tiếp dưới giờ.</li><li>Safe area: mọi chữ và control giữ trong lề 24dp mô phỏng. Chữ phụ xám, sao và glow giảm sáng để hợp AOD.</li></ul>'
+            '<h2>Mười tuỳ chọn app mẫu</h2><table><thead><tr><th>Tuỳ chọn</th><th>Quyết định</th><th>Áp dụng</th></tr></thead><tbody>' + table + '</tbody></table>'
+            '<p><strong>Model đã duyệt:</strong> ngày là block riêng của theme. Thời tiết, thông báo, nội dung thông báo mới nhất, nhạc và pin vẫn là block dùng chung. Không đổi model hoặc thêm màu chung.</p></section>')
+
+
+def mp_live_script():
+    entries = ",".join(f'["{gid}",{f(cx)},{f(cy)},{f(rotation)},{f(w)},{f(h)}]' for gid, cx, cy, rotation, w, h in MP_LIVE)
+    return ('<style>.mp-twinkle{animation:mpPulse 1s ease-in-out infinite alternate}@keyframes mpPulse{to{opacity:.22;transform:scale(.55)}}</style>'
+            '<script>(function(){var a=[' + entries + '];function t(){var d=new Date(),s=d.getSeconds()+d.getMilliseconds()/1e3,m=d.getMinutes()+s/60;'
+            'a.forEach(function(e){var g=document.getElementById(e[0]+"stars"),q=document.getElementById(e[0]+"moon"),z=document.getElementById(e[0]+"shoot");'
+            'if(g)g.setAttribute("transform","rotate("+(45*m).toFixed(2)+" "+(e[4]/2)+" "+(e[5]/2)+")");'
+            'if(q)q.setAttribute("transform","rotate("+(e[3]+s*2).toFixed(2)+" "+e[1]+" "+e[2]+")");'
+            'if(z){var p=(s%2.8)/2.8;z.setAttribute("transform","translate("+(e[4]*.18+p*e[4]*.7).toFixed(1)+" "+(e[5]*.12+p*e[5]*.42).toFixed(1)+")");z.setAttribute("opacity",p<.75?".92":"0");}});requestAnimationFrame(t)}t()})();</script>')
+
+
+moon_phase = [
+    mp_phase_strip(),
+    '<div style="font-size:0">',
+    frame_portrait("D1 · Dọc · Bố cục cố định: time/date trên, hero trăng giữa, icon thông báo và pin theo trục đáy.", mp_portrait(live=True)),
+    frame_portrait("D2 · Dọc · Cùng bố cục cố định; thêm thời tiết, thông báo mới và nhạc trong vùng details đáy.", mp_portrait("08.30HRS", .5, 45, weather=True, n=3, latest=True, media=True)),
+    frame_portrait("D3 · Dọc · Cùng bố cục cố định; thay pha, cỡ, xoay, màu nguồn và trạng thái sạc.", mp_portrait("21.47HRS", 1, 180, 1.32, character="#D8B5FF", glow="#80DEEA", particle="#C1FFF4", n=1, charging=True)),
+    frame_portrait("D4 · Dọc · Cùng bố cục cố định; nhạc hiện trong vùng details đáy như trạng thái app mẫu.", mp_portrait("01.36PM", .72, 45, media=True)),
+    '</div>',
+    frame("N1 · Ngang · Bố cục cố định: hero trăng trái; time/date, icon thông báo và pin gộp thành cột đọc phải.", mp_landscape(live=True)),
+    frame("N2 · Ngang · Cùng bố cục cố định; thời tiết, thông báo mới, nhạc và pin nối tiếp trong cột đọc phải.", mp_landscape("08.30HRS", .5, weather=True, n=3, latest=True, media=True)),
+    frame("N3 · Ngang · Cùng bố cục cố định; trăng tròn, xoay, màu nguồn và pin sạc chỉ thay dữ liệu hiển thị.", mp_landscape("21.47HRS", 1, 180, 1.18, "#D8B5FF", "#80DEEA", "#C1FFF4", n=1, charging=True)),
+    frame("N4 · Ngang · Cùng bố cục cố định; icon, nhạc và pin xuất hiện trong cột đọc phải theo trật tự app mẫu.", mp_landscape("01.36PM", .72, 45, media=True)),
+]
+moon_phase.append(mp_live_script())
+if ONLY in (None, "w_moon_phase"):
+    moon_phase_code = mp_review() + widget("Chủ đề Pha trăng (Moon Phase): pha trăng, glow, hạt sao và chuyển động, bốn khung dọc và bốn ngang", "", moon_phase)
+    (OUT / "w_moon_phase.html").write_text(moon_phase_code, encoding="utf-8")
+    print("w_moon_phase", len(moon_phase_code))

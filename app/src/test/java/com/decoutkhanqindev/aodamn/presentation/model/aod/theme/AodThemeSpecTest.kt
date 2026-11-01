@@ -21,6 +21,7 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.gentle.AodGentle
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.gentle.GentleThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.halfmoon.HalfMoonThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.mono.MonoThemeSpec
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.moonphase.MoonPhaseThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.orbit.OrbitThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.pebble.AodTileStyleValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.quarters.AodQuartersDigitStyleValue
@@ -738,6 +739,44 @@ class AodThemeSpecTest {
     }
 
     @Test
+    fun `moon phase keeps every approved reference option and fixed compact blocks`() {
+        val spec = AodThemeValue.MOON_PHASE.spec
+        assertEquals(
+            setOf(
+                AodComponentValue.DATE,
+                AodComponentValue.BATTERY,
+                AodComponentValue.WEATHER,
+                AodComponentValue.NOTIFICATIONS,
+                AodComponentValue.MEDIA,
+            ),
+            spec.components,
+        )
+        assertEquals(setOf(AodBlockValue.DATE), spec.ownBlocks)
+        assertEquals(true, spec.hasNotificationContent)
+        assertEquals(true, spec.isLiveInPreview)
+        assertEquals(80..120, MoonPhaseThemeSpec.ClockSize.range)
+        assertEquals(100, MoonPhaseThemeSpec.ClockSize.default)
+        assertEquals(60..140, MoonPhaseThemeSpec.CharacterSize.range)
+        assertEquals(100, MoonPhaseThemeSpec.CharacterSize.default)
+        assertEquals(0..50, MoonPhaseThemeSpec.Peek.range)
+        assertEquals(45, MoonPhaseThemeSpec.Rotation.default)
+        assertEquals(
+            listOf(
+                MoonPhaseThemeSpec.ClockColor,
+                MoonPhaseThemeSpec.ClockSize,
+                MoonPhaseThemeSpec.CharacterColor,
+                MoonPhaseThemeSpec.CharacterSize,
+                MoonPhaseThemeSpec.Peek,
+                MoonPhaseThemeSpec.Rotation,
+                MoonPhaseThemeSpec.GlowColor,
+                MoonPhaseThemeSpec.ParticleColor,
+                MoonPhaseThemeSpec.DateColor,
+            ),
+            spec.options,
+        )
+    }
+
+    @Test
     fun `flip keeps every reference option and only compact blocks`() {
         val spec = AodThemeValue.FLIP.spec
         assertEquals(
@@ -832,6 +871,7 @@ class AodThemeSpecTest {
             AodThemeValue.FLIP,
             AodThemeValue.ECLIPSE,
             AodThemeValue.BLINKY,
+            AodThemeValue.MOON_PHASE,
         )
         AodThemeValue.entries.forEach { theme ->
             assertEquals("${theme.id}: xem trước theo giờ thật", theme in liveThemes, theme.spec.isLiveInPreview)

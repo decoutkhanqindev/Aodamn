@@ -124,6 +124,15 @@ object ThemeTestCatalog {
                 checkpointsMillis = listOf(1_000L, 2_000L),
             ),
         ),
+        ThemeExpectation(
+            theme = AodThemeValue.MOON_PHASE,
+            optionKeys = listOf("clock_color", "clock_size", "character_color", "character_size", "peek", "rotation", "glow_color", "particle_color", "date_color"),
+            components = setOf(AodComponentValue.DATE, AodComponentValue.BATTERY, AodComponentValue.WEATHER, AodComponentValue.NOTIFICATIONS, AodComponentValue.MEDIA),
+            ownBlocks = setOf(AodBlockValue.DATE),
+            hasNotificationContent = true,
+            isLiveInPreview = true,
+            motion = ThemeMotionExpectation(fromMinute = 30, toMinute = 31, checkpointsMillis = listOf(1600L, 3200L)),
+        ),
     )
 }
 

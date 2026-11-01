@@ -91,7 +91,7 @@ fun AodMediaControls(
     ) { target ->
         if (target != null) {
             when (theme.value) {
-                AodThemeValue.CLASSIC, AodThemeValue.JERSEY ->
+                AodThemeValue.CLASSIC, AodThemeValue.JERSEY, AodThemeValue.MOON_PHASE ->
                     AodClassicMedia(media = target, style = style, layout = layout, onIntent = onIntent)
 
                 AodThemeValue.PEBBLE -> AodPebbleMedia(media = target, config = theme.config, onIntent = onIntent)

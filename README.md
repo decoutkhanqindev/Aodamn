@@ -1530,3 +1530,11 @@ trong [COMPARISON.md](COMPARISON.md). Ưu tiên gợi ý:
 ngữ. Giai đoạn 2: icon thông báo, viền sáng, điều khiển nhạc. Giai đoạn 3: mặt đồng hồ, font, màu,
 cỡ, ảnh nền, xoay ngang làm đồng hồ đêm. Giai đoạn 4: gán hành động cho thao tác và phím, đèn pin,
 tự giảm sáng, nhấc máy để hiện lại đồng hồ.
+
+## Chủ đề Pha trăng
+
+Pha trăng (Moon Phase) là chủ đề thứ 21 của Muviz Edge, có trăng, quầng sáng, hạt sao và sao băng. Bố cục không có tuỳ chọn đổi vị trí: dọc luôn giữ giờ và ngày trên trục giữa, trăng ở giữa, thời tiết, thông báo, nhạc và pin ở các vùng đáy cố định; ngang luôn đặt hero trăng bên trái và một cột chi tiết bên phải. Tắt một block chỉ làm block đó ẩn, không dời block khác.
+
+Tuỳ chọn của chủ đề: màu và cỡ đồng hồ 80–120 (100), màu và cỡ trăng 60–140 (100), pha trăng tự tính hoặc ép 1–50, xoay 0–359° (45°), màu quầng, màu hạt sao và màu ngày. Mọi màu hỗ trợ gradient. Ngày là khối do chủ đề tự vẽ; thời tiết, biểu tượng và nội dung thông báo, nhạc, pin vẫn dùng khối chung với tuỳ chỉnh riêng. Giao diện tự chạy trong AOD và xem trước màn chủ đề, còn thẻ ở lưới vẫn đứng yên.
+
+Kiểm tra trên máy thật, sau bước 25aa: Pha trăng phải giữ cùng toạ độ ở bốn trạng thái dọc và bốn trạng thái ngang; kiểm pha tự tính, Peek 1 và 50, Rotation 0 và 359, gradient cho đồng hồ, trăng, glow và hạt sao. Xem sao băng và hạt sao chuyển động, rồi bật và tắt lần lượt thời tiết, thông báo mới nhất, nhạc và pin để xác nhận các vùng cố định không chồng lên nhau. Màn ngang luôn giữ trăng trái và một cột chi tiết phải.

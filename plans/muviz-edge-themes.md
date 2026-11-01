@@ -369,3 +369,10 @@ Không cần chụp ảnh chủ đề từ app mẫu: số đo lấy từ layout
 Hoàn tất 2026-11-01: code giữ năm tuỳ chọn đã duyệt. Vầng sáng và bóng che dùng `EclipseThemeSpec`; ngày, pin, thông báo, thời tiết và nhạc tiếp tục là block chung. `Rotation` và `Peek` dùng giá trị tự động lưu riêng, hoặc khóa góc / mức; không có Controls Color, sự kiện, ghi nhớ hay nét vẽ.
 
 Không sửa code dùng chung, không thêm font, dependency hoặc permission. Mock đã sửa có bốn khung dọc và bốn khung ngang ở `tools/mockups/eclipse-render/w_eclipse.html`; chờ user duyệt lại trước khi code.
+## Pha trăng đã làm
+
+| Chủ đề của mình | Chủ đề app mẫu | Bằng chứng |
+|---|---|---|
+| Pha trăng (`MOON_PHASE`) | **21 · Jan23 "Moon Phase"** | làm từ danh mục này (2026-11-01), số đo và hành vi từ `Jan23Screen`, `MoonSpace`, `StarField`, `jan23_screen_layout` dọc / ngang |
+
+- ~~**21 · Moon Phase**~~ (MoonSpace, StarField, đã làm thành Pha trăng 2026-11-01): trăng có pha tự tính theo chu kỳ âm lịch hoặc Peek 1–50, bề mặt có crater, xoay 0–359°, quầng và hạt sao / sao băng. Bố cục user duyệt giữ hero trăng ở giữa dọc và trái ngang, cột thông tin cố định ở phải ngang; bỏ Controls Color vì các block dùng chung đã có màu riêng.

@@ -86,6 +86,7 @@
     <string name="theme_gentle">Gentle</string>
     <string name="theme_eclipse">Eclipse</string>
     <string name="theme_blinky">Blinky</string>
+    <string name="theme_moon_phase">Moon Phase</string>
     <string name="theme_in_use">In use</string>
     <string name="theme_edit">Edit</string>
     <string name="theme_saved">Theme saved</string>
@@ -136,6 +137,13 @@
     <string name="theme_color_minute_tag">Minute &amp; AM/PM</string>
     <string name="theme_color_line">Line</string>
     <string name="theme_color_face">Dial</string>
+    <string name="theme_color_character">Moon surface</string>
+    <string name="theme_color_glow">Moon glow</string>
+    <string name="theme_color_particles">Particles</string>
+    <string name="theme_opt_peek">Moon phase</string>
+    <string name="theme_opt_rotation">Rotation</string>
+    <string name="theme_character_size_value">Moon size: %1$d%%</string>
+    <string name="theme_tab_moon">Moon</string>
     <string name="theme_color_media_background">Music card</string>
     <string name="theme_color_ring">Ring</string>
     <string name="theme_color_shadow">Shadow</string>
@@ -447,6 +455,9 @@
     <string name="aod_half_moon_date_pattern" translatable="false">dd MMM yyyy</string>
     <string name="aod_half_moon_day_pattern" translatable="false">EEEE</string>
     <string name="aod_half_moon_notification" translatable="false">%1$s: %2$s</string>
+    <string name="aod_moon_phase_time_24h" translatable="false">HH.mm\'HRS\'</string>
+    <string name="aod_moon_phase_time_12h" translatable="false">hh.mma</string>
+    <string name="aod_moon_phase_date_pattern" translatable="false">EEE, dd MMM</string>
     <string name="aod_gradient_line_time_24h" translatable="false">HH:mm</string>
     <string name="aod_gradient_line_time_12h" translatable="false">hh:mm</string>
     <string name="aod_gradient_line_date_pattern" translatable="false">EEEE, dd MMM</string>

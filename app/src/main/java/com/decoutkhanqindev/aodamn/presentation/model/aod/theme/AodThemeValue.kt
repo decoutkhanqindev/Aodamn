@@ -22,6 +22,7 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.gentle.GentleThe
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.halfmoon.HalfMoonThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.jersey.JerseyThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.mono.MonoThemeSpec
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.moonphase.MoonPhaseThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.orbit.OrbitThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.pebble.PebbleThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.quarters.QuartersThemeSpec
@@ -64,7 +65,8 @@ enum class AodThemeValue(
     FLIP(id = "flip", nameRes = R.string.theme_flip, spec = FlipThemeSpec),
     GENTLE(id = "gentle", nameRes = R.string.theme_gentle, spec = GentleThemeSpec),
     ECLIPSE(id = "eclipse", nameRes = R.string.theme_eclipse, spec = EclipseThemeSpec),
-    BLINKY(id = "blinky", nameRes = R.string.theme_blinky, spec = BlinkyThemeSpec);
+    BLINKY(id = "blinky", nameRes = R.string.theme_blinky, spec = BlinkyThemeSpec),
+    MOON_PHASE(id = "moon_phase", nameRes = R.string.theme_moon_phase, spec = MoonPhaseThemeSpec);
 
     companion object {
         val DEFAULT = CLASSIC
