@@ -7,13 +7,8 @@ import androidx.compose.ui.test.onNodeWithTag
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.RuleChain
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
 
-@RunWith(Parameterized::class)
-class AodThemeOptionScreenshotTest(
-    private val expectation: ThemeExpectation,
-) {
+class AodThemeOptionScreenshotTest {
     private val deviceRule = ThemeDeviceRule()
     private val dropshots = ThemeDropshots.create()
     private val composeRule = createAndroidComposeRule<ComponentActivity>()
@@ -26,6 +21,10 @@ class AodThemeOptionScreenshotTest(
 
     @Test
     fun matchesApprovedChoiceBoard() {
+        selectedThemeExpectations().forEach(::assertChoiceBoard)
+    }
+
+    private fun assertChoiceBoard(expectation: ThemeExpectation) {
         composeRule.setContent {
             ThemeTestLocaleProvider {
                 ThemeOptionBoardContent(expectation.theme)
@@ -40,12 +39,5 @@ class AodThemeOptionScreenshotTest(
                 filePath = "themes/${expectation.theme.id}/options",
             )
         }
-    }
-
-    companion object {
-        @JvmStatic
-        @Parameterized.Parameters(name = "{0}")
-        fun cases(): List<Array<ThemeExpectation>> = selectedThemeExpectations()
-            .map { expectation -> arrayOf(expectation) }
     }
 }

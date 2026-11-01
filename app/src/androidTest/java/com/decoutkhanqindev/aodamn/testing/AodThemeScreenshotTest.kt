@@ -8,13 +8,8 @@ import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.RuleChain
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
 
-@RunWith(Parameterized::class)
-class AodThemeScreenshotTest(
-    private val expectation: ThemeExpectation,
-) {
+class AodThemeScreenshotTest {
     private val deviceRule = ThemeDeviceRule()
     private val dropshots = ThemeDropshots.create()
     private val composeRule = createEmptyComposeRule()
@@ -27,6 +22,10 @@ class AodThemeScreenshotTest(
 
     @Test
     fun matchesEightApprovedThemeImages() {
+        selectedThemeExpectations().forEach(::assertThemeImages)
+    }
+
+    private fun assertThemeImages(expectation: ThemeExpectation) {
         listOf(false, true).forEach { isLandscape ->
             val initial = ThemeScreenshotCase(
                 theme = expectation.theme,
@@ -60,12 +59,5 @@ class AodThemeScreenshotTest(
                 }
             }
         }
-    }
-
-    companion object {
-        @JvmStatic
-        @Parameterized.Parameters(name = "{0}")
-        fun cases(): List<Array<ThemeExpectation>> = selectedThemeExpectations()
-            .map { expectation -> arrayOf(expectation) }
     }
 }

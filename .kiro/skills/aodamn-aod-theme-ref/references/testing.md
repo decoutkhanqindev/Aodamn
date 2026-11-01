@@ -5,7 +5,7 @@ Nguyên tắc: tối ưu bằng lọc và gộp, không bỏ bằng chứng.
 `ThemeSpec → case tự sinh → test nhanh → test máy → báo cáo`
 
 Bộ test dùng chung nằm ở `app/src/{debug,androidTest}/java/com/decoutkhanqindev/aodamn/testing/`. Mỗi theme chỉ thêm một
-`ThemeExpectation`; không chép harness, quyền, flow, screenshot hay test block.
+`ThemeExpectation`; không chép harness, quyền, flow, screenshot hay test block. Đối số đầu của script là tên package. Id đã lưu khác package thì thêm `--theme-id=<id>`.
 
 ## Nhóm chạy
 
@@ -35,9 +35,7 @@ Chỉ ghi dấu sau khi cả nhóm pass. `clean` xóa dấu, nên lần kế ti�
 | `motion` | phần vẽ, mốc chuyển động | ba khung chuyển động |
 | `blocks` | block và style dùng chung | ảnh block dùng chung |
 
-`--device` gửi mọi nhóm đổi vào một lần chạy máy. Runner chỉ nạp class thuộc các nhóm đó.
-Nếu một nhóm lỗi, script vẫn ghi dấu cho các nhóm đã pass. Lần sau chỉ nhóm lỗi chạy lại.
-`--editor` và `--blocks` giữ phạm vi hẹp. `--force` bỏ qua dấu pass khi cần kiểm lại.
+`--device` gửi mọi nhóm đổi vào một lượt cài APK. Script chạy AndroidJUnitRunner qua `adb -s` trên serial đã khóa, nên Gradle không chạy lẫn máy ảo khác. Test nhóm dùng class thường; mỗi class tự lặp các `ThemeExpectation` đã lọc. Nếu một nhóm lỗi, script vẫn chỉ lưu dấu khi toàn lượt pass. `--editor` và `--blocks` giữ phạm vi hẹp. `--force` bỏ qua dấu pass khi cần kiểm lại.
 
 ## Một ThemeExpectation
 
@@ -105,8 +103,8 @@ Golden của cùng một theme cần ghi và kiểm trên cùng máy ảo cho m�
 ## Lệnh
 
 ```powershell
-bash .kiro/skills/aodamn-aod-theme-ref/scripts/check_theme.sh <gói> "<Tên Việt>"
-bash .kiro/skills/aodamn-aod-theme-ref/scripts/check_theme.sh <gói> "<Tên Việt>" --device
+bash .kiro/skills/aodamn-aod-theme-ref/scripts/check_theme.sh <gói> "<Tên Việt>" [--theme-id=<id>]
+bash .kiro/skills/aodamn-aod-theme-ref/scripts/check_theme.sh <gói> "<Tên Việt>" --device [--theme-id=<id>]
 bash .kiro/skills/aodamn-aod-theme-ref/scripts/check_theme.sh <gói> "<Tên Việt>" --editor
 bash .kiro/skills/aodamn-aod-theme-ref/scripts/check_theme.sh <gói> "<Tên Việt>" --record-editor
 bash .kiro/skills/aodamn-aod-theme-ref/scripts/check_theme.sh <gói> "<Tên Việt>" --record

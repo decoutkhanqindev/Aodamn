@@ -10,13 +10,8 @@ import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.RuleChain
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
 
-@RunWith(Parameterized::class)
-class AodThemeMotionTest(
-    private val expectation: ThemeExpectation,
-) {
+class AodThemeMotionTest {
     private val deviceRule = ThemeDeviceRule()
     private val dropshots = ThemeDropshots.create(maxDifferentPixels = 16)
     private val composeRule = createEmptyComposeRule()
@@ -29,6 +24,12 @@ class AodThemeMotionTest(
 
     @Test
     fun matchesEveryApprovedMotionFrame() {
+        selectedThemeExpectations()
+            .filter { expectation -> expectation.motion != null }
+            .forEach(::assertThemeMotion)
+    }
+
+    private fun assertThemeMotion(expectation: ThemeExpectation) {
         val motion = checkNotNull(expectation.motion)
         ThemeTestActivity.initialState = ThemeTestFixtures.state(
             theme = expectation.theme,
@@ -42,7 +43,7 @@ class AodThemeMotionTest(
         ActivityScenario.launch<ThemeTestActivity>(intent).use { scenario ->
             composeRule.onNodeWithTag(ThemeTestActivity.ROOT_TAG).assertExists()
             composeRule.waitForIdle()
-            assertFrame(millis = 0L)
+            assertFrame(expectation = expectation, millis = 0L)
             composeRule.mainClock.autoAdvance = false
             scenario.onActivity { activity ->
                 activity.render(
@@ -59,13 +60,13 @@ class AodThemeMotionTest(
             motion.checkpointsMillis.forEach { checkpointMillis ->
                 composeRule.mainClock.advanceTimeBy(checkpointMillis - elapsedMillis)
                 composeRule.waitForIdle()
-                assertFrame(millis = checkpointMillis)
+                assertFrame(expectation = expectation, millis = checkpointMillis)
                 elapsedMillis = checkpointMillis
             }
         }
     }
 
-    private fun assertFrame(millis: Long) {
+    private fun assertFrame(expectation: ThemeExpectation, millis: Long) {
         dropshots.assertSnapshot(
             bitmap = composeRule
                 .onNodeWithTag(ThemeTestActivity.ROOT_TAG)
@@ -74,13 +75,5 @@ class AodThemeMotionTest(
             name = "${expectation.theme.id}_motion_$millis",
             filePath = "themes/${expectation.theme.id}/motion",
         )
-    }
-
-    companion object {
-        @JvmStatic
-        @Parameterized.Parameters(name = "{0}")
-        fun cases(): List<Array<ThemeExpectation>> = selectedThemeExpectations()
-            .filter { expectation -> expectation.motion != null }
-            .map { expectation -> arrayOf(expectation) }
     }
 }

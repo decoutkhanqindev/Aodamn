@@ -8,8 +8,8 @@ import com.decoutkhanqindev.aodamn.presentation.base.BaseViewModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodBlockValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeConfig
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeValue
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.currentAodThemeConfigs
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.isDefault
-import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.observeAodThemeConfigs
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.saveAodThemeConfig
 import com.decoutkhanqindev.aodamn.presentation.model.permission.PermissionValue
 import com.decoutkhanqindev.aodamn.presentation.model.permission.hasRequiredPermissions
@@ -142,7 +142,8 @@ class ThemeEditorViewModel(
 
     private fun load() {
         viewModelScope.launch {
-            val config = dataStoreManager.observeAodThemeConfigs().first().getValue(state.value.theme)
+            dataStoreManager.aodThemeConfigs.filterNotNull().first()
+            val config = dataStoreManager.currentAodThemeConfigs().getValue(state.value.theme)
             val activeId = dataStoreManager.aodThemeId.filterNotNull().first()
             updateState {
                 copy(

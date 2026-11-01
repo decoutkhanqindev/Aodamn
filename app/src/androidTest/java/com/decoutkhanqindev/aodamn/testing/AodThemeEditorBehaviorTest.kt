@@ -19,19 +19,23 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
+import org.junit.rules.RuleChain
 import org.koin.core.context.GlobalContext
 
-@RunWith(Parameterized::class)
-class AodThemeEditorBehaviorTest(
-    private val expectation: ThemeExpectation,
-) {
+class AodThemeEditorBehaviorTest {
+    private val deviceRule = ThemeDeviceRule()
+
     @get:Rule
-    val deviceRule = ThemeDeviceRule()
+    val rules: RuleChain = RuleChain.outerRule(deviceRule)
 
     @Test
     fun changesResetsAppliesAndReopensSavedConfig() = runBlocking {
+        for (expectation in selectedThemeExpectations()) {
+            assertSavedConfig(expectation)
+        }
+    }
+
+    private suspend fun assertSavedConfig(expectation: ThemeExpectation) {
         val dataStoreManager = GlobalContext.get().get<DataStoreManager>()
         val permissionManager = GlobalContext.get().get<PermissionManager>()
         dataStoreManager.saveAodThemeConfig(expectation.theme, AodThemeConfig()).join()
@@ -90,12 +94,5 @@ class AodThemeEditorBehaviorTest(
 
     private suspend fun awaitLoaded(viewModel: ThemeEditorViewModel) = withTimeout(10_000L) {
         viewModel.state.first { state -> !state.isLoading }
-    }
-
-    companion object {
-        @JvmStatic
-        @Parameterized.Parameters(name = "{0}")
-        fun cases(): List<Array<ThemeExpectation>> = selectedThemeExpectations()
-            .map { expectation -> arrayOf(expectation) }
     }
 }

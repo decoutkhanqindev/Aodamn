@@ -1,14 +1,16 @@
 #!/usr/bin/env bash
 # Kiểm một chủ đề AOD mới trước khi báo xong. Chạy ở gốc repo (hoặc worktree):
-#   bash .kiro/skills/aodamn-aod-theme-ref/scripts/check_theme.sh <gói> "<Tên Việt>" [--device|--editor|--record|--record-editor|--blocks|--record-blocks] [--force]
+#   bash .kiro/skills/aodamn-aod-theme-ref/scripts/check_theme.sh <gói> "<Tên Việt>" [--theme-id=<id>] [--device|--editor|--record|--record-editor|--blocks|--record-blocks] [--force]
 set -u
 set -o pipefail
 PKG="${1:?thiếu gói chủ đề, vd tick}"
 NAME="${2:?thiếu tên tiếng Việt, vd \"Nhịp giây\"}"
+THEME_ID="$PKG"
 MODE=fast
 FORCE=false
 for arg in "${@:3}"; do
   case "$arg" in
+    --theme-id=*) THEME_ID="${arg#--theme-id=}" ;;
     --device) MODE=theme ;;
     --editor) MODE=editor ;;
     --record) MODE=record-theme ;;
@@ -26,9 +28,9 @@ SERIAL="${AOD_TEST_SERIAL:-}"
 AVD_NAME="${AOD_TEST_AVD:-}"
 LOCK_DIR=""
 TEST_PACKAGE="com.decoutkhanqindev.aodamn.test"
-RUN_ID="$(date -u +%Y%m%dT%H%M%SZ)-$PKG-$MODE"
+RUN_ID="$(date -u +%Y%m%dT%H%M%SZ)-$THEME_ID-$MODE"
 REPORT="build/theme-tests/$RUN_ID"
-CACHE="build/theme-tests/cache/$PKG"
+CACHE="build/theme-tests/cache/$THEME_ID"
 THEME_CLASSES="com.decoutkhanqindev.aodamn.testing.AodThemeTestSuite"
 EDITOR_CLASS="com.decoutkhanqindev.aodamn.testing.AodThemeEditorScreenshotTest"
 BLOCK_CLASS="com.decoutkhanqindev.aodamn.testing.AodSharedBlockScreenshotTest"
@@ -147,9 +149,54 @@ prepare_device() {
   export ANDROID_SERIAL="$SERIAL"
   ok "$AVD_NAME · $SERIAL · API 37 · 1440x3120 · 560dpi · 24h · font 1.0"
 }
+prepare_instrumentation() {
+  run_gradle :app:assembleDebug :app:assembleDebugAndroidTest --console=plain || return
+  run_adb -s "$SERIAL" install -r "app/build/outputs/apk/debug/app-debug.apk" || return
+  run_adb -s "$SERIAL" install -r "app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk"
+}
+run_instrumentation() {
+  local output status
+  output="$(run_adb -s "$SERIAL" shell am instrument -w "$@")"
+  status=$?
+  printf '%s\n' "$output"
+  [ "$status" -eq 0 ] || return "$status"
+  case "$output" in
+    *"FAILURES!!!"*|*"INSTRUMENTATION_CODE: -1"*) return 1 ;;
+  esac
+}
+run_theme_instrumentation() {
+  local groups="$1"
+  run_instrumentation \
+    -e class "$THEME_CLASSES" \
+    -e themeId "$THEME_ID" \
+    -e testGroups "$groups" \
+    -e runId "$RUN_ID" \
+    "$TEST_PACKAGE/androidx.test.runner.AndroidJUnitRunner"
+}
+run_block_instrumentation() {
+  run_instrumentation \
+    -e class "$BLOCK_CLASS" \
+    -e runId "$RUN_ID" \
+    "$TEST_PACKAGE/androidx.test.runner.AndroidJUnitRunner"
+}
+clear_device_screenshots() {
+  run_adb -s "$SERIAL" shell rm -rf "/sdcard/Download/screenshots/$TEST_PACKAGE"
+  run_adb -s "$SERIAL" shell mkdir -p "/sdcard/Download/screenshots/$TEST_PACKAGE"
+}
+begin_recording() {
+  clear_device_screenshots
+  run_adb -s "$SERIAL" shell touch "/sdcard/Download/screenshots/$TEST_PACKAGE/.isRecordingScreenshots"
+}
 copy_device_reports() {
-  [ -d app/build/reports/androidTests/connected/debug ] && cp -R app/build/reports/androidTests/connected/debug "$REPORT/android-report"
-  [ -d app/build/test-results/dropshots/DebugAndroidTest ] && cp -R app/build/test-results/dropshots/DebugAndroidTest "$REPORT/dropshots"
+  run_adb -s "$SERIAL" pull "/sdcard/Download/screenshots/$TEST_PACKAGE" "$REPORT/dropshots" >/dev/null 2>&1 || true
+}
+copy_recorded_references() {
+  local source="$REPORT/dropshots/reference"
+  [ -d "$source" ] || {
+    bad "không có ảnh record từ $SERIAL"
+    return 1
+  }
+  cp -R "$source/." app/src/androidTest/screenshots/
 }
 hash_paths() {
   "$PYTHON" -I -X utf8 - "$@" <<'PY'
@@ -325,19 +372,16 @@ run_changed_theme_groups() {
   joined="$(IFS=+; echo "${selected[*]}")"
   prepare_device
   [ "$FAIL" -eq 0 ] || return 1
+  run_step "build APK test" instrument-build prepare_instrumentation || return 1
+  clear_device_screenshots
   local status=0
-  run_step "test máy theo nhóm: $joined" device-theme \
-    run_gradle :app:connectedDebugAndroidTest \
-    "-Pandroid.testInstrumentationRunnerArguments.class=$THEME_CLASSES" \
-    "-Pandroid.testInstrumentationRunnerArguments.themeId=$PKG" \
-    "-Pandroid.testInstrumentationRunnerArguments.testGroups=$joined" \
-    "-Pandroid.testInstrumentationRunnerArguments.runId=$RUN_ID" --console=plain || status=$?
-  local passed
-  while IFS= read -r passed; do
-    [ -n "$passed" ] || continue
-    mark_group "$passed" "${hashes[$passed]}"
-    ok "ghi dấu pass: $passed"
-  done < <(passed_theme_groups "${selected[@]}")
+  run_step "test máy theo nhóm: $joined" device-theme run_theme_instrumentation "$joined" || status=$?
+  if [ "$status" -eq 0 ]; then
+    for group in "${selected[@]}"; do
+      mark_group "$group" "${hashes[$group]}"
+      ok "ghi dấu pass: $group"
+    done
+  fi
   copy_device_reports
   return "$status"
 }
@@ -348,7 +392,7 @@ mark_theme_groups() {
   done
 }
 
-printf 'run_id=%s\nmode=%s\ntheme=%s\n' "$RUN_ID" "$MODE" "$PKG" > "$REPORT/run.txt"
+printf 'run_id=%s\nmode=%s\ntheme_id=%s\npackage=%s\n' "$RUN_ID" "$MODE" "$THEME_ID" "$PKG" > "$REPORT/run.txt"
 
 [ -n "$PYTHON" ] || bad "thiếu python3 / python"
 [ -d "$J/components/aod/theme/$PKG" ] && [ -d "$J/model/aod/theme/$PKG" ] \
@@ -359,7 +403,7 @@ if [ "$MODE" = fast ] && [ "$FAIL" -eq 0 ]; then
   LOCAL_HASH="$(group_hash local)"
   if is_group_changed local "$LOCAL_HASH"; then
     if run_step "compileDebugKotlin + JVM option, pairwise và lưu cấu hình của $PKG" local-theme \
-      run_gradle "-Daod.theme.test.id=$PKG" :app:compileDebugKotlin :app:testDebugUnitTest \
+      run_gradle "-Daod.theme.test.id=$THEME_ID" :app:compileDebugKotlin :app:testDebugUnitTest \
       --tests "*AodThemeExpectationTest" --tests "*AodThemeContractTest" --console=plain -q; then
       mark_group local "$LOCAL_HASH"
     fi
@@ -381,10 +425,10 @@ if [ "$MODE" = fast ]; then
   CHANGED="$(run_git diff --name-only "$BASE" -- "${OLD[@]}"; run_git ls-files --others --exclude-standard -- "${OLD[@]}")"
   [ -z "$CHANGED" ] && ok "thư mục chủ đề cũ không đổi" || { bad "chủ đề cũ bị đổi"; printf '%s\n' "$CHANGED" | tee -a "$REPORT/summary.txt"; }
 
-  "$PYTHON" -I -X utf8 - "$PKG" "$NAME" <<'PY' | tee "$REPORT/registration.log" || FAIL=1
+  "$PYTHON" -I -X utf8 - "$PKG" "$THEME_ID" "$NAME" <<'PY' | tee "$REPORT/registration.log" || FAIL=1
 import re, sys
 from pathlib import Path
-pkg, name = sys.argv[1], sys.argv[2]
+pkg, theme_id, name = sys.argv[1], sys.argv[2], sys.argv[3]
 J = Path("app/src/main/java/com/decoutkhanqindev/aodamn/presentation")
 enum = J / "model/aod/theme/AodThemeValue.kt"
 entries = re.findall(r"^\s+([A-Z_]+)\(id = \"(\w+)\", nameRes = R\.string\.(\w+), spec = (\w+)\)", enum.read_text(encoding="utf-8"), re.M)
@@ -392,6 +436,9 @@ spec_import = re.search(rf"import \S+\.model\.aod\.theme\.{pkg}\.(\w+)", enum.re
 new = next((entry for entry in entries if spec_import and entry[3] == spec_import.group(1)), None)
 if not new:
     print(f"[FAIL] AodThemeValue chưa có mục dùng spec của gói {pkg}")
+    sys.exit(1)
+if new[1] != theme_id:
+    print(f"[FAIL] theme id {theme_id!r} không khớp id {new[1]!r} của gói {pkg}")
     sys.exit(1)
 vi = Path("app/src/main/res/values-vi/strings.xml").read_text(encoding="utf-8")
 def vi_name(key):
@@ -435,34 +482,29 @@ case "$MODE" in
     ;;
   record-editor)
     prepare_device
-    [ "$FAIL" -eq 0 ] && run_step "record ảnh panel editor của $PKG" record-editor \
-      run_gradle :app:recordDebugAndroidTestScreenshots \
-      "-Pandroid.testInstrumentationRunnerArguments.class=$EDITOR_CLASS" \
-      "-Pandroid.testInstrumentationRunnerArguments.themeId=$PKG" \
-      "-Pandroid.testInstrumentationRunnerArguments.runId=$RUN_ID" --console=plain
+    [ "$FAIL" -eq 0 ] && run_step "build APK test" instrument-build prepare_instrumentation
+    [ "$FAIL" -eq 0 ] && begin_recording
+    [ "$FAIL" -eq 0 ] && run_step "record ảnh panel editor của $PKG" record-editor run_theme_instrumentation editor
     cleanup_record_flag
-    [ "$FAIL" -eq 0 ] && mark_group editor "$(group_hash editor)"
     copy_device_reports
+    [ "$FAIL" -eq 0 ] && copy_recorded_references && mark_group editor "$(group_hash editor)"
     ;;
   record-theme)
     prepare_device
-    [ "$FAIL" -eq 0 ] && run_step "record riêng ảnh $PKG" record-theme \
-      run_gradle :app:recordDebugAndroidTestScreenshots \
-      "-Pandroid.testInstrumentationRunnerArguments.class=$THEME_CLASSES" \
-      "-Pandroid.testInstrumentationRunnerArguments.themeId=$PKG" \
-      "-Pandroid.testInstrumentationRunnerArguments.runId=$RUN_ID" --console=plain
+    [ "$FAIL" -eq 0 ] && run_step "build APK test" instrument-build prepare_instrumentation
+    [ "$FAIL" -eq 0 ] && begin_recording
+    [ "$FAIL" -eq 0 ] && run_step "record riêng ảnh $PKG" record-theme run_theme_instrumentation screens+options+editor+motion
     cleanup_record_flag
-    [ "$FAIL" -eq 0 ] && mark_theme_groups
     copy_device_reports
+    [ "$FAIL" -eq 0 ] && copy_recorded_references && mark_theme_groups
     ;;
   blocks)
     BLOCK_HASH="$(group_hash blocks)"
     if is_group_changed blocks "$BLOCK_HASH"; then
       prepare_device
-      [ "$FAIL" -eq 0 ] && run_step "ảnh block dùng chung" device-blocks \
-        run_gradle :app:connectedDebugAndroidTest \
-        "-Pandroid.testInstrumentationRunnerArguments.class=$BLOCK_CLASS" \
-        "-Pandroid.testInstrumentationRunnerArguments.runId=$RUN_ID" --console=plain
+      [ "$FAIL" -eq 0 ] && run_step "build APK test" instrument-build prepare_instrumentation
+      [ "$FAIL" -eq 0 ] && clear_device_screenshots
+      [ "$FAIL" -eq 0 ] && run_step "ảnh block dùng chung" device-blocks run_block_instrumentation
       [ "$FAIL" -eq 0 ] && mark_group blocks "$BLOCK_HASH"
       copy_device_reports
     else
@@ -471,13 +513,12 @@ case "$MODE" in
     ;;
   record-blocks)
     prepare_device
-    [ "$FAIL" -eq 0 ] && run_step "record riêng block dùng chung" record-blocks \
-      run_gradle :app:recordDebugAndroidTestScreenshots \
-      "-Pandroid.testInstrumentationRunnerArguments.class=$BLOCK_CLASS" \
-      "-Pandroid.testInstrumentationRunnerArguments.runId=$RUN_ID" --console=plain
+    [ "$FAIL" -eq 0 ] && run_step "build APK test" instrument-build prepare_instrumentation
+    [ "$FAIL" -eq 0 ] && begin_recording
+    [ "$FAIL" -eq 0 ] && run_step "record riêng block dùng chung" record-blocks run_block_instrumentation
     cleanup_record_flag
-    [ "$FAIL" -eq 0 ] && mark_group blocks "$(group_hash blocks)"
     copy_device_reports
+    [ "$FAIL" -eq 0 ] && copy_recorded_references && mark_group blocks "$(group_hash blocks)"
     ;;
 esac
 

@@ -18,13 +18,8 @@ import com.decoutkhanqindev.aodamn.presentation.theme.Theme
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.RuleChain
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
 
-@RunWith(Parameterized::class)
-class AodThemeEditorScreenshotTest(
-    private val expectation: ThemeExpectation,
-) {
+class AodThemeEditorScreenshotTest {
     private val deviceRule = ThemeDeviceRule()
     private val dropshots = ThemeDropshots.create()
     private val composeRule = createAndroidComposeRule<ComponentActivity>()
@@ -37,6 +32,10 @@ class AodThemeEditorScreenshotTest(
 
     @Test
     fun showsEveryEditorPreviewWithoutClipping() {
+        selectedThemeExpectations().forEach(::assertEditorPreview)
+    }
+
+    private fun assertEditorPreview(expectation: ThemeExpectation) {
         composeRule.setContent {
             ThemeTestLocaleProvider {
                 Theme {
@@ -66,12 +65,5 @@ class AodThemeEditorScreenshotTest(
                 filePath = "themes/${expectation.theme.id}/editor",
             )
         }
-    }
-
-    companion object {
-        @JvmStatic
-        @Parameterized.Parameters(name = "{0}")
-        fun cases(): List<Array<ThemeExpectation>> = selectedThemeExpectations()
-            .map { expectation -> arrayOf(expectation) }
     }
 }

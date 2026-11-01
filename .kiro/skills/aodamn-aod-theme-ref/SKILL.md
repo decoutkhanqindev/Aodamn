@@ -61,7 +61,7 @@ mới (README có hơn 10 chỗ liệt kê tên chủ đề, dễ sót).
 ### 5. Kiểm
 Theo [references/testing.md](references/testing.md). Kiểm local trước:
 ```bash
-bash .kiro/skills/aodamn-aod-theme-ref/scripts/check_theme.sh <gói chủ đề> "<Tên tiếng Việt>"
+bash .kiro/skills/aodamn-aod-theme-ref/scripts/check_theme.sh <gói chủ đề> "<Tên tiếng Việt>" [--theme-id=<id>]
 ```
 Lần đầu có máy ảo Android API 37 rảnh: chạy Fast một lần khi code ổn, chạy `--device` để lấy ảnh thực tế, xem ảnh rồi ghi ảnh chuẩn bằng `--record`. Script chọn máy API 37 không bị test khác giữ, hoặc dùng `AOD_TEST_SERIAL` để chọn đúng máy.
 Script băm đầu vào theo nhóm `behavior`, `screens`, `options`, `editor`, `motion`, `blocks`; chỉ nhóm chưa pass hoặc có file đổi mới chạy.
