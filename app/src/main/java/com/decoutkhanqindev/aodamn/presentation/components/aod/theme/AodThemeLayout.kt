@@ -3,6 +3,8 @@ package com.decoutkhanqindev.aodamn.presentation.components.aod.theme
 import androidx.compose.runtime.Composable
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.bezel.AodBezelLandscape
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.bezel.AodBezelPortrait
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.blinky.AodBlinkyLandscape
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.blinky.AodBlinkyPortrait
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.bigoverlap.AodBigOverlapLandscape
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.bigoverlap.AodBigOverlapPortrait
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.capsule.AodCapsuleLandscape
@@ -89,6 +91,7 @@ fun AodPortrait(
         AodThemeValue.FLIP -> AodFlipPortrait(state = state, onIntent = onIntent)
         AodThemeValue.GENTLE -> AodGentlePortrait(state = state, onIntent = onIntent)
         AodThemeValue.ECLIPSE -> AodEclipsePortrait(state = state, onIntent = onIntent)
+        AodThemeValue.BLINKY -> AodBlinkyPortrait(state = state, onIntent = onIntent)
     }
 }
 
@@ -124,5 +127,6 @@ fun AodLandscape(
         AodThemeValue.FLIP -> AodFlipLandscape(state = state, onIntent = onIntent)
         AodThemeValue.GENTLE -> AodGentleLandscape(state = state, onIntent = onIntent)
         AodThemeValue.ECLIPSE -> AodEclipseLandscape(state = state, onIntent = onIntent)
+        AodThemeValue.BLINKY -> AodBlinkyLandscape(state = state, onIntent = onIntent)
     }
 }

@@ -5114,6 +5114,126 @@ eclipse = [
     frame("N2 · Ngang, trình phát dùng chung kiểu Hàng ngang; ngày, pin và icon vẫn hiện", ec_landscape(media=True)),
     frame("N3 · Ngang, thời tiết cạnh ngày, nội dung thông báo dùng chung, đang sạc", ec_landscape(latest=True, charging=True, weather=True)),
     frame("N4 · Để so: phần riêng app mẫu toàn bề rộng, Xoay cố định 220°, Độ lộ 35%", ec_landscape(220, .35, details=False, clock="#80DEEA", shadow="#20142D", character="#80DEEA")),
+BK_DEFAULT = "#EE9BE6"
+BK_WHITE = "#FFFFFF"
+BK_DIM = "#B5B5B5"
+BK_CLOSED = 0.05
+BK_OPEN = 0.7
+
+
+def bk_eyes(cx, cy, size=100, openness=BK_OPEN, color=BK_DEFAULT, live_id=""):
+    attrs = f' data-bk-live="{live_id}" data-bk-cx="{f(cx)}" data-bk-cy="{f(cy)}" data-bk-size="{f(size)}"' if live_id else ""
+    id_attr = lambda side: f' id="{live_id}{side}"' if live_id else ""
+    height, radius = (openness + .1) * size, .1 * size
+    top = cy - height / 2
+    s = ""
+    for side, x in (("l", cx - size), ("r", cx + size)):
+        s += (f'<rect{id_attr(side)}{attrs} x="{f(x - size / 2)}" y="{f(top)}" width="{f(size)}" height="{f(height)}" '
+              f'rx="{f(radius)}" fill="{color}"/>')
+    return s
+
+
+def bk_clock(cx, cy, text="10:08", size=22, color=BK_DEFAULT):
+    return txt(cx, cy + .36 * size, text, size * 1.3, color, 400, "middle")
+
+
+def bk_source_row(cx, cy, mode="status", color=BK_DIM):
+    if mode == "notification":
+        return icon_shapes(color)[0](cx - 123, cy - 8, 16) + txt(cx - 98, cy + 5, "Tin nhắn mới từ Lan", 16, color)
+    if mode == "media":
+        return (f'<path d="M{f(cx - 125)},{f(cy - 7)} h6 v14 h-6z M{f(cx - 115)},{f(cy - 7)} h6 v14 h-6z" fill="{color}"/>'
+                + txt(cx - 98, cy + 5, "That Cool Song - It’s Artist", 16, color))
+    return battery_h(cx - 112, cy - 5.5, color) + txt(cx - 82, cy + 5, "72%  ·  THỨ BA, 13 THG 10", 16, color)
+
+
+def bk_latest(cx, cy, width, color=BK_DIM):
+    text = "Lan: Tối nay đi ăn lẩu không?"
+    return icon_shapes(color)[0](cx - width / 2, cy - 8, 16) + txt(cx - width / 2 + 26, cy + 5, text, 14, color)
+
+
+def bk_portrait(hh=10, mm=8, eye_size=100, clock_size=22, character=BK_DEFAULT, clock=BK_DEFAULT, date=True, weather=False,
+                status=True, latest=False, media=False, source_mode="", openness=BK_OPEN, live=False):
+    text, cx, eye_cy, clock_y = f"{hh:02d}:{mm:02d}", PW / 2, 310, 470
+    eid = "bkp" if live else ""
+    s = bk_eyes(cx, eye_cy, eye_size, openness, character, eid)
+    s += bk_clock(cx, clock_y, text, clock_size, clock)
+    if date:
+        s += date_spaced(cx, 92, weather)
+    if source_mode:
+        return s + bk_source_row(cx, 795, source_mode, clock)
+    if status:
+        s += status_row(cx, 705, clock, n=3)
+    if latest:
+        s += bk_latest(cx, 746, PW - 64, clock)
+    if media:
+        s += f'<g transform="translate(40 795)">{media_compact()}</g>'
+    return s
+
+
+def bk_landscape(hh=10, mm=8, eye_size=100, clock_size=22, character=BK_DEFAULT, clock=BK_DEFAULT, date=True, weather=False,
+                 status=True, latest=False, media=False, source_mode="", openness=BK_OPEN, live=False):
+    cx, eye_cy, clock_y, text = 206, 151, 270, f"{hh:02d}:{mm:02d}"
+    eid = "bkn" if live else ""
+    s = bk_eyes(cx, eye_cy, eye_size, openness, character, eid)
+    s += bk_clock(cx, clock_y, text, clock_size, clock)
+    s += '<line x1="510" y1="58" x2="510" y2="326" stroke="#3A3A3A"/>'
+    if source_mode:
+        return s + bk_source_row(683, 198, source_mode, clock)
+    if date:
+        s += date_spaced(683, 108, weather)
+    if status:
+        s += status_row(683, 148, clock, n=3)
+    if latest:
+        s += bk_latest(683, 198, 286, clock)
+    if media:
+        s += '<g transform="translate(540 252)">' + media_compact() + '</g>'
+    return s
+
+
+def bk_motion_strip():
+    values = (("Mở", BK_OPEN), ("Khép", BK_CLOSED), ("Mở lại", BK_OPEN))
+    s = ""
+    for i, (label, openness) in enumerate(values):
+        cx = 90 + i * 150
+        s += bk_eyes(cx, 68, 52, openness, BK_DEFAULT) + bk_clock(cx, 136, "10:08", 16, BK_DEFAULT)
+        s += txt(cx, 166, label, 13, DM, 400, "middle")
+    s += txt(680, 44, "2 giây chờ · đóng/mở 300 ms", 14, G, 500, "middle")
+    s += txt(680, 72, "12 giây: nhiều nhịp chớp và nheo mắt", 14, G, 400, "middle")
+    s += txt(680, 100, "Rung > 0,5: chớp ngay rồi hẹn lại", 14, G, 400, "middle")
+    s += txt(680, 128, "Ngày 60–359 s · đêm 11–60 s", 14, G, 400, "middle")
+    return (f'<p style="font-size:13px;color:var(--text-secondary);margin:1.25rem 0 6px">Chuyển động mắt giữ nguyên từ BlinkyCharacter</p>'
+            f'<svg viewBox="0 0 {W} 190" width="100%" role="img" aria-label="Chuyển động mắt Blinky" '
+            f'style="display:block;font-family:\'Plus Jakarta Sans\',sans-serif" fill="{G}"><rect width="{W}" height="190" rx="20" fill="#000"/>{s}</svg>')
+
+
+def bk_live_script():
+    values = ".7,.6,.5,.4,.3,.2,.2,.2,.2,.1,.1,.05,.05,.7,0,.7,.7,.7,.7,.7,.7,.7,.7,.7,.7,.7,.7,.7,.65,.6,.55,.5,.45,.4,.4,.4,.1,.2,.3,.4,.5,.6,.6,.6,.6,.6,.6,.6,.6,.6,.6,.2,.3,.4,.4,.4,.4,.4,.4,.4,.4,.4,.4,.4,.4,.4,.375,.35,.325,.3,.275,.25,.225,.2,.175,.15,.125,.1,.075,.05,.025,0"
+    return ('<script>(function(){var v=[' + values + '].map(Number),start=performance.now()+2000,d=12000;function p(){var e=(performance.now()-start)/d;'
+            'if(e<0){requestAnimationFrame(p);return}e=e%1;var q=e*(v.length-1),i=Math.floor(q),a=v[i]+(v[Math.min(i+1,v.length-1)]-v[i])*(q-i);'
+            'document.querySelectorAll("[data-bk-live]").forEach(function(r){var cy=+r.dataset.bkCy,z=+r.dataset.bkSize,x=+r.dataset.bkCx+(r.id.endsWith("l")?-z:z);'
+            'r.setAttribute("y",(cy-(a+.1)*z/2).toFixed(1));r.setAttribute("height",((a+.1)*z).toFixed(1));r.setAttribute("x",(x-z/2).toFixed(1));});requestAnimationFrame(p)}p()})();</script>')
+
+
+blinky = [
+    bk_motion_strip(),
+    '<div style="font-size:0">',
+    frame_portrait("D1 · Mở 0 ms · Bố cục dọc cố định: header trên, hero mắt + giờ cùng trục giữa, cụm chi tiết neo đáy",
+                   bk_portrait(weather=True)),
+    frame_portrait("D2 · Khép 300 ms · Bố cục dọc cố định: cùng trục hero, chỉ đổi trạng thái mắt và visibility của chi tiết",
+                   bk_portrait(weather=True, latest=True, media=True, openness=BK_CLOSED)),
+    frame_portrait("D3 · Mở lại 600 ms · Bố cục dọc cố định: cùng trục hero, dữ liệu 21:47 và màu Cyan / Hổ phách",
+                   bk_portrait(21, 47, character="#80DEEA", clock="#FFD54F", date=False, latest=True)),
+    frame_portrait("D4 · App mẫu 08:30 · Bố cục dọc cố định: cùng trục hero, chỉ nguồn nhạc ở slot chi tiết neo đáy",
+                   bk_portrait(8, 30, character=BK_WHITE, clock=BK_WHITE, date=False, status=False, source_mode="media")),
+    '</div>',
+    frame("N1 · Mở 0 ms · Bố cục ngang cố định: hero mắt + giờ bên trái, một cột chi tiết bên phải",
+          bk_landscape(weather=True)),
+    frame("N2 · Khép 300 ms · Bố cục ngang cố định: hero và cột không đổi, chỉ đổi trạng thái mắt và visibility",
+          bk_landscape(weather=True, latest=True, openness=BK_CLOSED)),
+    frame("N3 · Mở lại 600 ms · Bố cục ngang cố định: hero trái và cột phải không đổi, dữ liệu 21:47 màu Cyan / Hổ phách",
+          bk_landscape(21, 47, character="#80DEEA", clock="#FFD54F", date=False, media=True)),
+    frame("N4 · App mẫu 08:30 · Bố cục ngang cố định: hero trái và source nhạc trong slot của cột chi tiết phải",
+          bk_landscape(8, 30, character=BK_WHITE, clock=BK_WHITE, date=False, status=False, source_mode="media")),
 ]
 
 
@@ -5144,6 +5264,7 @@ for name, summary, defs, frames in [
     ("w_orbit", "Chủ đề Quỹ đạo (Solar System): ba hành tinh quay theo giờ thật, cỡ và màu, bốn khung dọc và bốn khung ngang", "", orbit),
     ("w_flip", "Chủ đề Thẻ lật (Flip Clock): chín kiểu chữ, hai bước lật, bốn khung dọc và bốn khung ngang", FC_DEFS, flip),
     ("w_eclipse", "Chủ đề Nhật thực (Eclipse): vầng sáng, bốn khung dọc và bốn khung ngang", "", eclipse),
+    ("w_blinky", "Chủ đề Chớp mắt (Blinky): mắt chớp theo chu kỳ, màu và cỡ riêng, bốn khung dọc và bốn khung ngang", "", blinky),
 ]:
     code = widget(summary, defs, frames)
     OUT.mkdir(parents=True, exist_ok=True)

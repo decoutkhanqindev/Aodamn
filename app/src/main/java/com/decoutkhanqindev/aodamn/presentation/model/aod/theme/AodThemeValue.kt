@@ -5,6 +5,7 @@ import androidx.compose.runtime.Immutable
 import com.decoutkhanqindev.aodamn.R
 import com.decoutkhanqindev.aodamn.data.local.datastore.DataStoreManager
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.bezel.BezelThemeSpec
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.blinky.BlinkyThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.bigoverlap.BigOverlapThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.capsule.CapsuleThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.card.CardThemeSpec
@@ -62,7 +63,8 @@ enum class AodThemeValue(
     ORBIT(id = "orbit", nameRes = R.string.theme_orbit, spec = OrbitThemeSpec),
     FLIP(id = "flip", nameRes = R.string.theme_flip, spec = FlipThemeSpec),
     GENTLE(id = "gentle", nameRes = R.string.theme_gentle, spec = GentleThemeSpec),
-    ECLIPSE(id = "eclipse", nameRes = R.string.theme_eclipse, spec = EclipseThemeSpec);
+    ECLIPSE(id = "eclipse", nameRes = R.string.theme_eclipse, spec = EclipseThemeSpec),
+    BLINKY(id = "blinky", nameRes = R.string.theme_blinky, spec = BlinkyThemeSpec);
 
     companion object {
         val DEFAULT = CLASSIC

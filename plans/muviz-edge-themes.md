@@ -57,6 +57,7 @@ code dịch ngược, không lấy asset (font, ảnh, Lottie) từ APK. APK và
 | Nhật thực (`ECLIPSE`) | **11 · Mar22 "Eclipse"** | làm từ danh mục này (2026-11-01), số đo lấy từ layout dọc / ngang / `Mar22Screen` / `Eclipse` / font `lato_regular` |
 | Thẻ lật (`FLIP`) | **9 · Jan22 "Flip Clock"** | làm từ danh mục này (2026-10-31), số đo lấy từ layout `jan22_screen_layout` dọc / ngang / `FlipClock` / `HalfTextView` |
 | Dịu (`GENTLE`) | **15 · Jul22 "Samsung Like"** | làm từ danh mục này (2026-10-31), số đo lấy từ layout `jul22_screen_layout` dọc / ngang / `Jul22Screen` / font Nunito |
+| Chớp mắt (`BLINKY`) | **8 · Dec21 "Blinky"** | làm từ danh mục này (2026-11-01), số đo lấy từ `Dec21Screen` / `BlinkyCharacter` |
 | Đơn cách (`MONO`) | **31 · Nov23 "Space Mono"** | làm từ danh mục này (2026-10-29), số đo lấy từ layout `nov23_screen_layout` dọc / ngang / `Nov23Screen` / `NoPadTextView` / font Space Mono trong APK |
 | Khung (`FRAME`) | **10 · Feb22 "Box Clock"** | làm từ danh mục này (2026-10-29), số đo lấy từ layout `feb22_screen_layout` dọc / ngang / `Feb22Screen` / font Josefin Sans trong APK |
 | Lời (`WORDS`) | **5 · Sep21 "Text Clock"** | làm từ danh mục này (2026-10-29), số đo lấy từ layout `sep21_screen_layout` dọc / ngang / `Sep21Screen` / font Lato 1.104 trong APK |
@@ -75,7 +76,7 @@ text view chung) hoặc font dùng trong code; "chữ (font layout)" nghĩa là 
 | 5 | Sep21 | Text Clock | Clock Weight, Clock Size, Theme Color | Hour, Minute, Date, Notification, Controls, Battery Status | chữ: lato | – | **Lời** (`WORDS`) |
 | 6 | Oct21 | Visualizer | Clock Size, Viz Height, Viz Spread, Viz Speed, Theme Color | Viz 1, Viz 2, Viz 3, Hour, Minute, Date, Notification, Controls, Battery Status | chữ (font layout) | quyền RECORD_AUDIO | chưa có |
 | 7 | Nov21 | Retro | Clock Size, Theme Color | Clock, Date, Notification, Controls | chữ (font layout) | – | chưa có |
-| 8 | Dec21 | Blinky | Character Size, Clock Size, Theme Color | Character, Clock | BlinkyCharacter | – | chưa có |
+| 8 | Dec21 | Blinky | Character Size, Clock Size, Theme Color | Character, Clock | BlinkyCharacter | – | **Chớp mắt** (`BLINKY`) |
 | 9 | Jan22 | Flip Clock | Clock Style, Clock Size, Character Size, Clock Color, Character Color | – | FlipClock | – | **Thẻ lật** (`FLIP`) |
 | 10 | Feb22 | Box Clock | Clock Size, Theme Color | Clock, Date, Notification, Controls | chữ (font layout) | – | **Khung** (`FRAME`) |
 | 11 | Mar22 | Eclipse | Clock Color, Shadow Color, Rotation, Peek, Character Color, Controls Color | – | Eclipse | – | **Nhật thực** (`ECLIPSE`) |
@@ -290,6 +291,7 @@ mỗi phút (`AodViewModel`), nên phần chạy theo giây của app mẫu ph�
   thời tiết, sự kiện, ghi nhớ, nét vẽ hay nhạc; các cờ phần thêm trong `Jan22Screen` đều tắt. Mock đề xuất giữ ngày + thời tiết một dòng phía
   trên và pin + icon thông báo một dòng phía dưới vì vẫn vừa ở cỡ 100 cả dọc lẫn ngang; bỏ nội dung thông báo mới nhất, sự kiện, ghi nhớ,
   nét vẽ và nhạc vì ở cỡ 100 màn ngang chỉ còn 79dp theo chiều cao, thêm khối cao sẽ ép hoặc lệch cặp thẻ.
+- Đọc đủ 2026-11-01 (bước 1 sau Thẻ lật): ~~**8 · Blinky**~~ (`Dec21Screen`, `BlinkyCharacter`; đã làm thành Chớp mắt 2026-11-01). Mắt gồm hai hình bo tròn cỡ 70–140 (mặc định 100), tâm cách nhau đúng hai lần cỡ mắt; giờ `hh:mm` / `HH:mm` cỡ 17–30 (mặc định 22 × 1,3sp). Mắt chớp khép 300ms rồi mở 300ms, đợi 2 giây lúc mở AOD và hẹn ngẫu nhiên 60–359 giây ban ngày, 11–60 giây ban đêm. App mẫu nhận rung để chớp ngay; bên mình không thêm MotionManager nên chỉ giữ chu kỳ thời gian. Theme Color là màu gốc, Advanced Character / Clock ghi đè từng phần. Layout mẫu chỉ có mắt, giờ và một dòng thay nhau pin + ngày / thông báo / nhạc; bên mình dùng khối chung đã duyệt: dọc ngày + thời tiết neo đầu, mắt + giờ cùng trục giữa, pin + icon, thông báo mới, nhạc neo đáy; ngang hero trái, một cột chi tiết phải. Bỏ sự kiện, ghi nhớ, nét vẽ vì mọi case phải giữ anchor cố định.
 - ~~**12 · Vertical Clock**~~ (`VerticalTextView`, `apr22_screen_layout` + bản ngang, đọc 2026-10-26, đọc lại đủ 2026-10-27, đã làm thành Gáy
   sách 2026-10-27): "HH:mm" Josefin Sans Regular cỡ 25–60sp (mặc định 40) xoay −90° (đọc từ dưới lên, nét chữ căn giữa dòng), ngày "EEE, dd MMMM" in
   hoa nửa cỡ trên giờ cùng trục cách 30dp; cột cách mép trái 18dp, đáy giờ cách đáy 45dp (ngang 30dp). Dọc: phần trên cột chia 0,25 trống /

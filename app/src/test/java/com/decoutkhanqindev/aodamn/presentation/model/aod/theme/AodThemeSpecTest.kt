@@ -5,6 +5,7 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.AodGradient
 import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.GradientSwatchValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.bigoverlap.AodBigOverlapStyleValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.bigoverlap.BigOverlapThemeSpec
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.blinky.BlinkyThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.clip.ClipThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.compass.AodCompassStyleValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.compass.CompassThemeSpec
@@ -664,7 +665,6 @@ class AodThemeSpecTest {
         )
     }
 
-    @Test
     fun `gentle keeps the Jul22 size, weights and colors without large blocks`() {
         val spec = AodThemeValue.GENTLE.spec
         assertEquals(
@@ -699,6 +699,39 @@ class AodThemeSpecTest {
                 GentleThemeSpec.MinuteColor,
                 GentleThemeSpec.NotificationsColor,
                 GentleThemeSpec.MediaColor,
+            ),
+            spec.options,
+        )
+    }
+
+    @Test
+    fun `blinky keeps every reference option and fixed detail blocks`() {
+        val spec = AodThemeValue.BLINKY.spec
+        assertEquals(
+            setOf(
+                AodComponentValue.DATE,
+                AodComponentValue.BATTERY,
+                AodComponentValue.WEATHER,
+                AodComponentValue.NOTIFICATIONS,
+                AodComponentValue.MEDIA,
+            ),
+            spec.components,
+        )
+        assertEquals(emptySet<AodBlockValue>(), spec.ownBlocks)
+        assertEquals(true, spec.hasNotificationContent)
+        assertEquals(true, spec.isLiveInPreview)
+        assertEquals(70..140, BlinkyThemeSpec.CharacterSize.range)
+        assertEquals(100, BlinkyThemeSpec.CharacterSize.default)
+        assertEquals(17..30, BlinkyThemeSpec.ClockSize.range)
+        assertEquals(22, BlinkyThemeSpec.ClockSize.default)
+        assertEquals(Orchid, BlinkyThemeSpec.ThemeColor.default)
+        assertEquals(
+            listOf(
+                BlinkyThemeSpec.ThemeColor,
+                BlinkyThemeSpec.CharacterSize,
+                BlinkyThemeSpec.CharacterColor,
+                BlinkyThemeSpec.ClockSize,
+                BlinkyThemeSpec.ClockColor,
             ),
             spec.options,
         )
@@ -798,6 +831,7 @@ class AodThemeSpecTest {
             AodThemeValue.ORBIT,
             AodThemeValue.FLIP,
             AodThemeValue.ECLIPSE,
+            AodThemeValue.BLINKY,
         )
         AodThemeValue.entries.forEach { theme ->
             assertEquals("${theme.id}: xem trước theo giờ thật", theme in liveThemes, theme.spec.isLiveInPreview)

@@ -78,6 +78,7 @@
     <string name="theme_flip">Thẻ lật</string>
     <string name="theme_gentle">Dịu</string>
     <string name="theme_eclipse">Nhật thực</string>
+    <string name="theme_blinky">Chớp mắt</string>
     <string name="aod_jersey_date_first_pattern">dd</string>
     <string name="aod_jersey_date_second_pattern">MM</string>
     <string name="aod_bezel_weekday_pattern">EEEE</string>
@@ -89,6 +90,8 @@
     <string name="theme_discard_desc">Chủ đề này còn thay đổi chưa lưu.</string>
     <string name="theme_discard_confirm">Bỏ thay đổi</string>
     <string name="theme_tab_clock">Đồng hồ</string>
+    <string name="theme_tab_theme">Chủ đề</string>
+    <string name="theme_tab_character">Nhân vật</string>
     <string name="theme_tab_hour">Giờ</string>
     <string name="theme_tab_minute">Phút</string>
     <string name="theme_tab_digits">Chữ số</string>
@@ -114,6 +117,8 @@
     <string name="theme_color_card">Thẻ</string>
     <string name="theme_color_status">Pin &amp; thông báo</string>
     <string name="theme_color_clock">Đồng hồ</string>
+    <string name="theme_color_theme">Chủ đề</string>
+    <string name="theme_color_character">Nhân vật</string>
     <string name="theme_color_battery">Pin</string>
     <string name="theme_color_notifications">Thông báo</string>
     <string name="theme_color_memo">Ghi nhớ</string>
@@ -152,6 +157,8 @@
     <string name="theme_opt_fade">Phai dần</string>
     <string name="theme_opt_digital_clock">Đồng hồ số</string>
     <string name="flip_character_size_value">Cỡ số: %1$d%%</string>
+    <string name="blinky_character_size_value">Cỡ mắt: %1$d</string>
+    <string name="blinky_clock_size_value">Cỡ đồng hồ: %1$d</string>
     <string name="flip_style_big_shoulders_light">Big Shoulders, mảnh</string>
     <string name="flip_style_double_outline">Viền đôi</string>
     <string name="font_weight_thin">Mảnh</string>

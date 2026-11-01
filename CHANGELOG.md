@@ -34,6 +34,20 @@ Thêm Nhật thực từ Eclipse của Muviz Edge. Kiểm compile Kotlin, contra
 ### Thay đổi
 
 - Chỉ thêm nhánh `ECLIPSE` trong `AodMediaControls` để dùng renderer nhạc chung `AodClassicMedia`; không thay đổi API hoặc hành vi renderer của theme đang có.
+## [Chưa phát hành] – 2026-11-01 – Chủ đề Chớp mắt
+
+User đã duyệt mock cố định cuối. Kiểm thử đang chờ hoàn tất.
+
+### Thêm
+
+- Chủ đề Chớp mắt (Blinky số 8 của Muviz Edge; số đo và chuyển động lấy từ `Dec21Screen` / `BlinkyCharacter` dịch ngược). Mắt là hai hình bo tròn cỡ 70–140 (mặc định 100), tâm cách nhau hai lần cỡ mắt. Giờ theo 12 / 24 giờ của máy, cỡ 17–30 (mặc định 22 × 1,3sp). Màu mặc định Orchid, mỗi màu hỗ trợ gradient.
+- Mắt chớp sau 2 giây, khép 300ms rồi mở 300ms. Lần kế tiếp được hẹn ngẫu nhiên 60–359 giây ban ngày, 11–60 giây ban đêm như nguồn. App mẫu chớp khi rung; không thêm `MotionManager` nên bản này chỉ chạy theo bộ hẹn giờ đã duyệt.
+- Bố cục dọc cố định: ngày + thời tiết ở đầu, hero mắt + giờ cùng trục giữa, pin + icon, thông báo mới nhất và nhạc ở các slot neo đáy. Bố cục ngang cố định: hero trái, một cột chi tiết phải. Mọi trạng thái chỉ đổi dữ liệu, màu, visibility và độ mở mắt.
+- Dùng lại khối ngày, thời tiết, pin, thông báo, thông báo mới nhất và trình phát. Không có sự kiện, ghi nhớ, nét vẽ vì không giữ được neo cố định ở cả hai hướng.
+
+### Thay đổi
+
+- Chỉ thêm, không đổi chủ đề đang có: `BLINKY` trong `AodThemeValue`, nhánh dọc / ngang ở `AodThemeLayout`, nhánh trình phát dùng chung trong `AodMediaControls`, một `ThemeExpectation`, chuỗi en / vi và vector Phosphor `ic_eye`. Mock `w_blinky` đã có trong `tools/mockups/aod_landscape_mockups.py`.
 
 ## [Chưa phát hành] – 2026-10-31 – Test tự động chủ đề AOD
 

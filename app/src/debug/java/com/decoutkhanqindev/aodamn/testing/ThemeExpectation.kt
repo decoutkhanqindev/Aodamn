@@ -69,6 +69,25 @@ object ThemeTestCatalog {
             isLiveInPreview = false,
         ),
         ThemeExpectation(
+            theme = AodThemeValue.BLINKY,
+            optionKeys = listOf("theme_color", "character_size", "character_color", "clock_size", "clock_color"),
+            components = setOf(
+                AodComponentValue.DATE,
+                AodComponentValue.BATTERY,
+                AodComponentValue.WEATHER,
+                AodComponentValue.NOTIFICATIONS,
+                AodComponentValue.MEDIA,
+            ),
+            ownBlocks = emptySet(),
+            hasNotificationContent = true,
+            isLiveInPreview = true,
+            motion = ThemeMotionExpectation(
+                fromMinute = 30,
+                toMinute = 31,
+                checkpointsMillis = listOf(300L, 600L),
+            ),
+        ),
+        ThemeExpectation(
             theme = AodThemeValue.FLIP,
             optionKeys = listOf("style", "size", "character_size", "card_color", "digit_color"),
             components = setOf(

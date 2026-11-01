@@ -85,6 +85,7 @@
     <string name="theme_flip">Flip</string>
     <string name="theme_gentle">Gentle</string>
     <string name="theme_eclipse">Eclipse</string>
+    <string name="theme_blinky">Blinky</string>
     <string name="theme_in_use">In use</string>
     <string name="theme_edit">Edit</string>
     <string name="theme_saved">Theme saved</string>
@@ -93,6 +94,8 @@
     <string name="theme_discard_desc">This theme has changes that are not saved yet.</string>
     <string name="theme_discard_confirm">Discard changes</string>
     <string name="theme_tab_clock">Clock</string>
+    <string name="theme_tab_theme">Theme</string>
+    <string name="theme_tab_character">Character</string>
     <string name="theme_tab_hour">Hour</string>
     <string name="theme_tab_minute">Minute</string>
     <string name="theme_tab_digits">Digits</string>
@@ -118,6 +121,8 @@
     <string name="theme_color_card">Card</string>
     <string name="theme_color_status">Battery &amp; alerts</string>
     <string name="theme_color_clock">Clock</string>
+    <string name="theme_color_theme">Theme</string>
+    <string name="theme_color_character">Character</string>
     <string name="theme_color_battery">Battery</string>
     <string name="theme_color_notifications">Alerts</string>
     <string name="theme_color_memo">Memo</string>
@@ -156,6 +161,8 @@
     <string name="theme_opt_fade">Fade</string>
     <string name="theme_opt_digital_clock">Digital clock</string>
     <string name="flip_character_size_value">Digit size: %1$d%%</string>
+    <string name="blinky_character_size_value">Eye size: %1$d</string>
+    <string name="blinky_clock_size_value">Clock size: %1$d</string>
     <string name="flip_style_bebas_neue" translatable="false">Bebas Neue</string>
     <string name="flip_style_big_shoulders_regular" translatable="false">Big Shoulders</string>
     <string name="flip_style_big_shoulders_light">Big Shoulders, light</string>
