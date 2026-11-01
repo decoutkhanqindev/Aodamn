@@ -22,7 +22,7 @@ object MoonPhaseThemeSpec : AodThemeSpec {
 
     val ClockColor = AodColorOption(key = "clock_color", labelRes = R.string.theme_color_clock, default = MoonGold, isGradientAllowed = true)
     val ClockSize = AodRangeOption(key = "clock_size", labelRes = R.string.opt_size_value, range = 80..120, step = 5, default = 100)
-    val CharacterColor = AodColorOption(key = "character_color", labelRes = R.string.theme_color_character, default = White, isGradientAllowed = true)
+    val CharacterColor = AodColorOption(key = "character_color", labelRes = R.string.theme_color_moon_surface, default = White, isGradientAllowed = true)
     val CharacterSize = AodRangeOption(key = "character_size", labelRes = R.string.theme_character_size_value, range = 60..140, step = 5, default = 100)
     val Peek = AodRangeOption(key = "peek", labelRes = R.string.theme_opt_peek, range = 0..50, step = 1, default = 0)
     val Rotation = AodRangeOption(key = "rotation", labelRes = R.string.theme_opt_rotation, range = 0..359, step = 1, default = 45)

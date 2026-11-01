@@ -137,7 +137,7 @@
     <string name="theme_color_minute_tag">Minute &amp; AM/PM</string>
     <string name="theme_color_line">Line</string>
     <string name="theme_color_face">Dial</string>
-    <string name="theme_color_character">Moon surface</string>
+    <string name="theme_color_moon_surface">Moon surface</string>
     <string name="theme_color_glow">Moon glow</string>
     <string name="theme_color_particles">Particles</string>
     <string name="theme_opt_peek">Moon phase</string>
