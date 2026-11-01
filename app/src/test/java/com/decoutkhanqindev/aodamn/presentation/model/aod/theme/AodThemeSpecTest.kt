@@ -8,6 +8,7 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.bigoverlap.BigOv
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.clip.ClipThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.compass.AodCompassStyleValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.compass.CompassThemeSpec
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.eclipse.EclipseThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.component.AodComponentValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.fade.AodFadeWeightValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.fade.FadeThemeSpec
@@ -34,6 +35,8 @@ import com.decoutkhanqindev.aodamn.presentation.theme.Amber
 import com.decoutkhanqindev.aodamn.presentation.theme.Aquamarine
 import com.decoutkhanqindev.aodamn.presentation.theme.Brick
 import com.decoutkhanqindev.aodamn.presentation.theme.Cream
+import com.decoutkhanqindev.aodamn.presentation.theme.EclipseHalo
+import com.decoutkhanqindev.aodamn.presentation.theme.EclipseShadow
 import com.decoutkhanqindev.aodamn.presentation.theme.Grey9A
 import com.decoutkhanqindev.aodamn.presentation.theme.GreyB4
 import com.decoutkhanqindev.aodamn.presentation.theme.GreyCE
@@ -751,6 +754,39 @@ class AodThemeSpecTest {
     }
 
     @Test
+    fun `eclipse keeps five reference options and only the blocks that fit`() {
+        val spec = AodThemeValue.ECLIPSE.spec
+        assertEquals(
+            setOf(
+                AodComponentValue.DATE,
+                AodComponentValue.BATTERY,
+                AodComponentValue.WEATHER,
+                AodComponentValue.NOTIFICATIONS,
+                AodComponentValue.MEDIA,
+            ),
+            spec.components,
+        )
+        assertEquals(emptySet<AodBlockValue>(), spec.ownBlocks)
+        assertEquals(true, spec.hasNotificationContent)
+        assertEquals(true, spec.isLiveInPreview)
+        assertEquals(AodRangeOption.AUTO, EclipseThemeSpec.Rotation.default)
+        assertEquals(AodRangeOption.AUTO, EclipseThemeSpec.Peek.default)
+        assertEquals(EclipseHalo, EclipseThemeSpec.RingColor.default)
+        assertEquals(EclipseShadow, EclipseThemeSpec.ShadowColor.default)
+        assertEquals(GreyED, EclipseThemeSpec.CharacterColor.default)
+        assertEquals(
+            listOf(
+                EclipseThemeSpec.RingColor,
+                EclipseThemeSpec.ShadowColor,
+                EclipseThemeSpec.Rotation,
+                EclipseThemeSpec.Peek,
+                EclipseThemeSpec.CharacterColor,
+            ),
+            spec.options,
+        )
+    }
+
+    @Test
     fun `only themes with real time motion run in real time in previews`() {
         val liveThemes = setOf(
             AodThemeValue.COMPASS,
@@ -761,6 +797,7 @@ class AodThemeSpecTest {
             AodThemeValue.SECTOR,
             AodThemeValue.ORBIT,
             AodThemeValue.FLIP,
+            AodThemeValue.ECLIPSE,
         )
         AodThemeValue.entries.forEach { theme ->
             assertEquals("${theme.id}: xem trước theo giờ thật", theme in liveThemes, theme.spec.isLiveInPreview)

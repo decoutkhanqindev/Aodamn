@@ -86,6 +86,25 @@ object ThemeTestCatalog {
                 checkpointsMillis = listOf(400L, 800L),
             ),
         ),
+        ThemeExpectation(
+            theme = AodThemeValue.ECLIPSE,
+            optionKeys = listOf("ring_color", "shadow_color", "rotation", "peek", "character_color"),
+            components = setOf(
+                AodComponentValue.DATE,
+                AodComponentValue.BATTERY,
+                AodComponentValue.WEATHER,
+                AodComponentValue.NOTIFICATIONS,
+                AodComponentValue.MEDIA,
+            ),
+            ownBlocks = emptySet(),
+            hasNotificationContent = true,
+            isLiveInPreview = true,
+            motion = ThemeMotionExpectation(
+                fromMinute = 30,
+                toMinute = 31,
+                checkpointsMillis = listOf(1_000L, 2_000L),
+            ),
+        ),
     )
 }
 

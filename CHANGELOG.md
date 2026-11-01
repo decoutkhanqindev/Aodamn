@@ -21,6 +21,19 @@ User duyệt mock Dịu và cho bắt đầu code. Chủ đề giữ đồng h�
 ### Thay đổi
 
 - Chỉ thêm `GENTLE` ở `AodThemeValue`, nhánh dọc / ngang ở `AodThemeLayout`, nhánh nhạc ở `AodMediaControls`, `ThemeExpectation`, test đặc tả, resource và mock `w_gentle`; không đổi theme cũ hoặc khối dùng chung.
+## [Chưa phát hành] – 2026-11-01 – Chủ đề Nhật thực
+
+Thêm Nhật thực từ Eclipse của Muviz Edge. Kiểm compile Kotlin, contract JVM, quy tắc source và test thiết bị theo bộ harness chung được ghi cùng thay đổi sau khi có golden được duyệt.
+
+### Thêm
+
+- `ECLIPSE` với năm tuỳ chọn của app mẫu: màu Vầng, màu Bóng, Xoay, Độ lộ và màu chữ số Lato. Màu Vầng, Bóng, chữ số hỗ trợ đơn sắc hoặc gradient; Xoay và Độ lộ tự động theo giờ hoặc khóa giá trị người dùng chọn.
+- Bố cục riêng dọc và ngang: vầng sáng và bóng che giữa màn, thông báo mới ở vùng trên, ngày + thời tiết và dòng pin + icon trên đĩa, trình phát chung ở đáy. Sự kiện, ghi nhớ, nét vẽ không thuộc `components`.
+- Một `ThemeExpectation` dùng chung cho contract, option pairwise, flow, tám ảnh fullscreen, option board, editor và motion. Test host gọi thẳng `AodContent`, không tạo `AdsManager`.
+
+### Thay đổi
+
+- Chỉ thêm nhánh `ECLIPSE` trong `AodMediaControls` để dùng renderer nhạc chung `AodClassicMedia`; không thay đổi API hoặc hành vi renderer của theme đang có.
 
 ## [Chưa phát hành] – 2026-10-31 – Test tự động chủ đề AOD
 

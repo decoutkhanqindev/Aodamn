@@ -5013,6 +5013,107 @@ gentle = [
     frame("N2 · Ngang, 10:27: thời tiết, thông báo mới nhất ở trái; trình phát ở phải", gd_landscape(10, 27, weather=True, latest=True, media=True, n=2)),
     frame("N3 · Ngang, 21:47: Đậm, cỡ 130, đang sạc, trình phát tạm dừng", gd_landscape(21, 47, 130, 700, media=True, n=1, charging=True)),
     frame("N4 · Để so: app mẫu ngang 08:30, cột đồng hồ + dòng trạng thái 45%, cột trình phát 45%", gd_landscape(media=True, n=2, ref=True)),
+EC_CLOCK = "#A75F82"
+EC_SHADOW = "#1B1C38"
+EC_CHARACTER = "#EDEDED"
+EC_SHARED = "#B4B4B4"
+EC_INDEX = [0]
+
+
+def ec_disc(cx, cy, width, angle=34, peek=0.84, clock=EC_CLOCK, shadow=EC_SHADOW):
+    EC_INDEX[0] += 1
+    key = EC_INDEX[0]
+    radius = width / 3
+    occ_x = width / 2 + width * .005 * peek
+    occ_r = width / 4 - width * .003 * peek - .3
+    source_x = width * (.4 - .06 * peek)
+    return (f'<defs><radialGradient id="ecr{key}" gradientUnits="userSpaceOnUse" cx="{f(source_x)}" cy="0" r="{f(radius)}">'
+            f'<stop offset=".35" stop-color="#DCA5C2"/><stop offset=".4" stop-color="{clock}"/>'
+            f'<stop offset=".45" stop-color="{shadow}"/><stop offset=".95" stop-color="#000" stop-opacity="0"/></radialGradient>'
+            f'<linearGradient id="ech{key}" gradientUnits="userSpaceOnUse" x1="{f(width / 4)}" y1="0" x2="{f(width * .75)}" y2="0">'
+            f'<stop stop-color="#E9B5CC"/><stop offset="1" stop-color="#070713"/></linearGradient>'
+            f'<filter id="ecb{key}"><feGaussianBlur stdDeviation="{f(width * .014)}"/></filter></defs>'
+            f'<g transform="translate({f(cx - width / 2)} {f(cy)}) rotate({f(angle)} {f(width / 2)} 0)">'
+            f'<circle cx="{f(source_x)}" cy="0" r="{f(radius)}" fill="url(#ecr{key})"/>'
+            f'<circle cx="{f(width / 2)}" cy="0" r="{f(width / 4)}" fill="url(#ech{key})" filter="url(#ecb{key})"/>'
+            f'<circle cx="{f(occ_x)}" cy="0" r="{f(occ_r)}" fill="#000" fill-opacity=".72"/></g>')
+
+
+def ec_clock(cx, cy, size=25, color=EC_CHARACTER, label="10:08"):
+    return txt(cx, cy + size * .34, label, size, color, 400, "middle", 'letter-spacing="9"')
+
+
+def ec_shared_details(cx, date_y, status_y, n=3, charging=False, weather=False):
+    s = date_spaced(cx, date_y, weather)
+    s += status_row(cx, status_y, EC_SHARED, n)
+    if charging:
+        s += f'<path d="M{f(cx - 70)},{f(status_y - 9)}l-5,8h5l-3,8l9,-11h-5l3,-5z" fill="{MINT}"/>'
+    return s
+
+
+def ec_shared_media(x, top, width):
+    return f'<g transform="translate({f(x)} {f(top)})">{media_row(width)}</g>'
+
+
+def ec_shared_notification(x, y):
+    return f'<g transform="translate({f(x)} {f(y)})">{notification_card()}</g>'
+
+
+def ec_portrait(angle=34, peek=.84, details=True, media=False, latest=False, charging=False, weather=False, clock=EC_CLOCK,
+                shadow=EC_SHADOW, character=EC_CHARACTER):
+    s = ec_disc(PW / 2, PH / 2, PW, angle, peek, clock, shadow)
+    s += ec_clock(PW / 2, PH / 2, color=character)
+    if details:
+        s += ec_shared_details(PW / 2, PH - 114, PH - 72, 3, charging, weather)
+    if latest:
+        s += ec_shared_notification(44, 72)
+    if media:
+        s += ec_shared_media(36, PH - 210, PW - 72)
+    return s
+
+
+def ec_landscape(angle=34, peek=.84, details=True, media=False, latest=False, charging=False, weather=False, clock=EC_CLOCK,
+                 shadow=EC_SHADOW, character=EC_CHARACTER):
+    s = ec_disc(W / 2, CY, W, angle, peek, clock, shadow)
+    s += ec_clock(W / 2, CY, 22, character)
+    if details:
+        s += ec_shared_details(W / 2, H - 92, H - 48, 3, charging, weather)
+    if latest:
+        s += ec_shared_notification(48, 42)
+    if media:
+        s += ec_shared_media(48, H - 146, W - 96)
+    return s
+
+
+def ec_strip():
+    states = (("Mặc định", 34, .84, EC_CLOCK, EC_SHADOW, EC_CHARACTER),
+              ("Màu vầng", 34, .84, "#80DEEA", EC_SHADOW, EC_CHARACTER),
+              ("Màu bóng", 34, .84, EC_CLOCK, "#20142D", EC_CHARACTER),
+              ("Màu chữ số", 34, .84, EC_CLOCK, EC_SHADOW, "#80DEEA"),
+              ("Xoay / lộ", 0, 0, EC_CLOCK, EC_SHADOW, EC_CHARACTER))
+    s = ""
+    for index, (label, angle, peek, clock, shadow, character) in enumerate(states):
+        x = 18 + index * 170
+        s += f'<g transform="translate({x} 14) scale(.32)"><rect width="{PW}" height="{PH}" rx="34" fill="#000" stroke="#333" stroke-width="2"/>'
+        s += ec_portrait(angle, peek, details=False, clock=clock, shadow=shadow, character=character) + "</g>"
+        s += txt(x + PW * .16, 14 + PH * .32 + 22, label, 13, DM, 400, "middle")
+    return (f'<p style="font-size:13px;color:var(--text-secondary);margin:1.25rem 0 6px">Năm tùy chọn chủ đề: Màu Vầng, Màu Bóng, Màu chữ số, Xoay và Độ lộ. 0% Xoay theo giờ, 0% Độ lộ đổi theo nửa ngày.</p>'
+            f'<svg viewBox="0 0 {W} 340" width="100%" role="img" aria-label="Năm tùy chọn Nhật thực" style="display:block;font-family:\'Plus Jakarta Sans\',sans-serif" fill="{G}">'
+            f'<rect width="{W}" height="340" rx="20" fill="#111"/>{s}</svg>')
+
+
+eclipse = [
+    ec_strip(),
+    '<div style="font-size:0">',
+    frame_portrait("D1 · Dọc, mặc định: đồng hồ riêng của Nhật thực, ngày / pin / icon thông báo là block dùng chung mặc định", ec_portrait()),
+    frame_portrait("D2 · Dọc, trình phát dùng chung kiểu Hàng ngang; ngày, pin và icon vẫn hiện", ec_portrait(media=True)),
+    frame_portrait("D3 · Dọc, thời tiết cạnh ngày, nội dung thông báo dùng chung, đang sạc", ec_portrait(latest=True, charging=True, weather=True)),
+    frame_portrait("D4 · Để so: phần riêng app mẫu, Xoay cố định 220°, Độ lộ 35%, màu Vầng / Bóng / chữ số đổi", ec_portrait(220, .35, details=False, clock="#80DEEA", shadow="#20142D", character="#80DEEA")),
+    '</div>',
+    frame("N1 · Ngang, mặc định: Eclipse lớn giữa màn, block ngày / pin / icon thông báo dùng style chung", ec_landscape()),
+    frame("N2 · Ngang, trình phát dùng chung kiểu Hàng ngang; ngày, pin và icon vẫn hiện", ec_landscape(media=True)),
+    frame("N3 · Ngang, thời tiết cạnh ngày, nội dung thông báo dùng chung, đang sạc", ec_landscape(latest=True, charging=True, weather=True)),
+    frame("N4 · Để so: phần riêng app mẫu toàn bề rộng, Xoay cố định 220°, Độ lộ 35%", ec_landscape(220, .35, details=False, clock="#80DEEA", shadow="#20142D", character="#80DEEA")),
 ]
 
 
@@ -5042,6 +5143,7 @@ for name, summary, defs, frames in [
     ("w_mono", "Chủ đề Đơn cách (Space Mono): giờ trên phút chữ đơn cách, cỡ và màu, bốn khung dọc và bốn khung ngang", "", mono),
     ("w_orbit", "Chủ đề Quỹ đạo (Solar System): ba hành tinh quay theo giờ thật, cỡ và màu, bốn khung dọc và bốn khung ngang", "", orbit),
     ("w_flip", "Chủ đề Thẻ lật (Flip Clock): chín kiểu chữ, hai bước lật, bốn khung dọc và bốn khung ngang", FC_DEFS, flip),
+    ("w_eclipse", "Chủ đề Nhật thực (Eclipse): vầng sáng, bốn khung dọc và bốn khung ngang", "", eclipse),
 ]:
     code = widget(summary, defs, frames)
     OUT.mkdir(parents=True, exist_ok=True)

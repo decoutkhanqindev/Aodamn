@@ -54,6 +54,7 @@ code dịch ngược, không lấy asset (font, ảnh, Lottie) từ APK. APK và
 | Kẹp giấy (`CLIP`) | **13 · May22 "Paper Clip"** | làm từ danh mục này (2026-10-28), số đo lấy từ layout `may22_screen_layout` dọc / ngang / `PaperClipClock` |
 | Phai (`FADE`) | **1 · May21 "Gradient"** | làm từ danh mục này (2026-10-28), số đo lấy từ layout `may21_screen_layout` (chỉ có bản dọc) / `May21Screen` / font Lato 1.104 trong APK |
 | Quỹ đạo (`ORBIT`) | **14 · Jun22 "Solar System"** | làm từ danh mục này (2026-10-30), số đo lấy từ layout `jun22_screen_layout` dọc / ngang / `SolarSystemClock` / `Jun22Screen` |
+| Nhật thực (`ECLIPSE`) | **11 · Mar22 "Eclipse"** | làm từ danh mục này (2026-11-01), số đo lấy từ layout dọc / ngang / `Mar22Screen` / `Eclipse` / font `lato_regular` |
 | Thẻ lật (`FLIP`) | **9 · Jan22 "Flip Clock"** | làm từ danh mục này (2026-10-31), số đo lấy từ layout `jan22_screen_layout` dọc / ngang / `FlipClock` / `HalfTextView` |
 | Dịu (`GENTLE`) | **15 · Jul22 "Samsung Like"** | làm từ danh mục này (2026-10-31), số đo lấy từ layout `jul22_screen_layout` dọc / ngang / `Jul22Screen` / font Nunito |
 | Đơn cách (`MONO`) | **31 · Nov23 "Space Mono"** | làm từ danh mục này (2026-10-29), số đo lấy từ layout `nov23_screen_layout` dọc / ngang / `Nov23Screen` / `NoPadTextView` / font Space Mono trong APK |
@@ -77,7 +78,7 @@ text view chung) hoặc font dùng trong code; "chữ (font layout)" nghĩa là 
 | 8 | Dec21 | Blinky | Character Size, Clock Size, Theme Color | Character, Clock | BlinkyCharacter | – | chưa có |
 | 9 | Jan22 | Flip Clock | Clock Style, Clock Size, Character Size, Clock Color, Character Color | – | FlipClock | – | **Thẻ lật** (`FLIP`) |
 | 10 | Feb22 | Box Clock | Clock Size, Theme Color | Clock, Date, Notification, Controls | chữ (font layout) | – | **Khung** (`FRAME`) |
-| 11 | Mar22 | Eclipse | Clock Color, Shadow Color, Rotation, Peek, Character Color, Controls Color | – | Eclipse | – | chưa có |
+| 11 | Mar22 | Eclipse | Clock Color, Shadow Color, Rotation, Peek, Character Color, Controls Color | – | Eclipse | – | **Nhật thực** (`ECLIPSE`) |
 | 12 | Apr22 | Vertical Clock | Clock Size, Theme Color | Clock, Date, Notification, Controls | VerticalTextView | – | **Gáy sách** (`SPINE`) |
 | 13 | May22 | Paper Clip | Clock Size, Second Color, Theme Color | Hour, Minute, Controls | PaperClipClock | – | **Kẹp giấy** (`CLIP`) |
 | 14 | Jun22 | Solar System | Clock Size, Digital Clock, Hour Color, Minute Color, Second Color, Clock Color, Controls Color | – | SolarSystemClock | – | **Quỹ đạo** (`ORBIT`) |
@@ -334,3 +335,35 @@ Không cần chụp ảnh chủ đề từ app mẫu: số đo lấy từ layout
 - Phân tích tĩnh, không chạy app mẫu; hành vi lúc chạy (hiệu ứng, thứ tự lưới) chưa quan sát.
 - Làm lại / cập nhật khi app mẫu ra bản mới: `python -I -X utf8 tools/reference/pull_decompile.py com.sparkine.muvizedge
   --out <thư mục mới>` rồi `python -I -X utf8 tools/reference/extract_muviz.py <thư mục đó>` (xem `tools/reference/README.md`).
+
+## Mock 11 · Mar22 Eclipse (2026-10-31)
+
+Đã đọc `Mar22Screen`, `Eclipse`, layout dọc / ngang và font `lato_regular` từ app mẫu. Đề xuất tên **Nhật thực** (`ECLIPSE`), giữ màu Vầng mặc định `#A75F82` và Bóng `#1B1C38` của mẫu. User duyệt giữ model hiện tại: Ngày, Pin, Thông báo, Thời tiết và Nhạc là khối dùng chung; không thuộc `ownBlocks`.
+
+| Hạng mục app mẫu | Quyết định | Bên Aodamn |
+|---|---|---|
+| Clock Color | Giữ | Màu Vầng của phần vẽ riêng, hỗ trợ đơn sắc hoặc gradient. |
+| Shadow Color | Giữ | Màu Bóng của phần vẽ riêng, hỗ trợ đơn sắc hoặc gradient. |
+| Rotation | Giữ | `0%` xoay theo giờ; giá trị dương khóa góc. |
+| Peek | Giữ | `0%` đổi độ lộ theo nửa ngày; giá trị dương khóa độ lộ. |
+| Character Color | Giữ | Màu giờ số Lato ở tâm. |
+| Controls Color | Bỏ, user duyệt | Thay bằng màu, font, cỡ và kiểu riêng của các khối dùng chung trong Tùy chỉnh. Không thêm option theme tương ứng. |
+| Vầng radial, halo mờ, đĩa đen che | Giữ | Phần nhận diện của Nhật thực. |
+| Giờ Lato giãn chữ | Giữ | Dùng `lato_regular` có sẵn. |
+| Hiệu ứng mở 2 giây | Giữ | Giãn chữ và độ lộ vầng sáng khi dựng lại. |
+| Vầng đổi theo giờ | Giữ | Theo giờ/phút thật. |
+| Nhạc hoặc thông báo thay cụm chi tiết | Đổi, user duyệt | Các khối dùng chung độc lập, có thể hiện cùng ngày, pin và icon thông báo. |
+
+| Khối dùng chung | Quyết định | Bố cục dọc / ngang |
+|---|---|---|
+| Ngày | Giữ | Kiểu Giãn chữ mặc định, phía dưới Eclipse. |
+| Pin | Giữ | Kiểu Biểu tượng mặc định, dưới ngày. |
+| Icon và nội dung thông báo | Giữ | Icon cùng dòng pin; nội dung dùng thẻ mặc định ở vùng trên khi bật. |
+| Thời tiết | Giữ | Kiểu Một dòng mặc định, cạnh ngày. |
+| Nhạc | Giữ | Kiểu Hàng ngang mặc định, dưới Eclipse; không thay cụm khác. |
+| Sự kiện | Bỏ | Không có vị trí ổn định quanh vầng sáng ở cả hai hướng. |
+| Ghi nhớ | Bỏ | Không có vị trí ổn định quanh vầng sáng ở cả hai hướng. |
+
+Hoàn tất 2026-11-01: code giữ năm tuỳ chọn đã duyệt. Vầng sáng và bóng che dùng `EclipseThemeSpec`; ngày, pin, thông báo, thời tiết và nhạc tiếp tục là block chung. `Rotation` và `Peek` dùng giá trị tự động lưu riêng, hoặc khóa góc / mức; không có Controls Color, sự kiện, ghi nhớ hay nét vẽ.
+
+Không sửa code dùng chung, không thêm font, dependency hoặc permission. Mock đã sửa có bốn khung dọc và bốn khung ngang ở `tools/mockups/eclipse-render/w_eclipse.html`; chờ user duyệt lại trước khi code.

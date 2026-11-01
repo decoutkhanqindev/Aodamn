@@ -84,6 +84,7 @@
     <string name="theme_orbit">Orbit</string>
     <string name="theme_flip">Flip</string>
     <string name="theme_gentle">Gentle</string>
+    <string name="theme_eclipse">Eclipse</string>
     <string name="theme_in_use">In use</string>
     <string name="theme_edit">Edit</string>
     <string name="theme_saved">Theme saved</string>
@@ -132,6 +133,11 @@
     <string name="theme_color_face">Dial</string>
     <string name="theme_color_media_background">Music card</string>
     <string name="theme_color_ring">Ring</string>
+    <string name="theme_color_shadow">Shadow</string>
+    <string name="eclipse_rotation_value">Rotation: %1$d°</string>
+    <string name="eclipse_rotation_live">Rotate with time</string>
+    <string name="eclipse_peek_value">Reveal: %1$d%%</string>
+    <string name="eclipse_peek_live">Reveal with time</string>
     <string name="theme_color_hour_digit_1">Hour digit 1</string>
     <string name="theme_color_hour_digit_2">Hour digit 2</string>
     <string name="theme_color_minute_digit_1">Minute digit 1</string>

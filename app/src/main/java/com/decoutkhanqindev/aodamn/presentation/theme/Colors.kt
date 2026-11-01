@@ -40,6 +40,8 @@ val Orchid = Color(0xFFEE9BE6)
 val Cream = Color(0xFFFEF7EB)
 
 val Ruby = Color(0xFFFF0A54)
+val EclipseHalo = Color(0xFFA75F82)
+val EclipseShadow = Color(0xFF1B1C38)
 val Grey44 = Color(0xFF444444)
 
 val Aquamarine = Color(0xFF4AEDC6)

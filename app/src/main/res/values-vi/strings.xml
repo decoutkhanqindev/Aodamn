@@ -77,6 +77,7 @@
     <string name="theme_orbit">Quỹ đạo</string>
     <string name="theme_flip">Thẻ lật</string>
     <string name="theme_gentle">Dịu</string>
+    <string name="theme_eclipse">Nhật thực</string>
     <string name="aod_jersey_date_first_pattern">dd</string>
     <string name="aod_jersey_date_second_pattern">MM</string>
     <string name="aod_bezel_weekday_pattern">EEEE</string>
@@ -128,6 +129,11 @@
     <string name="theme_color_face">Mặt số</string>
     <string name="theme_color_media_background">Nền thẻ nhạc</string>
     <string name="theme_color_ring">Vòng</string>
+    <string name="theme_color_shadow">Bóng</string>
+    <string name="eclipse_rotation_value">Góc xoay: %1$d°</string>
+    <string name="eclipse_rotation_live">Xoay theo giờ</string>
+    <string name="eclipse_peek_value">Độ lộ: %1$d%%</string>
+    <string name="eclipse_peek_live">Độ lộ theo giờ</string>
     <string name="theme_color_hour_digit_1">Giờ · số 1</string>
     <string name="theme_color_hour_digit_2">Giờ · số 2</string>
     <string name="theme_color_minute_digit_1">Phút · số 1</string>

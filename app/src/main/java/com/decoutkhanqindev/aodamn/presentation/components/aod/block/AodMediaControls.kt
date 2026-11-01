@@ -117,6 +117,7 @@ fun AodMediaControls(
                 AodThemeValue.ORBIT -> AodOrbitMedia(media = target, config = theme.config, onIntent = onIntent)
                 AodThemeValue.FLIP -> Unit
                 AodThemeValue.GENTLE -> AodGentleMedia(media = target, config = theme.config, onIntent = onIntent)
+                AodThemeValue.ECLIPSE -> AodClassicMedia(media = target, style = style, layout = layout, onIntent = onIntent)
             }
         }
     }
