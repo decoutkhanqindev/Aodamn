@@ -11,6 +11,23 @@
    - các khung có nhạc, thông báo mới nhất, đang sạc, thời tiết, kiểu khác của chủ đề (viền / đặc…), tắt ngày;
    - một khung "app mẫu" vẽ lại bố cục gốc để user so;
    - ngang: cùng các trạng thái, bố cục tự đánh giá cho cân (.kiro/steering/aodamn.md, README › Bố cục ngang).
+   - không mặc định đặt đồng hồ ở giữa: chọn một bố cục cố định cho từng hướng, rồi đặt đồng hồ trái / giữa / phải để cân với điểm nhấn và block. Mặt số hoặc hàng số là điểm nhấn thì có thể ở giữa; chủ đề có hình chính lớn như trăng, mắt, vầng sáng thì ưu tiên đặt đồng hồ lệch phía đối trọng khi bố cục rõ hơn.
+   - chú thích mỗi khung: điểm nhấn, vị trí đồng hồ, block cân thị giác. Khung cùng hướng phải giữ cùng anchor và hierarchy; các case chỉ đổi dữ liệu, option nguồn, trạng thái hoặc block bật. Chỉ được có layout khác khi app mẫu có kiểu bố cục là một option riêng, và phải nêu rõ.
+   - ngang phải chia thành cụm đọc được: hero + clock, details, rồi action/media khi có. Gom block cùng mục vào một cột hoặc vùng chung, cùng đường căn; không dàn ngày, pin, thông báo và nhạc thành các mảnh rời ở bốn cạnh chỉ để lấp chỗ.
+
+## Mẫu anchor bắt buộc
+
+Trước khi render, ghi một bảng cho từng orientation. Bảng có `hero`, `clock`, `date/weather`, `status`, `latest`, `media` và nêu anchor, vùng hoặc cột. Block không hợp chủ đề ghi `bỏ` cùng lý do.
+
+| Orientation | Hero + clock | Details | Vùng đáy |
+|---|---|---|---|
+| Dọc | trái, giữa hoặc phải; một trục cố định | header hoặc cột cố định | các slot cố định từ trên xuống |
+| Ngang | hero + clock một phía cố định | một cột đối trọng | nhạc nằm trong cột details |
+
+Mọi D1–D4 phải dùng cùng bảng dọc. Mọi N1–N4 phải dùng cùng bảng ngang. Chỉ dữ liệu, màu, option, visibility và trạng thái chuyển động được đổi. Không đổi anchor, hàng, cột, thứ tự đọc hoặc phía của block. Khi hero chuyển động, tâm hình học của hero và clock vẫn giữ nguyên.
+
+Trước khi gửi mock, so bảng này với Pha trăng, Dịu và Nhật thực. Nếu một block đổi vị trí giữa các frame cùng orientation, sửa toàn bộ mock trước khi render lại.
+
 3. Chuyển động theo giây thật thì thêm script nhỏ cho khung mock chạy (mẫu `tk_live_script()` của Nhịp giây).
 
 ## Render và tự kiểm (trước khi cho user xem)
@@ -23,8 +40,7 @@ EDGE="/c/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"
 "$EDGE" --headless=new --disable-gpu --hide-scrollbars --window-size=932,5200 --virtual-time-budget=4000 --screenshot="$S/shot.png" "file:///$S/page.html"
 ```
 
-Đọc `shot.png` bằng Read, nhìn kỹ: chữ số có nét lạ (glyph tự chồng, xem pitfalls), khối lệch, chữ tràn, màn ngang trống một bên.
-Sửa tới khi ổn rồi mới hiện.
+Đọc `shot.png` bằng Read, nhìn kỹ: chữ số có nét lạ (glyph tự chồng, xem pitfalls), khối lệch, chữ tràn, màn ngang trống một bên, block thành các mảnh rời, hoặc đồng hồ ở giữa dù điểm nhấn và block cần bố cục lệch. Sửa tới khi ổn rồi mới hiện.
 
 ## Hiện cho user
 

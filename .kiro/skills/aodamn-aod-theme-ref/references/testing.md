@@ -91,17 +91,16 @@ Không hardcode `canRequestAds=false` trong release. Test host không tạo `Ads
 `ThemeDeviceRule` chuẩn bị đúng một lần trong mỗi process: `isFirstOpen=false`, AOD tắt, quyền runtime / overlay / notification listener đủ,
 giờ 24h, font scale 1.0 và ba animation scale 1.0.
 
-## Máy ảo cố định
+## Máy ảo rảnh
 
-Chỉ dùng AVD `Pixel_7_Pro`, serial mặc định `emulator-5554`, API 37, 1440 × 3120, density 560. Script dừng nếu có thêm máy nối hoặc sai AVD.
+Dùng máy ảo Android API 37 đang rảnh. Script đặt khóa tạm theo serial, rồi chuẩn hóa màn 1440 × 3120, density 560, giờ 24h, font 1.0 và ba animation scale 1.0. Khi không truyền biến môi trường, script chọn emulator API 37 đầu tiên chưa bị khóa. `AOD_TEST_SERIAL` vẫn ép dùng một máy cụ thể.
 
 ```powershell
-android emulator start Pixel_7_Pro
-adb devices -l
+bash .kiro/skills/aodamn-aod-theme-ref/scripts/check_theme.sh <gói> "<Tên Việt>" --device
+AOD_TEST_SERIAL=emulator-5556 bash .kiro/skills/aodamn-aod-theme-ref/scripts/check_theme.sh <gói> "<Tên Việt>" --device
 ```
 
-Có thể đổi serial bằng `AOD_TEST_SERIAL` và AVD bằng `AOD_TEST_AVD`. Mặc định vẫn là `emulator-5554` và `Pixel_7_Pro`.
-Quyền Xiaomi riêng của ROM vẫn kiểm tay trên máy Xiaomi.
+Golden của cùng một theme cần ghi và kiểm trên cùng máy ảo cho một lượt. Chỉ đổi máy sau khi chạy lại `--device --force`. Quyền Xiaomi riêng của ROM vẫn kiểm tay trên máy Xiaomi.
 
 ## Lệnh
 

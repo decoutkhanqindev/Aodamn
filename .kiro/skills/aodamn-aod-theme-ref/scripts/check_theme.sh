@@ -19,13 +19,12 @@ for arg in "${@:3}"; do
     *) echo "Cờ lạ: $arg"; exit 2 ;;
   esac
 done
-ROOT="$(git rev-parse --show-toplevel)" || exit 1
-cd "$ROOT"
 J=app/src/main/java/com/decoutkhanqindev/aodamn/presentation
 TEST_ROOT=app/src/androidTest/java/com/decoutkhanqindev/aodamn/testing
 DEBUG_TEST_ROOT=app/src/debug/java/com/decoutkhanqindev/aodamn/testing
-SERIAL="${AOD_TEST_SERIAL:-emulator-5554}"
-AVD_NAME="${AOD_TEST_AVD:-Pixel_7_Pro}"
+SERIAL="${AOD_TEST_SERIAL:-}"
+AVD_NAME="${AOD_TEST_AVD:-}"
+LOCK_DIR=""
 TEST_PACKAGE="com.decoutkhanqindev.aodamn.test"
 RUN_ID="$(date -u +%Y%m%dT%H%M%SZ)-$PKG-$MODE"
 REPORT="build/theme-tests/$RUN_ID"
@@ -55,6 +54,15 @@ run_adb() {
     cmd.exe /d /c adb "$@"
   fi
 }
+run_git() {
+  if command -v cmd.exe >/dev/null 2>&1; then
+    cmd.exe /d /c git "$@" | tr -d '\r'
+  else
+    git "$@"
+  fi
+}
+ROOT="$(run_git rev-parse --show-toplevel)" || exit 1
+cd "$ROOT"
 run_step() {
   local label="$1"
   local log="$2"
@@ -70,18 +78,57 @@ run_step() {
 cleanup_record_flag() {
   run_adb -s "$SERIAL" shell rm -f "/sdcard/Download/screenshots/$TEST_PACKAGE/.isRecordingScreenshots" >/dev/null 2>&1 || true
 }
+release_device_lock() {
+  [ -n "$LOCK_DIR" ] && rmdir "$LOCK_DIR" >/dev/null 2>&1 || true
+}
+reserve_device() {
+  mapfile -t devices < <(run_adb devices | tr -d '\r' | awk 'NR > 1 && $2 == "device" && $1 ~ /^emulator-/ { print $1 }')
+  local candidate sdk lock
+  if [ -n "$SERIAL" ]; then
+    printf '%s\n' "${devices[@]}" | grep -Fxq "$SERIAL" || {
+      bad "không có máy $SERIAL; đang có: ${devices[*]:-không có}"
+      return 1
+    }
+    sdk="$(run_adb -s "$SERIAL" shell getprop ro.build.version.sdk | tr -d '\r')"
+    [ "$sdk" = 37 ] || {
+      bad "$SERIAL dùng API $sdk, cần API 37"
+      return 1
+    }
+    lock="${TMPDIR:-/tmp}/aod-theme-test-$SERIAL.lock"
+    mkdir "$lock" 2>/dev/null || {
+      bad "$SERIAL đang chạy test khác"
+      return 1
+    }
+    LOCK_DIR="$lock"
+    return 0
+  fi
+  for candidate in "${devices[@]}"; do
+    sdk="$(run_adb -s "$candidate" shell getprop ro.build.version.sdk | tr -d '\r')"
+    [ "$sdk" = 37 ] || continue
+    lock="${TMPDIR:-/tmp}/aod-theme-test-$candidate.lock"
+    mkdir "$lock" 2>/dev/null || continue
+    SERIAL="$candidate"
+    LOCK_DIR="$lock"
+    return 0
+  done
+  bad "không có máy ảo API 37 rảnh; đang có: ${devices[*]:-không có}"
+  return 1
+}
 prepare_device() {
-  mapfile -t devices < <(run_adb devices | tr -d '\r' | awk 'NR > 1 && $2 == "device" { print $1 }')
-  if [ "${#devices[@]}" -ne 1 ] || [ "${devices[0]:-}" != "$SERIAL" ]; then
-    bad "cần đúng một máy $SERIAL; đang có: ${devices[*]:-không có}"
-    return
-  fi
-  local avd
+  reserve_device || return
+  local avd sdk size density
   avd="$(run_adb -s "$SERIAL" emu avd name 2>/dev/null | tr -d '\r' | head -1)"
-  if [ "$avd" != "$AVD_NAME" ]; then
+  [ -n "$avd" ] || {
+    bad "$SERIAL không phải máy ảo Android"
+    release_device_lock
+    return
+  }
+  if [ -n "$AVD_NAME" ] && [ "$avd" != "$AVD_NAME" ]; then
     bad "$SERIAL là $avd, cần $AVD_NAME"
+    release_device_lock
     return
   fi
+  AVD_NAME="$avd"
   run_adb -s "$SERIAL" shell wm size 1440x3120 >/dev/null
   run_adb -s "$SERIAL" shell wm density 560 >/dev/null
   run_adb -s "$SERIAL" shell settings put system time_12_24 24
@@ -89,7 +136,6 @@ prepare_device() {
   run_adb -s "$SERIAL" shell settings put global window_animation_scale 1.0
   run_adb -s "$SERIAL" shell settings put global transition_animation_scale 1.0
   run_adb -s "$SERIAL" shell settings put global animator_duration_scale 1.0
-  local sdk size density
   sdk="$(run_adb -s "$SERIAL" shell getprop ro.build.version.sdk | tr -d '\r')"
   size="$(run_adb -s "$SERIAL" shell wm size | tr -d '\r')"
   density="$(run_adb -s "$SERIAL" shell wm density | tr -d '\r')"
@@ -97,7 +143,7 @@ prepare_device() {
   [[ "$size" == *"1440x3120"* ]] || bad "màn sai: $size"
   [[ "$density" == *"560"* ]] || bad "density sai: $density"
   cleanup_record_flag
-  trap cleanup_record_flag EXIT
+  trap 'cleanup_record_flag; release_device_lock' EXIT
   export ANDROID_SERIAL="$SERIAL"
   ok "$AVD_NAME · $SERIAL · API 37 · 1440x3120 · 560dpi · 24h · font 1.0"
 }
@@ -326,13 +372,13 @@ RULES="$(bash tools/check-rules.sh 2>&1 | tail -1)"
 case "$RULES" in *"0 vi phạm"*) ok "check-rules: $RULES" ;; *) bad "check-rules: $RULES" ;; esac
 
 if [ "$MODE" = fast ]; then
-  BASE="$(git merge-base HEAD main 2>/dev/null || git rev-parse HEAD)"
+  BASE="$(run_git merge-base HEAD main 2>/dev/null || run_git rev-parse HEAD)"
   OLD=()
   for d in "$J"/components/aod/theme/*/ "$J"/model/aod/theme/*/; do
     theme_dir="$(basename "$d")"
     [ "$theme_dir" = "$PKG" ] || [ "$theme_dir" = component ] || OLD+=("$d")
   done
-  CHANGED="$(git diff --name-only "$BASE" -- "${OLD[@]}"; git ls-files --others --exclude-standard -- "${OLD[@]}")"
+  CHANGED="$(run_git diff --name-only "$BASE" -- "${OLD[@]}"; run_git ls-files --others --exclude-standard -- "${OLD[@]}")"
   [ -z "$CHANGED" ] && ok "thư mục chủ đề cũ không đổi" || { bad "chủ đề cũ bị đổi"; printf '%s\n' "$CHANGED" | tee -a "$REPORT/summary.txt"; }
 
   "$PYTHON" -I -X utf8 - "$PKG" "$NAME" <<'PY' | tee "$REPORT/registration.log" || FAIL=1
