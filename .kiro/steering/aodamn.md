@@ -36,6 +36,7 @@ hồ che màn hình khoá rồi tự bật màn hình lại. Repo:
 - **Git — KHÔNG tự chạy khi chưa được phép:** `git commit` · `git push` / `--force` ·
   `git reset --hard` · `git rebase` · `git merge` · `git branch -D`.
 - Commit message không thêm dòng `Co-Authored-By` (hay trailer đồng tác giả nào khác).
+- Commit phải theo Conventional Commits: `type(scope): mô tả mệnh lệnh ngắn` (scope tuỳ chọn; `feat`, `fix`, `perf`, `refactor`, `test`, `docs`, `build`, `chore`); một commit một thay đổi hoàn chỉnh, không thêm file IDE, build, secret hay artifact tạm.
 - Thêm dependency, permission Manifest, hoặc xoá code/resource đang dùng → hỏi trước.
 - Xong việc phải: `./gradlew :app:compileDebugKotlin` pass + chạy `bash tools/check-rules.sh` (các
   lệnh grep kiểm tra) ra 0 kết quả.
