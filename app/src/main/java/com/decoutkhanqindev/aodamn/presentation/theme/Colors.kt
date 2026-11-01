@@ -45,6 +45,7 @@ val Grey44 = Color(0xFF444444)
 val Aquamarine = Color(0xFF4AEDC6)
 val Brick = Color(0xFFCA5353)
 val Sage = Color(0xFF76AEA1)
+val Mist = Color(0xFFA7C7E7)
 
 val YoutubeRed = Color(0xFFFF0033)
 val SoundcloudOrange = Color(0xFFFF5500)

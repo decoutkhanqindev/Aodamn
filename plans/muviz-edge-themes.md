@@ -55,6 +55,7 @@ code dịch ngược, không lấy asset (font, ảnh, Lottie) từ APK. APK và
 | Phai (`FADE`) | **1 · May21 "Gradient"** | làm từ danh mục này (2026-10-28), số đo lấy từ layout `may21_screen_layout` (chỉ có bản dọc) / `May21Screen` / font Lato 1.104 trong APK |
 | Quỹ đạo (`ORBIT`) | **14 · Jun22 "Solar System"** | làm từ danh mục này (2026-10-30), số đo lấy từ layout `jun22_screen_layout` dọc / ngang / `SolarSystemClock` / `Jun22Screen` |
 | Thẻ lật (`FLIP`) | **9 · Jan22 "Flip Clock"** | làm từ danh mục này (2026-10-31), số đo lấy từ layout `jan22_screen_layout` dọc / ngang / `FlipClock` / `HalfTextView` |
+| Dịu (`GENTLE`) | **15 · Jul22 "Samsung Like"** | làm từ danh mục này (2026-10-31), số đo lấy từ layout `jul22_screen_layout` dọc / ngang / `Jul22Screen` / font Nunito |
 | Đơn cách (`MONO`) | **31 · Nov23 "Space Mono"** | làm từ danh mục này (2026-10-29), số đo lấy từ layout `nov23_screen_layout` dọc / ngang / `Nov23Screen` / `NoPadTextView` / font Space Mono trong APK |
 | Khung (`FRAME`) | **10 · Feb22 "Box Clock"** | làm từ danh mục này (2026-10-29), số đo lấy từ layout `feb22_screen_layout` dọc / ngang / `Feb22Screen` / font Josefin Sans trong APK |
 | Lời (`WORDS`) | **5 · Sep21 "Text Clock"** | làm từ danh mục này (2026-10-29), số đo lấy từ layout `sep21_screen_layout` dọc / ngang / `Sep21Screen` / font Lato 1.104 trong APK |
@@ -80,7 +81,7 @@ text view chung) hoặc font dùng trong code; "chữ (font layout)" nghĩa là 
 | 12 | Apr22 | Vertical Clock | Clock Size, Theme Color | Clock, Date, Notification, Controls | VerticalTextView | – | **Gáy sách** (`SPINE`) |
 | 13 | May22 | Paper Clip | Clock Size, Second Color, Theme Color | Hour, Minute, Controls | PaperClipClock | – | **Kẹp giấy** (`CLIP`) |
 | 14 | Jun22 | Solar System | Clock Size, Digital Clock, Hour Color, Minute Color, Second Color, Clock Color, Controls Color | – | SolarSystemClock | – | **Quỹ đạo** (`ORBIT`) |
-| 15 | Jul22 | Samsung Like | Clock Weight, Clock Size, Hour Color, Minute Color, Notification Color, Controls Color | – | chữ: nunito | – | chưa có |
+| 15 | Jul22 | Samsung Like | Clock Weight, Clock Size, Hour Color, Minute Color, Notification Color, Controls Color | – | chữ: nunito | – | **Dịu** (`GENTLE`) |
 | 16 | Aug22 | Quotes | Text, Text Size, Text Style, Text Color, Text Align, Notification Color, Controls Color | – | chữ: 12 font (arvo, bangers, caveat, pacifico…) | ô nhập chữ | chưa có |
 | 17 | Sep22 | Nothing(1) | Clock Size, Theme Color | Hour, Minute, Second, Date, Notification, Controls, Battery Status | chữ: ndot47, ndot55 | font độc quyền | chưa có |
 | 18 | Oct22 | Pixel Default | Clock Weight, Clock Size, Theme Color | Hour, Minute, Date, Notification, Controls, Battery Status | chữ: google_sans_clock | font độc quyền | chưa có |
@@ -222,12 +223,12 @@ mỗi phút (`AodViewModel`), nên phần chạy theo giây của app mẫu ph�
   giữ chỗ nên đồng hồ không đổi cỡ (khối trên 179,8dp, khối dưới 188,5dp trên màn 873dp), chữ pin "72%" / "72%  ·  Charging" / "Charged",
   khối trên / dưới cùng số đo với `jul21` (Rẻ quạt); Lato Thin / Light / Bold 2.015 lấy ở google/fonts `ofl/lato` (bản Thin cùng hình chữ số
   với Hairline 1.104 của app mẫu). Bên mình: mặc định Đậm + gradient Trời pastel dọc, phai là công tắc chạy với mọi màu, chữ số đổi mờ chéo,
-  hiện thông báo mới + trình phát cùng lúc, màn ngang số giữa màn chữ hai bên, không ghi nhớ / sự kiện / nét vẽ (user duyệt). **15 · Samsung Like** (`Jul22Screen`, `jul22_screen_layout` dọc + ngang): "HH" trên "mm" Nunito 90sp ×
+  hiện thông báo mới + trình phát cùng lúc, màn ngang số giữa màn chữ hai bên, không ghi nhớ / sự kiện / nét vẽ (user duyệt). ~~**15 · Samsung Like**~~ (`Jul22Screen`, `jul22_screen_layout` dọc + ngang; đã làm thành Dịu 2026-10-31): "HH" trên "mm" Nunito 90sp ×
   cỡ (70–130), phút lấn lên 20dp, Clock Weight ExtraLight / Regular (mặc định) / Bold; dưới số (lề 20 / 40dp) một dòng pin 15dp + "%" ·
   ngày "EEE dd" in hoa · icon 17dp (Nunito Medium 13sp giãn 0,05, chấm 10sp cách 12dp), thông báo mới (icon 17dp + một dòng in hoa 12,5sp)
   thay dòng đó; trình phát neo đáy (lề 40dp): tên in hoa Nunito Bold 13sp / nghệ sĩ 11,5sp giãn 0,2 em, thanh 1,5dp, lùi 38 · phát 45 · tới
   38dp cách 40dp; ngang: 5% · cột số + dòng tin 45% · cột trình phát 45% neo đáy cách 60dp. Màu Hour, Minute, Notification, Controls (nghệ
-  sĩ tối 30%) đều trắng. Nunito có trên Google Fonts, đủ tiếng Việt; tên mẫu là thương hiệu. **2 · Default** (`Jun21Screen`, dọc + ngang):
+  sĩ tối 30%) đều trắng. Nunito có trên Google Fonts, đủ tiếng Việt; tên mẫu là thương hiệu. Bên mình: tên Dịu, giờ Xanh sương, phút GreyED, thông báo GreyB4, nhạc Xanh sương; giữ ngày + thời tiết, icon + thông báo mới nhất, trình phát + pin cùng lúc; bỏ sự kiện, ghi nhớ, nét vẽ và chế độ tiết kiệm (user duyệt). **2 · Default** (`Jun21Screen`, dọc + ngang):
   "HH ❖ mm" một hàng Rubik 30 + 0,7 × cỡ sp (mặc định cỡ 30), ký hiệu 15–50% cỡ đồng hồ cách 10dp, chọn 1 trong 27 ký hiệu (đa số emoji
   màu, không tô được), 4 độ đậm, ngày "EEEE, dd MMMM" 16sp dưới, khối 0,35 trên màn; Rubik thiếu tiếng Việt.
   Không đề xuất: **19 · Concentric** (`ConcentricClock`) cùng cấu trúc Bán nguyệt (vòng giây 00–55 ngoài, vòng phút trong, cùng xoay để giá

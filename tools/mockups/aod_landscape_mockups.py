@@ -4885,6 +4885,137 @@ words = [
 ]
 
 
+GD_ACCENT = "#A7C7E7"
+GD_TEXT = "#E4E4E4"
+GD_MUTED = "#9A9A9A"
+
+
+def gd_text(x, y, value, size, color=GD_TEXT, weight=400, anchor="middle", opacity=1.0, spacing=0):
+    opacity_attr = "" if opacity == 1 else f' fill-opacity="{f(opacity)}"'
+    spacing_attr = "" if not spacing else f' letter-spacing="{f(spacing)}"'
+    return txt(x, y, value, size, color, weight, anchor, f'font-family="Nunito"{opacity_attr}{spacing_attr}')
+
+
+def gd_clock(cx, hour=8, minute=30, size=100, weight=400, hour_color=GD_ACCENT, minute_color=GD_TEXT, top_baseline=392):
+    scale = size / 100
+    font_size = 90 * scale
+    return (gd_text(cx, top_baseline, f"{hour:02d}", font_size, hour_color, weight)
+            + gd_text(cx, top_baseline + font_size * .78, f"{minute:02d}", font_size, minute_color, weight))
+
+
+def gd_date(cx, y, weather=False, color=GD_TEXT):
+    body = gd_text(cx - (28 if weather else 0), y, "THỨ BA 13", 13, color, 500, spacing=.65)
+    if not weather:
+        return body
+    return body + cloud(cx + 55, y + 1, .55, color, 1.4) + gd_text(cx + 80, y, "24°", 13, color, 500, "start")
+
+
+def gd_status(cx, cy, n=3, charging=False, color=GD_MUTED):
+    return status_row(cx, cy, color=color, n=n).replace("72%", "72%") if not charging else (battery_h(cx - 86, cy - 5.5, color)
+            + gd_text(cx - 52, cy + 5, "72%  ·  ĐANG SẠC", 13, color, 500, "start", spacing=.35)
+            + f'<path d="M{f(cx + 43)},{f(cy - 8)} l-6,9 h5 l-4,8 l10,-12 h-5 l5,-5 Z" fill="{color}"/>'
+            + noti_icons(cx + 63, cy, color, n, 15, 8))
+
+
+def gd_icons(cx, cy, n=3, color=GD_MUTED):
+    if not n:
+        return ""
+    size, gap = 15, 8
+    width = 4 + 12 + n * size + (n - 1) * gap
+    x = cx - width / 2
+    return f'<circle cx="{f(x + 2)}" cy="{f(cy)}" r="2" fill="{color}"/>' + noti_icons(x + 14, cy, color, n, size, gap)
+
+
+def gd_latest(cx, y, width, color=GD_TEXT):
+    text = "LAN: TỐI NAY ĐI ĂN LẨU NHÉ"
+    while len(text) > 1 and len(text) * 8.0 > width - 30:
+        text = text[:-2].rstrip() + "…"
+    return icon_shapes(color)[0](cx - width / 2, y - 8, 16) + gd_text(cx - width / 2 + 27, y + 5, text, 12.5, color, 500, "start", spacing=.6)
+
+
+def gd_player(cx, top, width, color=GD_ACCENT, paused=False):
+    left, right = cx - width / 2, cx + width / 2
+    opacity = .6 if paused else 1
+    title = gd_text(left, top + 13, "THAT COOL SONG", 13, color, 700, "start", opacity, 2.6)
+    artist = gd_text(left, top + 34, "IT'S ARTIST", 11.5, color, 400, "start", .7 * opacity, 2.3)
+    s = title + artist
+    for x, direction in ((right - 110, -1), (right - 18, 1)):
+        s += (f'<path d="M{f(x - 4 * direction)},{f(top + 9)} L{f(x + 3 * direction)},{f(top + 15)} L{f(x - 4 * direction)},{f(top + 21)} Z" fill="{color}" fill-opacity="{f(opacity)}"/>'
+              f'<rect x="{f(x + 4 * direction - (1.6 if direction < 0 else 0))}" y="{f(top + 9)}" width="1.6" height="12" rx=".8" fill="{color}" fill-opacity="{f(opacity)}"/>')
+    play_x = right - 64
+    if paused:
+        s += f'<circle cx="{f(play_x)}" cy="{f(top + 15)}" r="18" fill="none" stroke="{color}" stroke-width="1.5" stroke-opacity="{f(opacity)}"/><path d="M{f(play_x - 4)},{f(top + 7)} L{f(play_x + 8)},{f(top + 15)} L{f(play_x - 4)},{f(top + 23)} Z" fill="{color}" fill-opacity="{f(opacity)}"/>'
+    else:
+        s += f'<circle cx="{f(play_x)}" cy="{f(top + 15)}" r="18" fill="none" stroke="{color}" stroke-width="1.5"/><rect x="{f(play_x - 5)}" y="{f(top + 8)}" width="3" height="14" rx="1" fill="{color}"/><rect x="{f(play_x + 2)}" y="{f(top + 8)}" width="3" height="14" rx="1" fill="{color}"/>'
+    s += f'<line x1="{f(left)}" y1="{f(top + 47)}" x2="{f(right)}" y2="{f(top + 47)}" stroke="{color}" stroke-opacity=".3" stroke-width="1.5"/>'
+    return s + f'<line x1="{f(left)}" y1="{f(top + 47)}" x2="{f(left + width * .42)}" y2="{f(top + 47)}" stroke="{color}" stroke-opacity="{f(opacity)}" stroke-width="1.5"/>'
+
+
+def gd_portrait(hour=8, minute=30, size=100, weight=400, weather=False, latest=False, media=False, n=3, charging=False, ref=False):
+    if ref:
+        s = gd_clock(PW / 2, hour, minute, size, weight, "#FFFFFF", "#FFFFFF")
+        s += gd_status(PW / 2, 535, n=n, charging=charging, color="#FFFFFF")
+        if latest:
+            s += gd_latest(PW / 2, 574, PW - 40, "#FFFFFF")
+        if media:
+            s += gd_player(PW / 2, PH - 126, PW - 80, "#FFFFFF")
+        return s
+    s = gd_date(PW / 2, 68, weather)
+    s += gd_icons(PW / 2, 108, n=n)
+    if latest:
+        s += gd_latest(PW / 2, 148, PW - 48)
+    s += gd_clock(PW / 2, hour, minute, size, weight)
+    if media:
+        s += gd_player(PW / 2, PH - 142, PW - 80, paused=hour == 21)
+    return s + gd_status(PW / 2, PH - 54, n=0, charging=charging)
+
+
+def gd_landscape(hour=8, minute=30, size=100, weight=400, weather=False, latest=False, media=False, n=3, charging=False, ref=False):
+    clock_x = W * .29 if ref else W / 2
+    clock_size = size * (.82 if ref else 1)
+    s = gd_clock(
+        clock_x,
+        hour,
+        minute,
+        clock_size,
+        weight,
+        "#FFFFFF" if ref else GD_ACCENT,
+        "#FFFFFF" if ref else GD_TEXT,
+        top_baseline=167,
+    )
+    if ref:
+        s += gd_status(W * .48, 264, n=n, charging=charging, color="#FFFFFF")
+        if latest:
+            s += gd_latest(W * .48, 300, 310, "#FFFFFF")
+        return s + (gd_player(W * .76, 266, 300, "#FFFFFF") if media else "")
+    left, right = W * .16, W * .84
+    s += gd_date(left, 142, weather)
+    s += gd_icons(left, 182, n=n)
+    if latest:
+        s += gd_latest(left, 220, 240)
+    if media:
+        s += gd_player(right, 160, 260, paused=hour == 21)
+        s += gd_status(right, 240, n=0, charging=charging)
+    else:
+        s += gd_status(right, 200, n=0, charging=charging)
+    return s
+
+
+gentle = [
+    '<style>@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@200;400;500;700&display=swap");</style>',
+    '<div style="font-size:0">',
+    frame_portrait("D1 · Dọc, mặc định 08:30: ngày + pin · icon trải ở đầu/cuối, đồng hồ giữa", gd_portrait()),
+    frame_portrait("D2 · Dọc, 10:27: thời tiết cạnh ngày, thông báo mới nhất và trình phát", gd_portrait(10, 27, weather=True, latest=True, media=True, n=2)),
+    frame_portrait("D3 · Dọc, 21:47: Đậm, cỡ 130, đang sạc, trình phát tạm dừng", gd_portrait(21, 47, 130, 700, media=True, n=1, charging=True)),
+    frame_portrait("D4 · Để so: app mẫu 09:45, Mảnh, cỡ 70, tất cả trắng; dòng trạng thái dưới số, trình phát neo đáy", gd_portrait(9, 45, 70, 200, latest=True, media=True, n=2, ref=True)),
+    '</div>',
+    frame("N1 · Ngang, mặc định 08:30: đồng hồ giữa, ngày + pin · icon bên trái, trạng thái pin bên phải", gd_landscape()),
+    frame("N2 · Ngang, 10:27: thời tiết, thông báo mới nhất ở trái; trình phát ở phải", gd_landscape(10, 27, weather=True, latest=True, media=True, n=2)),
+    frame("N3 · Ngang, 21:47: Đậm, cỡ 130, đang sạc, trình phát tạm dừng", gd_landscape(21, 47, 130, 700, media=True, n=1, charging=True)),
+    frame("N4 · Để so: app mẫu ngang 08:30, cột đồng hồ + dòng trạng thái 45%, cột trình phát 45%", gd_landscape(media=True, n=2, ref=True)),
+]
+
+
 for name, summary, defs, frames in [
     ("w_classic", "Bảy bố cục ngang của chủ đề Cổ điển theo các khối đang bật", classic_defs, classic),
     ("w_jersey", "Bố cục ngang của chủ đề Số áo: ngày, bốn chữ số một hàng, dòng pin", jersey_defs, jersey),
@@ -4905,6 +5036,7 @@ for name, summary, defs, frames in [
     ("w_spine", "Chủ đề Gáy sách (Vertical Clock): màu và cỡ, bốn khung dọc và bốn khung ngang", sp_defs(), spine),
     ("w_clip", "Chủ đề Kẹp giấy (Paper Clip): màu và cỡ, bốn khung dọc và bốn khung ngang", pc_defs(), clip),
     ("w_fade", "Chủ đề Phai (Gradient): độ đậm, phai dần và màu, bốn khung dọc và bốn khung ngang", gr_defs(), fade),
+    ("w_gentle", "Chủ đề Dịu: đồng hồ Nunito xếp dọc, trọng lượng, cỡ và màu riêng, bốn khung dọc và bốn khung ngang", "", gentle),
     ("w_words", "Chủ đề Lời (Text Clock): giờ đọc thành chữ, độ đậm, cỡ và màu, bốn khung dọc và bốn khung ngang", "", words),
     ("w_frame", "Chủ đề Khung (Box Clock): giờ / phút trong khung viền, cỡ và màu, bốn khung dọc và bốn khung ngang", "", frame_theme),
     ("w_mono", "Chủ đề Đơn cách (Space Mono): giờ trên phút chữ đơn cách, cỡ và màu, bốn khung dọc và bốn khung ngang", "", mono),

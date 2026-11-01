@@ -146,12 +146,15 @@ class ThemeEditorViewModel(
             val activeId = dataStoreManager.aodThemeId.filterNotNull().first()
             updateState {
                 copy(
-                    isLoading = false,
+                    config = config,
                     savedConfig = config,
                     isActive = activeId == theme.id,
+                    isLoading = false,
+                    history = ThemeEditorHistoryState(
+                        isDefault = theme.spec.isDefault(config),
+                    ),
                 )
             }
-            publish(config)
         }
     }
 

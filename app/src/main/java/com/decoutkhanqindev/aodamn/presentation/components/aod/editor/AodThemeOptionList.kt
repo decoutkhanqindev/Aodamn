@@ -6,11 +6,14 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
@@ -32,6 +35,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.AodShapeOutline
 import com.decoutkhanqindev.aodamn.presentation.components.settings.AppSectionLabel
@@ -175,33 +179,38 @@ private fun ChoiceControl(
 
     AppSectionLabel(text = stringResource(option.labelRes))
 
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .horizontalScroll(rememberScrollState())
-            .padding(vertical = 4.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        option.entries.forEach { entry ->
-            val isSelected = entry.code == selectedCode
-            val preview = remember(entry) { aodChoicePreview(entry) }
-            when {
-                entry is AodShapeValue ->
-                    ShapeChoice(shape = entry, isSelected = isSelected, onClick = { onSelect(entry.code) })
+    BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+        val previewWidth = maxWidth * 0.3f
 
-                preview != null -> PreviewChoice(
-                    label = stringResource(entry.labelRes),
-                    labelFontFamily = (entry as? ClockFontValue)?.fontFamily,
-                    isSelected = isSelected,
-                    onClick = { onSelect(entry.code) },
-                    preview = preview,
-                )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState())
+                .padding(vertical = 4.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            option.entries.forEach { entry ->
+                val isSelected = entry.code == selectedCode
+                val preview = remember(entry) { aodChoicePreview(entry) }
+                when {
+                    entry is AodShapeValue ->
+                        ShapeChoice(shape = entry, isSelected = isSelected, onClick = { onSelect(entry.code) })
 
-                else -> FilterChip(
-                    selected = isSelected,
-                    onClick = { onSelect(entry.code) },
-                    label = { Text(text = stringResource(entry.labelRes)) },
-                )
+                    preview != null -> PreviewChoice(
+                        label = stringResource(entry.labelRes),
+                        labelFontFamily = (entry as? ClockFontValue)?.fontFamily,
+                        isSelected = isSelected,
+                        onClick = { onSelect(entry.code) },
+                        previewWidth = previewWidth,
+                        preview = preview,
+                    )
+
+                    else -> FilterChip(
+                        selected = isSelected,
+                        onClick = { onSelect(entry.code) },
+                        label = { Text(text = stringResource(entry.labelRes)) },
+                    )
+                }
             }
         }
     }
@@ -262,6 +271,7 @@ private fun PreviewChoice(
     labelFontFamily: FontFamily?,
     isSelected: Boolean,
     onClick: () -> Unit,
+    previewWidth: Dp,
     preview: @Composable () -> Unit,
 ) {
     Column(
@@ -277,7 +287,8 @@ private fun PreviewChoice(
     ) {
         Box(
             modifier = Modifier
-                .size(width = 112.dp, height = 64.dp)
+                .width(previewWidth)
+                .aspectRatio(112f / 64f)
                 .clip(RoundedCornerShape12dp)
                 .background(Black)
                 .border(

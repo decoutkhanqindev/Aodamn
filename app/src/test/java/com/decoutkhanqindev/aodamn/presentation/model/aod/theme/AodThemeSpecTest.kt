@@ -15,6 +15,8 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.flip.AodFlipStyl
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.flip.FlipThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.frame.FrameThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.gradientline.GradientLineThemeSpec
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.gentle.AodGentleWeightValue
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.gentle.GentleThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.halfmoon.HalfMoonThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.mono.MonoThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.orbit.OrbitThemeSpec
@@ -39,6 +41,7 @@ import com.decoutkhanqindev.aodamn.presentation.theme.GreyE4
 import com.decoutkhanqindev.aodamn.presentation.theme.GreyED
 import com.decoutkhanqindev.aodamn.presentation.theme.Ink
 import com.decoutkhanqindev.aodamn.presentation.theme.Midnight
+import com.decoutkhanqindev.aodamn.presentation.theme.Mist
 import com.decoutkhanqindev.aodamn.presentation.theme.Orchid
 import com.decoutkhanqindev.aodamn.presentation.theme.Peach
 import com.decoutkhanqindev.aodamn.presentation.theme.Ruby
@@ -653,6 +656,46 @@ class AodThemeSpecTest {
                 OrbitThemeSpec.DateColor,
                 OrbitThemeSpec.StatusColor,
                 OrbitThemeSpec.MediaColor,
+            ),
+            spec.options,
+        )
+    }
+
+    @Test
+    fun `gentle keeps the Jul22 size, weights and colors without large blocks`() {
+        val spec = AodThemeValue.GENTLE.spec
+        assertEquals(
+            setOf(
+                AodComponentValue.DATE,
+                AodComponentValue.BATTERY,
+                AodComponentValue.WEATHER,
+                AodComponentValue.NOTIFICATIONS,
+                AodComponentValue.MEDIA,
+            ),
+            spec.components,
+        )
+        assertEquals(emptySet<AodBlockValue>(), spec.ownBlocks)
+        assertEquals(true, spec.hasNotificationContent)
+        assertEquals(false, spec.isLiveInPreview)
+        assertEquals(
+            listOf(AodGentleWeightValue.EXTRA_LIGHT, AodGentleWeightValue.REGULAR, AodGentleWeightValue.BOLD),
+            GentleThemeSpec.Weight.entries,
+        )
+        assertEquals(AodGentleWeightValue.REGULAR, GentleThemeSpec.Weight.default)
+        assertEquals(70..130, GentleThemeSpec.Size.range)
+        assertEquals(100, GentleThemeSpec.Size.default)
+        assertEquals(Mist, GentleThemeSpec.HourColor.default)
+        assertEquals(GreyED, GentleThemeSpec.MinuteColor.default)
+        assertEquals(GreyB4, GentleThemeSpec.NotificationsColor.default)
+        assertEquals(Mist, GentleThemeSpec.MediaColor.default)
+        assertEquals(
+            listOf(
+                GentleThemeSpec.Size,
+                GentleThemeSpec.Weight,
+                GentleThemeSpec.HourColor,
+                GentleThemeSpec.MinuteColor,
+                GentleThemeSpec.NotificationsColor,
+                GentleThemeSpec.MediaColor,
             ),
             spec.options,
         )

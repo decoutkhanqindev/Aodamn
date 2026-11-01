@@ -83,6 +83,7 @@
     <string name="theme_mono">Mono</string>
     <string name="theme_orbit">Orbit</string>
     <string name="theme_flip">Flip</string>
+    <string name="theme_gentle">Gentle</string>
     <string name="theme_in_use">In use</string>
     <string name="theme_edit">Edit</string>
     <string name="theme_saved">Theme saved</string>
@@ -159,6 +160,7 @@
     <string name="flip_style_anton" translatable="false">Anton</string>
     <string name="flip_style_rajdhani" translatable="false">Rajdhani</string>
     <string name="font_weight_thin">Thin</string>
+    <string name="font_weight_extra_light">Extra light</string>
     <string name="font_weight_light">Light</string>
     <string name="font_weight_regular">Regular</string>
     <string name="font_weight_bold">Bold</string>
@@ -196,6 +198,8 @@
     <string name="shape_cookie">Cookie</string>
     <string name="shape_flower">Flower</string>
     <string name="shape_star">Star</string>
+    <string name="aod_gentle_date_pattern" translatable="false">EEE dd</string>
+    <string name="aod_gentle_notification" translatable="false">%1$s: %2$s</string>
 
     <!-- Tab Edge Light -->
     <string name="edge_light_soon_title">Edge Light is coming soon</string>

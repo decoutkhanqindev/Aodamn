@@ -115,6 +115,12 @@ val FontFamilyLato = FontFamily(
     Font(R.font.lato_bold, FontWeight.Bold),
 )
 
+val FontFamilyNunito = FontFamily(
+    Font(R.font.nunito_extralight, FontWeight.ExtraLight),
+    Font(R.font.nunito_regular, FontWeight.Normal),
+    Font(R.font.nunito_bold, FontWeight.Bold),
+)
+
 val FontFamilySpaceMono = FontFamily(
     Font(R.font.space_mono_regular, FontWeight.Normal),
 )

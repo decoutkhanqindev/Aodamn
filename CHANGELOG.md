@@ -7,6 +7,21 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-10-31 – Chủ đề Dịu
+
+User duyệt mock Dịu và cho bắt đầu code. Chủ đề giữ đồng hồ số Nunito xếp dọc của Jul22 Muviz Edge, nhưng không dùng tên thương hiệu.
+
+### Thêm
+
+- Chủ đề Dịu: giờ `HH` trên phút `mm`, phút chồng giờ theo tỷ lệ 0,222 chiều cao chữ; cỡ 70–130 (mặc định 100), độ đậm Siêu mảnh / Thường / Đậm (mặc định Thường), đổi số mờ 300ms. Cỡ tính theo cạnh ngắn của vùng hiện để vừa cả màn dọc, ngang và khung xem trước.
+- Màu riêng có gradient: giờ Xanh sương `Mist` #A7C7E7, phút GreyED, thông báo GreyB4, nhạc Xanh sương. App mẫu để trắng; màu nhấn xanh sương đã duyệt để phân biệt chủ đề.
+- Ngày + thời tiết, icon và thông báo mới nhất ở đầu màn; đồng hồ giữ giữa; trình phát lùi / phát-tạm dừng / tới có thanh tiến trình 1,5dp và pin neo đáy. Màn ngang giữ đồng hồ giữa, thông tin bên trái, nhạc + pin bên phải.
+- Nunito ExtraLight, Regular và Bold tĩnh từ Google Fonts, cùng `Nunito-OFL.txt`; font có đầy đủ tiếng Việt.
+
+### Thay đổi
+
+- Chỉ thêm `GENTLE` ở `AodThemeValue`, nhánh dọc / ngang ở `AodThemeLayout`, nhánh nhạc ở `AodMediaControls`, `ThemeExpectation`, test đặc tả, resource và mock `w_gentle`; không đổi theme cũ hoặc khối dùng chung.
+
 ## [Chưa phát hành] – 2026-10-31 – Test tự động chủ đề AOD
 
 Thêm Dropshots 0.6.0 và bộ test dùng chung. Contract JVM chọn đúng theme `flip` pass; test theme cuối trên AVD `Pixel_7_Pro` API 37 pass
