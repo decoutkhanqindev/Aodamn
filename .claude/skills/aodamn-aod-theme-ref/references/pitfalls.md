@@ -25,6 +25,8 @@ Mỗi dòng là một lỗi đã xảy ra thật; kiểm từng dòng trước k
   màu của chủ đề, nhìn từng phần có đủ dải màu không.
 - **Khung nét chữ** (Đơn cách): `TextLayoutResult.getPathForRange` trả khung vùng chọn cả dòng (cao bằng dòng), không phải nét chữ;
   ô chữ ôm sát nét như `NoPadTextView` đo bằng `Paint.getTextBounds` với typeface từ `resolveTypeface`, cộng `firstBaseline` của layout.
+- **Cỡ chữ app mẫu đặt bằng `setTextSize(px)`** (Thẻ lật): tham số hiểu là sp nên cỡ thật nhân thêm density máy. Không chép hệ số từ máy test (560dpi); canh theo cỡ lớn nhất của app mẫu
+  phải vừa khít ở density khoảng 3 và kiểm mọi kiểu ở mức lớn nhất không bị cắt. Font mẫu lạ thì xem ảnh thẻ trước khi chọn thay thế (Metropolis 1920 là hai đường mỗi thân số, không phải chữ thường).
 - **`min` / `max` với `Dp`**: dùng `androidx.compose.ui.unit.min/max`, không phải `kotlin.math`.
 
 ## Bố cục
@@ -53,6 +55,8 @@ Mỗi dòng là một lỗi đã xảy ra thật; kiểm từng dòng trước k
   User muốn giữ chung tab, tách điều khiển theo phần, không tách tab mới.
 - **Điều khiển theo kiểu** (Gợn sóng): thẻ nhạc đổi đặc / viền theo kiểu mặt số như app mẫu; trước khi "sửa" một hành vi user
   báo, kiểm xem đó có phải hành vi của app mẫu không và giải thích trước.
+- **Lựa chọn kiểu của chủ đề không cần ảnh từng cái** (Thẻ lật, user: "clock style thì kh cần preview từng cái đâu nhé"): chip tên chữ, khung xem trước
+  đã cho thấy kiểu đang chọn; đừng thêm nhánh vào `aodChoicePreview` cho kiểu của riêng một chủ đề.
 - **Màu mặc định gần đen** (nền thẻ nhạc `#121218`): chạm vòng màu giữ độ sáng nên ra màu gần đen; mặc định tối thì kiểm cách
   chọn màu sáng vẫn dễ.
 - **Mọi màu cho gradient** và phần vẽ tô được gradient thật (chữ, icon, vạch, Paint): bật cờ mà quên tô thì gradient chỉ lấy

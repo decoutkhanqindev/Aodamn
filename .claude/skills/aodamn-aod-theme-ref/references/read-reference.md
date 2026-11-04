@@ -13,6 +13,7 @@ Thư mục làm việc (ngoài repo): `W=~/.local/share/rea/work/com.sparkine.mu
 | Layout dọc / ngang | `aapt2 dump xmltree` (lệnh dưới), có `res/layout-land/` thì đọc cả bản ngang |
 | Id font / màu / dimen trong layout | `$W/res-base.txt` |
 | Bảng màu gradient có sẵn | `ab/a0.java` (đã thành `GradientSwatchValue`) |
+| Ảnh thẻ của chủ đề | `res/drawable-xxhdpi-v4/screen_<mon>_<yy>.png` trong `apk/.../split_config.xxhdpi.apk`, giải nén ra scratchpad để xem, không đưa vào repo |
 
 ```bash
 APK="$HOME/.local/share/rea/work/com.sparkine.muvizedge/apk/com.sparkine.muvizedge/base.apk"
