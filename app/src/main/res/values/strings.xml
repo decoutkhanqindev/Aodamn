@@ -219,7 +219,7 @@
     <string name="shape_cookie">Cookie</string>
     <string name="shape_flower">Flower</string>
     <string name="shape_star">Star</string>
-    <string name="aod_gentle_date_pattern" translatable="false">EEE dd</string>
+    <string name="aod_gentle_date_pattern" translatable="false">EEEE dd</string>
     <string name="aod_gentle_notification" translatable="false">%1$s: %2$s</string>
 
     <!-- Tab Edge Light -->

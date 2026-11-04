@@ -118,6 +118,7 @@ val FontFamilyLato = FontFamily(
 val FontFamilyNunito = FontFamily(
     Font(R.font.nunito_extralight, FontWeight.ExtraLight),
     Font(R.font.nunito_regular, FontWeight.Normal),
+    Font(R.font.nunito_medium, FontWeight.Medium),
     Font(R.font.nunito_bold, FontWeight.Bold),
 )
 

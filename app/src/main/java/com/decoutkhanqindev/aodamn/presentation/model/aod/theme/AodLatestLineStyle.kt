@@ -2,6 +2,7 @@ package com.decoutkhanqindev.aodamn.presentation.model.aod.theme
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 
@@ -13,4 +14,5 @@ data class AodLatestLineStyle(
     val textSize: TextUnit,
     val letterSpacing: TextUnit = TextUnit.Unspecified,
     val isUppercase: Boolean = false,
+    val fontWeight: FontWeight? = null,
 )

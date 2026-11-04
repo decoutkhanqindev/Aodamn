@@ -4887,133 +4887,337 @@ words = [
 
 
 GD_ACCENT = "#A7C7E7"
-GD_TEXT = "#E4E4E4"
-GD_MUTED = "#9A9A9A"
+GD_MINUTE = "#EDEDED"
+GD_DATE = "#E4E4E4"
+GD_STATUS = "#B4B4B4"
+GD_WHITE = "#FFFFFF"
+GD_FONTS = {
+    200: TTFont(ROOT / "app/src/main/res/font/nunito_extralight.ttf"),
+    400: TTFont(ROOT / "app/src/main/res/font/nunito_regular.ttf"),
+    500: TTFont(ROOT / "app/src/main/res/font/nunito_medium.ttf"),
+    700: TTFont(ROOT / "app/src/main/res/font/nunito_bold.ttf"),
+}
+GD_ICONS = {
+    "back": "M208,47.88V208.12a16,16,0,0,1-24.43,13.43L64,146.77V216a8,8,0,0,1-16,0V40a8,8,0,0,1,16,0v69.23L183.57,34.45A15.95,15.95,0,0,1,208,47.88Z",
+    "next": "M208,40V216a8,8,0,0,1-16,0V146.77L72.43,221.55A15.95,15.95,0,0,1,48,208.12V47.88A15.95,15.95,0,0,1,72.43,34.45L192,109.23V40a8,8,0,0,1,16,0Z",
+    "play": "M240,128a15.74,15.74,0,0,1-7.6,13.51L88.32,229.65a16,16,0,0,1-16.2.3A15.86,15.86,0,0,1,64,216.13V39.87a15.86,15.86,0,0,1,8.12-13.82,16,16,0,0,1,16.2.3L232.4,114.49A15.74,15.74,0,0,1,240,128Z",
+    "pause": "M216,48V208a16,16,0,0,1-16,16H160a16,16,0,0,1-16-16V48a16,16,0,0,1,16-16h40A16,16,0,0,1,216,48ZM96,32H56A16,16,0,0,0,40,48V208a16,16,0,0,0,16,16H96a16,16,0,0,0,16-16V48A16,16,0,0,0,96,32Z",
+}
+GD_PATH_MIN_SIZE = 30
+GD_LINE_BOX = 1.315
+GD_NUMBER_OVERLAP = 20
+GD_CAP = .714
+GD_LINE = 1.364
+GD_TOP_MARGIN = 60
+GD_BOTTOM_MARGIN = 40
+GD_SIDE_MARGIN = 40
+GD_DATE_SIZE = 13
+GD_ICON = 17
+GD_ICON_GAP = 10
+GD_ROW_GAP = 14
+GD_LATEST_GAP = 12
+GD_PLAYER_HEIGHT = 123.9
+GD_BATTERY_GLYPH = 15
+GD_BATTERY_GAP = 20
+GD_LANDSCAPE_EDGE = .05
+GD_LANDSCAPE_GAP = 40
+GD_GLYPHS = {}
+GD_BLOCKS = {}
+GD_GRADIENT = '<linearGradient id="gdSun" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFCC70"/><stop offset=".5" stop-color="#C850C0"/><stop offset="1" stop-color="#4158D0"/></linearGradient>'
 
 
-def gd_text(x, y, value, size, color=GD_TEXT, weight=400, anchor="middle", opacity=1.0, spacing=0):
-    opacity_attr = "" if opacity == 1 else f' fill-opacity="{f(opacity)}"'
-    spacing_attr = "" if not spacing else f' letter-spacing="{f(spacing)}"'
-    return txt(x, y, value, size, color, weight, anchor, f'font-family="Nunito"{opacity_attr}{spacing_attr}')
+def gd_glyph(weight, char):
+    key = (weight, char)
+    if key not in GD_GLYPHS:
+        GD_GLYPHS[key] = f"g{len(GD_GLYPHS):x}"
+    return GD_GLYPHS[key]
 
 
-def gd_clock(cx, hour=8, minute=30, size=100, weight=400, hour_color=GD_ACCENT, minute_color=GD_TEXT, top_baseline=392):
-    scale = size / 100
-    font_size = 90 * scale
-    return (gd_text(cx, top_baseline, f"{hour:02d}", font_size, hour_color, weight)
-            + gd_text(cx, top_baseline + font_size * .78, f"{minute:02d}", font_size, minute_color, weight))
+def gd_advance(weight, char):
+    font = GD_FONTS[weight]
+    return font["hmtx"][font.getBestCmap()[ord(char)]][0]
 
 
-def gd_date(cx, y, weather=False, color=GD_TEXT):
-    body = gd_text(cx - (28 if weather else 0), y, "THỨ BA 13", 13, color, 500, spacing=.65)
-    if not weather:
-        return body
-    return body + cloud(cx + 55, y + 1, .55, color, 1.4) + gd_text(cx + 80, y, "24°", 13, color, 500, "start")
+def gd_width(value, size, weight, spacing=0):
+    return (sum(gd_advance(weight, char) for char in value) + spacing * 1000 * (len(value) - 1)) * size / 1000
 
 
-def gd_status(cx, cy, n=3, charging=False, color=GD_MUTED):
-    return status_row(cx, cy, color=color, n=n).replace("72%", "72%") if not charging else (battery_h(cx - 86, cy - 5.5, color)
-            + gd_text(cx - 52, cy + 5, "72%  ·  ĐANG SẠC", 13, color, 500, "start", spacing=.35)
-            + f'<path d="M{f(cx + 43)},{f(cy - 8)} l-6,9 h5 l-4,8 l10,-12 h-5 l5,-5 Z" fill="{color}"/>'
-            + noti_icons(cx + 63, cy, color, n, 15, 8))
+def gd_uses(value, weight, spacing):
+    cursor = 0
+    body = []
+    for char in value:
+        if char != " ":
+            body.append(f'<use href="#{gd_glyph(weight, char)}" x="{cursor}"/>')
+        cursor += gd_advance(weight, char) + round(spacing * 1000)
+    return "".join(body)
 
 
-def gd_icons(cx, cy, n=3, color=GD_MUTED):
-    if not n:
-        return ""
-    size, gap = 15, 8
-    width = 4 + 12 + n * size + (n - 1) * gap
-    x = cx - width / 2
-    return f'<circle cx="{f(x + 2)}" cy="{f(cy)}" r="2" fill="{color}"/>' + noti_icons(x + 14, cy, color, n, size, gap)
+def gd_text(x, baseline, value, size, weight=400, anchor="middle", spacing=0, color=None, opacity=None):
+    total = gd_width(value, size, weight, spacing)
+    left = x - total / 2 if anchor == "middle" else x - total if anchor == "end" else x
+    if size < GD_PATH_MIN_SIZE:
+        extra = 'font-family="Nunito"'
+        if spacing:
+            extra += f' letter-spacing="{f(spacing * size)}"'
+        if opacity is not None:
+            extra += f' fill-opacity="{f(opacity)}"'
+        return txt(left, baseline, value, size, color or G, weight, "start", extra)
+    scale = f"{size / 1000:.5f}".rstrip("0")
+    fill = f' fill="{color}"' if color else ""
+    alpha = f' fill-opacity="{f(opacity)}"' if opacity is not None else ""
+    return f'<g transform="translate({f(left)} {f(baseline)}) scale({scale} -{scale})"{fill}{alpha}>{gd_uses(value, weight, spacing)}</g>'
 
 
-def gd_latest(cx, y, width, color=GD_TEXT):
-    text = "LAN: TỐI NAY ĐI ĂN LẨU NHÉ"
-    while len(text) > 1 and len(text) * 8.0 > width - 30:
-        text = text[:-2].rstrip() + "…"
-    return icon_shapes(color)[0](cx - width / 2, y - 8, 16) + gd_text(cx - width / 2 + 27, y + 5, text, 12.5, color, 500, "start", spacing=.6)
+def gd_block(key, builder):
+    if key not in GD_BLOCKS:
+        GD_BLOCKS[key] = (f"b{len(GD_BLOCKS):x}", builder())
+    return GD_BLOCKS[key][0]
 
 
-def gd_player(cx, top, width, color=GD_ACCENT, paused=False):
-    left, right = cx - width / 2, cx + width / 2
-    opacity = .6 if paused else 1
-    title = gd_text(left, top + 13, "THAT COOL SONG", 13, color, 700, "start", opacity, 2.6)
-    artist = gd_text(left, top + 34, "IT'S ARTIST", 11.5, color, 400, "start", .7 * opacity, 2.3)
-    s = title + artist
-    for x, direction in ((right - 110, -1), (right - 18, 1)):
-        s += (f'<path d="M{f(x - 4 * direction)},{f(top + 9)} L{f(x + 3 * direction)},{f(top + 15)} L{f(x - 4 * direction)},{f(top + 21)} Z" fill="{color}" fill-opacity="{f(opacity)}"/>'
-              f'<rect x="{f(x + 4 * direction - (1.6 if direction < 0 else 0))}" y="{f(top + 9)}" width="1.6" height="12" rx=".8" fill="{color}" fill-opacity="{f(opacity)}"/>')
-    play_x = right - 64
-    if paused:
-        s += f'<circle cx="{f(play_x)}" cy="{f(top + 15)}" r="18" fill="none" stroke="{color}" stroke-width="1.5" stroke-opacity="{f(opacity)}"/><path d="M{f(play_x - 4)},{f(top + 7)} L{f(play_x + 8)},{f(top + 15)} L{f(play_x - 4)},{f(top + 23)} Z" fill="{color}" fill-opacity="{f(opacity)}"/>'
-    else:
-        s += f'<circle cx="{f(play_x)}" cy="{f(top + 15)}" r="18" fill="none" stroke="{color}" stroke-width="1.5"/><rect x="{f(play_x - 5)}" y="{f(top + 8)}" width="3" height="14" rx="1" fill="{color}"/><rect x="{f(play_x + 2)}" y="{f(top + 8)}" width="3" height="14" rx="1" fill="{color}"/>'
-    s += f'<line x1="{f(left)}" y1="{f(top + 47)}" x2="{f(right)}" y2="{f(top + 47)}" stroke="{color}" stroke-opacity=".3" stroke-width="1.5"/>'
-    return s + f'<line x1="{f(left)}" y1="{f(top + 47)}" x2="{f(left + width * .42)}" y2="{f(top + 47)}" stroke="{color}" stroke-opacity="{f(opacity)}" stroke-width="1.5"/>'
+def gd_put(block_id, x, y, color=None):
+    fill = f' fill="{color}"' if color else ""
+    return f'<use href="#{block_id}" x="{f(x)}" y="{f(y)}"{fill}/>'
 
 
-def gd_portrait(hour=8, minute=30, size=100, weight=400, weather=False, latest=False, media=False, n=3, charging=False, ref=False):
-    if ref:
-        s = gd_clock(PW / 2, hour, minute, size, weight, "#FFFFFF", "#FFFFFF")
-        s += gd_status(PW / 2, 535, n=n, charging=charging, color="#FFFFFF")
-        if latest:
-            s += gd_latest(PW / 2, 574, PW - 40, "#FFFFFF")
-        if media:
-            s += gd_player(PW / 2, PH - 126, PW - 80, "#FFFFFF")
-        return s
-    s = gd_date(PW / 2, 68, weather)
-    s += gd_icons(PW / 2, 108, n=n)
+def gd_defs():
+    paths = []
+    for (weight, char), glyph_id in GD_GLYPHS.items():
+        font = GD_FONTS[weight]
+        glyphs = font.getGlyphSet()
+        pen = SVGPathPen(glyphs, ntos=lambda value: str(round(value)))
+        glyphs[font.getBestCmap()[ord(char)]].draw(pen)
+        paths.append(f'<path id="{glyph_id}" d="{pen.getCommands()}"/>')
+    blocks = "".join(f'<g id="{block_id}">{body}</g>' for block_id, body in GD_BLOCKS.values())
+    return GD_GRADIENT + "".join(paths) + blocks
+
+
+def gd_number(cx, baseline, value, size, weight, color, gradient_id=None):
+    if gradient_id is None:
+        return gd_text(cx, baseline, value, size, weight, color=color)
+    width = gd_width(value, size, weight)
+    left = cx - width / 2
+    scale = f"{size / 1000:.5f}".rstrip("0")
+    clip = f'<clipPath id="{gradient_id}"><use href="#{gd_glyph(weight, value[0])}" transform="translate({f(left)} {f(baseline)}) scale({scale} -{scale})"/><use href="#{gd_glyph(weight, value[1])}" transform="translate({f(left + width / 2)} {f(baseline)}) scale({scale} -{scale})"/></clipPath>'
+    return f'{clip}<rect x="{f(left)}" y="{f(baseline - GD_CAP * size)}" width="{f(width)}" height="{f(GD_CAP * size * 1.02)}" fill="url(#gdSun)" clip-path="url(#{gradient_id})"/>'
+
+
+def gd_clock(cx, cy, hour, minute, size=100, weight=700, hour_color=GD_ACCENT, minute_color=GD_MINUTE, gradient_id=None, live=False):
+    em = .9 * size
+    gap = GD_LINE_BOX * em - GD_NUMBER_OVERLAP
+    cap = GD_CAP * em
+    hour_baseline = cy - (gap + cap) / 2 + cap
+    minute_number = gd_number(cx, hour_baseline + gap, f"{minute:02d}", em, weight, minute_color, f"{gradient_id}m" if gradient_id else None)
+    if live:
+        minute_number = f'<g class="gd-min">{minute_number}</g>'
+    return gd_number(cx, hour_baseline, f"{hour:02d}", em, weight, hour_color, f"{gradient_id}h" if gradient_id else None) + minute_number
+
+
+def gd_icon(name, cx, cy, size):
+    scale = size / 256
+    return f'<path transform="translate({f(cx - size / 2)} {f(cy - size / 2)}) scale({scale:.4f})" d="{GD_ICONS[name]}"/>'
+
+
+def gd_player_body(width, paused=False, live=False):
+    alpha = .6 if paused else 1
+    title = gd_text(0, 13.6, "CHUYẾN XE ĐÊM", 13, 700, spacing=.2, opacity=alpha)
+    artist = gd_text(0, 33.3, "LO-FI RADIO", 11.5, 400, spacing=.2, opacity=.7 * alpha)
+    progress_attr = f' class="gd-prog" data-w="{f(width)}"' if live else ""
+    if live:
+        title = f'<g class="gd-title">{title}</g>'
+        artist = f'<g class="gd-artist">{artist}</g>'
+    return (title + artist
+            + f'<rect x="{f(-width / 2)}" y="57.4" width="{f(width)}" height="1.5" fill-opacity=".3"/>'
+            + f'<rect x="{f(-width / 2)}" y="57.4" width="{f(width * .42)}" height="1.5"{progress_attr}/>'
+            + gd_icon("back", -81.5, 101.4, 18) + gd_icon("play" if paused else "pause", 0, 101.4, 25) + gd_icon("next", 81.5, 101.4, 18))
+
+
+def gd_player(width, paused=False):
+    return gd_block(("player", width, paused), lambda: gd_player_body(width, paused))
+
+
+def gd_live_player(width, x, y, color=GD_ACCENT):
+    return f'<g transform="translate({f(x)} {f(y)})" fill="{color}">{gd_player_body(width, live=True)}</g>'
+
+
+def gd_battery(cx, cy, charging=False, color=GD_STATUS):
+    glyph = GD_BATTERY_GLYPH
+    width = glyph * .522
+    gap = glyph * .717
+    text_size = glyph * .915
+    total = width + gap + gd_width("72%", text_size, 500)
+    left = cx - total / 2
+    body_top = cy - glyph / 2 + glyph * .1
+    body_height = glyph * .9
+    level = 1 if charging else .72
+    body = (f'<rect x="{f(left + width * .28)}" y="{f(cy - glyph / 2)}" width="{f(width * .44)}" height="{f(glyph * .12)}" rx=".6" fill="{color}"/>'
+            f'<rect x="{f(left + .55)}" y="{f(body_top + .55)}" width="{f(width - 1.1)}" height="{f(body_height - 1.1)}" rx="1.8" fill="none" stroke="{color}" stroke-width="1.1"/>'
+            f'<rect x="{f(left + 1.6)}" y="{f(body_top + 1.6 + (body_height - 3.2) * (1 - level))}" width="{f(width - 3.2)}" height="{f((body_height - 3.2) * level)}" rx=".8" fill="{color}"/>')
+    if charging:
+        body += f'<path d="M{f(left + width * .56)},{f(cy - 3.8)} l-2.4,4.4 h1.9 l-.7,3.6 l2.6,-4.6 h-1.9 Z" fill="#000"/>'
+    return body + gd_text(left + width + gap, cy + 4.6, "72%", text_size, 500, "start", color=color)
+
+
+def gd_date_row(cx, baseline, date, weather, color=GD_DATE, weather_color=GD_DATE):
+    date_text = "THỨ BA 13"
+    date_width = gd_width(date_text, GD_DATE_SIZE, 500, .05) if date else 0
+    dot_width = 24 + 4 if date and weather else 0
+    weather_width = 16 + 5 + gd_width("24°", GD_DATE_SIZE, 500) if weather else 0
+    x = cx - (date_width + dot_width + weather_width) / 2
+    body = ""
+    if date:
+        body += gd_text(x, baseline, date_text, GD_DATE_SIZE, 500, "start", .05, color)
+        x += date_width
+    if date and weather:
+        body += f'<circle cx="{f(x + 14)}" cy="{f(baseline - 4.5)}" r="1.6" fill="{color}"/>'
+        x += dot_width
+    if weather:
+        body += cloud(x, baseline + 1, .42, weather_color, 1.4)
+        body += gd_text(x + 21, baseline, "24°", GD_DATE_SIZE, 500, "start", color=weather_color)
+    return body
+
+
+def gd_icons_row(cx, cy, n, color=GD_STATUS):
+    width = n * GD_ICON + (n - 1) * GD_ICON_GAP
+    return noti_icons(cx - width / 2, cy, color, n, GD_ICON, GD_ICON_GAP)
+
+
+def gd_latest(cx, cy, color=GD_STATUS):
+    text = "LAN: TỐI NAY 7 GIỜ NHÉ?"
+    text_width = gd_width(text, 12.5, 500, .05)
+    left = cx - (GD_ICON + GD_ICON_GAP + text_width) / 2
+    return icon_shapes(color)[0](left, cy - GD_ICON / 2, GD_ICON) + gd_text(left + GD_ICON + GD_ICON_GAP, cy + 4.4, text, 12.5, 500, "start", .05, color)
+
+
+def gd_details_height(date, weather, n, latest):
+    height = 0
+    if date or weather:
+        height += 17.7
+    if n:
+        height += (GD_ROW_GAP if height else 0) + GD_ICON
     if latest:
-        s += gd_latest(PW / 2, 148, PW - 48)
-    s += gd_clock(PW / 2, hour, minute, size, weight)
-    if media:
-        s += gd_player(PW / 2, PH - 142, PW - 80, paused=hour == 21)
-    return s + gd_status(PW / 2, PH - 54, n=0, charging=charging)
+        height += (GD_LATEST_GAP if height else 0) + GD_ICON
+    return height
 
 
-def gd_landscape(hour=8, minute=30, size=100, weight=400, weather=False, latest=False, media=False, n=3, charging=False, ref=False):
-    clock_x = W * .29 if ref else W / 2
-    clock_size = size * (.82 if ref else 1)
-    s = gd_clock(
-        clock_x,
-        hour,
-        minute,
-        clock_size,
-        weight,
-        "#FFFFFF" if ref else GD_ACCENT,
-        "#FFFFFF" if ref else GD_TEXT,
-        top_baseline=167,
-    )
-    if ref:
-        s += gd_status(W * .48, 264, n=n, charging=charging, color="#FFFFFF")
-        if latest:
-            s += gd_latest(W * .48, 300, 310, "#FFFFFF")
-        return s + (gd_player(W * .76, 266, 300, "#FFFFFF") if media else "")
-    left, right = W * .16, W * .84
-    s += gd_date(left, 142, weather)
-    s += gd_icons(left, 182, n=n)
+def gd_details(cx, top, date, weather, n, latest):
+    y = top
+    body = ""
+    if date or weather:
+        body += gd_date_row(cx, y + 13.4, date, weather)
+        y += 17.7
+    if n:
+        y += GD_ROW_GAP if y > top else 0
+        body += gd_icons_row(cx, y + GD_ICON / 2, n)
+        y += GD_ICON
     if latest:
-        s += gd_latest(left, 220, 240)
+        y += GD_LATEST_GAP if y > top else 0
+        body += gd_latest(cx, y + GD_ICON / 2)
+    return body
+
+
+def gd_portrait(hour=8, minute=30, size=100, weight=700, date=True, weather=False, n=3, latest=False, media=True,
+                charging=False, paused=False, battery=True, gradient_id=None, live=False):
+    s = gd_clock(PW / 2, PH / 2, hour, minute, size, weight, gradient_id=gradient_id, live=live)
+    s += gd_details(PW / 2, GD_TOP_MARGIN, date, weather, n, latest)
+    y = PH - GD_BOTTOM_MARGIN
+    if battery:
+        s += gd_battery(PW / 2, y - GD_BATTERY_GLYPH / 2, charging)
+        y -= GD_BATTERY_GLYPH + (GD_BATTERY_GAP if media else 0)
     if media:
-        s += gd_player(right, 160, 260, paused=hour == 21)
-        s += gd_status(right, 240, n=0, charging=charging)
-    else:
-        s += gd_status(right, 200, n=0, charging=charging)
+        width = PW - GD_SIDE_MARGIN * 2
+        top = y - GD_PLAYER_HEIGHT
+        s += gd_live_player(width, PW / 2, top) if live else gd_put(gd_player(width, paused), PW / 2, top, GD_ACCENT)
     return s
 
 
+def gd_landscape(hour=8, minute=30, size=100, weight=700, date=True, weather=False, n=3, latest=False, media=True,
+                 charging=False, paused=False, battery=True, gradient_id=None, live=False):
+    edge = W * GD_LANDSCAPE_EDGE
+    side = W / 2 - .9 * size * .6 - GD_LANDSCAPE_GAP - edge
+    left = edge + side / 2
+    right = W - edge - side / 2
+    s = gd_clock(W / 2, H / 2, hour, minute, size, weight, gradient_id=gradient_id, live=live)
+    s += gd_details(left, (H - gd_details_height(date, weather, n, latest)) / 2, date, weather, n, latest)
+    height = (GD_PLAYER_HEIGHT if media else 0) + (GD_BATTERY_GLYPH if battery else 0) + (GD_BATTERY_GAP if media and battery else 0)
+    y = (H - height) / 2
+    if media:
+        width = round(min(side, PW - GD_SIDE_MARGIN * 2))
+        s += gd_live_player(width, right, y) if live else gd_put(gd_player(width, paused), right, y, GD_ACCENT)
+        y += GD_PLAYER_HEIGHT + GD_BATTERY_GAP
+    if battery:
+        s += gd_battery(right, y + GD_BATTERY_GLYPH / 2, charging)
+    return s
+
+
+def gd_live_script():
+    digits = ",".join(f'{digit}:"{gd_glyph(700, digit)}"' for digit in "0123456789")
+    return ("<script>(function(){var D={" + digits + "},m=30,p=.42,t=0;"
+            "function fade(e,a,b,d){return e.animate([{opacity:a},{opacity:b}],{duration:300,delay:d||0,fill:'both'})}"
+            "function slide(e,d){e.animate([{transform:'translateY(14px)',opacity:0},{transform:'none',opacity:1}],{duration:300,delay:d,fill:'both',easing:'ease-out'})}"
+            "setInterval(function(){m=m>=39?30:m+1;var s=String(m);document.querySelectorAll('.gd-min').forEach(function(w){"
+            "var o=w.lastElementChild,g=o.cloneNode(false);g.innerHTML='<use href=\"#'+D[s[0]]+'\" x=\"0\"/><use href=\"#'+D[s[1]]+'\" x=\"600\"/>';"
+            "w.appendChild(g);fade(g,0,1);fade(o,1,0).onfinish=function(){o.remove()}});"
+            "t++;if(t%3==0){p=.08;document.querySelectorAll('.gd-title').forEach(function(e){slide(e,0)});document.querySelectorAll('.gd-artist').forEach(function(e){slide(e,50)})}},3000);"
+            "setInterval(function(){p=Math.min(1,p+.01);document.querySelectorAll('.gd-prog').forEach(function(r){r.setAttribute('width',r.dataset.w*p)})},300)"
+            "})();</script>")
+
+
+def gd_source_row(cx, cy, n):
+    color = GD_WHITE
+    battery_width = 15 + 5 + gd_width("72%", 13, 500, .05)
+    date_width = gd_width("THỨ BA 13", 13, 500, .05)
+    dot = 24 + 4
+    icons = n * GD_ICON + (n - 1) * GD_ICON_GAP
+    x = cx - (battery_width + dot + date_width + dot + icons) / 2
+    body = battery_h(x - 3, cy - 5.5, color) + gd_text(x + 20, cy + 4.6, "72%", 13, 500, "start", .05, color)
+    x += battery_width
+    body += f'<circle cx="{f(x + 14)}" cy="{f(cy)}" r="1.6" fill="{color}"/>'
+    x += dot
+    body += gd_text(x, cy + 4.6, "THỨ BA 13", 13, 500, "start", .05, color)
+    x += date_width
+    body += f'<circle cx="{f(x + 14)}" cy="{f(cy)}" r="1.6" fill="{color}"/>'
+    x += dot
+    return body + noti_icons(x, cy, color, n, GD_ICON, GD_ICON_GAP)
+
+
+def gd_source_cluster(cx, top, hour, minute):
+    em = 90
+    hour_baseline = top + 1.039 * em
+    minute_baseline = hour_baseline + GD_LINE_BOX * em - GD_NUMBER_OVERLAP
+    s = gd_number(cx, hour_baseline, f"{hour:02d}", em, 400, GD_WHITE)
+    s += gd_number(cx, minute_baseline, f"{minute:02d}", em, 400, GD_WHITE)
+    return s + gd_source_row(cx, top + 2 * GD_LINE_BOX * em - GD_NUMBER_OVERLAP + 20 + 8.5, 3)
+
+
+def gd_source_portrait():
+    media_top = PH - 204
+    zone_top = media_top * .1 / 1.1
+    zone = media_top * .9 / 1.1
+    cluster = 2 * GD_LINE_BOX * 90 - GD_NUMBER_OVERLAP + 57
+    s = gd_source_cluster(PW / 2, zone_top + (zone - cluster) / 2, 9, 45)
+    return s + gd_put(gd_player(PW - GD_SIDE_MARGIN * 2), PW / 2, media_top + GD_SIDE_MARGIN, GD_WHITE)
+
+
+def gd_source_landscape():
+    cluster = 2 * GD_LINE_BOX * 90 - GD_NUMBER_OVERLAP + 57
+    s = gd_source_cluster(W * .275, (H - cluster) / 2, 9, 45)
+    return s + gd_put(gd_player(round(W * .45)), W * .725, H - 60 - GD_PLAYER_HEIGHT, GD_WHITE)
+
+
 gentle = [
-    '<style>@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@200;400;500;700&display=swap");</style>',
+    '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;700&display=swap">',
     '<div style="font-size:0">',
-    frame_portrait("D1 · Dọc, mặc định 08:30: ngày + pin · icon trải ở đầu/cuối, đồng hồ giữa", gd_portrait()),
-    frame_portrait("D2 · Dọc, 10:27: thời tiết cạnh ngày, thông báo mới nhất và trình phát", gd_portrait(10, 27, weather=True, latest=True, media=True, n=2)),
-    frame_portrait("D3 · Dọc, 21:47: Đậm, cỡ 130, đang sạc, trình phát tạm dừng", gd_portrait(21, 47, 130, 700, media=True, n=1, charging=True)),
-    frame_portrait("D4 · Để so: app mẫu 09:45, Mảnh, cỡ 70, tất cả trắng; dòng trạng thái dưới số, trình phát neo đáy", gd_portrait(9, 45, 70, 200, latest=True, media=True, n=2, ref=True)),
+    frame_portrait("D1 · Mặc định, đang chạy thử: 3 giây = 1 phút (số mờ dần 300ms), 9 giây đổi bài (tên trượt lên) · đồng hồ giữa màn; ngày, icon neo trên; nhạc, pin neo đáy", gd_portrait(live=True)),
+    frame_portrait("D2 · Đủ khối · thêm thời tiết, thông báo mới nhất, đang sạc; không khối nào đổi chỗ", gd_portrait(10, 27, weather=True, n=2, latest=True, charging=True)),
+    frame_portrait("D3 · Mảnh, cỡ 130, gradient Hoàng hôn · tắt ngày, không nhạc; đồng hồ vẫn ở tâm", gd_portrait(21, 47, 130, 200, date=False, n=1, media=False, gradient_id="gdP")),
+    frame_portrait("D4 · Để so: app mẫu 09:45, Thường, cỡ 100, trắng; cụm số + dòng tin giữa vùng trên, trình phát đáy", gd_source_portrait()),
     '</div>',
-    frame("N1 · Ngang, mặc định 08:30: đồng hồ giữa, ngày + pin · icon bên trái, trạng thái pin bên phải", gd_landscape()),
-    frame("N2 · Ngang, 10:27: thời tiết, thông báo mới nhất ở trái; trình phát ở phải", gd_landscape(10, 27, weather=True, latest=True, media=True, n=2)),
-    frame("N3 · Ngang, 21:47: Đậm, cỡ 130, đang sạc, trình phát tạm dừng", gd_landscape(21, 47, 130, 700, media=True, n=1, charging=True)),
-    frame("N4 · Để so: app mẫu ngang 08:30, cột đồng hồ + dòng trạng thái 45%, cột trình phát 45%", gd_landscape(media=True, n=2, ref=True)),
+    frame("N1 · Mặc định, đang chạy thử như D1 · đồng hồ giữa màn; ngày, icon bên trái; nhạc, pin bên phải", gd_landscape(live=True)),
+    frame("N2 · Đủ khối, nhạc đang dừng (chữ mờ) · thời tiết, thông báo mới nhất bên trái; đang sạc bên phải", gd_landscape(10, 27, weather=True, n=2, latest=True, charging=True, paused=True)),
+    frame("N3 · Mảnh, cỡ 130, gradient Hoàng hôn · tắt ngày, không nhạc; hai bên chỉ bớt khối", gd_landscape(21, 47, 130, 200, date=False, n=1, media=False, gradient_id="gdL")),
+    frame("N4 · Để so: app mẫu ngang, Thường, cỡ 100, trắng; 5% · cột số + dòng tin 45% · cột trình phát 45% neo đáy 60dp · 5%", gd_source_landscape()),
+]
+gentle.append(gd_live_script())
 EC_CLOCK = "#A75F82"
 EC_SHADOW = "#1B1C38"
 EC_CHARACTER = "#EDEDED"
@@ -5115,6 +5319,7 @@ eclipse = [
     frame("N2 · Ngang, trình phát dùng chung kiểu Hàng ngang; ngày, pin và icon vẫn hiện", ec_landscape(media=True)),
     frame("N3 · Ngang, thời tiết cạnh ngày, nội dung thông báo dùng chung, đang sạc", ec_landscape(latest=True, charging=True, weather=True)),
     frame("N4 · Để so: phần riêng app mẫu toàn bề rộng, Xoay cố định 220°, Độ lộ 35%", ec_landscape(220, .35, details=False, clock="#80DEEA", shadow="#20142D", character="#80DEEA")),
+]
 BK_DEFAULT = "#EE9BE6"
 BK_WHITE = "#FFFFFF"
 BK_DIM = "#B5B5B5"
@@ -5258,7 +5463,7 @@ for name, summary, defs, frames in [
     ("w_spine", "Chủ đề Gáy sách (Vertical Clock): màu và cỡ, bốn khung dọc và bốn khung ngang", sp_defs(), spine),
     ("w_clip", "Chủ đề Kẹp giấy (Paper Clip): màu và cỡ, bốn khung dọc và bốn khung ngang", pc_defs(), clip),
     ("w_fade", "Chủ đề Phai (Gradient): độ đậm, phai dần và màu, bốn khung dọc và bốn khung ngang", gr_defs(), fade),
-    ("w_gentle", "Chủ đề Dịu: đồng hồ Nunito xếp dọc, trọng lượng, cỡ và màu riêng, bốn khung dọc và bốn khung ngang", "", gentle),
+    ("w_gentle", "Chủ đề Dịu: đồng hồ Nunito xếp dọc, trọng lượng, cỡ và màu riêng, bốn khung dọc và bốn khung ngang", gd_defs(), gentle),
     ("w_words", "Chủ đề Lời (Text Clock): giờ đọc thành chữ, độ đậm, cỡ và màu, bốn khung dọc và bốn khung ngang", "", words),
     ("w_frame", "Chủ đề Khung (Box Clock): giờ / phút trong khung viền, cỡ và màu, bốn khung dọc và bốn khung ngang", "", frame_theme),
     ("w_mono", "Chủ đề Đơn cách (Space Mono): giờ trên phút chữ đơn cách, cỡ và màu, bốn khung dọc và bốn khung ngang", "", mono),

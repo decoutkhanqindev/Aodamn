@@ -52,6 +52,7 @@ fun AodLatestLine(
             color = color,
             fontSize = style.textSize,
             fontFamily = style.font,
+            fontWeight = style.fontWeight,
             letterSpacing = style.letterSpacing,
             maxLines = 1,
         )

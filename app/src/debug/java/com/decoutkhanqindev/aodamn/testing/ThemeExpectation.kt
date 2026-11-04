@@ -56,7 +56,7 @@ object ThemeTestCatalog {
     val expectations = listOf(
         ThemeExpectation(
             theme = AodThemeValue.GENTLE,
-            optionKeys = listOf("size", "weight", "hour_color", "minute_color", "notifications_color", "media_color"),
+            optionKeys = listOf("size", "weight", "hour_color", "minute_color", "date_color", "status_color", "media_color"),
             components = setOf(
                 AodComponentValue.DATE,
                 AodComponentValue.BATTERY,
@@ -64,7 +64,7 @@ object ThemeTestCatalog {
                 AodComponentValue.NOTIFICATIONS,
                 AodComponentValue.MEDIA,
             ),
-            ownBlocks = emptySet(),
+            ownBlocks = setOf(AodBlockValue.DATE, AodBlockValue.STATUS, AodBlockValue.MEDIA),
             hasNotificationContent = true,
             isLiveInPreview = false,
         ),

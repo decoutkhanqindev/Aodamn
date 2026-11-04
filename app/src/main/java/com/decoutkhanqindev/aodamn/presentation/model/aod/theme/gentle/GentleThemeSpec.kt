@@ -11,6 +11,7 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeTab
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.component.AodComponentValue
 import com.decoutkhanqindev.aodamn.presentation.theme.FontFamilyNunito
 import com.decoutkhanqindev.aodamn.presentation.theme.GreyB4
+import com.decoutkhanqindev.aodamn.presentation.theme.GreyE4
 import com.decoutkhanqindev.aodamn.presentation.theme.GreyED
 import com.decoutkhanqindev.aodamn.presentation.theme.Mist
 import kotlinx.collections.immutable.persistentListOf
@@ -32,17 +33,13 @@ object GentleThemeSpec : AodThemeSpec {
         key = "weight",
         labelRes = R.string.theme_opt_weight,
         entries = AodGentleWeightValue.entries.toImmutableList(),
-        default = AodGentleWeightValue.REGULAR,
+        default = AodGentleWeightValue.BOLD,
     )
 
     val HourColor = AodColorOption(key = "hour_color", labelRes = R.string.theme_color_hour, default = Mist, isGradientAllowed = true)
     val MinuteColor = AodColorOption(key = "minute_color", labelRes = R.string.theme_color_minute, default = GreyED, isGradientAllowed = true)
-    val NotificationsColor = AodColorOption(
-        key = "notifications_color",
-        labelRes = R.string.theme_color_notifications,
-        default = GreyB4,
-        isGradientAllowed = true,
-    )
+    val DateColor = AodColorOption(key = "date_color", labelRes = R.string.theme_color_date, default = GreyE4, isGradientAllowed = true)
+    val StatusColor = AodColorOption(key = "status_color", labelRes = R.string.theme_color_status, default = GreyB4, isGradientAllowed = true)
     val MediaColor = AodColorOption(key = "media_color", labelRes = R.string.theme_color_media, default = Mist, isGradientAllowed = true)
 
     override val tabs = persistentListOf(
@@ -52,18 +49,26 @@ object GentleThemeSpec : AodThemeSpec {
             options = persistentListOf(Size, Weight, HourColor, MinuteColor),
         ),
         AodThemeTab(
+            iconRes = R.drawable.ic_calendar_blank,
+            labelRes = R.string.theme_tab_date,
+            options = persistentListOf(DateColor),
+            block = AodBlockValue.DATE,
+        ),
+        AodThemeTab(
             iconRes = R.drawable.ic_battery_full,
             labelRes = R.string.theme_tab_status,
-            options = persistentListOf(NotificationsColor),
+            options = persistentListOf(StatusColor),
+            block = AodBlockValue.STATUS,
         ),
         AodThemeTab(
             iconRes = R.drawable.ic_music_notes,
             labelRes = R.string.theme_tab_media,
             options = persistentListOf(MediaColor),
+            block = AodBlockValue.MEDIA,
         ),
     )
 
-    override val ownBlocks = persistentSetOf<AodBlockValue>()
+    override val ownBlocks = persistentSetOf(AodBlockValue.DATE, AodBlockValue.STATUS, AodBlockValue.MEDIA)
 
     override val components = persistentSetOf(
         AodComponentValue.DATE,
@@ -72,4 +77,6 @@ object GentleThemeSpec : AodThemeSpec {
         AodComponentValue.NOTIFICATIONS,
         AodComponentValue.MEDIA,
     )
+
+    override val hasNotificationContent = true
 }

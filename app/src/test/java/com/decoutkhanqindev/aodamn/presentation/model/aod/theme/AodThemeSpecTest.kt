@@ -97,6 +97,7 @@ class AodThemeSpecTest {
                     AodThemeValue.FRAME,
                     AodThemeValue.MONO,
                     AodThemeValue.ORBIT,
+                    AodThemeValue.GENTLE,
                 )
             val hasSharedLatest = AodBlockValue.STATUS !in theme.spec.ownBlocks && theme != AodThemeValue.FLIP
             assertEquals("${theme.id}: ghi nhớ", isChain, AodBlockValue.MEMO in theme.spec.ownBlocks)
@@ -666,7 +667,8 @@ class AodThemeSpecTest {
         )
     }
 
-    fun `gentle keeps the Jul22 size, weights and colors without large blocks`() {
+    @Test
+    fun `gentle keeps every Jul22 option and draws its own date, status and media`() {
         val spec = AodThemeValue.GENTLE.spec
         assertEquals(
             setOf(
@@ -678,19 +680,20 @@ class AodThemeSpecTest {
             ),
             spec.components,
         )
-        assertEquals(emptySet<AodBlockValue>(), spec.ownBlocks)
+        assertEquals(setOf(AodBlockValue.DATE, AodBlockValue.STATUS, AodBlockValue.MEDIA), spec.ownBlocks)
         assertEquals(true, spec.hasNotificationContent)
         assertEquals(false, spec.isLiveInPreview)
         assertEquals(
             listOf(AodGentleWeightValue.EXTRA_LIGHT, AodGentleWeightValue.REGULAR, AodGentleWeightValue.BOLD),
             GentleThemeSpec.Weight.entries,
         )
-        assertEquals(AodGentleWeightValue.REGULAR, GentleThemeSpec.Weight.default)
+        assertEquals(AodGentleWeightValue.BOLD, GentleThemeSpec.Weight.default)
         assertEquals(70..130, GentleThemeSpec.Size.range)
         assertEquals(100, GentleThemeSpec.Size.default)
         assertEquals(Mist, GentleThemeSpec.HourColor.default)
         assertEquals(GreyED, GentleThemeSpec.MinuteColor.default)
-        assertEquals(GreyB4, GentleThemeSpec.NotificationsColor.default)
+        assertEquals(GreyE4, GentleThemeSpec.DateColor.default)
+        assertEquals(GreyB4, GentleThemeSpec.StatusColor.default)
         assertEquals(Mist, GentleThemeSpec.MediaColor.default)
         assertEquals(
             listOf(
@@ -698,7 +701,8 @@ class AodThemeSpecTest {
                 GentleThemeSpec.Weight,
                 GentleThemeSpec.HourColor,
                 GentleThemeSpec.MinuteColor,
-                GentleThemeSpec.NotificationsColor,
+                GentleThemeSpec.DateColor,
+                GentleThemeSpec.StatusColor,
                 GentleThemeSpec.MediaColor,
             ),
             spec.options,

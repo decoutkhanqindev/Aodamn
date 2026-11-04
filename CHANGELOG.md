@@ -7,6 +7,38 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-11-04 – Làm lại chủ đề Dịu
+
+Đọc lại `Jul22Screen` và `jul22_screen_layout` dọc / ngang rồi làm lại theo đủ flow. User duyệt mock: "oke tốt hãy đưa cho kiro code nhé, bạn chỉ
+review sau đó thôi" (Kiro CLI code, Claude review). `check_theme.sh gentle "Dịu"` phần nhanh pass (compile, test JVM, `check-rules` 0 vi phạm, thư
+mục chủ đề cũ không đổi). Chưa chạy test máy vì không có máy ảo, nên ảnh chuẩn `androidTest/screenshots/themes/gentle/` vẫn là bản cũ, cần chạy
+`--device` rồi `--record`. Chưa test trên máy thật.
+
+### Sửa
+
+- Giờ theo cài đặt máy (`HH` / `hh`), bản trước luôn 24 giờ.
+- Cỡ số `90sp × cỡ / 100` như app mẫu, bản trước theo cạnh ngắn của vùng hiện. Khoảng giờ – phút lấy từ khung chữ của font mẫu: đường cơ sở cách
+  nhau `1,315 em − 20dp`, không nhân khoảng chồng theo cỡ. Màn thấp thì tự thu số để không đè trình phát.
+- Mỗi số nằm trong ô cố định `1,2 em × 0,714 em`, đồng hồ không xê dịch theo chữ số; gradient trải đúng trên ô đó (bản trước trải cả dòng chữ nên mất
+  dải màu). Đổi số hoặc đổi độ đậm đều mờ chuyển 300ms.
+- Ngày `EEEE dd` in hoa, Medium 13sp, giãn 0,05 em; `EEE` của tiếng Việt ra "TH 3 13" dễ nhầm. Bản trước không in hoa.
+- Trình phát xếp dọc như app mẫu: tên bài, nghệ sĩ, thanh 1,5dp, lùi 38 · phát 45 · tới 38dp cách 40dp; tên trượt lên khi đổi bài, nghệ sĩ trễ 50ms. Bản
+  trước là `AodCompactPlayer` một hàng.
+- Bỏ độ mờ dòng pin khi không sạc (không có trong Jul22).
+- Khai báo `ownBlocks` ngày, trạng thái, nhạc và tab theo phần, nên xem trước chủ đề có đủ mẫu; bản trước để rỗng.
+- Test đặc tả của Dịu thiếu `@Test` nên chưa từng chạy, nay đã chạy.
+
+### Thay đổi
+
+- Bố cục loại A: đồng hồ đúng tâm màn ở cả hai hướng, không dời khi có nhạc. Dọc: ngày + thời tiết, icon, thông báo mới nhất cách đỉnh 60dp; nhạc +
+  pin cách đáy 40dp. Ngang: nhóm đó ở vùng trái, nhạc + pin ở vùng phải. Không dùng `AodHeroInfoLayout` vì khung đó canh trái, không in hoa, có mẫu ngày
+  riêng và đồng hồ xê dịch khi có nhạc.
+- Mặc định Đậm (app mẫu Thường) để thẻ ở lưới nổi. Tách màu thông báo của app mẫu thành Ngày (`GreyE4`) và Pin & thông báo (`GreyB4`), khoá
+  `notifications_color` đổi thành `status_color`. Chữ mờ 60% khi dừng nhạc là nâng cấp.
+- Thêm Nunito Medium cho ngày, pin, thông báo như app mẫu. `AodLatestLineStyle` thêm `fontWeight` (mặc định `null`, chủ đề khác không đổi).
+- Skill `aodamn-aod-theme-ref`: user yêu cầu "nêu skill có sự thay đổi khác với trước thì sửa lịa như trước". Trả phần hiện mock về cách cũ: một
+  `show_widget` có mọi khung, chuyển động chạy ngay trong đó, không gửi PNG; số lớn là path từ font, chữ nhỏ là `<text>`. Mock Dịu thêm chạy thử ở D1, N1.
+
 ## [Chưa phát hành] – 2026-10-31 – Chủ đề Dịu
 
 User duyệt mock Dịu và cho bắt đầu code. Chủ đề giữ đồng hồ số Nunito xếp dọc của Jul22 Muviz Edge, nhưng không dùng tên thương hiệu.
