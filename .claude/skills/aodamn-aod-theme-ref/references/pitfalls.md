@@ -60,6 +60,19 @@ Mỗi dòng là một lỗi đã xảy ra thật; kiểm từng dòng trước k
 - **`AodThemeSpecTest`**: tự vẽ thông báo mới nhất thì thêm vào tập `drawsLatest`; chạy theo giờ thật ở xem trước thì thêm vào
   `liveThemes`; thêm test riêng chặn chủ đề có lại khối đã bỏ và giữ đủ tuỳ chọn của app mẫu (khoảng cỡ, mặc định, thứ tự).
 
+## Mock và trình bày
+
+- **Mock phải xem được trong chat**: `show_widget` có mọi khung dọc + ngang, hoặc ảnh PNG từ `render_mock.py` ([mock.md](mock.md)).
+  Chỉ gửi file HTML thì user phải hỏi "tôi xem mock ở đâu" (Thẻ lật, Dịu).
+- **Font của mock**: chữ AOD dùng đúng file font của chủ đề; `render_mock.py` nhúng font thật và dừng khi chữ rơi về font mặc định
+  (Dịu: mock dùng font mặc định của HTML nên khác app).
+- **Vị trí đồng hồ theo loại chủ đề** ([layout.md](layout.md)): loại A (đồng hồ là điểm nhấn) dồn đồng hồ về một phía là sai (Dịu);
+  loại B / C ép đồng hồ ra giữa làm block lệch là sai (Chớp mắt, Pha trăng). Hai lời sửa cùng đúng vì khác loại.
+- **Không gợi ý chỉnh vị trí block**: mock không có tay cầm, nút hay chú thích "kéo / đổi chỗ"; khung cùng hướng giữ nguyên anchor
+  (Chớp mắt và Pha trăng bị làm lại nhiều lần vì lỗi này).
+- **Khung dùng chung đã có**: reuse.md chỉ khung nào thì dùng khung đó (`AodHeroInfoLayout`) hoặc ghi lý do bỏ trong mock; bỏ im
+  lặng là lỗi (Dịu).
+
 ## Font
 
 - Thêm font: chỉ sinh họ mới (`python -I tools/fonts/make_static_fonts.py <họ>`), không sinh lại họ cũ (đổi byte file đã có).

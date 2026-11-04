@@ -13,7 +13,7 @@ Play đang làm, kể cả việc dùng quyền "Hiển thị trên ứng dụng
 
 Tài liệu khác:
 
-- [Kiro steering](.kiro/steering/aodamn.md): rule kiến trúc và quy ước code của project. Kiro tự đọc file này.
+- [CLAUDE.md](CLAUDE.md): rule kiến trúc và quy ước code của project. Claude Code tự đọc file này.
 - [CHANGELOG.md](CHANGELOG.md): các thay đổi, kể cả lịch sử của FakeAOD.
 - [COMPARISON.md](COMPARISON.md): so sánh kỹ thuật và tính năng với Always On AMOLED.
 
@@ -119,15 +119,15 @@ Color solid / gradient và mọi cặp option. Test máy mở hai Activity cho h
 
 | Lệnh | Phạm vi |
 |---|---|
-| `bash .kiro/skills/aodamn-aod-theme-ref/scripts/check_theme.sh blinky "Chớp mắt"` | Fast: theme đang làm, không lint |
-| `bash .kiro/skills/aodamn-aod-theme-ref/scripts/check_theme.sh blinky "Chớp mắt" --device` | Theme: flow, apply / mở lại, ảnh, motion |
-| `bash .kiro/skills/aodamn-aod-theme-ref/scripts/check_theme.sh blinky "Chớp mắt" --record` | Ghi riêng ảnh theme rồi kiểm lại |
-| `bash .kiro/skills/aodamn-aod-theme-ref/scripts/check_theme.sh flip "Thẻ lật" --blocks` | Chỉ block dùng chung |
-| `bash .kiro/skills/aodamn-aod-theme-ref/scripts/check_theme.sh flip "Thẻ lật" --all` | Toàn bộ trước phát hành / CI |
+| `bash .claude/skills/aodamn-aod-theme-ref/scripts/check_theme.sh blinky "Chớp mắt"` | Fast: theme đang làm, không lint |
+| `bash .claude/skills/aodamn-aod-theme-ref/scripts/check_theme.sh blinky "Chớp mắt" --device` | Theme: flow, apply / mở lại, ảnh, motion |
+| `bash .claude/skills/aodamn-aod-theme-ref/scripts/check_theme.sh blinky "Chớp mắt" --record` | Ghi riêng ảnh theme rồi kiểm lại |
+| `bash .claude/skills/aodamn-aod-theme-ref/scripts/check_theme.sh flip "Thẻ lật" --blocks` | Chỉ block dùng chung |
+| `bash .claude/skills/aodamn-aod-theme-ref/scripts/check_theme.sh flip "Thẻ lật" --all` | Toàn bộ trước phát hành / CI |
 
 Mỗi lần chạy có thư mục riêng dưới `build/theme-tests/`. Ảnh chuẩn nằm ở `app/src/androidTest/screenshots/`; actual / reference / diff của
 lần lỗi nằm trong báo cáo Dropshots. Không record để biến ảnh lỗi thành ảnh chuẩn. Chi tiết ở
-`.kiro/skills/aodamn-aod-theme-ref/references/testing.md`.
+`.claude/skills/aodamn-aod-theme-ref/references/testing.md`.
 
 ## Cấp quyền
 
@@ -1451,7 +1451,7 @@ Log của app đi qua Timber nên chỉ có ở bản debug. Cách đọc log:
   kiện vừa thêm hiện ở lần AOD sau, hoặc sau tối đa 15 phút nếu đồng hồ đang hiện.
 - **Hình vẽ nhanh** chỉ có một màu và không xoá từng nét; mở lại khung vẽ là vẽ hình mới.
 - **Form consent có thể hiện trên AOD** nếu nó tải xong đúng lúc AOD đang mở (rất hiếm), xem
-  .kiro/steering/aodamn.md › Ads.
+  CLAUDE.md › Ads.
 
 ## targetSdk 37
 

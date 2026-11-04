@@ -45,8 +45,12 @@ Theo [references/mock.md](references/mock.md): thêm mục chủ đề vào `too
 chụp kiểm, rồi vẽ inline bằng `show_widget` kèm bảng giữ / đổi / bỏ. Kết thúc lượt bằng câu hỏi duyệt. Chưa có câu "duyệt" của
 user thì không viết dòng code chủ đề nào. Sửa mock theo góp ý thì vẽ lại **cả bản**.
 
+Trước khi vẽ, xếp chủ đề vào loại bố cục A / B / C theo [references/layout.md](references/layout.md) và ghi loại + lý do vào mock.
+Chữ AOD trong mock dùng đúng file font của chủ đề; dựng ảnh bằng `tools/mockups/render_mock.py` (nhúng font thật, chạy offline).
+
 ### 3. Code
-Theo README › Thêm chủ đề mới bước 3–6. Media, Layout, thông báo mới nhất, font, giờ thật: dùng khối đã chọn ở
+Theo README › Thêm chủ đề mới bước 3–6. Trước khi vẽ, thêm đúng một `ThemeExpectation` vào bộ test dùng chung theo
+[references/testing.md](references/testing.md); không chép harness hay test block sang file riêng của chủ đề. Media, Layout, thông báo mới nhất, font, giờ thật: dùng khối đã chọn ở
 [references/reuse.md](references/reuse.md), chủ đề chỉ thêm style trong Metrics; không chép hàm làm tối brush, resolve
 typeface hay vòng lặp giờ thật. Phần riêng mới lấy mẫu từ chủ đề vừa làm (`sector/`, `bigoverlap/`, `tick/`). Trước khi viết, đọc
 [references/pitfalls.md](references/pitfalls.md): danh sách lỗi đã gặp, mỗi lỗi một dòng kiểm.
@@ -58,15 +62,20 @@ Theo [references/registration.md](references/registration.md): danh sách đủ 
 mới (README có hơn 10 chỗ liệt kê tên chủ đề, dễ sót).
 
 ### 5. Kiểm
+Theo [references/testing.md](references/testing.md). Kiểm local trước:
 ```bash
-bash .claude/skills/aodamn-aod-theme-ref/scripts/check_theme.sh <gói chủ đề> "<Tên tiếng Việt>"
+bash .claude/skills/aodamn-aod-theme-ref/scripts/check_theme.sh <gói chủ đề> "<Tên tiếng Việt>" [--theme-id=<id>]
 ```
-Script chạy compile, unit test, lint, `check-rules`, kiểm thư mục chủ đề cũ không đổi so với main, đếm tên chủ đề ở từng chỗ
-đăng ký và in `[CHECK]` cho đoạn README nhắc chủ đề trước mà chưa nhắc chủ đề mới. Mọi mục phải OK, từng `[CHECK]` xem tay;
-lỗi thì sửa rồi chạy lại. Lệnh gradle lâu thì chạy nền.
+Lần đầu có máy ảo Android API 37 rảnh: chạy Fast một lần khi code ổn, chạy `--device` để lấy ảnh thực tế, xem ảnh rồi ghi ảnh chuẩn bằng `--record`. Script chọn máy API 37 không bị test khác giữ, hoặc dùng `AOD_TEST_SERIAL` để chọn đúng máy. Chưa có máy ảo thì thêm `--wait=600` (script tự
+chờ máy boot xong trong một lệnh); không chờ bằng nhiều lượt model.
+Script băm đầu vào theo nhóm `behavior`, `screens`, `options`, `editor`, `motion`, `blocks`; chỉ nhóm chưa pass hoặc có file đổi mới chạy.
+Dùng `--force` khi cần chạy lại dù đầu vào không đổi. Dấu pass nằm trong `build/theme-tests/cache/<gói>/` và mất khi `clean`.
+`--editor` chỉ xét panel editor. Block chung chỉ xét bằng `--blocks`. Fast không compile androidTest; lệnh test máy tự compile phần đó.
+Lint và toàn bộ test nằm ở cổng phát hành, không nằm trong vòng làm một theme.
+Mọi mục phải OK; lỗi rẻ thì dừng trước máy, lỗi ảnh thì đọc actual / reference / diff. Lệnh Gradle lâu thì chạy nền.
 
-Báo user (user tự test, không dùng adb): thư mục đang làm (worktree nếu có), lệnh `./gradlew installDebug`, tóm tắt bước test
-trên máy vừa thêm vào README, các file dùng chung đã sửa và lý do không đổi hành vi.
+Báo user: kết quả local + device, AVD dùng để ghi ảnh, đường dẫn diff nếu fail, các file dùng chung đã sửa và phần quyền Xiaomi còn phải
+kiểm tay. Test theme phải đi qua test host không tạo `AdsManager`; không sửa `canRequestAds` của app thật. Không bắt user lặp lại luồng onboarding để xem theme.
 
 ### 6. Commit + đưa lên main ⛔
 Chỉ khi user bảo ("commit", "commit vào main"). Làm theo [references/land.md](references/land.md).
@@ -76,3 +85,7 @@ Sau khi chủ đề đã lên main, user báo lỗi thì sửa thẳng trên che
 
 User chỉ ra hướng làm sai (vd "vẫn chung tab, chỉ tách phần chỉnh cỡ"): hoàn tác đúng phần đã làm sai trước khi làm lại,
 không chồng bản sửa mới lên bản sai. Chưa rõ ý thì hỏi lại trước khi code.
+
+Lời sửa chỉ áp cho chủ đề và loại chủ đề user nhắc. Ghi vào [references/pitfalls.md](references/pitfalls.md) kèm tên chủ đề, không
+viết thành luật "luôn" / "không bao giờ" cho mọi chủ đề (đã có lần đổi từ "luôn giữa" sang "không mặc định giữa" rồi sai lại ở
+chiều ngược).

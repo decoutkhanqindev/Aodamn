@@ -94,8 +94,9 @@ giờ 24h, font scale 1.0 và ba animation scale 1.0.
 Dùng máy ảo Android API 37 đang rảnh. Script đặt khóa tạm theo serial, rồi chuẩn hóa màn 1440 × 3120, density 560, giờ 24h, font 1.0 và ba animation scale 1.0. Khi không truyền biến môi trường, script chọn emulator API 37 đầu tiên chưa bị khóa. `AOD_TEST_SERIAL` vẫn ép dùng một máy cụ thể.
 
 ```powershell
-bash .kiro/skills/aodamn-aod-theme-ref/scripts/check_theme.sh <gói> "<Tên Việt>" --device
-AOD_TEST_SERIAL=emulator-5556 bash .kiro/skills/aodamn-aod-theme-ref/scripts/check_theme.sh <gói> "<Tên Việt>" --device
+bash .claude/skills/aodamn-aod-theme-ref/scripts/check_theme.sh <gói> "<Tên Việt>" --device
+AOD_TEST_SERIAL=emulator-5556 bash .claude/skills/aodamn-aod-theme-ref/scripts/check_theme.sh <gói> "<Tên Việt>" --device
+bash .claude/skills/aodamn-aod-theme-ref/scripts/check_theme.sh <gói> "<Tên Việt>" --device --wait=600
 ```
 
 Golden của cùng một theme cần ghi và kiểm trên cùng máy ảo cho một lượt. Chỉ đổi máy sau khi chạy lại `--device --force`. Quyền Xiaomi riêng của ROM vẫn kiểm tay trên máy Xiaomi.
@@ -103,13 +104,13 @@ Golden của cùng một theme cần ghi và kiểm trên cùng máy ảo cho m�
 ## Lệnh
 
 ```powershell
-bash .kiro/skills/aodamn-aod-theme-ref/scripts/check_theme.sh <gói> "<Tên Việt>" [--theme-id=<id>]
-bash .kiro/skills/aodamn-aod-theme-ref/scripts/check_theme.sh <gói> "<Tên Việt>" --device [--theme-id=<id>]
-bash .kiro/skills/aodamn-aod-theme-ref/scripts/check_theme.sh <gói> "<Tên Việt>" --editor
-bash .kiro/skills/aodamn-aod-theme-ref/scripts/check_theme.sh <gói> "<Tên Việt>" --record-editor
-bash .kiro/skills/aodamn-aod-theme-ref/scripts/check_theme.sh <gói> "<Tên Việt>" --record
-bash .kiro/skills/aodamn-aod-theme-ref/scripts/check_theme.sh <gói> "<Tên Việt>" --blocks
-bash .kiro/skills/aodamn-aod-theme-ref/scripts/check_theme.sh <gói> "<Tên Việt>" --device --force
+bash .claude/skills/aodamn-aod-theme-ref/scripts/check_theme.sh <gói> "<Tên Việt>" [--theme-id=<id>]
+bash .claude/skills/aodamn-aod-theme-ref/scripts/check_theme.sh <gói> "<Tên Việt>" --device [--theme-id=<id>]
+bash .claude/skills/aodamn-aod-theme-ref/scripts/check_theme.sh <gói> "<Tên Việt>" --editor
+bash .claude/skills/aodamn-aod-theme-ref/scripts/check_theme.sh <gói> "<Tên Việt>" --record-editor
+bash .claude/skills/aodamn-aod-theme-ref/scripts/check_theme.sh <gói> "<Tên Việt>" --record
+bash .claude/skills/aodamn-aod-theme-ref/scripts/check_theme.sh <gói> "<Tên Việt>" --blocks
+bash .claude/skills/aodamn-aod-theme-ref/scripts/check_theme.sh <gói> "<Tên Việt>" --device --force
 ```
 
 Fast và các nhóm máy giữ dấu pass theo nội dung file. Nếu không có đầu vào đổi, script báo `SKIP` và không mở máy.

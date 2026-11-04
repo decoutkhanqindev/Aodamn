@@ -7,8 +7,9 @@ Chỉ làm khi user bảo. Lệnh git bị chặn vì cần user cho phép thì 
 1. `git status --short`: liệt kê đúng file của chủ đề (thư mục chủ đề, các chỗ ở registration.md, font / license / mock).
 2. `git add <từng file>` (không `-A`, không `.`); không stage `local.properties`, `.idea/*`, `app/build.gradle.kts` hay file
    không phải của chủ đề.
-3. Message: một đoạn chữ thường tiếng Anh như các commit chủ đề trước (`git log --grep "add the" -3`): chủ đề nào, số đo lấy từ
-   đâu, các phần vẽ, tuỳ chọn, mặc định, font. Không dòng `Co-Authored-By`.
+3. Message theo Conventional Commits: `type(scope): mô tả mệnh lệnh ngắn`, chủ đề mới là `feat: add <Tên> AOD theme` (xem
+   `git log --oneline -5`). Một commit một chủ đề hoàn chỉnh; số đo, font, quyết định thiết kế ghi ở CHANGELOG / README, không nhồi vào
+   message. Không dòng `Co-Authored-By`.
 
 Làm thẳng trên checkout chính thì commit xong là xong. Không push.
 

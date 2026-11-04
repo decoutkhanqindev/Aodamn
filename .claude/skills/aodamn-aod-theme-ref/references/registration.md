@@ -15,6 +15,8 @@ cũng phải có. `scripts/check_theme.sh` đếm tên ở các chỗ này.
 | `res/values/strings.xml` (mẫu dòng thông báo) | chuỗi định dạng "tiêu đề + nội dung" cho `lineText(R.string.aod_<chủ đề>_notification)` khi dùng `AodLatestLine` |
 | `model/aod/theme/Aod*Style.kt`, khối ở `block/` / `theme/` | chỉ khi mở rộng khối dùng chung: thuộc tính mới có mặc định đúng hành vi cũ (hỏi user trước) |
 | `app/src/test/.../AodThemeSpecTest.kt` | import, `drawsLatest` / `liveThemes` nếu đúng, test riêng |
+| `app/src/debug/.../testing/ThemeExpectation.kt` | đúng một `ThemeExpectation`; mọi option / cặp option, profile dọc / ngang và mốc motion tự sinh |
+| `app/src/androidTest/screenshots/themes/<id>/` | 8 ảnh toàn màn + option board + ảnh motion Dropshots; không chép test block vào theme |
 | `theme/Colors.kt`, `theme/Typography.kt` | màu nhấn / họ font mới |
 | `res/values/strings.xml`, `res/values-vi/strings.xml` | `theme_<id>`, nhãn màu / tuỳ chọn mới; mẫu định dạng `translatable="false"` chỉ ở `values/` |
 | `tools/icons/icons.txt` | icon mới (dòng `light:` / `fill:` riêng), chạy `import_phosphor.py` |
