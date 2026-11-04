@@ -71,6 +71,14 @@ val FontFamilyRajdhani = FontFamily(
     Font(R.font.rajdhani_bold, FontWeight.Bold),
 )
 
+val FontFamilyRubik = FontFamily(
+    Font(R.font.rubik_light, FontWeight.Light),
+)
+
+val FontFamilyBodoniModa = FontFamily(
+    Font(R.font.bodoni_moda_regular, FontWeight.Normal),
+)
+
 val FontFamilyGoogleSans = FontFamily(
     Font(R.font.google_sans_bold, FontWeight.Bold),
 )

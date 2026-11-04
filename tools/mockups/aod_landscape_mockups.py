@@ -4712,57 +4712,156 @@ orbit.append(ss_live_script())
 # ================================================================== THẺ LẬT
 FC_PANEL = "#1C1D25"
 FC_DIGIT = GE
+FC_WHITE = "#FFFFFF"
+FC_TEXT_SCALE = 1.6
+FC_REF_TEXT_SCALE = 1.5
+FC_CARD_GAP = 25
+FC_PIECE_GAP = 4
+FC_OUTLINE = .028
 FC_STYLES = [
-    ("Bebas Neue", "Bebas Neue", 400, 1.05),
-    ("Big Shoulders Regular*", "Big Shoulders Display", 400, 1.0),
-    ("Big Shoulders Light", "Big Shoulders Display", 300, 0.92),
-    ("Viền đôi*", "Big Shoulders Display", 400, 0.92),
-    ("Tomorrow", "Tomorrow", 500, 0.64),
-    ("Google Sans*", "Google Sans", 400, 0.72),
-    ("Fraunces*", "Fraunces", 400, 0.78),
-    ("Anton", "Anton", 400, 0.8),
-    ("Rajdhani", "Rajdhani", 700, 0.84),
+    ("Bebas Neue", "bebas_neue_regular", 1.05, False),
+    ("Big Shoulders, đậm", "big_shoulders_display_bold", .94, False),
+    ("Big Shoulders, mảnh", "big_shoulders_display_light", .92, False),
+    ("Viền đôi", "big_shoulders_display_bold", .9, True),
+    ("Tomorrow", "tomorrow_medium", .64, False),
+    ("Rubik", "rubik_light", .72, False),
+    ("Bodoni Moda", "bodoni_moda_regular", .71, False),
+    ("Anton", "anton_regular", .8, False),
+    ("Rajdhani", "rajdhani_bold", .84, False),
 ]
-FC_FONTS = ('<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Big+Shoulders+Display:wght@300;400'
-            '&family=Fraunces:opsz,wght@9..144,400&family=Google+Sans:wght@400&family=Rajdhani:wght@700&family=Tomorrow:wght@500&display=swap">')
-FC_DEFS = ('<linearGradient id="fcPanelGradient" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#283048"/>'
-           '<stop offset=".5" stop-color="#4B3F72"/><stop offset="1" stop-color="#1C1D25"/></linearGradient>'
-           '<linearGradient id="fcDigitGradient" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#F6D365"/>'
-           '<stop offset=".5" stop-color="#FDA085"/><stop offset="1" stop-color="#F6D365"/></linearGradient>')
+FC_FONTS = {}
+FC_GLYPHS = {}
+FC_DEFS = ('<linearGradient id="fcSun" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#FFCC70"/><stop offset=".5" stop-color="#C850C0"/><stop offset="1" stop-color="#4158D0"/></linearGradient>'
+           '<linearGradient id="fcPanelSea" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#3A2A5E"/><stop offset="1" stop-color="#123B4A"/></linearGradient>')
 FC_N = [0]
 
 
-def fc_piece(x, y, w, h, rtl, rtr, rbr, rbl, fill):
-    d = (f'M{f(x + rtl)},{f(y)}H{f(x + w - rtr)}Q{f(x + w)},{f(y)} {f(x + w)},{f(y + rtr)}V{f(y + h - rbr)}'
-         f'Q{f(x + w)},{f(y + h)} {f(x + w - rbr)},{f(y + h)}H{f(x + rbl)}Q{f(x)},{f(y + h)} {f(x)},{f(y + h - rbl)}'
-         f'V{f(y + rtl)}Q{f(x)},{f(y)} {f(x + rtl)},{f(y)}Z')
-    return f'<path d="{d}" fill="{fill}"/>'
+def fc_font(file):
+    if file not in FC_FONTS:
+        font = TTFont(ROOT / f"app/src/main/res/font/{file}.ttf")
+        if file == "big_shoulders_display_bold":
+            from fontTools.ttLib.removeOverlaps import removeOverlaps
+            removeOverlaps(font, [font.getBestCmap()[ord(digit)] for digit in "0123456789"])
+        FC_FONTS[file] = font
+    return FC_FONTS[file]
 
 
-def fc_card(cx, cy, size, value, character=55, style=0, panel=FC_PANEL, digit=FC_DIGIT, top_value=None, bottom_value=None):
-    FC_N[0] += 1
-    clip = f"fcc{FC_N[0]}"
-    x, y, gap = cx - size / 2, cy - size / 2, 4.0
-    half = (size - gap) / 2
-    outer, inner = min(20.0, size * .1), min(2.0, size * .02)
-    family, weight, factor = FC_STYLES[style][1:]
-    fs = size * 1.12 * character / 55 * factor / 1.05
-    top_text = value if top_value is None else top_value
-    bottom_text = value if bottom_value is None else bottom_value
-    attrs = (f'x="{f(cx)}" y="{f(cy + fs * .025)}" font-size="{f(fs)}" font-family="{family}" '
-             f'font-weight="{weight}" text-anchor="middle" dominant-baseline="central"')
-    pieces = (fc_piece(x, y, size, half, outer, outer, inner, inner, panel)
-              + fc_piece(x, y + half + gap, size, half, inner, inner, outer, outer, panel))
-    clips = (f'<defs><clipPath id="{clip}t"><rect x="{f(x)}" y="{f(y)}" width="{f(size)}" height="{f(half)}"/></clipPath>'
-             f'<clipPath id="{clip}b"><rect x="{f(x)}" y="{f(y + half + gap)}" width="{f(size)}" height="{f(half)}"/></clipPath></defs>')
+def fc_glyph(file, char):
+    key = (file, char)
+    if key not in FC_GLYPHS:
+        FC_GLYPHS[key] = f"c{len(FC_GLYPHS):x}"
+    return FC_GLYPHS[key]
 
-    def glyph(text, part):
-        if style != 3:
-            return f'<text {attrs} fill="{digit}" clip-path="url(#{clip}{part})">{text}</text>'
-        return (f'<text {attrs} fill="none" stroke="{digit}" stroke-width="{f(size * .038)}" clip-path="url(#{clip}{part})">{text}</text>'
-                f'<text {attrs} fill="none" stroke="{panel}" stroke-width="{f(size * .016)}" clip-path="url(#{clip}{part})">{text}</text>')
 
-    return clips + pieces + glyph(top_text, "t") + glyph(bottom_text, "b")
+def fc_defs():
+    paths = []
+    for (file, char), glyph_id in FC_GLYPHS.items():
+        font = fc_font(file)
+        glyphs = font.getGlyphSet()
+        pen = SVGPathPen(glyphs, ntos=lambda value: str(round(value)))
+        glyphs[font.getBestCmap()[ord(char)]].draw(pen)
+        paths.append(f'<path id="{glyph_id}" d="{pen.getCommands()}"/>')
+    return FC_DEFS + "".join(paths)
+
+
+def fc_metrics(file, value):
+    font = fc_font(file)
+    glyphs = font.getGlyphSet()
+    cmap = font.getBestCmap()
+    x = 0
+    left, right, top, bottom = 1e9, -1e9, -1e9, 1e9
+    advances = []
+    for char in value:
+        pen = BoundsPen(glyphs)
+        glyphs[cmap[ord(char)]].draw(pen)
+        b = pen.bounds
+        left, right = min(left, x + b[0]), max(right, x + b[2])
+        top, bottom = max(top, b[3]), min(bottom, b[1])
+        advances.append(x)
+        x += font["hmtx"][cmap[ord(char)]][0]
+    return left, right, top, bottom, advances, font["head"].unitsPerEm
+
+
+def fc_piece(x, y, w, h, t, b, fill):
+    return (f'<path d="M{f(x + t)},{f(y)}h{f(w - 2 * t)}a{f(t)},{f(t)} 0 0 1 {f(t)},{f(t)}v{f(h - t - b)}a{f(b)},{f(b)} 0 0 1 {f(-b)},{f(b)}'
+            f'h{f(2 * b - w)}a{f(b)},{f(b)} 0 0 1 {f(-b)},{f(-b)}v{f(t + b - h)}a{f(t)},{f(t)} 0 0 1 {f(t)},{f(-t)}Z" fill="{fill}"/>')
+
+
+def fc_number(cx, cy, card, value, style, character, digit, scale):
+    _, file, factor, is_outline = FC_STYLES[style]
+    left, right, top, bottom, advances, upm = fc_metrics(file, value)
+    text_size = card * scale * factor * character / 100
+    k = text_size / upm
+    x = cx - (left + right) / 2 * k
+    y = cy + (top + bottom) / 2 * k
+    uses = "".join(f'<use href="#{fc_glyph(file, char)}" x="{advance}"/>' for char, advance in zip(value, advances))
+    scale_text = f"{k:.5f}".rstrip("0")
+    transform = f'translate({f(x)} {f(y)}) scale({scale_text} -{scale_text})'
+    if is_outline:
+        return f'<g transform="{transform}" fill="none" stroke="{digit}" stroke-width="{f(card * FC_OUTLINE / k)}" stroke-linejoin="round">{uses}</g>'
+    if digit.startswith("url("):
+        FC_N[0] += 1
+        clip = f"fcClip{FC_N[0]}"
+        ink_w, ink_h = (right - left) * k, (top - bottom) * k
+        return (f'<clipPath id="{clip}">' + "".join(
+                    f'<use href="#{fc_glyph(file, char)}" transform="translate({f(x + advance * k)} {f(y)}) scale({scale_text} -{scale_text})"/>'
+                    for char, advance in zip(value, advances)) + '</clipPath>'
+                f'<rect x="{f(cx - ink_w / 2)}" y="{f(cy - ink_h / 2)}" width="{f(ink_w)}" height="{f(ink_h)}" fill="{digit}" clip-path="url(#{clip})"/>')
+    return f'<g transform="{transform}" fill="{digit}">{uses}</g>'
+
+
+def fc_card(cx, cy, card, value, style=0, character=55, panel=FC_PANEL, digit=FC_DIGIT, scale=FC_TEXT_SCALE):
+    half = (card - FC_PIECE_GAP) / 2
+    x, y = cx - card / 2, cy - card / 2
+    outer = min(20, card / 8)
+    inner = min(2, card / 50)
+    return (fc_piece(x, y, card, half, outer, inner, panel)
+            + fc_piece(x, y + half + FC_PIECE_GAP, card, half, inner, outer, panel)
+            + fc_number(cx, cy, card, value, style, character, digit, scale)
+            + f'<rect x="{f(x)}" y="{f(cy - FC_PIECE_GAP / 2)}" width="{f(card)}" height="{FC_PIECE_GAP}" fill="#000"/>')
+
+
+def fc_live_card(cx, cy, card, kind):
+    return (f'<foreignObject x="{f(cx - card / 2)}" y="{f(cy - card / 2)}" width="{f(card)}" height="{f(card)}">'
+            f'<div class="fc-live" data-k="{kind}" data-s="{f(card)}" style="position:relative;width:{f(card)}px;height:{f(card)}px"></div></foreignObject>')
+
+
+def fc_live_script():
+    file = FC_STYLES[0][1]
+    font = fc_font(file)
+    glyphs = font.getGlyphSet()
+    cmap = font.getBestCmap()
+    rows = []
+    top, bottom = -1e9, 1e9
+    for digit in "0123456789":
+        pen = BoundsPen(glyphs)
+        glyphs[cmap[ord(digit)]].draw(pen)
+        b = pen.bounds
+        top, bottom = max(top, b[3]), min(bottom, b[1])
+        rows.append(f'{digit}:["{fc_glyph(file, digit)}",{font["hmtx"][cmap[ord(digit)]][0]},{round(b[0])},{round(b[2])}]')
+    zoom = FC_TEXT_SCALE * FC_STYLES[0][2] * .55
+    upm = font["head"].unitsPerEm
+    return ('<script>(function(){var G={' + ",".join(rows) + '},T=' + str(round(top)) + ',B=' + str(round(bottom)) + ',Z=' + f"{zoom:.3f}" + ',U=' + str(upm) + ''';
+function num(v,S,H,t){if(!v)return"";var a=G[v[0]],b=G[v[1]],s=S*Z/U,L=a[2],R=a[1]+b[3],x=S/2-(L+R)/2*s,y=S/2+(T+B)/2*s-(t?0:H+4);
+return'<svg width="'+S+'" height="'+H+'" style="display:block" fill="#EDEDED"><g transform="translate('+x+' '+y+') scale('+s+' '+(-s)+')"><use href="#'+a[0]+'"/><use href="#'+b[0]+'" x="'+a[1]+'"/></g></svg>'}
+function half(v,e,t){var d=document.createElement("div");d.style.cssText="position:absolute;left:0;top:"+(t?0:e.H+4)+"px;width:"+e.S+"px;height:"+e.H+"px;overflow:hidden;background:#1C1D25;border-radius:"+(t?"20px 20px 2px 2px":"2px 2px 20px 20px");d.innerHTML=num(v,e.S,e.H,t);return d}
+function set(e,v){e.innerHTML="";e.append(half(v,e,1),half(v,e,0));e.v=v}
+var P="perspective(1280px) ",O={duration:400,easing:"cubic-bezier(.37,0,.63,1)",fill:"both"};
+function flip(e,v){if(e.v===v)return;var p=e.v,a=half(p,e,1),b=half(v,e,0);e.innerHTML="";e.append(half(v,e,1),half(p,e,0),a,b);a.style.transformOrigin="50% 100%";b.style.transformOrigin="50% -4px";
+a.animate([{transform:P+"rotateX(0deg)",filter:"brightness(1)"},{transform:P+"rotateX(-90deg)",filter:"brightness(.76)"}],O);
+b.animate([{transform:P+"rotateX(90deg)",filter:"brightness(.76)"},{transform:P+"rotateX(0deg)",filter:"brightness(1)"}],Object.assign({delay:400},O)).onfinish=function(){set(e,v)};e.v=v}
+var h=8,m=30,L=document.querySelectorAll(".fc-live");function pad(n){return(n<10?"0":"")+n}
+function show(){L.forEach(function(e){flip(e,pad(e.dataset.k=="h"?h:m))})}
+L.forEach(function(e){e.S=+e.dataset.s;e.H=(e.S-4)/2;set(e,"")});show();
+setInterval(function(){m=m>=59?0:m+1;if(m%4==2)h=h>=12?1:h+1;show()},3000)})();</script>''')
+
+
+def fc_date_row(cx, y, date=True, weather=False):
+    if date:
+        return date_spaced(cx, y, weather)
+    if weather:
+        return cloud(cx - 30, y + 1, .6, sw=1.4) + txt(cx - 4, y, "24°", 15)
+    return ""
 
 
 def fc_status(cx, cy, n=3, charging=False):
@@ -4777,89 +4876,67 @@ def fc_status(cx, cy, n=3, charging=False):
     return s
 
 
-def fc_clock(cx, cy, fw, fh, hh=8, mm=30, size=65, character=55, style=0, panel=FC_PANEL, digit=FC_DIGIT, land=False):
-    card = min(fw * (.4 if land else .8), fh * (.8 if land else .4)) * size / 100
-    gap = 25.0
-    if land:
-        left = cx - (2 * card + gap) / 2
-        s = fc_card(left + card / 2, cy, card, f"{hh:02d}", character, style, panel, digit)
-        s += fc_card(left + card + gap + card / 2, cy, card, f"{mm:02d}", character, style, panel, digit)
-        return card, left, cy - card / 2, left + 2 * card + gap, cy + card / 2, s
-    top = cy - (2 * card + gap) / 2
-    s = fc_card(cx, top + card / 2, card, f"{hh:02d}", character, style, panel, digit)
-    s += fc_card(cx, top + card + gap + card / 2, card, f"{mm:02d}", character, style, panel, digit)
-    return card, cx - card / 2, top, cx + card / 2, top + 2 * card + gap, s
+def fc_portrait(hh=8, mm=30, size=65, character=55, style=0, panel=FC_PANEL, digit=FC_DIGIT, date=True, weather=False, n=3,
+                charging=False, live=False, ref=False):
+    card = min(PW * .8, PH * .4) * size / 100
+    top_center = PH / 2 - (card + FC_CARD_GAP) / 2
+    bottom_center = PH / 2 + (card + FC_CARD_GAP) / 2
+    band = (PH - 2 * card - FC_CARD_GAP) / 2
+    scale = FC_REF_TEXT_SCALE if ref else FC_TEXT_SCALE
+    s = (fc_card(PW / 2, top_center, card, f"{hh:02d}", style, character, panel, digit, scale)
+         + fc_card(PW / 2, bottom_center, card, f"{mm:02d}", style, character, panel, digit, scale))
+    if live:
+        s += fc_live_card(PW / 2, top_center, card, "h") + fc_live_card(PW / 2, bottom_center, card, "m")
+    if not ref:
+        s += fc_date_row(PW / 2, band / 2 + 5, date, weather) + fc_status(PW / 2, PH - band / 2, n, charging)
+    return s
 
 
-def fc_portrait(hh=8, mm=30, size=65, character=55, style=0, panel=FC_PANEL, digit=FC_DIGIT, date=True, weather=False, n=3, charging=False,
-                ref=False):
-    _, _, top, _, bottom, s = fc_clock(PW / 2, PH / 2, PW, PH, hh, mm, size, character, style, panel, digit)
-    if ref:
-        return s
-    if date:
-        s += date_spaced(PW / 2, max(28, top - 34), weather)
-    return s + fc_status(PW / 2, min(PH - 28, bottom + 36), n, charging)
-
-
-def fc_landscape(hh=8, mm=30, size=65, character=55, style=0, panel=FC_PANEL, digit=FC_DIGIT, date=True, weather=False, n=3, charging=False,
-                 ref=False):
-    _, _, top, _, bottom, s = fc_clock(W / 2, CY, W, H, hh, mm, size, character, style, panel, digit, land=True)
-    if ref:
-        return s
-    if date:
-        s += date_spaced(W / 2, max(18, top - 24), weather)
-    return s + fc_status(W / 2, min(H - 18, bottom + 24), n, charging)
+def fc_landscape(hh=8, mm=30, size=65, character=55, style=0, panel=FC_PANEL, digit=FC_DIGIT, date=True, weather=False, n=3,
+                 charging=False, live=False, ref=False):
+    card = min(W * .4, H * .8) * size / 100
+    left_center = W / 2 - (card + FC_CARD_GAP) / 2
+    right_center = W / 2 + (card + FC_CARD_GAP) / 2
+    band = (H - card) / 2
+    scale = FC_REF_TEXT_SCALE if ref else FC_TEXT_SCALE
+    s = (fc_card(left_center, H / 2, card, f"{hh:02d}", style, character, panel, digit, scale)
+         + fc_card(right_center, H / 2, card, f"{mm:02d}", style, character, panel, digit, scale))
+    if live:
+        s += fc_live_card(left_center, H / 2, card, "h") + fc_live_card(right_center, H / 2, card, "m")
+    if not ref:
+        s += fc_date_row(W / 2, band / 2 + 5, date, weather) + fc_status(W / 2, H - band / 2, n, charging)
+    return s
 
 
 def fc_font_strip():
-    s = ""
-    for i, (label, _, _, _) in enumerate(FC_STYLES):
-        col, row = i % 3, i // 3
-        cx, cy = 145.5 + col * 291, 66 + row * 132
-        s += fc_card(cx, cy, 88, "08", 55, i)
-        s += txt(cx, cy + 62, f"{i + 1} · {label}", 13, DM, 400, "middle")
-    return (f'<p style="font-size:13px;color:var(--text-secondary);margin:1.25rem 0 6px">9 kiểu chữ: dấu * là font mở gần nhất thay font thiếu giấy phép hoặc thiếu tiếng Việt</p>'
-            f'<svg viewBox="0 0 {W} 404" width="100%" role="img" aria-label="Chín kiểu chữ" '
-            f'style="display:block;font-family:\'Plus Jakarta Sans\',sans-serif" fill="{G}"><rect width="{W}" height="404" rx="20" fill="#111"/>{s}</svg>')
-
-
-def fc_motion_strip():
-    xs = (145.5, 436.5, 727.5)
-    cards = (fc_card(xs[0], 105, 150, "07"), fc_card(xs[1], 105, 150, "08", top_value="08", bottom_value="07"),
-             fc_card(xs[2], 105, 150, "08"))
-    labels = (("0 ms", "07"), ("400 ms", "08 / 07"), ("800 ms", "08"))
-    s = ""
-    for x, card, (time, value) in zip(xs, cards, labels):
-        s += card + txt(x, 210, time, 15, G, 700, "middle") + txt(x, 232, value, 13, DM, 400, "middle")
-    s += txt((xs[0] + xs[1]) / 2, 105, "→", 28, DM, 400, "middle") + txt((xs[1] + xs[2]) / 2, 105, "→", 28, DM, 400, "middle")
-    return (f'<p style="font-size:13px;color:var(--text-secondary);margin:1.25rem 0 6px">Một lần lật: nửa trên cũ gập 400 ms, nửa dưới mới mở 400 ms</p>'
-            f'<svg viewBox="0 0 {W} 252" width="100%" role="img" aria-label="Ba bước lật số" '
-            f'style="display:block;font-family:\'Plus Jakarta Sans\',sans-serif" fill="{G}"><rect width="{W}" height="252" rx="20" fill="#111"/>{s}</svg>')
+    card = 118
+    columns = 5
+    gap = (W - columns * card) / (columns + 1)
+    height = 2 * (card + 34) + 10
+    body = ""
+    for index, (label, _, _, _) in enumerate(FC_STYLES):
+        row, column = divmod(index, columns)
+        cx = gap + card / 2 + column * (card + gap)
+        cy = 12 + card / 2 + row * (card + 34)
+        body += fc_card(cx, cy, card, "08", index) + txt(cx, cy + card / 2 + 18, label, 12.5, "#AAAAAA", 400, "middle")
+    return ('<p style="font-size:13px;color:var(--text-secondary);margin:1.25rem 0 6px">Chín kiểu chữ ở cỡ số 55: Rubik là font đúng của app mẫu; Bodoni Moda thay Made Canvas; Big Shoulders đậm thay Hamurz; Viền đôi là viền một nét trên số đậm, gần Metropolis 1920</p>'
+            f'<svg viewBox="0 0 {W} {f(height)}" width="100%" aria-label="Chín kiểu chữ" style="display:block" fill="{G}"><rect width="{W}" height="{f(height)}" rx="20" fill="#000"/>{body}</svg>')
 
 
 flip = [
-    FC_FONTS,
     fc_font_strip(),
-    fc_motion_strip(),
     '<div style="font-size:0">',
-    frame_portrait("D1 · Aodamn mặc định 08:30: thẻ dọc giữa màn, ngày trên, pin + icon thông báo dưới",
-                   fc_portrait()),
-    frame_portrait("D2 · 10:27, kiểu 7, nền và số gradient, thời tiết, đang sạc, hai icon thông báo",
-                   fc_portrait(10, 27, style=6, panel="url(#fcPanelGradient)", digit="url(#fcDigitGradient)", weather=True, n=2, charging=True)),
-    frame_portrait("D3 · 21:47, cỡ 100, chữ 75, kiểu 9, tắt ngày, không thông báo: hai thẻ vẫn giữ đúng tâm",
-                   fc_portrait(21, 47, 100, 75, 8, date=False, n=0)),
-    frame_portrait("D4 · App mẫu 08:30: chỉ hai thẻ, nền #1C1D25, số trắng; không có khối nào khác",
-                   fc_portrait(digit="#FFFFFF", ref=True)),
+    frame_portrait("D1 · Mặc định, đang chạy thử: 3 giây = 1 phút, phút lật mỗi lần, giờ lật khi đổi giờ; mở AOD thẻ lật từ trắng ra số · hai thẻ giữa màn, ngày giữa vùng trên, pin + icon giữa vùng dưới", fc_portrait(live=True)),
+    frame_portrait("D2 · Cỡ 100, cỡ số 75, Anton, số gradient Hoàng hôn · số vừa khít thẻ, không bị cắt; thêm thời tiết, đang sạc", fc_portrait(10, 27, 100, 75, 7, digit="url(#fcSun)", weather=True, n=2, charging=True)),
+    frame_portrait("D3 · Viền đôi, tắt ngày, không thông báo · thẻ vẫn đúng tâm, vùng trên chỉ bớt khối", fc_portrait(21, 47, style=3, date=False, n=0)),
+    frame_portrait("D4 · Để so: app mẫu mặc định, chỉ có hai thẻ, nền #1C1D25, số trắng; cỡ số đo ở máy density 3", fc_portrait(digit=FC_WHITE, ref=True)),
     '</div>',
-    frame("N1 · Aodamn ngang, bật thời tiết: hai thẻ nằm ngang giữa màn, ngày + thời tiết trên, pin + icon dưới",
-          fc_landscape(weather=True)),
-    frame("N2 · 10:27, kiểu 5, nền và số gradient, đang sạc, hai icon thông báo",
-          fc_landscape(10, 27, style=4, panel="url(#fcPanelGradient)", digit="url(#fcDigitGradient)", n=2, charging=True)),
-    frame("N3 · 21:47, cỡ 100, chữ 75, kiểu 9, tắt ngày, không thông báo: vẫn vừa đủ chiều cao",
-          fc_landscape(21, 47, 100, 75, 8, date=False, n=0)),
-    frame("N4 · App mẫu ngang 08:30: chỉ hai thẻ 65%, nằm giữa màn, không có khối nào khác",
-          fc_landscape(digit="#FFFFFF", ref=True)),
+    frame("N1 · Mặc định, đang chạy thử như D1 · hai thẻ giữa màn, ngày giữa dải trên, pin + icon giữa dải dưới", fc_landscape(live=True)),
+    frame("N2 · Cỡ 100, cỡ số 75, Rajdhani, thẻ gradient · dải trên / dưới còn 39dp vẫn đủ một dòng; thêm thời tiết, đang sạc", fc_landscape(10, 27, 100, 75, 8, panel="url(#fcPanelSea)", weather=True, n=2, charging=True)),
+    frame("N3 · Viền đôi, tắt ngày · thẻ vẫn đúng tâm", fc_landscape(21, 47, style=3, date=False, n=1)),
+    frame("N4 · Để so: app mẫu ngang, hai thẻ, không có khối nào", fc_landscape(digit=FC_WHITE, ref=True)),
 ]
+flip.append(fc_live_script())
 
 
 words = [
@@ -5468,7 +5545,7 @@ for name, summary, defs, frames in [
     ("w_frame", "Chủ đề Khung (Box Clock): giờ / phút trong khung viền, cỡ và màu, bốn khung dọc và bốn khung ngang", "", frame_theme),
     ("w_mono", "Chủ đề Đơn cách (Space Mono): giờ trên phút chữ đơn cách, cỡ và màu, bốn khung dọc và bốn khung ngang", "", mono),
     ("w_orbit", "Chủ đề Quỹ đạo (Solar System): ba hành tinh quay theo giờ thật, cỡ và màu, bốn khung dọc và bốn khung ngang", "", orbit),
-    ("w_flip", "Chủ đề Thẻ lật (Flip Clock): chín kiểu chữ, hai bước lật, bốn khung dọc và bốn khung ngang", FC_DEFS, flip),
+    ("w_flip", "Chủ đề Thẻ lật (Flip Clock): chín kiểu chữ, hai bước lật, bốn khung dọc và bốn khung ngang", fc_defs(), flip),
     ("w_eclipse", "Chủ đề Nhật thực (Eclipse): vầng sáng, bốn khung dọc và bốn khung ngang", "", eclipse),
     ("w_blinky", "Chủ đề Chớp mắt (Blinky): mắt chớp theo chu kỳ, màu và cỡ riêng, bốn khung dọc và bốn khung ngang", "", blinky),
 ]:

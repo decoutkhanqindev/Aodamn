@@ -23,6 +23,7 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.component.AodCom
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.flip.FlipThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodIntent
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
+import kotlin.math.max
 import kotlin.math.min
 
 @Composable
@@ -52,23 +53,22 @@ private fun AodFlipLayout(
         val loose = constraints.copy(minWidth = 0, minHeight = 0)
         val top = subcompose("top") { FlipTopDetails(state = state) }.single().measure(loose)
         val bottom = subcompose("bottom") { FlipBottomDetails(state = state) }.single().measure(loose)
-        val gap = FlipMetrics.DetailsGap.roundToPx()
+        val width = constraints.maxWidth
+        val height = constraints.maxHeight
+        val margin = FlipMetrics.BlockMargin.roundToPx()
+        val band = max(top.height, bottom.height) + margin * 2
         val cardGap = FlipMetrics.CardGap.roundToPx()
         val desired = FlipMetrics.cardSize(
-            width = constraints.maxWidth.toDp(),
-            height = constraints.maxHeight.toDp(),
+            width = width.toDp(),
+            height = height.toDp(),
             size = config[FlipThemeSpec.Size],
             isLandscape = isLandscape,
         ).roundToPx()
-        val heightFit = if (isLandscape) {
-            constraints.maxHeight - top.height - bottom.height - gap * 2
-        } else {
-            (constraints.maxHeight - top.height - bottom.height - gap * 2 - cardGap) / 2
-        }
+        val heightFit = if (isLandscape) height - band * 2 else (height - band * 2 - cardGap) / 2
         val widthFit = if (isLandscape) {
-            (constraints.maxWidth - cardGap) / 2
+            (width - cardGap) / 2
         } else {
-            constraints.maxWidth
+            width
         }
         val minimumCard = FlipMetrics.PieceGap.roundToPx() + 2
         val cardSize = min(desired, min(heightFit, widthFit)).coerceAtLeast(minimumCard)
@@ -77,18 +77,17 @@ private fun AodFlipLayout(
                 nowMillis = state.nowMillis,
                 isLandscape = isLandscape,
                 isPreviewLive = state.isPreview && state.isClockLive,
+                isAppearing = !state.isPreview,
                 cardSize = cardSize.toDp(),
                 config = config,
             )
         }.single().measure(Constraints())
-        val width = constraints.maxWidth
-        val height = constraints.maxHeight
         val clockX = (width - clock.width) / 2
         val clockY = (height - clock.height) / 2
         val topX = (width - top.width) / 2
-        val topY = (clockY - gap - top.height).coerceAtLeast(0)
+        val topY = (clockY - top.height) / 2
         val bottomX = (width - bottom.width) / 2
-        val bottomY = (clockY + clock.height + gap).coerceAtMost(height - bottom.height)
+        val bottomY = clockY + clock.height + (height - clockY - clock.height - bottom.height) / 2
 
         layout(width, height) {
             top.placeRelative(topX, topY)
@@ -101,9 +100,11 @@ private fun AodFlipLayout(
 @Composable
 private fun FlipTopDetails(state: AodState) {
     val components = state.appearance.components
+    val isDateShown = state.extras.isDateEnabled
+    val isWeatherShown = state.weather != null
 
     Row(verticalAlignment = Alignment.CenterVertically) {
-        AnimatedVisibility(visible = state.extras.isDateEnabled) {
+        AnimatedVisibility(visible = isDateShown) {
             AodDate(
                 nowMillis = state.nowMillis,
                 style = components.styleOf(AodComponentValue.DATE),
@@ -111,33 +112,36 @@ private fun FlipTopDetails(state: AodState) {
             )
         }
 
-        AodWeather(
-            weather = state.weather,
-            style = components.styleOf(AodComponentValue.WEATHER),
-            layout = components.weatherLayout,
-        )
+        Box(modifier = Modifier.padding(start = if (isDateShown && isWeatherShown) FlipMetrics.WeatherGap else 0.dp)) {
+            AodWeather(
+                weather = state.weather,
+                style = components.styleOf(AodComponentValue.WEATHER),
+                layout = components.weatherLayout,
+            )
+        }
     }
 }
 
 @Composable
 private fun FlipBottomDetails(state: AodState) {
     val components = state.appearance.components
+    val hasPower = (state.battery != null && state.extras.isBatteryEnabled) || state.isFlashlightOn
     val hasIcons = state.notifications.icons.isNotEmpty()
 
     Row(verticalAlignment = Alignment.CenterVertically) {
-        AodNotificationIcons(
-            notifications = state.notifications,
-            style = components.styleOf(AodComponentValue.NOTIFICATIONS),
-            layout = components.notificationsLayout,
+        AodStatus(
+            battery = state.battery,
+            isBatteryEnabled = state.extras.isBatteryEnabled,
+            isFlashlightOn = state.isFlashlightOn,
+            style = components.styleOf(AodComponentValue.BATTERY),
+            layout = components.batteryLayout,
         )
 
-        Box(modifier = Modifier.padding(start = if (hasIcons) 16.dp else 0.dp)) {
-            AodStatus(
-                battery = state.battery,
-                isBatteryEnabled = state.extras.isBatteryEnabled,
-                isFlashlightOn = state.isFlashlightOn,
-                style = components.styleOf(AodComponentValue.BATTERY),
-                layout = components.batteryLayout,
+        Box(modifier = Modifier.padding(start = if (hasPower && hasIcons) FlipMetrics.StatusGap else 0.dp)) {
+            AodNotificationIcons(
+                notifications = state.notifications,
+                style = components.styleOf(AodComponentValue.NOTIFICATIONS),
+                layout = components.notificationsLayout,
             )
         }
     }

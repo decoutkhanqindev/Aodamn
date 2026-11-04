@@ -9,9 +9,9 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeChoice
 import com.decoutkhanqindev.aodamn.presentation.theme.FontFamilyAnton
 import com.decoutkhanqindev.aodamn.presentation.theme.FontFamilyBebasNeue
 import com.decoutkhanqindev.aodamn.presentation.theme.FontFamilyBigShouldersDisplay
-import com.decoutkhanqindev.aodamn.presentation.theme.FontFamilyFraunces
-import com.decoutkhanqindev.aodamn.presentation.theme.FontFamilyGoogleSansText
+import com.decoutkhanqindev.aodamn.presentation.theme.FontFamilyBodoniModa
 import com.decoutkhanqindev.aodamn.presentation.theme.FontFamilyRajdhani
+import com.decoutkhanqindev.aodamn.presentation.theme.FontFamilyRubik
 import com.decoutkhanqindev.aodamn.presentation.theme.FontFamilyTomorrow
 
 @Immutable
@@ -21,7 +21,7 @@ enum class AodFlipStyleValue(
     val fontFamily: FontFamily,
     val fontWeight: FontWeight,
     val textScale: Float,
-    val isDoubleOutline: Boolean = false,
+    val isOutlined: Boolean = false,
 ) : AodThemeChoice {
     BEBAS_NEUE(
         code = 0,
@@ -30,12 +30,12 @@ enum class AodFlipStyleValue(
         fontWeight = FontWeight.Normal,
         textScale = 1.05f,
     ),
-    BIG_SHOULDERS_REGULAR(
+    BIG_SHOULDERS_BOLD(
         code = 1,
-        labelRes = R.string.flip_style_big_shoulders_regular,
+        labelRes = R.string.flip_style_big_shoulders_bold,
         fontFamily = FontFamilyBigShouldersDisplay,
-        fontWeight = FontWeight.Normal,
-        textScale = 1f,
+        fontWeight = FontWeight.Bold,
+        textScale = 0.94f,
     ),
     BIG_SHOULDERS_LIGHT(
         code = 2,
@@ -48,9 +48,9 @@ enum class AodFlipStyleValue(
         code = 3,
         labelRes = R.string.flip_style_double_outline,
         fontFamily = FontFamilyBigShouldersDisplay,
-        fontWeight = FontWeight.Normal,
-        textScale = 0.92f,
-        isDoubleOutline = true,
+        fontWeight = FontWeight.Bold,
+        textScale = 0.9f,
+        isOutlined = true,
     ),
     TOMORROW(
         code = 4,
@@ -59,19 +59,19 @@ enum class AodFlipStyleValue(
         fontWeight = FontWeight.Medium,
         textScale = 0.64f,
     ),
-    GOOGLE_SANS(
+    RUBIK(
         code = 5,
-        labelRes = R.string.flip_style_google_sans,
-        fontFamily = FontFamilyGoogleSansText,
-        fontWeight = FontWeight.Normal,
+        labelRes = R.string.flip_style_rubik,
+        fontFamily = FontFamilyRubik,
+        fontWeight = FontWeight.Light,
         textScale = 0.72f,
     ),
-    FRAUNCES(
+    BODONI_MODA(
         code = 6,
-        labelRes = R.string.flip_style_fraunces,
-        fontFamily = FontFamilyFraunces,
+        labelRes = R.string.flip_style_bodoni_moda,
+        fontFamily = FontFamilyBodoniModa,
         fontWeight = FontWeight.Normal,
-        textScale = 0.78f,
+        textScale = 0.71f,
     ),
     ANTON(
         code = 7,

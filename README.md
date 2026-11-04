@@ -516,7 +516,7 @@ thông báo ──▶ AodNotificationListener ──▶ NotificationStateManager
 | `presentation/theme/`                                                                                                                                                                                                                               | Theme: `Colors.kt` (màu + biến thể alpha), `Typography.kt` (font Plus Jakarta Sans cho app và 6 font đồng hồ, `TextStyle`), `Shapes.kt` (bo góc) là các `val` cấp file, không bọc `object`, UI import từng tên rồi đọc thẳng, dp / sp viết số; `Theme { }` chỉ nối sang Material 3                                                                                                                                                                                                                                                      |
 | `res/drawable/ic_*.xml` · `tools/icons/` | Icon Phosphor 2.1.1 (MIT) đổi sang VectorDrawable bằng `tools/icons/import_phosphor.py` theo danh sách `tools/icons/icons.txt`; sửa danh sách rồi chạy lại, không sửa tay file sinh ra |
 | `tools/wallpapers/` | `generate_wallpapers.py` sinh 12 ảnh nền `img_wallpaper_*.xml` (mưa sao băng… đèn trời) bằng code, seed cố định; `--preview-svg <thư mục>` ghi thêm SVG để xem trong trình duyệt. Sửa script rồi chạy lại, không sửa tay file sinh ra |
-| `res/font/` · `tools/fonts/` · `licenses/` | Font Google Fonts (OFL), font dùng cho text có tiếng Việt, mỗi độ đậm một file TTF tĩnh (55 file, khoảng 7,6 MB) sinh bằng `tools/fonts/make_static_fonts.py` từ font variable ở `tools/fonts/variable/` (Google Sans là bản đã cắt còn Latin + tiếng Việt) hoặc chép font chỉ có bản tĩnh / có tên dành riêng ở `tools/fonts/static/` (Anton, Zalando Sans Expanded, Krona One, Lato, Bebas Neue, Tomorrow, Rajdhani) (cần `pip install fonttools`); giấy phép OFL của từng font và MIT của Phosphor ở `licenses/` |
+| `res/font/` · `tools/fonts/` · `licenses/` | Font Google Fonts (OFL), font dùng cho text có tiếng Việt, mỗi độ đậm một file TTF tĩnh (57 file, khoảng 7,9 MB) sinh bằng `tools/fonts/make_static_fonts.py` từ font variable ở `tools/fonts/variable/` (Google Sans là bản đã cắt còn Latin + tiếng Việt) hoặc chép font chỉ có bản tĩnh / có tên dành riêng ở `tools/fonts/static/` (Anton, Zalando Sans Expanded, Krona One, Lato, Bebas Neue, Tomorrow, Rajdhani) (cần `pip install fonttools`); giấy phép OFL của từng font và MIT của Phosphor ở `licenses/` |
 | `presentation/components/AppSlider.kt` | Slider của app: track gradient, thumb tròn; nhận `progress: () -> Int`, mọi đọc state trễ sang snapshotFlow / pha layout / pha vẽ |
 | `presentation/model/aod/appearance/ClockColor.kt` | Đọc / ghi màu đồng hồ (ARGB, tương thích mã 0–7 cũ) |
 | `presentation/MainActivity.kt`                                                                                                                                                                                                                      | Activity chính: consent, ngôn ngữ, theme, khởi động service                                                                                                                                                                                                                                                                                                                                                                                                                                       |
@@ -1263,9 +1263,10 @@ chọn theo các khối đang có dữ liệu, dùng chung cho mọi chủ đề
 25aa. Chủ đề Thẻ lật: tab AOD › Chủ đề › Thẻ lật: thẻ ở lưới đứng yên ở 08:30, hai ô nền xanh đen, giờ trên phút, mỗi ô
     chia hai nửa bằng khe 4dp. Mở chủ đề: đồng hồ chạy theo giờ thật; chờ qua phút mới, nửa trên số cũ gập trong 400ms rồi nửa
     dưới số mới mở trong 400ms. Sửa: 9 kiểu chữ; Cỡ 50–100%; Cỡ số 35–75%; màu Thẻ và Chữ số, cả hai dùng được Gradient.
-    Kiểu 4 là viền đôi; đổi từng kiểu phải thấy nét số đổi ngay trong ảnh lựa chọn và khung xem trước. Áp dụng rồi khóa máy:
-    dọc xếp giờ trên phút, ngang xếp giờ trái phút, cách nhau 25dp; ngày + thời tiết ở trên, pin + icon thông báo ở dưới. Bật
-    kiểu ngày / pin / thông báo cao rồi đặt cỡ 100: thẻ tự thu vừa phần còn lại, không chồng khối. Tùy chỉnh khi dùng Thẻ lật
+    Kiểu 4 là viền đôi (mỗi thân số hai đường); kiểu 6 là Rubik, kiểu 7 là Bodoni Moda; kiểu chọn bằng chip tên chữ, không có ảnh từng kiểu, đổi kiểu thì nét số đổi ngay ở khung xem
+    trước. Đặt Cỡ 100 + Cỡ số 75 rồi thử từng kiểu: số vừa trong thẻ, không bị cắt. Áp dụng rồi khóa máy: mỗi lần mở AOD hai thẻ lật từ trắng ra số;
+    dọc xếp giờ trên phút, ngang xếp giờ trái phút, cách nhau 25dp, luôn đúng tâm màn; ngày + thời tiết giữa khoảng trống phía trên, pin + icon thông báo giữa
+    khoảng trống phía dưới. Bật kiểu ngày / pin / thông báo cao rồi đặt cỡ 100: thẻ tự thu đều, không chồng khối, khối không chạm mép màn. Tùy chỉnh khi dùng Thẻ lật
     chỉ có Ngày, Pin, Thời tiết, Thông báo; không có nội dung thông báo mới nhất, Sự kiện, Ghi nhớ, Nét vẽ, Nhạc. Các chủ đề
     khác không đổi gì.
 25ab. Chủ đề Nhật thực: tab AOD › Chủ đề › Nhật thực: thẻ ở lưới đứng yên ở 08:30; mở chủ đề hoặc Tùy chỉnh thì vầng sáng,
@@ -1327,7 +1328,7 @@ chọn theo các khối đang có dữ liệu, dùng chung cho mọi chủ đề
     phát, pin phải. Khung: khung số giữa màn cỡ như màn dọc; ngày, sự kiện, ghi nhớ trái; pin · thông báo, trình phát phải. Đơn cách: cột số 45% bên trái, cột
     phải giữa chiều cao (sự kiện, ghi nhớ, pin · thông báo, trình phát), cột phải trống thì số ra giữa màn. Quỹ đạo: đĩa giữa màn cỡ như màn
     dọc, ngày, sự kiện, ghi nhớ trái; pin · thông báo, trình phát phải. Dịu: giờ trên phút giữa màn cỡ như màn dọc, ngày + thời tiết, icon, thông báo mới nhất trái; trình phát, pin phải.
-    Thẻ lật: hai thẻ nằm ngang giữa màn, ngày + thời tiết một dòng
+    Thẻ lật: hai thẻ nằm ngang đúng tâm màn, ngày + thời tiết một dòng giữa dải
     phía trên, pin + icon thông báo một dòng phía dưới; đặt cỡ 100 và chọn từng kiểu ngày, pin, thông báo, thẻ tự thu nếu cần, không chồng
     hay lệch khỏi tâm. Số áo: một cột giữa màn hình: ngày "13 / 10" + viên thuốc thứ nằm
     ngang, bốn chữ số một hàng (giờ và phút cách một khoảng), pin + icon thông báo, rồi các khối thêm cạnh nhau; tắt ngày

@@ -1,17 +1,16 @@
 package com.decoutkhanqindev.aodamn.presentation.components.aod.theme.flip
 
 import android.graphics.Paint
+import android.graphics.Path as AndroidPath
 import android.graphics.Rect as AndroidRect
 import android.graphics.Typeface
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -29,24 +28,24 @@ import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.decoutkhanqindev.aodamn.R
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.resolveTypeface
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.toShader
 import com.decoutkhanqindev.aodamn.presentation.components.is24HourFormat
 import com.decoutkhanqindev.aodamn.presentation.components.rememberFormatter
 import com.decoutkhanqindev.aodamn.presentation.components.rememberTimeFormatter
 import com.decoutkhanqindev.aodamn.presentation.components.rememberZonedDateTime
-import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.resolveTypeface
-import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.toShader
 import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.AodGradient
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeConfig
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.flip.AodFlipStyleValue
@@ -62,6 +61,7 @@ fun AodFlipClock(
     nowMillis: Long,
     isLandscape: Boolean,
     isPreviewLive: Boolean,
+    isAppearing: Boolean,
     cardSize: Dp,
     config: AodThemeConfig,
 ) {
@@ -103,6 +103,7 @@ fun AodFlipClock(
             panelGradient = panelGradient,
             digitColor = digitColor,
             digitGradient = digitGradient,
+            isAppearing = isAppearing,
         )
         AodFlipCard(
             value = minute,
@@ -113,6 +114,7 @@ fun AodFlipClock(
             panelGradient = panelGradient,
             digitColor = digitColor,
             digitGradient = digitGradient,
+            isAppearing = isAppearing,
         )
     }
 
@@ -136,7 +138,7 @@ fun AodFlipClock(
 }
 
 @Composable
-fun AodFlipCard(
+private fun AodFlipCard(
     modifier: Modifier = Modifier,
     value: String,
     cardSize: Dp,
@@ -146,10 +148,11 @@ fun AodFlipCard(
     panelGradient: AodGradient?,
     digitColor: Color,
     digitGradient: AodGradient?,
+    isAppearing: Boolean,
 ) {
-    var shown by remember { mutableStateOf(value) }
-    var previous by remember { mutableStateOf(value) }
-    var next by remember { mutableStateOf(value) }
+    var shown by remember { mutableStateOf(if (isAppearing) "" else value) }
+    var previous by remember { mutableStateOf(if (isAppearing) "" else value) }
+    var next by remember { mutableStateOf(if (isAppearing) "" else value) }
     var isFlipping by remember { mutableStateOf(false) }
     val topRotation = remember { Animatable(0f) }
     val bottomRotation = remember { Animatable(90f) }
@@ -162,8 +165,14 @@ fun AodFlipCard(
         isFlipping = true
         topRotation.snapTo(0f)
         bottomRotation.snapTo(90f)
-        topRotation.animateTo(-90f, tween(durationMillis = FlipMetrics.ANIMATION_MILLIS))
-        bottomRotation.animateTo(0f, tween(durationMillis = FlipMetrics.ANIMATION_MILLIS))
+        topRotation.animateTo(
+            -90f,
+            tween(durationMillis = FlipMetrics.ANIMATION_MILLIS, easing = FlipMetrics.FlipEasing),
+        )
+        bottomRotation.animateTo(
+            0f,
+            tween(durationMillis = FlipMetrics.ANIMATION_MILLIS, easing = FlipMetrics.FlipEasing),
+        )
         shown = value
         isFlipping = false
     }
@@ -232,32 +241,10 @@ fun AodFlipCard(
                     .align(Alignment.BottomCenter)
                     .graphicsLayer {
                         rotationX = bottomRotation.value
-                        transformOrigin = TransformOrigin(0.5f, 0f)
+                        transformOrigin = TransformOrigin(0.5f, -(FlipMetrics.PieceGap / halfSize))
                     },
             )
         }
-    }
-}
-
-@Composable
-fun AodFlipStylePreview(
-    modifier: Modifier = Modifier,
-    style: AodFlipStyleValue,
-) {
-    BoxWithConstraints(
-        modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center,
-    ) {
-        AodFlipCard(
-            value = "08",
-            cardSize = minOf(maxWidth, maxHeight) * 0.88f,
-            characterSize = FlipThemeSpec.CharacterSize.default,
-            style = style,
-            panelColor = FlipThemeSpec.CardColor.default,
-            panelGradient = null,
-            digitColor = FlipThemeSpec.DigitColor.default,
-            digitGradient = null,
-        )
     }
 }
 
@@ -285,7 +272,7 @@ private fun AodFlipHalf(
         }
     }
 
-    Canvas(
+    Spacer(
         modifier = modifier
             .size(width = cardSize, height = halfSize)
             .drawWithCache {
@@ -309,9 +296,7 @@ private fun AodFlipHalf(
                 }
                 val fullBounds = Rect(left = 0f, top = -segmentTop, right = size.width, bottom = fullHeight - segmentTop)
                 val panelBrush = panelGradient?.toBrush(fullBounds) ?: SolidColor(panelColor)
-                val textSize = fullHeight * FlipMetrics.TEXT_SIZE * (characterSize / FlipMetrics.CHARACTER_DEFAULT) *
-                        (style.textScale / FlipMetrics.DEFAULT_STYLE_SCALE)
-                textPaint.textSize = textSize
+                textPaint.textSize = FlipMetrics.textSize(fullHeight, characterSize, style.textScale)
                 textPaint.typeface = typeface
                 val textBounds = AndroidRect().also { textPaint.getTextBounds(value, 0, value.length, it) }
                 val textX = (size.width - textBounds.width()) / 2f - textBounds.left
@@ -322,33 +307,38 @@ private fun AodFlipHalf(
                     textX + textBounds.right,
                     textY + textBounds.bottom,
                 )
-                val panelShader = panelGradient?.toShader(0f, -segmentTop, size.width, fullHeight - segmentTop)
+                val merged = if (style.isOutlined && value.isNotEmpty()) {
+                    val raw = AndroidPath()
+                    textPaint.getTextPath(value, 0, value.length, textX, textY, raw)
+                    AndroidPath().apply { op(raw, AndroidPath(), AndroidPath.Op.UNION) }
+                } else {
+                    null
+                }
 
                 onDrawBehind {
                     clipPath(shape) {
                         drawPath(path = shape, brush = panelBrush)
-                        drawIntoCanvas { canvas ->
-                            val native = canvas.nativeCanvas
-                            textPaint.shader = digitShader
-                            textPaint.color = if (digitShader == null) digitColor.toArgb() else White.toArgb()
-                            if (style.isDoubleOutline) {
-                                textPaint.style = Paint.Style.STROKE
-                                textPaint.strokeWidth = fullHeight * FlipMetrics.OUTER_OUTLINE
-                                native.drawText(value, textX, textY, textPaint)
-                                textPaint.shader = panelShader
-                                textPaint.color = if (panelShader == null) panelColor.toArgb() else White.toArgb()
-                                textPaint.strokeWidth = fullHeight * FlipMetrics.INNER_OUTLINE
-                                native.drawText(value, textX, textY, textPaint)
-                            } else {
-                                textPaint.style = Paint.Style.FILL
-                                native.drawText(value, textX, textY, textPaint)
+                        if (value.isNotEmpty()) {
+                            drawIntoCanvas { canvas ->
+                                val native = canvas.nativeCanvas
+                                textPaint.shader = digitShader
+                                textPaint.color = if (digitShader == null) digitColor.toArgb() else White.toArgb()
+                                if (style.isOutlined) {
+                                    textPaint.style = Paint.Style.STROKE
+                                    textPaint.strokeWidth = fullHeight * FlipMetrics.OUTLINE
+                                    textPaint.strokeJoin = Paint.Join.ROUND
+                                    merged?.let { native.drawPath(it, textPaint) }
+                                } else {
+                                    textPaint.style = Paint.Style.FILL
+                                    native.drawText(value, textX, textY, textPaint)
+                                }
+                                textPaint.shader = null
                             }
-                            textPaint.shader = null
                         }
                         val shade = shadeAlpha()
                         if (shade > 0f) drawPath(path = shape, color = Black, alpha = shade)
                     }
                 }
             },
-    ) {}
+    )
 }

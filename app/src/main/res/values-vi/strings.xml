@@ -167,6 +167,7 @@
     <string name="flip_character_size_value">Cỡ số: %1$d%%</string>
     <string name="blinky_character_size_value">Cỡ mắt: %1$d</string>
     <string name="blinky_clock_size_value">Cỡ đồng hồ: %1$d</string>
+    <string name="flip_style_big_shoulders_bold">Big Shoulders, đậm</string>
     <string name="flip_style_big_shoulders_light">Big Shoulders, mảnh</string>
     <string name="flip_style_double_outline">Viền đôi</string>
     <string name="font_weight_thin">Mảnh</string>

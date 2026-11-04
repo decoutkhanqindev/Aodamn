@@ -7,6 +7,33 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-11-04 – Làm lại chủ đề Thẻ lật
+
+Đối chiếu lại `Jan22Screen`, `FlipClock`, `HalfTextView`, hai listener lật, layout dọc / ngang và font của app mẫu. User duyệt mock: "Duyệt, giao Kiro"
+(Kiro CLI code, Claude review). `check_theme.sh flip "Thẻ lật"` phần nhanh pass. Chưa chạy test máy vì không có máy ảo, nên ảnh chuẩn
+`androidTest/screenshots/themes/flip/` vẫn là bản cũ, cần chạy `--device` rồi `--record`. Chưa test trên máy thật.
+
+### Sửa
+
+- Cỡ số: bản trước to hơn app mẫu, cỡ số 70–75 bị cắt mép thẻ. App mẫu gọi `TextView.setTextSize(px)` nên cỡ chữ nhân thêm density máy; hệ số `J` của từng font
+  cho thấy mẫu canh ở density khoảng 3. Nay cỡ chữ = cạnh thẻ × 1,6 × `J` × cỡ số / 100, cỡ 75 vừa khít thẻ ở cả chín kiểu.
+- Viền đôi: bản trước chồng hai nét nên mỗi thân số thành 4 đường mảnh. Metropolis 1920 của app mẫu là 2 đường mỗi thân, nay vẽ một nét trên số Big Shoulders
+  Bold, gộp đường viền bằng `Path.op` trước khi vẽ để không lộ cạnh trong.
+- Lật: đúng nhịp tăng tốc rồi giảm tốc của `ValueAnimator`; bản lề nửa dưới cách mép 4dp, trùng bản lề nửa trên như app mẫu; mở AOD hai thẻ lật từ trắng ra số như
+  app mẫu (bản trước hiện số ngay; khung xem trước không lật mở).
+- Bo góc giữ 20dp ở mọi cỡ thẻ thật (bản trước giảm khi thẻ nhỏ hơn 200dp).
+- Ngày + thời tiết không còn dính nhau; khối cao ở cỡ lớn không còn chạm mép màn; khoảng tính đối xứng nên thẻ luôn đúng tâm.
+
+### Thay đổi
+
+- Font: kiểu 6 dùng đúng Rubik Light của app mẫu thay Google Sans (chỉ vẽ số nên thiếu tiếng Việt không sao); kiểu 7 Bodoni Moda thay Fraunces, gần Made Canvas hơn;
+  kiểu 2 Big Shoulders Bold thay Regular, gần Hamurz hơn nhưng mất vân sần. Mã lưu 0–8 không đổi. Thêm `rubik_light.ttf`, `bodoni_moda_regular.ttf` và giấy phép OFL.
+- Bố cục: ngày + thời tiết giữa khoảng trống phía trên thẻ, pin + icon giữa khoảng trống phía dưới (bản trước dính sát thẻ); pin đứng trước icon như các chủ đề khác.
+  Màn ngang không đặt hai bên vì ở cỡ 100 mỗi bên chỉ còn khoảng 110dp.
+- Kiểu chữ chọn bằng chip tên chữ, bỏ ảnh xem trước từng kiểu (`AodFlipStylePreview`). User: "clock style thì kh cần preview từng cái đâu nhé, mấy theme trước
+  cũng kh làm vậy".
+- Bỏ chuỗi `flip_style_google_sans`, `flip_style_fraunces`, `flip_style_big_shoulders_regular`, thêm chuỗi của ba kiểu mới. Mock `w_flip` chạy lật thật ngay trong widget.
+
 ## [Chưa phát hành] – 2026-11-04 – Làm lại chủ đề Dịu
 
 Đọc lại `Jul22Screen` và `jul22_screen_layout` dọc / ngang rồi làm lại theo đủ flow. User duyệt mock: "oke tốt hãy đưa cho kiro code nhé, bạn chỉ

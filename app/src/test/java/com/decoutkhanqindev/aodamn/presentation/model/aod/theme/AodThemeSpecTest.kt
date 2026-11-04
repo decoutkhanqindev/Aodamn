@@ -798,17 +798,18 @@ class AodThemeSpecTest {
         assertEquals(
             listOf(
                 AodFlipStyleValue.BEBAS_NEUE,
-                AodFlipStyleValue.BIG_SHOULDERS_REGULAR,
+                AodFlipStyleValue.BIG_SHOULDERS_BOLD,
                 AodFlipStyleValue.BIG_SHOULDERS_LIGHT,
                 AodFlipStyleValue.DOUBLE_OUTLINE,
                 AodFlipStyleValue.TOMORROW,
-                AodFlipStyleValue.GOOGLE_SANS,
-                AodFlipStyleValue.FRAUNCES,
+                AodFlipStyleValue.RUBIK,
+                AodFlipStyleValue.BODONI_MODA,
                 AodFlipStyleValue.ANTON,
                 AodFlipStyleValue.RAJDHANI,
             ),
             FlipThemeSpec.Style.entries,
         )
+        assertEquals(listOf(0, 1, 2, 3, 4, 5, 6, 7, 8), FlipThemeSpec.Style.entries.map { it.code })
         assertEquals(AodFlipStyleValue.BEBAS_NEUE, FlipThemeSpec.Style.default)
         assertEquals(50..100, FlipThemeSpec.Size.range)
         assertEquals(65, FlipThemeSpec.Size.default)
@@ -816,7 +817,7 @@ class AodThemeSpecTest {
         assertEquals(55, FlipThemeSpec.CharacterSize.default)
         assertEquals(Midnight, FlipThemeSpec.CardColor.default)
         assertEquals(GreyED, FlipThemeSpec.DigitColor.default)
-        assertEquals(true, AodFlipStyleValue.DOUBLE_OUTLINE.isDoubleOutline)
+        assertEquals(true, AodFlipStyleValue.DOUBLE_OUTLINE.isOutlined)
         assertEquals(
             listOf(
                 FlipThemeSpec.Style,
