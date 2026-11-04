@@ -46,7 +46,7 @@ chụp kiểm, rồi vẽ inline bằng `show_widget` kèm bảng giữ / đổi
 user thì không viết dòng code chủ đề nào. Sửa mock theo góp ý thì vẽ lại **cả bản**.
 
 Trước khi vẽ, xếp chủ đề vào loại bố cục A / B / C theo [references/layout.md](references/layout.md) và ghi loại + lý do vào mock.
-Chữ AOD trong mock dùng đúng file font của chủ đề; dựng ảnh bằng `tools/mockups/render_mock.py` (nhúng font thật, chạy offline).
+Chữ AOD trong mock dùng đúng font của chủ đề ([references/mock.md](references/mock.md) › Font trong mock).
 
 ### 3. Code
 Theo README › Thêm chủ đề mới bước 3–6. Trước khi vẽ, thêm đúng một `ThemeExpectation` vào bộ test dùng chung theo

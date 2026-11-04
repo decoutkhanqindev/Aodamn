@@ -36,30 +36,27 @@ Trước khi gửi mock, so bảng này với hai chủ đề cùng loại ở [
 ## Render và tự kiểm (trước khi cho user xem)
 
 ```bash
-python tools/mockups/render_mock.py w_<chủ đề>
+S="<scratchpad>/mock"
+python tools/mockups/aod_landscape_mockups.py "$S" w_<chủ đề>          # không -I nếu cần gói --user (skia-pathops)
+python -I -c "import pathlib,sys; d=pathlib.Path(sys.argv[1]); s=(d/'w_<chủ đề>.html').read_text(encoding='utf-8'); (d/'page.html').write_text('<!doctype html><meta charset=utf-8><style>body{background:#1e1e1e;margin:0;padding:16px;width:900px;--text-secondary:#aaa}.sr-only{display:none}</style>'+s, encoding='utf-8')" "$S"
+EDGE="/c/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"
+"$EDGE" --headless=new --disable-gpu --hide-scrollbars --window-size=932,5200 --virtual-time-budget=4000 --screenshot="$S/shot.png" "file:///$S/page.html"
 ```
 
-Lệnh chạy `aod_landscape_mockups.py` cho đúng mục đó, nhúng font thật của repo (không cần mạng), dừng nếu còn tài nguyên ngoài hoặc
-có chữ rơi về font mặc định, rồi chụp bằng Edge headless và cắt thành `build/mock/w_<chủ đề>/mock_01.png`, `mock_02.png`… cùng
-`page.html` (tự chứa, còn chạy chuyển động). Worktree chưa có `tools/mockups/render_mock.py` thì chép nguyên file từ checkout chính.
-
-Đọc từng `mock_NN.png`, nhìn kỹ: chữ số có nét lạ (glyph tự chồng, xem pitfalls), khối lệch, chữ tràn, màn ngang trống một bên,
-block thành các mảnh rời, đồng hồ lệch dù chủ đề loại A hoặc ép giữa dù loại B / C làm block lệch ([layout.md](layout.md)). Dòng
-`lưu ý:` của lệnh (độ đậm không có trong repo) phải xử lý: dùng độ đậm có thật hoặc nói với user. Sửa tới khi ổn rồi mới hiện.
+Đọc `shot.png` bằng Read, nhìn kỹ: chữ số có nét lạ (glyph tự chồng, xem pitfalls), khối lệch, chữ tràn, màn ngang trống một bên,
+block thành các mảnh rời, đồng hồ lệch dù chủ đề loại A hoặc ép giữa dù loại B / C làm block lệch ([layout.md](layout.md)).
+Sửa tới khi ổn rồi mới hiện.
 
 ## Font trong mock
 
-Chữ AOD trong mock dùng **đúng file font của chủ đề** (`app/src/main/res/font/*.ttf`, `tools/fonts/static/`), không dùng font mặc
-định của HTML. Liên kết Google Fonts / jsdelivr có thể không tải được (widget, Edge headless, máy không mạng) nên chữ rơi về font mặc
-định và user thấy khác app. `render_mock.py` thay mọi liên kết ngoài bằng `@font-face` base64 từ file thật và dừng khi thiếu file font
-trong repo, còn tài nguyên ngoài, hoặc mock dùng một `font-family` không được nhúng. Chủ đề dùng font mới thì sinh font vào repo
-trước (`make_static_fonts.py`) rồi mới dựng mock. Chữ số dựng bằng `<path>` từ glyph (fontTools, mẫu `BzFont`) vẫn dùng khi cần
-đường viền thật. Tự kiểm: nét chữ trong ảnh khớp font thật (chữ số, dấu tiếng Việt).
+Chữ AOD trong mock dùng font của chủ đề, không dùng font mặc định của HTML: chữ số lớn dựng bằng `<path>` từ glyph (fontTools, mẫu
+`BzFont`), chữ nhỏ dùng `<text>` với `<link>` Google Fonts / jsdelivr (widget cho nạp). Mock gọn như các chủ đề cũ, nhờ `<use>` và
+`<text>`: không dựng mọi chữ nhỏ bằng path. Tự kiểm: nét chữ trong ảnh khớp font thật (chữ số, dấu tiếng Việt).
 
 ## Hiện cho user
 
-- `show_widget` một lần với nội dung `w_<chủ đề>.html` (không gửi file HTML, user xem trong chat). Widget không nạp được font thì hiện
-  từng `mock_NN.png` của `render_mock.py` bằng ảnh nhúng trong tin nhắn.
+- `show_widget` một lần với nội dung `w_<chủ đề>.html`, mọi khung dọc + ngang trong cùng một widget, có chuyển động thì chạy được ngay
+  trong widget (không gửi file HTML, không gửi ảnh PNG, không tách nhiều lần; user xem trong chat).
 - Kèm text, theo thứ tự:
   1. Tên tiếng Việt + tiếng Anh đề xuất (en ngắn, vd "Tick", "Overlap").
   2. Màu nhấn mặc định: một màu chưa chủ đề nào dùng. Xem màu đã dùng ở `theme/Colors.kt` và `default =` của

@@ -62,10 +62,10 @@ Mỗi dòng là một lỗi đã xảy ra thật; kiểm từng dòng trước k
 
 ## Mock và trình bày
 
-- **Mock phải xem được trong chat**: `show_widget` có mọi khung dọc + ngang, hoặc ảnh PNG từ `render_mock.py` ([mock.md](mock.md)).
-  Chỉ gửi file HTML thì user phải hỏi "tôi xem mock ở đâu" (Thẻ lật, Dịu).
-- **Font của mock**: chữ AOD dùng đúng file font của chủ đề; `render_mock.py` nhúng font thật và dừng khi chữ rơi về font mặc định
-  (Dịu: mock dùng font mặc định của HTML nên khác app).
+- **Mock phải xem được trong chat**: một `show_widget` có mọi khung dọc + ngang, có chuyển động thì chạy được ngay trong đó ([mock.md](mock.md)).
+  Chỉ gửi file HTML thì user phải hỏi "tôi xem mock ở đâu" (Thẻ lật, Dịu); gửi ảnh PNG tách rời cũng sai, user đòi lại cách vẽ thẳng (Dịu).
+- **Font của mock**: chữ AOD dùng đúng font của chủ đề (số lớn `<path>` từ glyph, chữ nhỏ `<text>` + `<link>` font, [mock.md](mock.md)), tự kiểm
+  không rơi về font mặc định (Dịu: mock dùng font mặc định của HTML nên khác app).
 - **Vị trí đồng hồ theo loại chủ đề** ([layout.md](layout.md)): loại A (đồng hồ là điểm nhấn) dồn đồng hồ về một phía là sai (Dịu);
   loại B / C ép đồng hồ ra giữa làm block lệch là sai (Chớp mắt, Pha trăng). Hai lời sửa cùng đúng vì khác loại.
 - **Không gợi ý chỉnh vị trí block**: mock không có tay cầm, nút hay chú thích "kéo / đổi chỗ"; khung cùng hướng giữ nguyên anchor
