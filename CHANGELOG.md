@@ -7,6 +7,33 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-11-07 – Làm lại chủ đề Chớp mắt
+
+Đối chiếu lại `Dec21Screen`, `BlinkyCharacter`, các listener `jb/b`, `jb/c`, `jb/d`, `ab/k`, layout `dec21_screen_layout` và ảnh thẻ `screen_dec_21.png` của app mẫu. User duyệt mock: "Duyệt, giao Kiro"
+(Kiro CLI code, Claude review). `check_theme.sh blinky "Chớp mắt"` phần nhanh pass, 38 test `AodThemeSpecTest`, `AodThemeExpectationTest`, `BlinkyMetricsTest` pass. Chưa chạy test máy vì không có máy ảo, nên ảnh chuẩn
+`androidTest/screenshots/themes/blinky/` vẫn là bản cũ, cần chạy `--device` rồi `--record`. Chưa test trên máy thật.
+
+### Sửa
+
+- Nhịp chớp: bản trước coi 60–359 giây là nhịp chớp và khởi động lại mỗi phút. Thật ra khi thức mắt chớp 300 ms, cách nhau 0,2–5,2 giây, đúng nhịp nhanh dần rồi chậm dần của `ValueAnimator`; mở AOD là chớp ngay.
+- Thêm chuỗi ngủ bản trước thiếu: sau 60–359 giây (22 giờ đến 6 giờ sáng là 11–60 giây) chờ 2 giây rồi chạy 81 mốc trong 12 giây, nheo dần, giật mở hai lần, nhắm hẳn. Thức khi rung máy, chạm màn, đổi trạng thái sạc,
+  có thông báo mới, đổi bài. Khung xem trước chỉ chớp, không ngủ vì không có gì đánh thức.
+- Hình mắt: đáy mắt đứng yên, mép trên hạ xuống, cao 0,8 cỡ mắt khi mở, 0,1 khi nhắm (bản trước co từ hai phía, cao 0,64).
+- Cỡ mắt: app mẫu vẽ bằng px thô, 100 px trên máy 1080 bằng 9,26% bề ngang, khớp ảnh thẻ (9,2%). Nay bằng cạnh ngắn × cỡ / 1080, máy nào cũng cùng tỉ lệ; bản trước 100dp, gấp 2,75 lần.
+- Bố cục: mắt đúng tâm màn, giờ + dòng phụ căn giữa vùng 30% đáy như layout mẫu, cả dọc lẫn ngang; bỏ vạch ngăn và cột phải tự đặt của bản trước.
+- Giờ: Rubik Regular và `hh:mm` như app mẫu (bản trước font hệ thống và `h:mm`); cỡ 17 là ẩn giờ nhưng vẫn giữ chỗ.
+
+### Thay đổi
+
+- Dòng phụ một hàng như app mẫu: pin + ngày + thời tiết; thông báo mới hiện 10 giây; bài hát hiện 30 giây, chạm để phát / dừng; chạm màn để đổi lần lượt, chữ hiện dần 300 ms. Icon đúng màu, chữ tối đi 20%. Thay trình phát của
+  bản trước nên mất nút trước / sau và thanh tiến trình (đổi bài vẫn được nếu gán cho cử chỉ vuốt hoặc phím âm lượng). Nâng cấp: dòng nhạc mờ khi dừng, thông báo có cả nội dung, thêm thời tiết, đèn pin, hàng icon thông báo dưới dòng.
+- Dòng phụ dùng Nunito Medium có sẵn thay Rubik vì Rubik thiếu tiếng Việt. Màu mặc định giữ Orchid (app mẫu trắng).
+- Màu từng phần độc lập như các chủ đề khác: Mắt, Đồng hồ, Ngày, Pin & thông báo, Nhạc, mặc định đều Orchid nên nhìn như mock. Ba màu sau thêm vì `AodThemeSpecTest` bắt mỗi khối tự vẽ có đúng một tab; mock chưa nêu, báo user sau khi duyệt.
+- Bỏ Theme Color của app mẫu cùng tab Chủ đề. User: "bỏ phần theme này nhé, vì đều chỉnh được components colors nên mục này không cần, như các theme đã có nhé". Bỏ chuỗi `theme_tab_theme`, `theme_color_theme` không còn dùng.
+- Thời tiết dùng khối chung nên màu theo Tùy chỉnh, không theo màu chủ đề như mock.
+- Bỏ: low power 15 giây thì ngủ (Aodamn không có low power, chỉ giữ hẹn giờ ngẫu nhiên); giờ tắt AOD rút ngắn giờ ngủ. Bỏ `motion` của Chớp mắt ở `ThemeExpectation` và ba ảnh chuẩn `motion/` vì khoảng cách chớp ngẫu nhiên, thay bằng `BlinkyMetricsTest`.
+- Dùng chung, chỉ thêm: `MotionManager` (cảm biến gia tốc tuyến tính, chỉ chạy khi mắt đang ngủ, không cần quyền mới), `AodIntent.ToggleMotionWatch`, `AodState.motionCount`; thêm `rubik_regular.ttf` và ba icon Phosphor. Các chủ đề khác không đổi.
+
 ## [Chưa phát hành] – 2026-11-04 – Làm lại chủ đề Thẻ lật
 
 Đối chiếu lại `Jan22Screen`, `FlipClock`, `HalfTextView`, hai listener lật, layout dọc / ngang và font của app mẫu. User duyệt mock: "Duyệt, giao Kiro"

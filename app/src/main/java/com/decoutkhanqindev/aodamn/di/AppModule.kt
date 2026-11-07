@@ -7,6 +7,7 @@ import com.decoutkhanqindev.aodamn.data.device.flashlight.FlashlightManager
 import com.decoutkhanqindev.aodamn.data.device.light.AmbientLightManager
 import com.decoutkhanqindev.aodamn.data.device.location.DeviceLocationManager
 import com.decoutkhanqindev.aodamn.data.device.media.MediaStateManager
+import com.decoutkhanqindev.aodamn.data.device.motion.MotionManager
 import com.decoutkhanqindev.aodamn.data.device.notification.NotificationStateManager
 import com.decoutkhanqindev.aodamn.data.device.permission.PermissionManager
 import com.decoutkhanqindev.aodamn.data.device.pickup.PickupGestureManager
@@ -56,6 +57,7 @@ val managerModule = module {
     single { FlashlightManager(androidApplication()) }
     single { AmbientLightManager(androidApplication()) }
     single { PickupGestureManager(androidApplication()) }
+    single { MotionManager(androidApplication()) }
     single { DeviceLocationManager(androidApplication()) }
 }
 
@@ -106,6 +108,7 @@ val viewModelModule = module {
     viewModel { (themeId: String, focusBlock: AodBlockValue?) -> ThemeEditorViewModel(themeId, focusBlock, get(), get()) }
     viewModel {
         AodViewModel(
+            get(),
             get(),
             get(),
             get(),

@@ -7,6 +7,7 @@ import com.decoutkhanqindev.aodamn.data.device.battery.BatteryStateManager
 import com.decoutkhanqindev.aodamn.data.device.flashlight.FlashlightManager
 import com.decoutkhanqindev.aodamn.data.device.light.AmbientLightManager
 import com.decoutkhanqindev.aodamn.data.device.media.MediaStateManager
+import com.decoutkhanqindev.aodamn.data.device.motion.MotionManager
 import com.decoutkhanqindev.aodamn.data.device.notification.NotificationStateManager
 import com.decoutkhanqindev.aodamn.data.device.proximity.ProximityManager
 import com.decoutkhanqindev.aodamn.data.local.datastore.DataStoreManager
@@ -59,6 +60,7 @@ class AodViewModel(
     private val aodImageManager: AodImageManager,
     private val flashlightManager: FlashlightManager,
     private val ambientLightManager: AmbientLightManager,
+    private val motionManager: MotionManager,
     private val observeWeatherUseCase: ObserveWeatherUseCase,
     private val refreshWeatherUseCase: RefreshWeatherUseCase,
     private val getUpcomingEventsUseCase: GetUpcomingEventsUseCase,
@@ -81,6 +83,7 @@ class AodViewModel(
     private var timeoutJob: Job? = null
     private var hintJob: Job? = null
     private var glowJob: Job? = null
+    private var motionJob: Job? = null
     private var nextEventsReloadMillis = 0L
     private var nextWeatherRefreshMillis = 0L
 
@@ -108,12 +111,25 @@ class AodViewModel(
 
     override fun onIntent(intent: AodIntent) {
         Timber.tag(tag).d("onIntent: $intent")
-        if (proximityManager.isNear.value) return
+        if (proximityManager.isNear.value && intent !is AodIntent.ToggleMotionWatch) return
         when (intent) {
             is AodIntent.PerformGesture -> performGesture(intent.gesture)
+            is AodIntent.ToggleMotionWatch -> toggleMotionWatch(intent.isEnabled)
             is AodIntent.PlayPauseMedia -> mediaStateManager.playPause()
             is AodIntent.SkipToPreviousTrack -> mediaStateManager.skipToPrevious()
             is AodIntent.SkipToNextTrack -> mediaStateManager.skipToNext()
+        }
+    }
+
+    private fun toggleMotionWatch(isEnabled: Boolean) {
+        motionJob?.cancel()
+        motionJob = null
+        if (!isEnabled) return
+        motionJob = viewModelScope.launch {
+            motionManager.motions.collectCatching(
+                block = { updateState { copy(motionCount = motionCount + 1) } },
+                catch = { e -> Timber.tag(tag).e(e.stackTraceToString()) },
+            )
         }
     }
 

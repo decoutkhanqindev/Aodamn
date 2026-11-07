@@ -42,7 +42,7 @@ FONTS = {
     "josefin_sans": ([100, 300, 400, 600, 700], {}),
     "nunito": ([200, 400, 500, 700], {}),
     # Chữ số của Thẻ lật, không cần tiếng Việt: Rubik Light là font đúng của app mẫu, Bodoni Moda thay Made Canvas
-    "rubik": ([300], {}),
+    "rubik": ([300, 400], {}),
     "bodoni_moda": ([400], {"opsz": 28}),
     # Bản Google Fonts nặng 5 MB vì nhiều hệ chữ: tools/fonts/variable giữ bản đã cắt còn Latin + tiếng Việt (fontTools subset, giữ mọi trục).
     "google_sans": ([400, 500, 700], {"GRAD": 0, "opsz": 18}),

@@ -98,6 +98,7 @@ class AodThemeSpecTest {
                     AodThemeValue.MONO,
                     AodThemeValue.ORBIT,
                     AodThemeValue.GENTLE,
+                    AodThemeValue.BLINKY,
                 )
             val hasSharedLatest = AodBlockValue.STATUS !in theme.spec.ownBlocks && theme != AodThemeValue.FLIP
             assertEquals("${theme.id}: ghi nhớ", isChain, AodBlockValue.MEMO in theme.spec.ownBlocks)
@@ -722,21 +723,29 @@ class AodThemeSpecTest {
             ),
             spec.components,
         )
-        assertEquals(emptySet<AodBlockValue>(), spec.ownBlocks)
+        assertEquals(setOf(AodBlockValue.DATE, AodBlockValue.STATUS, AodBlockValue.MEDIA), spec.ownBlocks)
         assertEquals(true, spec.hasNotificationContent)
         assertEquals(true, spec.isLiveInPreview)
         assertEquals(70..140, BlinkyThemeSpec.CharacterSize.range)
         assertEquals(100, BlinkyThemeSpec.CharacterSize.default)
         assertEquals(17..30, BlinkyThemeSpec.ClockSize.range)
         assertEquals(22, BlinkyThemeSpec.ClockSize.default)
-        assertEquals(Orchid, BlinkyThemeSpec.ThemeColor.default)
+        listOf(
+            BlinkyThemeSpec.CharacterColor,
+            BlinkyThemeSpec.ClockColor,
+            BlinkyThemeSpec.DateColor,
+            BlinkyThemeSpec.StatusColor,
+            BlinkyThemeSpec.MediaColor,
+        ).forEach { option -> assertEquals(option.key, Orchid, option.default) }
         assertEquals(
             listOf(
-                BlinkyThemeSpec.ThemeColor,
                 BlinkyThemeSpec.CharacterSize,
                 BlinkyThemeSpec.CharacterColor,
                 BlinkyThemeSpec.ClockSize,
                 BlinkyThemeSpec.ClockColor,
+                BlinkyThemeSpec.DateColor,
+                BlinkyThemeSpec.StatusColor,
+                BlinkyThemeSpec.MediaColor,
             ),
             spec.options,
         )

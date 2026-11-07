@@ -91,7 +91,6 @@
     <string name="theme_discard_desc">Chủ đề này còn thay đổi chưa lưu.</string>
     <string name="theme_discard_confirm">Bỏ thay đổi</string>
     <string name="theme_tab_clock">Đồng hồ</string>
-    <string name="theme_tab_theme">Chủ đề</string>
     <string name="theme_tab_character">Nhân vật</string>
     <string name="theme_tab_hour">Giờ</string>
     <string name="theme_tab_minute">Phút</string>
@@ -118,7 +117,6 @@
     <string name="theme_color_card">Thẻ</string>
     <string name="theme_color_status">Pin &amp; thông báo</string>
     <string name="theme_color_clock">Đồng hồ</string>
-    <string name="theme_color_theme">Chủ đề</string>
     <string name="theme_color_character">Nhân vật</string>
     <string name="theme_color_battery">Pin</string>
     <string name="theme_color_notifications">Thông báo</string>
@@ -402,6 +400,8 @@
 
     <!-- AOD -->
     <string name="aod_hint">Chạm 2 lần để thoát</string>
+    <string name="aod_blinky_no_notification">Không có thông báo</string>
+    <string name="aod_blinky_no_media">Không có nhạc đang phát</string>
     <string name="aod_battery_charging">Đang sạc · %1$d%%</string>
     <string name="aod_media_previous">Bài trước</string>
     <string name="aod_media_play">Phát</string>

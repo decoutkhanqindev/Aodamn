@@ -5399,124 +5399,167 @@ eclipse = [
 ]
 BK_DEFAULT = "#EE9BE6"
 BK_WHITE = "#FFFFFF"
-BK_DIM = "#B5B5B5"
-BK_CLOSED = 0.05
-BK_OPEN = 0.7
+BK_CYAN = "#80DEEA"
+BK_AMBER = "#FFD54F"
+BK_OPEN = .7
+BK_SIZE_BASE = 1080
+BK_DARKEN = .2
+BK_CLOCK_SCALE = 1.3
+BK_RUBIK_BOX, BK_RUBIK_ASCENT = 1.185, .935
+BK_LINE_BOX, BK_LINE_ASCENT = 1.364, 1.011
+BK_LINE_TEXT = 16
+BK_LINE_PAD = 12
+BK_ICON, BK_ICON_GAP = 16, 7
+BK_SEP = "  ∙  "
+BK_FONT = 'font-family="Rubik"'
+BK_LINE_FONT = 'font-family="Nunito" font-weight="500" style="white-space:pre;fill:var(--bk-b)"'
+BK_SLEEP = (.7, .6, .5, .4, .3, .2, .2, .2, .2, .1, .1, .05, .05, .7, 0, .7, .7, .7, .7, .7, .7, .7, .7, .7, .7, .7, .7, .7, .65, .6, .55, .5, .45, .4, .4, .4,
+            .1, .2, .3, .4, .5, .6, .6, .6, .6, .6, .6, .6, .6, .6, .6, .2, .3, .4, .4, .4, .4, .4, .4, .4, .4, .4, .4, .4, .4, .375, .35, .325, .3, .275, .25,
+            .225, .2, .175, .15, .125, .1, .075, .05, .025, 0)
+BK_NOTE = "M210.3 56.34l-80-24A8 8 0 0 0 120 40v108.26A48 48 0 1 0 136 184V98.75l69.7 20.91A8 8 0 0 0 216 112V64a8 8 0 0 0-5.7-7.66Z"
 
 
-def bk_eyes(cx, cy, size=100, openness=BK_OPEN, color=BK_DEFAULT, live_id=""):
-    attrs = f' data-bk-live="{live_id}" data-bk-cx="{f(cx)}" data-bk-cy="{f(cy)}" data-bk-size="{f(size)}"' if live_id else ""
-    id_attr = lambda side: f' id="{live_id}{side}"' if live_id else ""
-    height, radius = (openness + .1) * size, .1 * size
-    top = cy - height / 2
-    s = ""
-    for side, x in (("l", cx - size), ("r", cx + size)):
-        s += (f'<rect{id_attr(side)}{attrs} x="{f(x - size / 2)}" y="{f(top)}" width="{f(size)}" height="{f(height)}" '
-              f'rx="{f(radius)}" fill="{color}"/>')
+def bk_vector(name):
+    import re
+    raw = (ROOT / "app/src/main/res/drawable" / f"{name}.xml").read_text(encoding="utf-8")
+    return " ".join(re.findall(r'android:pathData="([^"]+)"', raw))
+
+
+def bk_width(text, size=BK_LINE_TEXT):
+    font = bk_width.font
+    cmap, metrics = font.getBestCmap(), font["hmtx"]
+    return sum(metrics[cmap.get(ord(ch), cmap[32])][0] for ch in text) * size / font["head"].unitsPerEm
+
+
+bk_width.font = TTFont(ROOT / "app/src/main/res/font/nunito_medium.ttf")
+
+
+def bk_lerp_black(color, fraction=BK_DARKEN):
+    channels = [int(color[i:i + 2], 16) for i in (1, 3, 5)]
+    return "#" + "".join(f"{round(c * (1 - fraction)):02X}" for c in channels)
+
+
+def bk_glyph(ref, x, size=BK_ICON):
+    return f'<use href="#{ref}" transform="translate({f(x)} {f(-size * .84)}) scale({size / 256:.4f})" style="fill:var(--bk-a)"/>'
+
+
+def bk_line(ref, icons, text, tail=""):
+    icon_width = len(icons) * (BK_ICON + 2) - 2 + BK_ICON_GAP if icons else 0
+    tail_width = 12 + 16 + 4 + bk_width("28°", 14) if tail else 0
+    x = -(icon_width + bk_width(text) + tail_width) / 2
+    s = f'<g id="{ref}">'
+    for i, icon in enumerate(icons):
+        s += bk_glyph(icon, x + i * (BK_ICON + 2))
+    x += icon_width
+    s += f'<text x="{f(x)}" font-size="{BK_LINE_TEXT}" {BK_LINE_FONT}>{text}</text>'
+    if tail:
+        x += bk_width(text) + 12
+        s += bk_glyph("bki-cloud", x)
+        s += f'<text x="{f(x + 20)}" font-size="14" {BK_LINE_FONT}>28°</text>'
+    return s + "</g>"
+
+
+def bk_defs():
+    s = "".join(f'<path id="{ref}" d="{data}"/>' for ref, data in (
+        ("bki-bat", bk_vector("ic_battery_full_fill")),
+        ("bki-chg", bk_vector("ic_battery_charging")),
+        ("bki-bell", bk_vector("ic_bell_fill")),
+        ("bki-cloud", bk_vector("ic_cloud_sun_fill")),
+        ("bki-note", BK_NOTE),
+    ))
+    s += bk_line("bkl0", ["bki-bat"], "72%" + BK_SEP + "Th 7, 07 thg 11")
+    s += bk_line("bkl0c", ["bki-chg"], "72%" + BK_SEP + "Th 7, 07 thg 11", "weather")
+    s += bk_line("bkl1", ["bki-bell"], "Mẹ: Chiều nay về sớm nhé")
+    s += bk_line("bkl2", ["bki-note"], "traitor - Olivia Rodrigo")
+    s += ('<linearGradient id="bkg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF8A65"/><stop offset="1" stop-color="#BA68C8"/></linearGradient>')
     return s
 
 
-def bk_clock(cx, cy, text="10:08", size=22, color=BK_DEFAULT):
-    return txt(cx, cy + .36 * size, text, size * 1.3, color, 400, "middle")
-
-
-def bk_source_row(cx, cy, mode="status", color=BK_DIM):
-    if mode == "notification":
-        return icon_shapes(color)[0](cx - 123, cy - 8, 16) + txt(cx - 98, cy + 5, "Tin nhắn mới từ Lan", 16, color)
-    if mode == "media":
-        return (f'<path d="M{f(cx - 125)},{f(cy - 7)} h6 v14 h-6z M{f(cx - 115)},{f(cy - 7)} h6 v14 h-6z" fill="{color}"/>'
-                + txt(cx - 98, cy + 5, "That Cool Song - It’s Artist", 16, color))
-    return battery_h(cx - 112, cy - 5.5, color) + txt(cx - 82, cy + 5, "72%  ·  THỨ BA, 13 THG 10", 16, color)
-
-
-def bk_latest(cx, cy, width, color=BK_DIM):
-    text = "Lan: Tối nay đi ăn lẩu không?"
-    return icon_shapes(color)[0](cx - width / 2, cy - 8, 16) + txt(cx - width / 2 + 26, cy + 5, text, 14, color)
-
-
-def bk_portrait(hh=10, mm=8, eye_size=100, clock_size=22, character=BK_DEFAULT, clock=BK_DEFAULT, date=True, weather=False,
-                status=True, latest=False, media=False, source_mode="", openness=BK_OPEN, live=False):
-    text, cx, eye_cy, clock_y = f"{hh:02d}:{mm:02d}", PW / 2, 310, 470
-    eid = "bkp" if live else ""
-    s = bk_eyes(cx, eye_cy, eye_size, openness, character, eid)
-    s += bk_clock(cx, clock_y, text, clock_size, clock)
-    if date:
-        s += date_spaced(cx, 92, weather)
-    if source_mode:
-        return s + bk_source_row(cx, 795, source_mode, clock)
-    if status:
-        s += status_row(cx, 705, clock, n=3)
-    if latest:
-        s += bk_latest(cx, 746, PW - 64, clock)
-    if media:
-        s += f'<g transform="translate(40 795)">{media_compact()}</g>'
-    return s
-
-
-def bk_landscape(hh=10, mm=8, eye_size=100, clock_size=22, character=BK_DEFAULT, clock=BK_DEFAULT, date=True, weather=False,
-                 status=True, latest=False, media=False, source_mode="", openness=BK_OPEN, live=False):
-    cx, eye_cy, clock_y, text = 206, 151, 270, f"{hh:02d}:{mm:02d}"
-    eid = "bkn" if live else ""
-    s = bk_eyes(cx, eye_cy, eye_size, openness, character, eid)
-    s += bk_clock(cx, clock_y, text, clock_size, clock)
-    s += '<line x1="510" y1="58" x2="510" y2="326" stroke="#3A3A3A"/>'
-    if source_mode:
-        return s + bk_source_row(683, 198, source_mode, clock)
-    if date:
-        s += date_spaced(683, 108, weather)
-    if status:
-        s += status_row(683, 148, clock, n=3)
-    if latest:
-        s += bk_latest(683, 198, 286, clock)
-    if media:
-        s += '<g transform="translate(540 252)">' + media_compact() + '</g>'
-    return s
+def bk_face(width, height, time="10:08", size=100, clock_size=22, character=BK_DEFAULT, clock=BK_DEFAULT, mode=0, status="bkl0", sleeps=False, icons=0):
+    eye = min(width, height) * size / BK_SIZE_BASE
+    cx, cy = width / 2, height / 2
+    em = clock_size * BK_CLOCK_SCALE
+    box = em * BK_RUBIK_BOX
+    row = BK_LINE_PAD * 2 + BK_LINE_TEXT * BK_LINE_BOX
+    top = height * .85 - (box + row) / 2
+    base = top + em * BK_RUBIK_ASCENT
+    line = top + box + BK_LINE_PAD + BK_LINE_TEXT * BK_LINE_ASCENT
+    s = (f'<g class="bk" data-e="{f(eye)}" data-c="{f(cy)}" data-m="{mode}" data-s="{1 if sleeps else 0}" '
+         f'style="cursor:pointer;--bk-a:{clock};--bk-b:{bk_lerp_black(clock)}"><rect width="{width}" height="{height}" fill="transparent"/>')
+    for x in (cx - eye, cx + eye):
+        s += (f'<rect class="bk-e" x="{f(x - eye / 2)}" y="{f(cy - BK_OPEN * eye)}" width="{f(eye)}" height="{f((BK_OPEN + .1) * eye)}" '
+              f'rx="{f(.1 * eye)}" fill="{character}"/>')
+    s += txt(cx, base, time, em, clock, 400, "middle", BK_FONT)
+    for i, ref in enumerate((status, "bkl1", "bkl2")):
+        hidden = "" if i == mode else ' style="display:none"'
+        s += f'<g class="bk-l"{hidden}><use href="#{ref}" x="{f(cx)}" y="{f(line)}"/></g>'
+    if icons:
+        y = top + box + row - 8
+        x = cx - (icons * 14 + (icons - 1) * 8) / 2
+        s += "".join(icon_shapes(bk_lerp_black(clock))[i % 3](x + i * 22, y, 14) for i in range(icons))
+    return s + "</g>"
 
 
 def bk_motion_strip():
-    values = (("Mở", BK_OPEN), ("Khép", BK_CLOSED), ("Mở lại", BK_OPEN))
-    s = ""
-    for i, (label, openness) in enumerate(values):
-        cx = 90 + i * 150
-        s += bk_eyes(cx, 68, 52, openness, BK_DEFAULT) + bk_clock(cx, 136, "10:08", 16, BK_DEFAULT)
-        s += txt(cx, 166, label, 13, DM, 400, "middle")
-    s += txt(680, 44, "2 giây chờ · đóng/mở 300 ms", 14, G, 500, "middle")
-    s += txt(680, 72, "12 giây: nhiều nhịp chớp và nheo mắt", 14, G, 400, "middle")
-    s += txt(680, 100, "Rung > 0,5: chớp ngay rồi hẹn lại", 14, G, 400, "middle")
-    s += txt(680, 128, "Ngày 60–359 s · đêm 11–60 s", 14, G, 400, "middle")
-    return (f'<p style="font-size:13px;color:var(--text-secondary);margin:1.25rem 0 6px">Chuyển động mắt giữ nguyên từ BlinkyCharacter</p>'
-            f'<svg viewBox="0 0 {W} 190" width="100%" role="img" aria-label="Chuyển động mắt Blinky" '
-            f'style="display:block;font-family:\'Plus Jakarta Sans\',sans-serif" fill="{G}"><rect width="{W}" height="190" rx="20" fill="#000"/>{s}</svg>')
+    x0, width, top, bottom = 64, 600, 26, 118
+    total = 14
+    points = []
+    for step in range(281):
+        seconds = step / 20
+        if seconds < 2:
+            value = BK_OPEN
+        else:
+            elapsed = (seconds - 2) / 12
+            eased = math.cos((elapsed + 1) * math.pi) / 2 + .5
+            q = eased * (len(BK_SLEEP) - 1)
+            i = min(int(q), len(BK_SLEEP) - 2)
+            value = BK_SLEEP[i] + (BK_SLEEP[i + 1] - BK_SLEEP[i]) * (q - i)
+        points.append(f"{f(x0 + seconds / total * width)},{f(bottom - value / BK_OPEN * (bottom - top))}")
+    s = f'<path d="M{" ".join(points)}" fill="none" stroke="{BK_DEFAULT}" stroke-width="2.2" stroke-linejoin="round"/>'
+    s += f'<line x1="{x0}" y1="{bottom}" x2="{x0 + width}" y2="{bottom}" stroke="{DV}"/>'
+    s += txt(x0 - 8, top + 5, "mở", 12, DM, 400, "end") + txt(x0 - 8, bottom + 4, "nhắm", 12, DM, 400, "end")
+    for seconds, label in ((0, "0"), (2, "2 giây chờ"), (8, "8"), (14, "14 giây")):
+        s += txt(x0 + seconds / total * width, bottom + 20, label, 12, DM, 400, "middle")
+    s += txt(684, 34, "Thức", 14, GE, 600)
+    s += txt(684, 56, "Chớp 300 ms, cách 0,2–5,2 s", 13, G)
+    s += txt(684, 86, "Sắp ngủ", 14, GE, 600)
+    s += txt(684, 108, "Sau 60–359 s, đêm 11–60 s", 13, G)
+    return (f'<p style="font-size:13px;color:var(--text-secondary);margin:1.25rem 0 6px">Độ mở mắt khi ngủ, đúng 81 mốc của app mẫu: nheo dần, giật mở, sụp, giật mở, rồi nhắm hẳn đến khi rung máy hoặc chạm</p>'
+            f'<svg viewBox="0 0 {W} 148" width="100%" style="display:block;font-family:\'Plus Jakarta Sans\',sans-serif" fill="{G}"><rect width="{W}" height="148" rx="20" fill="#000"/>{s}</svg>')
 
 
 def bk_live_script():
-    values = ".7,.6,.5,.4,.3,.2,.2,.2,.2,.1,.1,.05,.05,.7,0,.7,.7,.7,.7,.7,.7,.7,.7,.7,.7,.7,.7,.7,.65,.6,.55,.5,.45,.4,.4,.4,.1,.2,.3,.4,.5,.6,.6,.6,.6,.6,.6,.6,.6,.6,.6,.2,.3,.4,.4,.4,.4,.4,.4,.4,.4,.4,.4,.4,.4,.4,.375,.35,.325,.3,.275,.25,.225,.2,.175,.15,.125,.1,.075,.05,.025,0"
-    return ('<script>(function(){var v=[' + values + '].map(Number),start=performance.now()+2000,d=12000;function p(){var e=(performance.now()-start)/d;'
-            'if(e<0){requestAnimationFrame(p);return}e=e%1;var q=e*(v.length-1),i=Math.floor(q),a=v[i]+(v[Math.min(i+1,v.length-1)]-v[i])*(q-i);'
-            'document.querySelectorAll("[data-bk-live]").forEach(function(r){var cy=+r.dataset.bkCy,z=+r.dataset.bkSize,x=+r.dataset.bkCx+(r.id.endsWith("l")?-z:z);'
-            'r.setAttribute("y",(cy-(a+.1)*z/2).toFixed(1));r.setAttribute("height",((a+.1)*z).toFixed(1));r.setAttribute("x",(x-z/2).toFixed(1));});requestAnimationFrame(p)}p()})();</script>')
+    frames = ",".join(f"{value:g}" for value in BK_SLEEP)
+    return ('<script>(function(){var K=[' + frames + '];'
+            'function e(t){return Math.cos((t+1)*Math.PI)/2+.5}'
+            'function at(p){var q=p*(K.length-1),i=Math.min(Math.floor(q),K.length-2);return K[i]+(K[i+1]-K[i])*(q-i)}'
+            'document.querySelectorAll(".bk").forEach(function(S){'
+            'var E=+S.dataset.e,C=+S.dataset.c,M=+S.dataset.m,Z=S.dataset.s=="1",R=S.querySelectorAll(".bk-e"),L=S.querySelectorAll(".bk-l"),D=.7,st=0,t0=0,nx=0,sl=1/0;'
+            'function wake(n){st=0;D=.7;nx=n;sl=Z?n+7000:1/0}'
+            'S.addEventListener("click",function(){wake(performance.now());M=(M+1)%3;L.forEach(function(g,i){g.style.display=i==M?"":"none";'
+            'if(i==M&&g.animate)g.animate([{opacity:0},{opacity:1}],{duration:300})})});'
+            'function tick(n){if(st==0){if(n>=sl){st=2;t0=n}else if(n>=nx){st=1;t0=n}}'
+            'if(st==1){var p=(n-t0)/300;if(p>=1){D=.7;st=0;nx=n+200+Math.random()*5000}else{var a=e(p);D=a<.5?.7-a*1.4:(a-.5)*1.4}}'
+            'if(st==2){var q=(n-t0-2000)/12000;if(q>=1){D=0;st=3;t0=n}else if(q>0)D=at(e(q))}'
+            'if(st==3&&n-t0>3000)wake(n);'
+            'R.forEach(function(r){r.setAttribute("y",(C-D*E).toFixed(2));r.setAttribute("height",((D+.1)*E).toFixed(2))});requestAnimationFrame(tick)}'
+            'wake(performance.now());requestAnimationFrame(tick)})})();</script>')
 
 
 blinky = [
+    '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@400&family=Nunito:wght@500&display=swap">',
     bk_motion_strip(),
     '<div style="font-size:0">',
-    frame_portrait("D1 · Mở 0 ms · Bố cục dọc cố định: header trên, hero mắt + giờ cùng trục giữa, cụm chi tiết neo đáy",
-                   bk_portrait(weather=True)),
-    frame_portrait("D2 · Khép 300 ms · Bố cục dọc cố định: cùng trục hero, chỉ đổi trạng thái mắt và visibility của chi tiết",
-                   bk_portrait(weather=True, latest=True, media=True, openness=BK_CLOSED)),
-    frame_portrait("D3 · Mở lại 600 ms · Bố cục dọc cố định: cùng trục hero, dữ liệu 21:47 và màu Cyan / Hổ phách",
-                   bk_portrait(21, 47, character="#80DEEA", clock="#FFD54F", date=False, latest=True)),
-    frame_portrait("D4 · App mẫu 08:30 · Bố cục dọc cố định: cùng trục hero, chỉ nguồn nhạc ở slot chi tiết neo đáy",
-                   bk_portrait(8, 30, character=BK_WHITE, clock=BK_WHITE, date=False, status=False, source_mode="media")),
+    frame_portrait("D1 · Mặc định: mắt đúng tâm màn, giờ + dòng phụ giữa vùng 30% đáy. Chạm khung: mắt mở, dòng đổi pin + ngày → thông báo → nhạc", bk_face(PW, PH)),
+    frame_portrait("D2 · Chạy cả vòng: thức 7 giây, nheo 2 + 12 giây, nhắm 3 giây, rung máy thì mở. Đang sạc, thêm thời tiết", bk_face(PW, PH, status="bkl0c", sleeps=True)),
+    frame_portrait("D3 · Cỡ lớn nhất (mắt 140, giờ 30), màu riêng + gradient. Thông báo mới hiện ở dòng phụ 10 giây, hàng icon dưới dòng", bk_face(PW, PH, "21:47", 140, 30, "url(#bkg)", BK_AMBER, 1, icons=3)),
+    frame_portrait("D4 · Để so với ảnh app mẫu: trắng, nhạc ở dòng phụ, chạm dòng để phát / dừng", bk_face(PW, PH, "07:40", character=BK_WHITE, clock=BK_WHITE, mode=2)),
     '</div>',
-    frame("N1 · Mở 0 ms · Bố cục ngang cố định: hero mắt + giờ bên trái, một cột chi tiết bên phải",
-          bk_landscape(weather=True)),
-    frame("N2 · Khép 300 ms · Bố cục ngang cố định: hero và cột không đổi, chỉ đổi trạng thái mắt và visibility",
-          bk_landscape(weather=True, latest=True, openness=BK_CLOSED)),
-    frame("N3 · Mở lại 600 ms · Bố cục ngang cố định: hero trái và cột phải không đổi, dữ liệu 21:47 màu Cyan / Hổ phách",
-          bk_landscape(21, 47, character="#80DEEA", clock="#FFD54F", date=False, media=True)),
-    frame("N4 · App mẫu 08:30 · Bố cục ngang cố định: hero trái và source nhạc trong slot của cột chi tiết phải",
-          bk_landscape(8, 30, character=BK_WHITE, clock=BK_WHITE, date=False, status=False, source_mode="media")),
+    frame("N1 · Ngang, mặc định: cùng một bố cục như dọc, app mẫu không có bản ngang riêng", bk_face(W, H)),
+    frame("N2 · Chạy cả vòng ngủ, đang sạc, thêm thời tiết", bk_face(W, H, status="bkl0c", sleeps=True)),
+    frame("N3 · Cỡ lớn nhất, hàng icon vẫn cách mép dưới, thông báo mới ở dòng phụ", bk_face(W, H, "21:47", 140, 30, "url(#bkg)", BK_AMBER, 1, icons=3)),
+    frame("N4 · Để so với app mẫu: trắng, nhạc ở dòng phụ", bk_face(W, H, "07:40", character=BK_WHITE, clock=BK_WHITE, mode=2)),
+    bk_live_script(),
 ]
 
 
@@ -5547,7 +5590,7 @@ for name, summary, defs, frames in [
     ("w_orbit", "Chủ đề Quỹ đạo (Solar System): ba hành tinh quay theo giờ thật, cỡ và màu, bốn khung dọc và bốn khung ngang", "", orbit),
     ("w_flip", "Chủ đề Thẻ lật (Flip Clock): chín kiểu chữ, hai bước lật, bốn khung dọc và bốn khung ngang", fc_defs(), flip),
     ("w_eclipse", "Chủ đề Nhật thực (Eclipse): vầng sáng, bốn khung dọc và bốn khung ngang", "", eclipse),
-    ("w_blinky", "Chủ đề Chớp mắt (Blinky): mắt chớp theo chu kỳ, màu và cỡ riêng, bốn khung dọc và bốn khung ngang", "", blinky),
+    ("w_blinky", "Chủ đề Chớp mắt (Blinky): mắt chớp và ngủ theo app mẫu, dòng phụ đổi nội dung, bốn khung dọc và bốn khung ngang", bk_defs(), blinky),
 ]:
     if ONLY not in (None, name):
         continue

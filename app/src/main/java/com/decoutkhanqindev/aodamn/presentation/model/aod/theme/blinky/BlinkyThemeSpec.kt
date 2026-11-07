@@ -1,12 +1,9 @@
 package com.decoutkhanqindev.aodamn.presentation.model.aod.theme.blinky
 
-import androidx.compose.ui.graphics.Color
 import com.decoutkhanqindev.aodamn.R
-import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.AodGradient
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodBlockValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodColorOption
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodRangeOption
-import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeConfig
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeTab
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.component.AodComponentValue
@@ -15,13 +12,6 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentSetOf
 
 object BlinkyThemeSpec : AodThemeSpec {
-    val ThemeColor = AodColorOption(
-        key = "theme_color",
-        labelRes = R.string.theme_color_theme,
-        default = Orchid,
-        isGradientAllowed = true,
-    )
-
     val CharacterSize = AodRangeOption(
         key = "character_size",
         labelRes = R.string.blinky_character_size_value,
@@ -52,12 +42,28 @@ object BlinkyThemeSpec : AodThemeSpec {
         isGradientAllowed = true,
     )
 
+    val DateColor = AodColorOption(
+        key = "date_color",
+        labelRes = R.string.theme_color_date,
+        default = Orchid,
+        isGradientAllowed = true,
+    )
+
+    val StatusColor = AodColorOption(
+        key = "status_color",
+        labelRes = R.string.theme_color_status,
+        default = Orchid,
+        isGradientAllowed = true,
+    )
+
+    val MediaColor = AodColorOption(
+        key = "media_color",
+        labelRes = R.string.theme_color_media,
+        default = Orchid,
+        isGradientAllowed = true,
+    )
+
     override val tabs = persistentListOf(
-        AodThemeTab(
-            iconRes = R.drawable.ic_paint_brush,
-            labelRes = R.string.theme_tab_theme,
-            options = persistentListOf(ThemeColor),
-        ),
         AodThemeTab(
             iconRes = R.drawable.ic_eye,
             labelRes = R.string.theme_tab_character,
@@ -68,9 +74,27 @@ object BlinkyThemeSpec : AodThemeSpec {
             labelRes = R.string.theme_tab_clock,
             options = persistentListOf(ClockSize, ClockColor),
         ),
+        AodThemeTab(
+            iconRes = R.drawable.ic_calendar_blank,
+            labelRes = R.string.theme_tab_date,
+            options = persistentListOf(DateColor),
+            block = AodBlockValue.DATE,
+        ),
+        AodThemeTab(
+            iconRes = R.drawable.ic_battery_full,
+            labelRes = R.string.theme_tab_status,
+            options = persistentListOf(StatusColor),
+            block = AodBlockValue.STATUS,
+        ),
+        AodThemeTab(
+            iconRes = R.drawable.ic_music_notes,
+            labelRes = R.string.theme_tab_media,
+            options = persistentListOf(MediaColor),
+            block = AodBlockValue.MEDIA,
+        ),
     )
 
-    override val ownBlocks = persistentSetOf<AodBlockValue>()
+    override val ownBlocks = persistentSetOf(AodBlockValue.DATE, AodBlockValue.STATUS, AodBlockValue.MEDIA)
 
     override val components = persistentSetOf(
         AodComponentValue.DATE,
@@ -83,18 +107,4 @@ object BlinkyThemeSpec : AodThemeSpec {
     override val hasNotificationContent = true
 
     override val isLiveInPreview = true
-
-    fun characterColor(config: AodThemeConfig): Color = colorOf(config, CharacterColor)
-
-    fun characterGradient(config: AodThemeConfig): AodGradient? = gradientOf(config, CharacterColor)
-
-    fun clockColor(config: AodThemeConfig): Color = colorOf(config, ClockColor)
-
-    fun clockGradient(config: AodThemeConfig): AodGradient? = gradientOf(config, ClockColor)
-
-    private fun colorOf(config: AodThemeConfig, option: AodColorOption): Color =
-        if (option.key in config.values) config[option] else config[ThemeColor]
-
-    private fun gradientOf(config: AodThemeConfig, option: AodColorOption): AodGradient? =
-        if (option.key in config.values) config.gradientOf(option) else config.gradientOf(ThemeColor)
 }

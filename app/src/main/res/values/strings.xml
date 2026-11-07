@@ -95,7 +95,6 @@
     <string name="theme_discard_desc">This theme has changes that are not saved yet.</string>
     <string name="theme_discard_confirm">Discard changes</string>
     <string name="theme_tab_clock">Clock</string>
-    <string name="theme_tab_theme">Theme</string>
     <string name="theme_tab_character">Character</string>
     <string name="theme_tab_hour">Hour</string>
     <string name="theme_tab_minute">Minute</string>
@@ -122,7 +121,6 @@
     <string name="theme_color_card">Card</string>
     <string name="theme_color_status">Battery &amp; alerts</string>
     <string name="theme_color_clock">Clock</string>
-    <string name="theme_color_theme">Theme</string>
     <string name="theme_color_character">Character</string>
     <string name="theme_color_battery">Battery</string>
     <string name="theme_color_notifications">Alerts</string>
@@ -221,6 +219,13 @@
     <string name="shape_star">Star</string>
     <string name="aod_gentle_date_pattern" translatable="false">EEEE dd</string>
     <string name="aod_gentle_notification" translatable="false">%1$s: %2$s</string>
+    <string name="aod_blinky_time_12h" translatable="false">hh:mm</string>
+    <string name="aod_blinky_date_pattern" translatable="false">EEE, dd LLL</string>
+    <string name="aod_blinky_separator" translatable="false">"  ∙  "</string>
+    <string name="aod_blinky_notification" translatable="false">%1$s: %2$s</string>
+    <string name="aod_blinky_media" translatable="false">%1$s - %2$s</string>
+    <string name="aod_blinky_no_notification">No notifications</string>
+    <string name="aod_blinky_no_media">No music playing</string>
 
     <!-- Tab Edge Light -->
     <string name="edge_light_soon_title">Edge Light is coming soon</string>

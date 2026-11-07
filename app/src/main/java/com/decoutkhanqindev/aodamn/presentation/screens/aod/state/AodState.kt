@@ -39,6 +39,7 @@ data class AodState(
     val isDark: Boolean = false,
     val isPreview: Boolean = false,
     val isStill: Boolean = false,
+    val motionCount: Int = 0,
 ) {
     val isClockLive: Boolean
         get() = !isPreview || (appearance.theme.value.spec.isLiveInPreview && !isStill)
