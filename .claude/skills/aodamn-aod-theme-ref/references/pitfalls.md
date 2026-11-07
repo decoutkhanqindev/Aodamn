@@ -27,6 +27,9 @@ Mỗi dòng là một lỗi đã xảy ra thật; kiểm từng dòng trước k
   ô chữ ôm sát nét như `NoPadTextView` đo bằng `Paint.getTextBounds` với typeface từ `resolveTypeface`, cộng `firstBaseline` của layout.
 - **Cỡ chữ app mẫu đặt bằng `setTextSize(px)`** (Thẻ lật): tham số hiểu là sp nên cỡ thật nhân thêm density máy. Không chép hệ số từ máy test (560dpi); canh theo cỡ lớn nhất của app mẫu
   phải vừa khít ở density khoảng 3 và kiểm mọi kiểu ở mức lớn nhất không bị cắt. Font mẫu lạ thì xem ảnh thẻ trước khi chọn thay thế (Metropolis 1920 là hai đường mỗi thân số, không phải chữ thường).
+- **Lần tới listener trước khi kết luận chuyển động** (Chớp mắt): `postDelayed` / `setStartDelay` / `addListener` trỏ sang class khác (`jb/b`, `ab/k`). Bản đầu đọc riêng số 60–359 giây nên tưởng là nhịp chớp, thật ra là thời gian trước khi ngủ;
+  nhịp chớp nằm trong listener, cả chuỗi ngủ 12 giây bị bỏ sót.
+- **Kích thước đặt thẳng vào `Canvas` là px thô** (Chớp mắt, cỡ mắt 100): đo tỉ lệ trên ảnh thẻ để biết máy cơ sở (9,2% bề ngang = 100 / 1080), rồi quy về cạnh ngắn; đừng coi số đó là dp (bản đầu to gấp 2,75 lần).
 - **`min` / `max` với `Dp`**: dùng `androidx.compose.ui.unit.min/max`, không phải `kotlin.math`.
 
 ## Bố cục
@@ -59,6 +62,9 @@ Mỗi dòng là một lỗi đã xảy ra thật; kiểm từng dòng trước k
   đã cho thấy kiểu đang chọn; đừng thêm nhánh vào `aodChoicePreview` cho kiểu của riêng một chủ đề.
 - **Màu mặc định gần đen** (nền thẻ nhạc `#121218`): chạm vòng màu giữ độ sáng nên ra màu gần đen; mặc định tối thì kiểm cách
   chọn màu sáng vẫn dễ.
+- **Khối tự vẽ phải có đúng một tab** (`AodThemeSpecTest`, Chớp mắt): chủ đề gộp ngày, pin, nhạc vào một dòng vẫn cần ba tab, nên phải có màu riêng từng khối. Nêu trong mock ngay lúc chọn `ownBlocks`, đừng để lộ ra sau khi duyệt.
+- **Màu chung Theme Color của app mẫu** (Chớp mắt, user: "đều chỉnh được components colors nên mục này không cần, như các theme đã có"): chủ đề đã có màu từng phần thì bỏ tab màu chung, mỗi màu độc lập, không viết
+  chuỗi màu dự phòng (ô màu ở tab chưa chỉnh còn hiện sai màu mặc định). Ghi là bỏ trong bảng của mock.
 - **Mọi màu cho gradient** và phần vẽ tô được gradient thật (chữ, icon, vạch, Paint): bật cờ mà quên tô thì gradient chỉ lấy
   màu đầu.
 - **`AodThemeSpecTest`**: tự vẽ thông báo mới nhất thì thêm vào tập `drawsLatest`; chạy theo giờ thật ở xem trước thì thêm vào
