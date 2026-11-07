@@ -27,6 +27,10 @@ Mỗi dòng là một lỗi đã xảy ra thật; kiểm từng dòng trước k
   ô chữ ôm sát nét như `NoPadTextView` đo bằng `Paint.getTextBounds` với typeface từ `resolveTypeface`, cộng `firstBaseline` của layout.
 - **Cỡ chữ app mẫu đặt bằng `setTextSize(px)`** (Thẻ lật): tham số hiểu là sp nên cỡ thật nhân thêm density máy. Không chép hệ số từ máy test (560dpi); canh theo cỡ lớn nhất của app mẫu
   phải vừa khít ở density khoảng 3 và kiểm mọi kiểu ở mức lớn nhất không bị cắt. Font mẫu lạ thì xem ảnh thẻ trước khi chọn thay thế (Metropolis 1920 là hai đường mỗi thân số, không phải chữ thường).
+- **Chủ đề vẽ cầu kì** (Nhật thực, user: "theme này cầu kì nên cần tối ưu về perf"): theo skill `jetpack-compose-performance`, ghi thẳng vào brief: một node `drawWithCache`; `Paint`, shader, `Path` tạo ở khối cache; giá trị đổi theo phút qua
+  `rememberUpdatedState`, đọc ở `onDrawBehind`; list màu qua `remember(config)` để lambda giữ nguyên; chuyển động ngắn đọc `Animatable` ở pha vẽ (giãn chữ bằng `Paint.letterSpacing`, không qua `TextStyle`); không `BoxWithConstraints`.
+- **`SolidColor` vào `aodTint`** (Nhật thực, Chớp mắt): brush khác null là mở một lớp offscreen cho từng icon. Màu đơn truyền brush null, chỉ truyền khi tuỳ chọn có gradient thật.
+- **`pointerInput(Unit)` giữ lambda đầu** (Nhật thực): giá trị thường trong lambda chạm bị cũ mãi (có nhạc sau khi mở AOD mà chạm không ra trình phát). Đọc qua `rememberUpdatedState` hoặc biến state.
 - **Lần tới listener trước khi kết luận chuyển động** (Chớp mắt): `postDelayed` / `setStartDelay` / `addListener` trỏ sang class khác (`jb/b`, `ab/k`). Bản đầu đọc riêng số 60–359 giây nên tưởng là nhịp chớp, thật ra là thời gian trước khi ngủ;
   nhịp chớp nằm trong listener, cả chuỗi ngủ 12 giây bị bỏ sót.
 - **Kích thước đặt thẳng vào `Canvas` là px thô** (Chớp mắt, cỡ mắt 100): đo tỉ lệ trên ảnh thẻ để biết máy cơ sở (9,2% bề ngang = 100 / 1080), rồi quy về cạnh ngắn; đừng coi số đó là dp (bản đầu to gấp 2,75 lần).
@@ -74,6 +78,8 @@ Mỗi dòng là một lỗi đã xảy ra thật; kiểm từng dòng trước k
 
 - **Mock phải xem được trong chat**: một `show_widget` có mọi khung dọc + ngang, có chuyển động thì chạy được ngay trong đó ([mock.md](mock.md)).
   Chỉ gửi file HTML thì user phải hỏi "tôi xem mock ở đâu" (Thẻ lật, Dịu); gửi ảnh PNG tách rời cũng sai, user đòi lại cách vẽ thẳng (Dịu).
+- **Nêu rõ chỗ khác các chủ đề đang có** (Chớp mắt, Nhật thực: nhạc thay chỗ và tự ẩn sau 30 giây như app mẫu, các chủ đề khác hiện suốt): bám app mẫu mà khác thói quen của app thì mock phải ghi là khác; chỉ ghi con số thì user
+  duyệt mà không biết, lúc thử trên máy tưởng mất tính năng.
 - **Font của mock**: chữ AOD dùng đúng font của chủ đề (số lớn `<path>` từ glyph, chữ nhỏ `<text>` + `<link>` font, [mock.md](mock.md)), tự kiểm
   không rơi về font mặc định (Dịu: mock dùng font mặc định của HTML nên khác app).
 - **Vị trí đồng hồ theo loại chủ đề** ([layout.md](layout.md)): loại A (đồng hồ là điểm nhấn) dồn đồng hồ về một phía là sai (Dịu);
