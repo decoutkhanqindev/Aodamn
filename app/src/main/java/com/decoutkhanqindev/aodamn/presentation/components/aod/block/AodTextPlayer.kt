@@ -59,7 +59,7 @@ fun AodTextPlayer(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         AodPlayerButton(
-            iconRes = R.drawable.ic_skip_back_fill,
+            iconRes = style.previousIconRes,
             contentDescription = stringResource(R.string.aod_media_previous),
             isEnabled = media.canSkipToPrevious,
             color = color,
@@ -118,7 +118,7 @@ fun AodTextPlayer(
         }
 
         AodPlayerButton(
-            iconRes = R.drawable.ic_skip_forward_fill,
+            iconRes = style.nextIconRes,
             contentDescription = stringResource(R.string.aod_media_next),
             isEnabled = media.canSkipToNext,
             color = color,

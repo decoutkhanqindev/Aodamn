@@ -98,6 +98,7 @@ class AodThemeSpecTest {
                     AodThemeValue.MONO,
                     AodThemeValue.ORBIT,
                     AodThemeValue.GENTLE,
+                    AodThemeValue.ECLIPSE,
                     AodThemeValue.BLINKY,
                 )
             val hasSharedLatest = AodBlockValue.STATUS !in theme.spec.ownBlocks && theme != AodThemeValue.FLIP
@@ -840,7 +841,7 @@ class AodThemeSpecTest {
     }
 
     @Test
-    fun `eclipse keeps five reference options and only the blocks that fit`() {
+    fun `eclipse keeps reference options and only the blocks that fit`() {
         val spec = AodThemeValue.ECLIPSE.spec
         assertEquals(
             setOf(
@@ -852,7 +853,7 @@ class AodThemeSpecTest {
             ),
             spec.components,
         )
-        assertEquals(emptySet<AodBlockValue>(), spec.ownBlocks)
+        assertEquals(setOf(AodBlockValue.DATE, AodBlockValue.STATUS, AodBlockValue.MEDIA), spec.ownBlocks)
         assertEquals(true, spec.hasNotificationContent)
         assertEquals(true, spec.isLiveInPreview)
         assertEquals(AodRangeOption.AUTO, EclipseThemeSpec.Rotation.default)
@@ -860,6 +861,9 @@ class AodThemeSpecTest {
         assertEquals(EclipseHalo, EclipseThemeSpec.RingColor.default)
         assertEquals(EclipseShadow, EclipseThemeSpec.ShadowColor.default)
         assertEquals(GreyED, EclipseThemeSpec.CharacterColor.default)
+        assertEquals(GreyED, EclipseThemeSpec.DateColor.default)
+        assertEquals(GreyED, EclipseThemeSpec.StatusColor.default)
+        assertEquals(GreyED, EclipseThemeSpec.MediaColor.default)
         assertEquals(
             listOf(
                 EclipseThemeSpec.RingColor,
@@ -867,6 +871,9 @@ class AodThemeSpecTest {
                 EclipseThemeSpec.Rotation,
                 EclipseThemeSpec.Peek,
                 EclipseThemeSpec.CharacterColor,
+                EclipseThemeSpec.DateColor,
+                EclipseThemeSpec.StatusColor,
+                EclipseThemeSpec.MediaColor,
             ),
             spec.options,
         )

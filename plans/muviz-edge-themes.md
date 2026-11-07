@@ -54,7 +54,7 @@ code dịch ngược, không lấy asset (font, ảnh, Lottie) từ APK. APK và
 | Kẹp giấy (`CLIP`) | **13 · May22 "Paper Clip"** | làm từ danh mục này (2026-10-28), số đo lấy từ layout `may22_screen_layout` dọc / ngang / `PaperClipClock` |
 | Phai (`FADE`) | **1 · May21 "Gradient"** | làm từ danh mục này (2026-10-28), số đo lấy từ layout `may21_screen_layout` (chỉ có bản dọc) / `May21Screen` / font Lato 1.104 trong APK |
 | Quỹ đạo (`ORBIT`) | **14 · Jun22 "Solar System"** | làm từ danh mục này (2026-10-30), số đo lấy từ layout `jun22_screen_layout` dọc / ngang / `SolarSystemClock` / `Jun22Screen` |
-| Nhật thực (`ECLIPSE`) | **11 · Mar22 "Eclipse"** | làm từ danh mục này (2026-11-01), số đo lấy từ layout dọc / ngang / `Mar22Screen` / `Eclipse` / font `lato_regular` |
+| Nhật thực (`ECLIPSE`) | **11 · Mar22 "Eclipse"** | làm từ danh mục này (2026-11-01), làm lại 2026-11-07, số đo lấy từ layout dọc / ngang / `Mar22Screen` / `Eclipse` / font `lato_regular` |
 | Thẻ lật (`FLIP`) | **9 · Jan22 "Flip Clock"** | làm từ danh mục này (2026-10-31), số đo lấy từ layout `jan22_screen_layout` dọc / ngang / `FlipClock` / `HalfTextView` |
 | Dịu (`GENTLE`) | **15 · Jul22 "Samsung Like"** | làm từ danh mục này (2026-10-31), số đo lấy từ layout `jul22_screen_layout` dọc / ngang / `Jul22Screen` / font Nunito |
 | Chớp mắt (`BLINKY`) | **8 · Dec21 "Blinky"** | làm từ danh mục này (2026-11-01), làm lại 2026-11-07, số đo lấy từ `Dec21Screen` / `BlinkyCharacter` |
@@ -367,6 +367,8 @@ Không cần chụp ảnh chủ đề từ app mẫu: số đo lấy từ layout
 | Nhạc | Giữ | Kiểu Hàng ngang mặc định, dưới Eclipse; không thay cụm khác. |
 | Sự kiện | Bỏ | Không có vị trí ổn định quanh vầng sáng ở cả hai hướng. |
 | Ghi nhớ | Bỏ | Không có vị trí ổn định quanh vầng sáng ở cả hai hướng. |
+
+Làm lại 2026-11-07 (user duyệt mock), đính chính bảng trên: bán kính đĩa = 1/4 cạnh ngắn, quầng radial tâm lệch 0,1 + 0,06 × độ lộ, viền blur 0,014, hòa màu Screen; góc = giờ / 12 × 360° như kim giờ; độ lộ = giờ / 12, chiều thì đảo; giãn chữ 2,1 em đo từ ảnh thẻ; ngang: cạnh đĩa = chiều cao − 60dp, dải chi tiết rộng cạnh + 60dp. Controls Color tách thành ba màu vì ngày, pin, nhạc giờ là khối tự vẽ.
 
 Hoàn tất 2026-11-01: code giữ năm tuỳ chọn đã duyệt. Vầng sáng và bóng che dùng `EclipseThemeSpec`; ngày, pin, thông báo, thời tiết và nhạc tiếp tục là block chung. `Rotation` và `Peek` dùng giá trị tự động lưu riêng, hoặc khóa góc / mức; không có Controls Color, sự kiện, ghi nhớ hay nét vẽ.
 

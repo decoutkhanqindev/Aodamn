@@ -1,11 +1,13 @@
 package com.decoutkhanqindev.aodamn.presentation.model.aod.theme
 
+import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import com.decoutkhanqindev.aodamn.R
 
 @Immutable
 data class AodTextPlayerStyle(
@@ -23,4 +25,6 @@ data class AodTextPlayerStyle(
     val artistAlpha: Float = 1f,
     val buttonAlpha: Float = 1f,
     val isUppercase: Boolean = false,
+    @param:DrawableRes val previousIconRes: Int = R.drawable.ic_skip_back_fill,
+    @param:DrawableRes val nextIconRes: Int = R.drawable.ic_skip_forward_fill,
 )

@@ -47,6 +47,7 @@ import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.card.AodCar
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.chain.AodChainMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.clip.AodClipMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.compass.AodCompassMedia
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.eclipse.AodEclipseMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.fade.AodFadeMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.frame.AodFrameMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.gradientline.AodGradientLineMedia
@@ -117,7 +118,7 @@ fun AodMediaControls(
                 AodThemeValue.ORBIT -> AodOrbitMedia(media = target, config = theme.config, onIntent = onIntent)
                 AodThemeValue.FLIP -> Unit
                 AodThemeValue.GENTLE -> AodGentleMedia(media = target, config = theme.config, onIntent = onIntent)
-                AodThemeValue.ECLIPSE -> AodClassicMedia(media = target, style = style, layout = layout, onIntent = onIntent)
+                AodThemeValue.ECLIPSE -> AodEclipseMedia(media = target, config = theme.config, onIntent = onIntent)
                 AodThemeValue.BLINKY -> AodClassicMedia(media = target, style = style, layout = layout, onIntent = onIntent)
             }
         }

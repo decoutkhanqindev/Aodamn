@@ -57,15 +57,54 @@ object EclipseThemeSpec : AodThemeSpec {
         isGradientAllowed = true,
     )
 
+    val DateColor = AodColorOption(
+        key = "date_color",
+        labelRes = R.string.theme_color_date,
+        default = GreyED,
+        isGradientAllowed = true,
+    )
+
+    val StatusColor = AodColorOption(
+        key = "status_color",
+        labelRes = R.string.theme_color_status,
+        default = GreyED,
+        isGradientAllowed = true,
+    )
+
+    val MediaColor = AodColorOption(
+        key = "media_color",
+        labelRes = R.string.theme_color_media,
+        default = GreyED,
+        isGradientAllowed = true,
+    )
+
     override val tabs = persistentListOf(
         AodThemeTab(
             iconRes = R.drawable.ic_clock,
             labelRes = R.string.theme_tab_clock,
             options = persistentListOf(RingColor, ShadowColor, Rotation, Peek, CharacterColor),
         ),
+        AodThemeTab(
+            iconRes = R.drawable.ic_calendar_blank,
+            labelRes = R.string.theme_tab_date,
+            options = persistentListOf(DateColor),
+            block = AodBlockValue.DATE,
+        ),
+        AodThemeTab(
+            iconRes = R.drawable.ic_battery_full,
+            labelRes = R.string.theme_tab_status,
+            options = persistentListOf(StatusColor),
+            block = AodBlockValue.STATUS,
+        ),
+        AodThemeTab(
+            iconRes = R.drawable.ic_music_notes,
+            labelRes = R.string.theme_tab_media,
+            options = persistentListOf(MediaColor),
+            block = AodBlockValue.MEDIA,
+        ),
     )
 
-    override val ownBlocks = persistentSetOf<AodBlockValue>()
+    override val ownBlocks = persistentSetOf(AodBlockValue.DATE, AodBlockValue.STATUS, AodBlockValue.MEDIA)
 
     override val components = persistentSetOf(
         AodComponentValue.DATE,
@@ -75,5 +114,6 @@ object EclipseThemeSpec : AodThemeSpec {
         AodComponentValue.MEDIA,
     )
 
+    override val hasNotificationContent = true
     override val isLiveInPreview = true
 }

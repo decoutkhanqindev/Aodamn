@@ -17,7 +17,7 @@ URL = "https://cdn.jsdelivr.net/npm/@phosphor-icons/core@{version}/assets/{weigh
 MARKER = "Sinh bằng tools/icons/import_phosphor.py"
 VIEWPORT = 256
 # Icon có hướng: tự lật khi giao diện đọc từ phải sang trái (tiếng Ả Rập, Do Thái).
-MIRRORED = {"arrow-left", "arrow-right", "caret-right", "arrow-u-up-left", "arrow-u-up-right", "skip-back", "skip-forward"}
+MIRRORED = {"arrow-left", "arrow-right", "caret-left", "caret-right", "arrow-u-up-left", "arrow-u-up-right", "skip-back", "skip-forward"}
 
 
 def parse_manifest(path):

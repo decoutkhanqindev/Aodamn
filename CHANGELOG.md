@@ -7,6 +7,27 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-11-07 – Làm lại chủ đề Nhật thực
+
+Đối chiếu lại `Mar22Screen`, `Eclipse`, các lớp `d1`, `b1`, `c1`, `jb/g`, `a4/b0`, layout `mar22_screen_layout` dọc / ngang và ảnh thẻ `screen_mar_22.png` của app mẫu. User duyệt mock: "duyệt cho kiro code, theme này cầu kì
+nên cần tối ưu về perf nhé" (Kiro CLI code, Claude review). `check_theme.sh eclipse "Nhật thực"` phần nhanh pass, 40 test `AodThemeSpecTest`, `AodThemeExpectationTest`, `EclipseMetricsTest` pass. Chưa chạy test máy vì không có máy ảo, nên
+ảnh chuẩn `androidTest/screenshots/themes/eclipse/` vẫn là bản cũ, cần chạy `--device` rồi `--record`. Chưa test trên máy thật, chưa đo khung hình.
+
+### Sửa
+
+- Phần vẽ theo đúng `Eclipse.onDraw`: đĩa đen độ mờ 180 / 255, bán kính bằng 1/4 cạnh ngắn; quầng radial lệch sang một bên; viền gradient có blur; quầng và viền hòa màu Screen, khoét vùng trong đĩa. Bản trước là 4 vòng tròn mờ chồng nhau và một đĩa bóng.
+- Vành sáng chạy như kim giờ, 08:00 nằm ở hướng 8 giờ; bản trước đẩy bóng về hướng kim giờ nên vành sáng ở phía đối diện. Độ lộ tăng đều từ nửa đêm tới trưa rồi giảm lại (bản trước dùng đường sin); sửa lỗi của mẫu ở phút 12:00 làm độ lộ rớt về 0.
+- Giờ Lato 25sp (ngang 22sp), giãn chữ 2,1 em, `hh:mm`, rộng hơn đĩa; bản trước giãn 0,18 em và nằm gọn trong đĩa. Hiệu ứng mở 2 giây chỉ chạy khi mở AOD: độ lộ từ 0 lên, giãn chữ từ 1,8 lên 2,1 em; bản trước chạy lại mỗi phút.
+- Bố cục theo layout mẫu: đĩa + giờ đúng tâm màn, một cụm cách đáy 60dp; ngang đĩa + giờ ở trên, cạnh bằng chiều cao trừ 60dp, dải đáy cao cố định 46dp nên đĩa không nhích khi đổi chi tiết ↔ nhạc.
+
+### Thay đổi
+
+- Chủ đề tự vẽ ngày, dòng pin, trình phát theo kiểu chữ hoa giãn của mẫu (`ownBlocks` Ngày, Pin, Nhạc); Controls Color của mẫu tách thành ba màu Ngày, Pin & thông báo, Nhạc, phần phụ tối đi 40%. Thời tiết vẫn là khối chung nên màu theo Tùy chỉnh.
+- Hành vi theo mẫu: trình phát thay cụm chi tiết 30 giây khi mở AOD hoặc đổi bài; chạm màn đổi chi tiết ↔ nhạc; chạm cụm chi tiết hiện / ẩn thông báo mới nhất; thông báo mới ẩn nhạc và thay hàng icon 10 giây. Cố định 30 giây vì Aodamn không có cài đặt hẹn giờ này. Khác các chủ đề còn lại (hiện suốt khi có nhạc); user đã xem và chốt cho cả Chớp mắt lẫn Nhật thực: "giữ nguyên cho 2 theme nhé".
+- Nâng cấp: gradient cho Vầng và Bóng (trải từ màu đầu tới màu cuối, màu đơn thì giống hệt mẫu), nhạc mờ khi dừng, thông báo có cả nội dung, thời tiết, đèn pin. Giãn chữ cố định 2,1 em thay công thức theo density máy của mẫu; chữ `GreyED` thay trắng.
+- Hiệu năng (`jetpack-compose-performance`): một `Spacer` + `drawWithCache` vẽ cả đĩa lẫn giờ; `Paint`, shader, `BlurMaskFilter`, `Path` tạo trong khối cache, `onDrawBehind` không cấp phát; không recompose trong 2 giây mở vì `Animatable` và giãn chữ đọc ở pha vẽ; giờ, góc, độ lộ qua `rememberUpdatedState` nên cache không dựng lại mỗi phút; sau hiệu ứng mở không còn gì chạy theo khung hình; không `BoxWithConstraints`; màu đơn không qua `aodTint` để khỏi mở lớp offscreen.
+- Dùng chung, chỉ thêm: `previousIconRes` / `nextIconRes` trong `AodTextPlayerStyle`, mặc định giữ nút cũ; nhánh `ECLIPSE` của `AodMediaControls` sang `AodEclipseMedia`; icon `caret-left`, `caret-right` bản light. Các chủ đề khác không đổi. Mock `w_eclipse` vẽ lại, chạy hiệu ứng mở và đổi chi tiết ↔ nhạc ngay trong widget.
+
 ## [Chưa phát hành] – 2026-11-07 – Làm lại chủ đề Chớp mắt
 
 Đối chiếu lại `Dec21Screen`, `BlinkyCharacter`, các listener `jb/b`, `jb/c`, `jb/d`, `ab/k`, layout `dec21_screen_layout` và ảnh thẻ `screen_dec_21.png` của app mẫu. User duyệt mock: "Duyệt, giao Kiro"

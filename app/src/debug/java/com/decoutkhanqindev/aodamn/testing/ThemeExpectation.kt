@@ -102,7 +102,7 @@ object ThemeTestCatalog {
         ),
         ThemeExpectation(
             theme = AodThemeValue.ECLIPSE,
-            optionKeys = listOf("ring_color", "shadow_color", "rotation", "peek", "character_color"),
+            optionKeys = listOf("ring_color", "shadow_color", "rotation", "peek", "character_color", "date_color", "status_color", "media_color"),
             components = setOf(
                 AodComponentValue.DATE,
                 AodComponentValue.BATTERY,
@@ -110,7 +110,7 @@ object ThemeTestCatalog {
                 AodComponentValue.NOTIFICATIONS,
                 AodComponentValue.MEDIA,
             ),
-            ownBlocks = emptySet(),
+            ownBlocks = setOf(AodBlockValue.DATE, AodBlockValue.STATUS, AodBlockValue.MEDIA),
             hasNotificationContent = true,
             isLiveInPreview = true,
             motion = ThemeMotionExpectation(
