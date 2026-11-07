@@ -22,6 +22,7 @@ Mã nguồn demo FakeAOD không nằm trong repo này.
 - Cỡ mắt: app mẫu vẽ bằng px thô, 100 px trên máy 1080 bằng 9,26% bề ngang, khớp ảnh thẻ (9,2%). Nay bằng cạnh ngắn × cỡ / 1080, máy nào cũng cùng tỉ lệ; bản trước 100dp, gấp 2,75 lần.
 - Bố cục: mắt đúng tâm màn, giờ + dòng phụ căn giữa vùng 30% đáy như layout mẫu, cả dọc lẫn ngang; bỏ vạch ngăn và cột phải tự đặt của bản trước.
 - Giờ: Rubik Regular và `hh:mm` như app mẫu (bản trước font hệ thống và `h:mm`); cỡ 17 là ẩn giờ nhưng vẫn giữ chỗ.
+- Hàng icon thông báo: màu đơn không còn đi qua `aodTint`, bỏ một lớp offscreen thừa cho mỗi icon; nhìn không đổi.
 
 ### Thay đổi
 

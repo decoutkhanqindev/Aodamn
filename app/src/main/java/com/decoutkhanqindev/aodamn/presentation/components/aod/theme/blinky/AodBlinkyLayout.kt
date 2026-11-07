@@ -41,6 +41,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.painterResource
@@ -68,6 +69,7 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.blinky.BlinkyThe
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.component.AodComponentValue
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodIntent
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
+import com.decoutkhanqindev.aodamn.presentation.theme.Black
 import com.decoutkhanqindev.aodamn.presentation.theme.FontFamilyNunito
 import kotlinx.coroutines.delay
 
@@ -368,19 +370,20 @@ private fun BlinkyMediaLine(
 private fun BlinkyNotificationIcons(state: AodState) {
     val config = state.appearance.theme.config
     val option = BlinkyThemeSpec.StatusColor
+    val brush = if (config.gradientOf(option) != null) config.darkBrushOf(option, BlinkyMetrics.LINE_DARKEN) else null
 
     AodStatusLine(
         battery = null,
         isFlashlightOn = false,
         notifications = state.notifications.copy(latest = null),
-        color = config[option],
+        color = lerp(config[option], Black, BlinkyMetrics.LINE_DARKEN),
         glyphHeight = BlinkyMetrics.IconRowHeight,
         fontFamily = FontFamilyNunito,
         modifier = Modifier.layout { measurable, constraints ->
             val placeable = measurable.measure(constraints)
             layout(placeable.width, 0) { placeable.place(0, -BlinkyMetrics.IconRowLift.roundToPx()) }
         },
-        brush = config.darkBrushOf(option, BlinkyMetrics.LINE_DARKEN),
+        brush = brush,
     )
 }
 
