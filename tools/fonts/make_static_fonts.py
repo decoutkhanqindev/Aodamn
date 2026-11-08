@@ -44,6 +44,8 @@ FONTS = {
     # Chữ số của Thẻ lật, không cần tiếng Việt: Rubik Light là font đúng của app mẫu, Bodoni Moda thay Made Canvas
     "rubik": ([300, 400], {}),
     "bodoni_moda": ([400], {"opsz": 28}),
+    # Thay Nasalization của Pha trăng (không có trên Google Fonts), có đủ tiếng Việt
+    "exo2": ([500], {}),
     # Bản Google Fonts nặng 5 MB vì nhiều hệ chữ: tools/fonts/variable giữ bản đã cắt còn Latin + tiếng Việt (fontTools subset, giữ mọi trục).
     "google_sans": ([400, 500, 700], {"GRAD": 0, "opsz": 18}),
     # Chữ số của Chồng số: font mẫu đậm hơn cả wght 1000 nên lấy 1000, wdth 108 cho số 0 rộng như mẫu; góc vuông / bo tròn (ROND 0 / 100) là hai họ

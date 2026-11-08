@@ -121,9 +121,9 @@ object ThemeTestCatalog {
         ),
         ThemeExpectation(
             theme = AodThemeValue.MOON_PHASE,
-            optionKeys = listOf("clock_color", "clock_size", "character_color", "character_size", "peek", "rotation", "glow_color", "particle_color", "date_color"),
+            optionKeys = listOf("clock_color", "clock_size", "character_color", "character_size", "peek", "rotation", "glow_color", "particle_color", "date_color", "status_color", "media_color"),
             components = setOf(AodComponentValue.DATE, AodComponentValue.BATTERY, AodComponentValue.WEATHER, AodComponentValue.NOTIFICATIONS, AodComponentValue.MEDIA),
-            ownBlocks = setOf(AodBlockValue.DATE),
+            ownBlocks = setOf(AodBlockValue.DATE, AodBlockValue.STATUS, AodBlockValue.MEDIA),
             hasNotificationContent = true,
             isLiveInPreview = true,
             motion = ThemeMotionExpectation(fromMinute = 30, toMinute = 31, checkpointsMillis = listOf(1600L, 3200L)),

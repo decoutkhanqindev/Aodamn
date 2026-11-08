@@ -136,7 +136,7 @@
     <string name="theme_color_line">Line</string>
     <string name="theme_color_face">Dial</string>
     <string name="theme_color_moon_surface">Moon surface</string>
-    <string name="theme_color_glow">Moon glow</string>
+    <string name="theme_color_shooting_star">Shooting star</string>
     <string name="theme_color_particles">Particles</string>
     <string name="theme_opt_peek">Moon phase</string>
     <string name="theme_opt_rotation">Rotation</string>
@@ -475,6 +475,7 @@
     <string name="aod_eclipse_time_12h" translatable="false">hh:mm</string>
     <string name="aod_eclipse_date_pattern" translatable="false">dd MMMM yyyy</string>
     <string name="aod_eclipse_notification" translatable="false">%1$s: %2$s</string>
+    <string name="aod_moon_phase_notification" translatable="false">%1$s: %2$s</string>
     <string name="aod_spine_notification" translatable="false">%1$s: %2$s</string>
     <string name="aod_clip_notification" translatable="false">%1$s: %2$s</string>
     <string name="aod_frame_notification" translatable="false">%1$s: %2$s</string>

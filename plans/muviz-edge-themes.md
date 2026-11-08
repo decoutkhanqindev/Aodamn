@@ -377,6 +377,8 @@ Không sửa code dùng chung, không thêm font, dependency hoặc permission. 
 
 | Chủ đề của mình | Chủ đề app mẫu | Bằng chứng |
 |---|---|---|
-| Pha trăng (`MOON_PHASE`) | **21 · Jan23 "Moon Phase"** | làm từ danh mục này (2026-11-01), số đo và hành vi từ `Jan23Screen`, `MoonSpace`, `StarField`, `jan23_screen_layout` dọc / ngang |
+| Pha trăng (`MOON_PHASE`) | **21 · Jan23 "Moon Phase"** | làm từ danh mục này (2026-11-01), làm lại 2026-11-08, số đo và hành vi từ `Jan23Screen`, `MoonSpace`, `StarField`, `jan23_screen_layout` dọc / ngang |
 
 - ~~**21 · Moon Phase**~~ (MoonSpace, StarField, đã làm thành Pha trăng 2026-11-01): trăng có pha tự tính theo chu kỳ âm lịch hoặc Peek 1–50, bề mặt có crater, xoay 0–359°, quầng và hạt sao / sao băng. Bố cục user duyệt giữ hero trăng ở giữa dọc và trái ngang, cột thông tin cố định ở phải ngang; bỏ Controls Color vì các block dùng chung đã có màu riêng.
+
+Làm lại 2026-11-08 (user duyệt mock), đính chính bảng trên: trăng đường kính = 25% cạnh vùng × cỡ, bay quỹ đạo lệch (cạnh − 2 × đường kính) / 3 quanh tâm vùng, 4 phút một vòng, tự xoay ngược thêm giờ12 + phút / 60 độ + Rotation; pha cắt nửa trái bằng bầu dục nửa rộng = đường kính × |0,5 − pha| (DIFFERENCE dưới 0,5, UNION từ 0,5); 8 miệng hố tối hơn 5%, không có quầng. StarField: 80–128 hạt nhỏ + 12–24 sao lớn, cả bầu trời xoay 8 phút một vòng, sao lấp lánh ±1 px mỗi 500 ms; sao băng ±135°, dài 25–50% cạnh dài, 2–3,5 giây, nghỉ 0–3 giây. Glow Color là màu sao băng, Controls Color tách thành Pin & thông báo + Nhạc. Font Nasalization (không có trên Google Fonts) thay bằng Exo 2 Medium.

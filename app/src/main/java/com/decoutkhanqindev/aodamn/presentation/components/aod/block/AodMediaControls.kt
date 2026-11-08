@@ -54,6 +54,7 @@ import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.gradientlin
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.gentle.AodGentleMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.halfmoon.AodHalfMoonMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.mono.AodMonoMedia
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.moonphase.AodMoonPhaseMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.orbit.AodOrbitMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.pebble.AodPebbleMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.quarters.AodQuartersMedia
@@ -92,8 +93,10 @@ fun AodMediaControls(
     ) { target ->
         if (target != null) {
             when (theme.value) {
-                AodThemeValue.CLASSIC, AodThemeValue.JERSEY, AodThemeValue.MOON_PHASE ->
+                AodThemeValue.CLASSIC, AodThemeValue.JERSEY ->
                     AodClassicMedia(media = target, style = style, layout = layout, onIntent = onIntent)
+
+                AodThemeValue.MOON_PHASE -> AodMoonPhaseMedia(media = target, config = theme.config, onIntent = onIntent)
 
                 AodThemeValue.PEBBLE -> AodPebbleMedia(media = target, config = theme.config, onIntent = onIntent)
                 AodThemeValue.CAPSULE -> AodCapsuleMedia(media = target, config = theme.config, onIntent = onIntent)

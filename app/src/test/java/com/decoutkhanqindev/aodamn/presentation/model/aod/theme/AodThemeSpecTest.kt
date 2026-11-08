@@ -99,6 +99,7 @@ class AodThemeSpecTest {
                     AodThemeValue.ORBIT,
                     AodThemeValue.GENTLE,
                     AodThemeValue.ECLIPSE,
+                    AodThemeValue.MOON_PHASE,
                     AodThemeValue.BLINKY,
                 )
             val hasSharedLatest = AodBlockValue.STATUS !in theme.spec.ownBlocks && theme != AodThemeValue.FLIP
@@ -765,7 +766,7 @@ class AodThemeSpecTest {
             ),
             spec.components,
         )
-        assertEquals(setOf(AodBlockValue.DATE), spec.ownBlocks)
+        assertEquals(setOf(AodBlockValue.DATE, AodBlockValue.STATUS, AodBlockValue.MEDIA), spec.ownBlocks)
         assertEquals(true, spec.hasNotificationContent)
         assertEquals(true, spec.isLiveInPreview)
         assertEquals(80..120, MoonPhaseThemeSpec.ClockSize.range)
@@ -785,6 +786,8 @@ class AodThemeSpecTest {
                 MoonPhaseThemeSpec.GlowColor,
                 MoonPhaseThemeSpec.ParticleColor,
                 MoonPhaseThemeSpec.DateColor,
+                MoonPhaseThemeSpec.StatusColor,
+                MoonPhaseThemeSpec.MediaColor,
             ),
             spec.options,
         )

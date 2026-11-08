@@ -67,6 +67,10 @@ val FontFamilyTomorrow = FontFamily(
     Font(R.font.tomorrow_medium, FontWeight.Medium),
 )
 
+val FontFamilyExo2 = FontFamily(
+    Font(R.font.exo2_medium, FontWeight.Medium),
+)
+
 val FontFamilyRajdhani = FontFamily(
     Font(R.font.rajdhani_bold, FontWeight.Bold),
 )

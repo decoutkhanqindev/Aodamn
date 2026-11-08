@@ -7,6 +7,30 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-11-08 – Làm lại chủ đề Pha trăng
+
+Đối chiếu lại `Jan23Screen`, `MoonSpace`, `StarField` và layout `jan23_screen_layout` dọc / ngang của app mẫu. User duyệt mock: "Duyệt, giao Kiro"
+(Kiro CLI code, Claude review theo `jetpack-compose-performance`). `check_theme.sh moonphase "Pha trăng"` phần nhanh pass, `AodThemeSpecTest`, `MoonPhaseMetricsTest` pass,
+`check-rules` 0 vi phạm. Chưa chạy test máy vì không có máy ảo, ảnh chuẩn `androidTest/screenshots/themes/moon_phase/` vẫn là bản cũ, cần chạy `--device` rồi `--record`.
+Chưa test trên máy thật, chưa đo khung hình.
+
+### Sửa
+
+- Trăng bay quỹ đạo quanh tâm vùng giữa, 4 phút một vòng, tự xoay ngược theo giờ và Rotation như `MoonSpace`; bản trước đặt cố định giữa màn và to hơn nhiều. Đường kính = 25% cạnh vùng × cỡ.
+- Pha trăng cắt nửa trái bằng bầu dục theo pha (DIFFERENCE / UNION) như mẫu; bản trước che bằng đĩa đen nên che luôn ảnh nền. 8 miệng hố chỉ tối hơn mặt trăng 5% (bản trước 5 hố xám đậm), không còn quầng quanh trăng.
+- Glow Color của mẫu là màu sao băng, đổi nhãn thành "Sao băng"; bản trước vẽ thành quầng trăng. Bầu trời có 92–152 sao, xoay 8 phút một vòng, sao lớn lấp lánh, sao băng hướng và độ dài ngẫu nhiên; bản trước 24 chấm và một sao băng lặp đều.
+- Bố cục ba vùng 30% / 52% / 18% chiều cao như layout mẫu, giờ 33sp giãn chữ, ngày căn phải theo mép giờ, nền mờ đen sau chữ; mở AOD thì giờ trượt lên, ngày trượt xuống 1 giây. Tắt ngày giờ không dời. Ngang theo layout ngang của mẫu: trăng bên trái, giờ + ngày và hàng chi tiết bên phải.
+
+### Thay đổi
+
+- Font Nasalization của mẫu không có trên Google Fonts, thay bằng Exo 2 Medium (`exo2_medium.ttf`, OFL, có đủ tiếng Việt); giờ giãn 0,55 em để rộng bằng mẫu.
+- Chủ đề tự vẽ ngày, hàng pin • icon và trình phát (`ownBlocks` Ngày, Pin, Nhạc); Controls Color của mẫu tách thành hai màu Pin & thông báo, Nhạc, nghệ sĩ tối đi 30%. Thời tiết dùng khối chung trên dòng ngày.
+- Hành vi theo mẫu: trình phát thay hàng pin 30 giây khi mở AOD hoặc đổi bài, chạm màn đổi chi tiết ↔ nhạc, chạm hàng pin hiện / ẩn thông báo mới nhất, thông báo mới ẩn nhạc và thay hàng pin 10 giây. Giống Chớp mắt và Nhật thực, khác các chủ đề còn lại.
+- Bỏ nghỉ sau 15 giây của mẫu: hiệu ứng chạy liên tục, bù bằng giới hạn khung hình bên dưới. Hạt nhỏ vẽ bằng chấm (mẫu là sao 4 cánh 1–5 px), sao lớn và sao băng không blur theo khung hình. Nghệ sĩ giãn 0,3 em như tên bài (mẫu 0,2 em) vì `AodTextPlayerStyle` chỉ có một giãn chữ.
+- Nâng cấp: gradient cho mọi màu, nhạc mờ khi dừng, thông báo có cả nội dung, thời tiết, đèn pin.
+- Hiệu năng (`jetpack-compose-performance`): một `Spacer` + `drawWithCache` vẽ sao, sao băng, trăng; trăng dựng sẵn thành ảnh, chỉ dựng lại khi đổi màu, cỡ hoặc pha; hạt nhỏ gom 4 lệnh `drawPoints`, sao lớn là ảnh nhỏ dựng sẵn; `onDrawBehind` không cấp phát, chỉ đọc đồng hồ 10 fps và tiến độ sao băng 30 fps (chỉ khi đang bay); chuyển động không recompose; header đặt bằng một `Layout`, dải đáy bằng `Modifier.layout`, không `BoxWithConstraints`.
+- Dùng chung, chỉ thêm: nhánh `MOON_PHASE` của `AodMediaControls` sang `AodMoonPhaseMedia`; màu `GreyBD`, `BlackAlpha90`; `FontFamilyExo2`. Bỏ chuỗi `theme_color_glow` chỉ Pha trăng dùng. Các chủ đề khác không đổi.
+
 ## [Chưa phát hành] – 2026-11-07 – Làm lại chủ đề Nhật thực
 
 Đối chiếu lại `Mar22Screen`, `Eclipse`, các lớp `d1`, `b1`, `c1`, `jb/g`, `a4/b0`, layout `mar22_screen_layout` dọc / ngang và ảnh thẻ `screen_mar_22.png` của app mẫu. User duyệt mock: "duyệt cho kiro code, theme này cầu kì
