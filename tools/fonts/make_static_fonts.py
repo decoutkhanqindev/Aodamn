@@ -46,6 +46,8 @@ FONTS = {
     "bodoni_moda": ([400], {"opsz": 28}),
     # Thay Nasalization của Pha trăng (không có trên Google Fonts), có đủ tiếng Việt
     "exo2": ([500], {}),
+    # Thay Neumatic Black của Áp phích (không có trên Google Fonts, thiếu dấu tiếng Việt): chữ hẹp đậm gần nhất, chỉ có trục wdth
+    "league_gothic": ([400], {}),
     # Bản Google Fonts nặng 5 MB vì nhiều hệ chữ: tools/fonts/variable giữ bản đã cắt còn Latin + tiếng Việt (fontTools subset, giữ mọi trục).
     "google_sans": ([400, 500, 700], {"GRAD": 0, "opsz": 18}),
     # Chữ số của Chồng số: font mẫu đậm hơn cả wght 1000 nên lấy 1000, wdth 108 cho số 0 rộng như mẫu; góc vuông / bo tròn (ROND 0 / 100) là hai họ
@@ -78,7 +80,8 @@ def main(families):
             axes = {axis.axisTag: axis for axis in font["fvar"].axes}
             location = {tag: axis.defaultValue for tag, axis in axes.items()}
             location.update(pinned)
-            location["wght"] = min(max(weight, axes["wght"].minValue), axes["wght"].maxValue)
+            if "wght" in axes:
+                location["wght"] = min(max(weight, axes["wght"].minValue), axes["wght"].maxValue)
             static = instancer.instantiateVariableFont(font, location, inplace=False)
             target = OUT / f"{family}_{NAMES[weight]}.ttf"
             static.save(target)

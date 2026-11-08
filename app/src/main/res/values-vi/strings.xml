@@ -80,6 +80,7 @@
     <string name="theme_eclipse">Nhật thực</string>
     <string name="theme_blinky">Chớp mắt</string>
     <string name="theme_moon_phase">Pha trăng</string>
+    <string name="theme_poster">Áp phích</string>
     <string name="aod_jersey_date_first_pattern">dd</string>
     <string name="aod_jersey_date_second_pattern">MM</string>
     <string name="aod_bezel_weekday_pattern">EEEE</string>
@@ -100,6 +101,7 @@
     <string name="theme_tab_media">Nhạc</string>
     <string name="theme_tab_status">Pin &amp; thông báo</string>
     <string name="theme_tab_line">Vạch</string>
+    <string name="theme_tab_day">Thứ</string>
     <string name="theme_opt_shape">Hình</string>
     <string name="theme_opt_tile_style">Kiểu</string>
     <string name="tile_style_filled">Đặc</string>
@@ -110,6 +112,7 @@
     <string name="theme_color_minute_tile">Khối phút</string>
     <string name="theme_color_minute_digits">Số phút</string>
     <string name="theme_color_date">Ngày</string>
+    <string name="theme_color_day">Thứ</string>
     <string name="theme_color_media">Nhạc</string>
     <string name="theme_color_digits">Chữ số</string>
     <string name="theme_color_hands">Kim và vạch</string>

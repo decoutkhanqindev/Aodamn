@@ -24,6 +24,7 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.mono.MonoThemeSp
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.moonphase.MoonPhaseThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.orbit.OrbitThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.pebble.AodTileStyleValue
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.poster.PosterThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.quarters.AodQuartersDigitStyleValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.quarters.QuartersThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.ripple.RippleThemeSpec
@@ -100,6 +101,7 @@ class AodThemeSpecTest {
                     AodThemeValue.GENTLE,
                     AodThemeValue.ECLIPSE,
                     AodThemeValue.MOON_PHASE,
+                    AodThemeValue.POSTER,
                     AodThemeValue.BLINKY,
                 )
             val hasSharedLatest = AodBlockValue.STATUS !in theme.spec.ownBlocks && theme != AodThemeValue.FLIP
@@ -877,6 +879,38 @@ class AodThemeSpecTest {
                 EclipseThemeSpec.DateColor,
                 EclipseThemeSpec.StatusColor,
                 EclipseThemeSpec.MediaColor,
+            ),
+            spec.options,
+        )
+    }
+
+    @Test
+    fun `poster keeps every reference option and fixed compact blocks`() {
+        val spec = AodThemeValue.POSTER.spec
+        assertEquals(
+            setOf(
+                AodComponentValue.DATE,
+                AodComponentValue.BATTERY,
+                AodComponentValue.WEATHER,
+                AodComponentValue.NOTIFICATIONS,
+                AodComponentValue.MEDIA,
+            ),
+            spec.components,
+        )
+        assertEquals(setOf(AodBlockValue.DATE, AodBlockValue.STATUS, AodBlockValue.MEDIA), spec.ownBlocks)
+        assertEquals(true, spec.hasNotificationContent)
+        assertEquals(false, spec.isLiveInPreview)
+        assertEquals(80..140, PosterThemeSpec.ClockSize.range)
+        assertEquals(100, PosterThemeSpec.ClockSize.default)
+        assertEquals(
+            listOf(
+                PosterThemeSpec.ClockSize,
+                PosterThemeSpec.HourColor,
+                PosterThemeSpec.MinuteColor,
+                PosterThemeSpec.DayColor,
+                PosterThemeSpec.DateColor,
+                PosterThemeSpec.StatusColor,
+                PosterThemeSpec.MediaColor,
             ),
             spec.options,
         )

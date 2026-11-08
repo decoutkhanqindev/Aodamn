@@ -61,6 +61,7 @@ code dịch ngược, không lấy asset (font, ảnh, Lottie) từ APK. APK và
 | Đơn cách (`MONO`) | **31 · Nov23 "Space Mono"** | làm từ danh mục này (2026-10-29), số đo lấy từ layout `nov23_screen_layout` dọc / ngang / `Nov23Screen` / `NoPadTextView` / font Space Mono trong APK |
 | Khung (`FRAME`) | **10 · Feb22 "Box Clock"** | làm từ danh mục này (2026-10-29), số đo lấy từ layout `feb22_screen_layout` dọc / ngang / `Feb22Screen` / font Josefin Sans trong APK |
 | Lời (`WORDS`) | **5 · Sep21 "Text Clock"** | làm từ danh mục này (2026-10-29), số đo lấy từ layout `sep21_screen_layout` dọc / ngang / `Sep21Screen` / font Lato 1.104 trong APK |
+| Áp phích (`POSTER`) | **35 · Mar24 "Text HyperOS"** | làm từ danh mục này (2026-11-08), số đo lấy từ layout `mar24_screen_layout` dọc / ngang / `Mar24Screen` / `NoPadTextView` / font Neumatic Black trong APK |
 
 ## Danh mục đủ 44 chủ đề
 
@@ -89,7 +90,7 @@ text view chung) hoặc font dùng trong code; "chữ (font layout)" nghĩa là 
 | 18 | Oct22 | Pixel Default | Clock Weight, Clock Size, Theme Color | Hour, Minute, Date, Notification, Controls, Battery Status | chữ: google_sans_clock | font độc quyền | chưa có |
 | 19 | Nov22 | Concentric | Clock Size, Hour Color, Minute Color, Ring Color, Dash Color, Controls Color | – | ConcentricClock | – | chưa có |
 | 20 | Dec22 | Half Concentric ⭐ | Hour Color, Minute Color, Ring Color, Dash Color, Date Color, Controls Color | – | HalfConcentricClock | – | **Bán nguyệt** (`HALF_MOON`) |
-| 21 | Jan23 | Moon Phase ⭐ | Clock Color, Date Color, Clock Size, Character Color, Character Size, Peek, Rotation, Glow Color, Particle Color, Controls Color | – | MoonSpace, StarField | – | chưa có |
+| 21 | Jan23 | Moon Phase ⭐ | Clock Color, Date Color, Clock Size, Character Color, Character Size, Peek, Rotation, Glow Color, Particle Color, Controls Color | – | MoonSpace, StarField | – | **Pha trăng** (`MOON_PHASE`) |
 | 22 | Feb23 | Vertical Text | Text, Spacing, Text Size, Text Style, Text Color, Notification Color, Controls Color | – | chữ: 12 font (abril, bebas, monoton, rye…) | ô nhập chữ | chưa có |
 | 23 | Mar23 | Big Overlap Clock | Clock Style, Clock Size, Color 1, Color 2, Theme Color | Color 3, Color 4, Date, Notification, Controls, Battery Status | BigPixel2Clock | – | **Chồng số** (`BIG_OVERLAP`) |
 | 24 | Apr23 | Android 14 Analog Clock | Text Style, Clock Style, Clock Size, Color 1, Color 2, Theme Color | Color 3, Date, Notification, Controls, Battery Status | PilotBold2Tick, PixelAnalogClock | – | **Bốn số** (`QUARTERS`) |
@@ -103,7 +104,7 @@ text view chung) hoặc font dùng trong code; "chữ (font layout)" nghĩa là 
 | 32 | Dec23 | Flex Round | Clock Style, Color 1, Color 2, Clock Size | – | chữ (font layout) | – | **Viên nang** (`CAPSULE`) |
 | 33 | Jan24 | Dual Timezone | Time Zone, Clock Style, Color 1, Color 2 | – | SimpleAnalogClock | chọn múi giờ | chưa có |
 | 34 | Feb24 | Long HyperOS | Clock Style, Clock Size, Hour Color, Minute Color, Date Color, Controls Color | – | chữ (font layout) | – | **Tháp** (`TOWER`) |
-| 35 | Mar24 | Text HyperOS | Clock Size, Theme Color | Hour, Minute, Day, Date, Controls | chữ (font layout) | – | chưa có |
+| 35 | Mar24 | Text HyperOS | Clock Size, Theme Color | Hour, Minute, Day, Date, Controls | chữ (font layout) | – | **Áp phích** (`POSTER`) |
 | 36 | Apr24 | Big Retro | Clock Style, Clock Size, Clock Color, Theme Color | Date, Controls | chữ (font layout) | – | chưa có |
 | 37 | May24 | Fill HyperOS | Clock Size, Hour Color, Minute Color, Date Color, Controls Color | – | chữ (font layout) | – | **Số áo** (`JERSEY`) |
 | 38 | Jun24 | M3 Expressive | Clock Style, Background, Color 1, Color 2, Clock Size | – | chữ (font layout) | – | **Thẻ** (`CARD`) |
@@ -305,6 +306,14 @@ mỗi phút (`AodViewModel`), nên phần chạy theo giây của app mẫu ph�
 - **43 · MIUI Doodle** ⭐ (`Nov24Screen`): giờ, phút, thứ, tháng, ngày là **ảnh vẽ tay** (24 + 60 + 7 + 12 + 31 hình), không phải
   font; không được lấy ảnh của app mẫu, phải tự vẽ cả bộ, nên để sau.
 
+- ~~**35 · Text HyperOS**~~ (`Mar24Screen`, `mar24_screen_layout` dọc / ngang, đã làm thành Áp phích 2026-11-08): giờ, phút, thứ in hoa, ngày `d/M` / `M/d`
+  theo thứ tự của locale là bốn `NoPadTextView` Neumatic Black (khung = khung nét chữ, giãn 0,02 em), s = cạnh ngắn × cỡ (80–140, mặc định 100) × 0,23 (ngang lấy
+  min(0,4 × bề ngang, chiều cao)), giờ + phút 1,2 × s cách 5 dp, các dòng cách 10 dp. Dọc: khối chữ căn trái lề 20 dp giữa vùng 55% trên; vùng 40% dưới neo đáy
+  trình phát (lùi / tới 40 dp, tên 13sp / nghệ sĩ 11,5sp Product Sans in hoa giãn 0,38, thanh tiến trình cách 30 dp) rồi hàng pin 15 dp + 14sp · chấm · icon 17 dp
+  cách 15 dp (đệm trên 40, dưới 10), chừa 5% đáy. Ngang: cột trái 45% (khối chữ + hàng pin), cột phải 55% trình phát neo đáy 35 dp, không có nhạc thì cột trái chiếm cả
+  màn. Màu: Theme `#CFD8DC`, phút = Theme tối 25,5% độ sáng. Hành vi: nhạc hiện khi mở AOD / đổi bài, ẩn sau AOD_CONTROLS_TIMEOUT (mặc định 30 giây), chạm màn bật /
+  tắt, bấm nút giữ thêm; thông báo mới thay hàng icon `NOTIFY_TIME_MS` (10 giây), chạm hàng pin bật / tắt; không có dạng tiết kiệm riêng. Neumatic Black không có dấu
+  tiếng Việt nên thay bằng League Gothic (hẹp đậm gần nhất có tiếng Việt, nét mảnh hơn khoảng 13%); ngang gom pin + nhạc ở cột phải (user duyệt).
 Để sau: 33 Dual Timezone (cần control chọn múi giờ), 16 / 22 (cần ô nhập chữ), ~~chủ đề giờ bằng chữ~~ (đã làm thành Lời bằng ICU spellout có sẵn), 6 Visualizer (cần quyền `RECORD_AUDIO`, phải hỏi trước), 8 / 11 / 21 (hiệu ứng, hạt: công sức
 lớn), 17 / 26 / 27 (cần chọn font mở thay font độc quyền). 18 / 41 dùng Google Sans: font này nay có trên Google Fonts (OFL, Vành
 dùng bản Bold), Google Sans Flex cũng có, nên không còn vướng font.

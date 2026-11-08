@@ -87,6 +87,7 @@
     <string name="theme_eclipse">Eclipse</string>
     <string name="theme_blinky">Blinky</string>
     <string name="theme_moon_phase">Moon Phase</string>
+    <string name="theme_poster">Poster</string>
     <string name="theme_in_use">In use</string>
     <string name="theme_edit">Edit</string>
     <string name="theme_saved">Theme saved</string>
@@ -104,6 +105,7 @@
     <string name="theme_tab_media">Music</string>
     <string name="theme_tab_status">Battery &amp; alerts</string>
     <string name="theme_tab_line">Line</string>
+    <string name="theme_tab_day">Day</string>
     <string name="theme_opt_shape">Shape</string>
     <string name="theme_opt_tile_style">Style</string>
     <string name="tile_style_filled">Filled</string>
@@ -114,6 +116,7 @@
     <string name="theme_color_minute_tile">Minute tile</string>
     <string name="theme_color_minute_digits">Minute digits</string>
     <string name="theme_color_date">Date</string>
+    <string name="theme_color_day">Day</string>
     <string name="theme_color_media">Music</string>
     <string name="theme_color_digits">Digits</string>
     <string name="theme_color_hands">Hands &amp; ticks</string>
@@ -473,6 +476,13 @@
     <string name="aod_tick_date_pattern" translatable="false">EEE, dd MMM</string>
     <string name="aod_tick_notification" translatable="false">%1$s: %2$s</string>
     <string name="aod_eclipse_time_12h" translatable="false">hh:mm</string>
+    <string name="aod_poster_notification" translatable="false">%1$s: %2$s</string>
+    <string name="aod_poster_hour_12h" translatable="false">hh</string>
+    <string name="aod_poster_hour_24h" translatable="false">HH</string>
+    <string name="aod_poster_minute" translatable="false">mm</string>
+    <string name="aod_poster_day" translatable="false">EEEE</string>
+    <string name="aod_poster_date_dm" translatable="false">d/M</string>
+    <string name="aod_poster_date_md" translatable="false">M/d</string>
     <string name="aod_eclipse_date_pattern" translatable="false">dd MMMM yyyy</string>
     <string name="aod_eclipse_notification" translatable="false">%1$s: %2$s</string>
     <string name="aod_moon_phase_notification" translatable="false">%1$s: %2$s</string>

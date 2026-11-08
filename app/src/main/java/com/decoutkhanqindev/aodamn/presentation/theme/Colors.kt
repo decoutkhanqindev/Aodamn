@@ -12,6 +12,8 @@ val Purple = Color(0xFFC3A6FF)
 val Lavender = Color(0xFFBAB8F8)
 val Orange = Color(0xFFFFB27A)
 val Pink = Color(0xFFFF9EC4)
+val Vermilion = Color(0xFFFF6B3D)
+val VermilionDeep = Color(0xFFEB3800)
 
 val GreyED = Color(0xFFEDEDED)
 val GreyBD = Color(0xFFBDBDBD)

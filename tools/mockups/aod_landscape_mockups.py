@@ -5938,3 +5938,242 @@ if ONLY in (None, "w_moon_phase"):
     moon_phase_code = widget("Chủ đề Pha trăng (Moon Phase): trăng bay quỹ đạo, sao lấp lánh, sao băng, bốn khung dọc và bốn khung ngang", mp_defs(), moon_phase)
     (OUT / "w_moon_phase.html").write_text(moon_phase_code, encoding="utf-8")
     print("w_moon_phase", len(moon_phase_code))
+
+
+# ------------------------------------------------------------------ ÁP PHÍCH (Text HyperOS của Muviz Edge, Mar24Screen)
+# Bốn khối chữ League Gothic (thay Neumatic Black của mẫu, font mẫu không có dấu tiếng Việt): giờ + phút cỡ 1,2 × s, thứ in hoa và
+# ngày d/M cỡ s, s = cạnh ngắn × 0,23 × cỡ (ngang lấy min(0,4 × bề ngang, chiều cao)), giãn 0,02 em, khung chữ ôm sát nét như
+# NoPadTextView; khoảng 5 dp giữa giờ và phút, 10 dp giữa các dòng. Dọc: khối chữ căn trái lề 20 dp, giữa vùng 55% trên; cụm nhạc +
+# pin neo đáy vùng 40% dưới (chừa 5%). Ngang: khối chữ giữa cột trái 45% (lề 40 dp), cụm nhạc + pin ở cột phải (đổi so với mẫu).
+PS_FONT = TTFont(ROOT / "tools/fonts/variable/league_gothic_variable.ttf")
+PS_UPM = PS_FONT["head"].unitsPerEm
+PS_CMAP = PS_FONT.getBestCmap()
+PS_GLYPHS = PS_FONT.getGlyphSet()
+PS_HMTX = PS_FONT["hmtx"]
+PS_GS = TTFont(ROOT / "app/src/main/res/font/google_sans_regular.ttf")
+PS_GS_UPM = PS_GS["head"].unitsPerEm
+PS_GS_CMAP = PS_GS.getBestCmap()
+PS_SPACING = .02
+PS_HOUR = "#FF6B3D"
+PS_TEXT = "#BDBDBD"
+PS_DAY = "#CED4DA"
+PS_REF = "#CFD8DC"
+PS_USED = set()
+
+
+def ps_dark(color, factor=.745):
+    import colorsys
+    r, g, b = (int(color[i:i + 2], 16) / 255 for i in (1, 3, 5))
+    h, l, s = colorsys.rgb_to_hls(r, g, b)
+    return "#" + "".join(f"{round(c * 255):02X}" for c in colorsys.hls_to_rgb(h, l * factor, s))
+
+
+PS_MINUTE = ps_dark(PS_HOUR)
+
+
+def ps_glyph_def(ch):
+    name = PS_CMAP[ord(ch)]
+    pen = SVGPathPen(PS_GLYPHS)
+    PS_GLYPHS[name].draw(TransformPen(pen, (1, 0, 0, -1, 0, 0)))
+    return f'<path id="psg{ord(ch)}" d="{pen.getCommands()}"/>'
+
+
+def ps_ink(text):
+    x, box = 0.0, None
+    for ch in text:
+        name = PS_CMAP[ord(ch)]
+        pen = BoundsPen(PS_GLYPHS)
+        PS_GLYPHS[name].draw(pen)
+        if pen.bounds:
+            b = (pen.bounds[0] + x, pen.bounds[1], pen.bounds[2] + x, pen.bounds[3])
+            box = b if box is None else (min(box[0], b[0]), min(box[1], b[1]), max(box[2], b[2]), max(box[3], b[3]))
+        x += PS_HMTX[name][0] + PS_SPACING * PS_UPM
+    return box
+
+
+def ps_line(x, top, text, size, color):
+    """Một dòng chữ lớn, khung ôm nét: (x, top) là góc trên trái khung; trả (svg, rộng, cao)."""
+    k = size / PS_UPM
+    x0, y0, x1, y1 = ps_ink(text)
+    base = top + y1 * k
+    pen_x = x - x0 * k
+    s, cursor = "", 0.0
+    for ch in text:
+        name = PS_CMAP[ord(ch)]
+        if ch != " ":
+            PS_USED.add(ch)
+            s += f'<use href="#psg{ord(ch)}"' + (f' x="{round(cursor)}"' if cursor else "") + "/>"
+        cursor += PS_HMTX[name][0] + PS_SPACING * PS_UPM
+    return f'<g fill="{color}" transform="translate({f(pen_x)} {f(base)}) scale({k:.4f})">{s}</g>', (x1 - x0) * k, (y1 - y0) * k
+
+
+def ps_fit(text, size, width):
+    x0, _, x1, _ = ps_ink(text)
+    return min(size, width / ((x1 - x0) / PS_UPM))
+
+
+def ps_gs_width(text, size, spacing=0.0):
+    hmtx = PS_GS["hmtx"]
+    adv = sum(hmtx[PS_GS_CMAP[ord(c)]][0] for c in text if ord(c) in PS_GS_CMAP)
+    return adv / PS_GS_UPM * size + spacing * size * len(text)
+
+
+def ps_text(cx, base, text, size, color, spacing=0.0, anchor="middle"):
+    width = ps_gs_width(text, size, spacing)
+    x = cx - width / 2 if anchor == "middle" else cx
+    track = f' letter-spacing="{spacing}em"' if spacing else ""
+    return f'<text class="psx" x="{f(x + spacing * size / 2)}" y="{f(base)}" font-size="{f(size)}" fill="{color}"{track}>{text}</text>'
+
+
+def ps_block(x, top, colors, hour, minute, day, date, s, max_width, weather):
+    """Khối chữ: giờ + phút, thứ, ngày (+ thời tiết cạnh ngày). Trả (svg, cao)."""
+    hour_size = ps_fit(f"{hour}  {minute}", 1.2 * s, max_width)
+    day_size = ps_fit(day, s, max_width)
+    out, y = "", top
+    g, w, h = ps_line(x, y, hour, hour_size, colors[0])
+    out += g
+    g2, w2, h2 = ps_line(x + w + 5, y, minute, hour_size, colors[1])
+    out += g2
+    y += max(h, h2) + 10
+    if day:
+        g, w, h = ps_line(x, y, day, day_size, colors[2])
+        out += g
+        y += h + 10
+    if date:
+        g, w, h = ps_line(x, y, date, s, colors[3])
+        out += g
+        if weather:
+            wx, cy = x + w + 16, y + h / 2
+            out += f'<use href="#psi-w" transform="translate({f(wx)} {f(cy - 9)}) scale(.075)" fill="{colors[3]}"/>' + ps_text(wx + 22, cy + 6, "28°", 17, colors[3], anchor="start")
+        y += h
+    elif weather:
+        cy = y + 8
+        out += f'<use href="#psi-w" transform="translate({f(x)} {f(cy - 9)}) scale(.075)" fill="{colors[3]}"/>' + ps_text(x + 22, cy + 6, "28°", 17, colors[3], anchor="start")
+        y += 18
+    return out, y - top
+
+
+def ps_block_height(hour, minute, day, date, s, max_width):
+    return ps_block(0, 0, ("#000",) * 4, hour, minute, day, date, s, max_width, False)[1]
+
+
+def ps_status(cx, cy, color, charging, icons):
+    percent = "72%"
+    text_width = ps_gs_width(percent, 14, .1)
+    total = 7.6 + 5 + text_width + (15 + ps_gs_width("•", 13) + 15 + icons * 17 + (icons - 1) * 15 if icons else 0)
+    x = cx - total / 2
+    s = ec_battery(x, cy, color, charging)
+    x += 12.6
+    s += ps_text(x, cy + 5, percent, 14, color, .1, "start")
+    x += text_width
+    if icons:
+        x += 15
+        s += ps_text(x, cy + 4.5, "•", 13, color, anchor="start")
+        x += ps_gs_width("•", 13) + 15
+        for i in range(icons):
+            s += icon_shapes(color)[i % 3](x + i * 32, cy - 8.5, 17)
+    return s
+
+
+def ps_latest(cx, cy, color):
+    text = "HANNA: ON MY WAY HOME"
+    width = 15 + 15 + ps_gs_width(text, 12, .2)
+    x = cx - width / 2
+    return icon_shapes(color)[0](x, cy - 7.5, 15) + ps_text(x + 30, cy + 4.3, text, 12, color, .2, "start")
+
+
+def ps_media(left, right, cy, color, title, artist, progress=.38):
+    middle = (left + right) / 2
+    dark = ec_mix(color, "#000000", .3)
+    s = ec_chevron(left + 20 + 20, cy, color, -1) + ec_chevron(right - 20 - 20, cy, color, 1)
+    s += ps_text(middle, cy - 4, title, 13, color, .38) + ps_text(middle, cy + 15, artist, 11.5, dark, .38)
+    bar_y = cy + 20 + 30
+    a, b = left + 30, right - 30
+    s += (f'<rect x="{f(a)}" y="{f(bar_y)}" width="{f(b - a)}" height="2" rx="1" fill="{color}" opacity=".3"/>'
+          f'<rect x="{f(a)}" y="{f(bar_y)}" width="{f((b - a) * progress)}" height="2" rx="1" fill="{color}"/>')
+    return s
+
+
+def ps_face(width, height, hour="08", minute="30", day="CHỦ NHẬT", date="8/11", size=100, colors=None, text=PS_TEXT,
+            media=False, latest=False, charging=False, icons=3, weather=False, title="THAT COOL SONG", artist="IT'S ARTIST", ref=False):
+    colors = colors or (PS_HOUR, PS_MINUTE, PS_DAY, PS_DAY)
+    is_landscape = width > height
+    s = min(width * .4 if is_landscape else width, height) * size / 100 * .23
+    if is_landscape:
+        left_w = width * .45
+        if ref:
+            column_w = width if not media else left_w
+        else:
+            column_w = left_w
+        max_width = column_w - 80
+        block_h = ps_block_height(hour, minute, day, date, s, max_width) + (0 if not weather or date else 18)
+        avail_bottom = height - (62 if ref else 0)
+        top = (avail_bottom - block_h) / 2
+        block, _ = ps_block(40, top, colors, hour, minute, day, date, s, max_width, weather)
+        if ref:
+            dcx = column_w / 2
+            status_cy = height - 35 - 8.5
+            media_l, media_r = left_w + 40, width - 40
+        else:
+            dcx = left_w + (width - left_w) / 2
+            status_cy = height - 35 - 8.5
+            media_l, media_r = left_w + 40, width - 40
+        details = ps_latest(dcx, status_cy, text) if latest else ps_status(dcx, status_cy, text, charging, icons)
+        media_cy = height - 35 - 2 - 30 - 20 if ref else status_cy - 8.5 - 30 - 2 - 30 - 20
+        media_svg = ps_media(media_l, media_r, media_cy, text, title, artist) if media else ""
+    else:
+        max_width = width - 40
+        block_h = ps_block_height(hour, minute, day, date, s, max_width) + (0 if not weather or date else 18)
+        top = (height * .55 - block_h) / 2
+        block, _ = ps_block(20, top, colors, hour, minute, day, date, s, max_width, weather)
+        bottom = height * .95
+        status_cy = bottom - 10 - 8.5
+        details_top = bottom - 10 - 17 - 40
+        details = ps_latest(width / 2, status_cy, text) if latest else ps_status(width / 2, status_cy, text, charging, icons)
+        media_cy = details_top - 2 - 30 - 20
+        media_svg = ps_media(0, width, media_cy, text, title, artist) if media else ""
+    media_g = f'<g class="ps-m"{"" if media else " style=" + chr(34) + "display:none" + chr(34)}>{media_svg or ps_media(0 if not is_landscape else width * .45 + 40, width if not is_landscape else width - 40, media_cy, text, title, artist)}</g>'
+    return f'<g class="ps" style="cursor:pointer"><rect width="{width}" height="{height}" fill="transparent"/>{block}{details}{media_g}</g>'
+
+
+def ps_defs():
+    return (f'<path id="psi-w" d="{ec_vector("ic_cloud_sun_fill")}"/>'
+            + "".join(ps_glyph_def(ch) for ch in sorted(PS_USED)))
+
+
+def ps_live_script():
+    return ('<style>.psx{font-family:"Google Sans";white-space:pre}</style>'
+            '<script>(function(){document.querySelectorAll(".ps").forEach(function(G){var m=G.querySelector(".ps-m");'
+            'G.addEventListener("click",function(){var on=m.style.display=="none";m.style.display=on?"":"none";'
+            'if(on&&m.animate)m.animate([{transform:"translateY(17px)",opacity:0},{transform:"none",opacity:1}],{duration:200,easing:"ease-out"})})})})();</script>')
+
+
+poster_frames = [
+    '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400&display=swap">',
+    '<div style="font-size:0">',
+    frame_portrait("App mẫu (Text HyperOS) vẽ lại: một màu Theme #CFD8DC, phút tối hơn 25,5% độ sáng; nhạc trên hàng pin",
+                   ps_face(PW, PH, "05", "36", "WEDNESDAY", "30/4", colors=(PS_REF, ps_dark(PS_REF), PS_REF, PS_REF), text=PS_REF, media=True, icons=4, ref=True)),
+    frame_portrait("D1 · Mặc định (thẻ ở lưới): giờ đỏ cam, phút đỏ cam đậm, thứ + ngày xám sáng. Khối chữ căn trái, giữa vùng 55% trên; hàng pin neo đáy. Chạm khung: hiện / ẩn nhạc",
+                   ps_face(PW, PH)),
+    frame_portrait("D2 · Có nhạc: trình phát hiện trên hàng pin 30 giây khi mở AOD hoặc đổi bài (giống Nhật thực, Pha trăng; các chủ đề khác hiện suốt). 24 giờ",
+                   ps_face(PW, PH, "13", "36", "THỨ HAI", "9/11", media=True)),
+    frame_portrait("D3 · Cỡ 140 + màu riêng: thứ dài tự thu cho vừa bề ngang (mẫu để tràn bị cắt). Thông báo mới thay hàng icon 10 giây, thời tiết cạnh ngày",
+                   ps_face(PW, PH, "09", "47", "WEDNESDAY", "30/4", 140, ("#80DEEA", "#4FB3BF", "#FFE082", "#FFCC80"), "#B3E5FC", latest=True, weather=True)),
+    frame_portrait("D4 · Đang sạc, 4 icon, tắt ngày: thứ vẫn giữ, khối chữ căn lại giữa vùng trên",
+                   ps_face(PW, PH, "07", "40", "THỨ BẢY", "", charging=True, icons=4)),
+    frame_portrait("D5 · Cỡ nhỏ nhất 80, 12 giờ (\"hh\" không AM/PM như mẫu), không thông báo",
+                   ps_face(PW, PH, "11", "05", "THỨ SÁU", "13/11", 80, icons=0)),
+    '</div>',
+    frame("N0 · App mẫu ngang: khối chữ + hàng pin ở cột trái 45%, nhạc ở cột phải; không có nhạc thì cột trái chiếm cả màn",
+          ps_face(W, H, "05", "36", "WEDNESDAY", "30/4", colors=(PS_REF, ps_dark(PS_REF), PS_REF, PS_REF), text=PS_REF, media=True, icons=4, ref=True)),
+    frame("N1 · Mặc định ngang: khối chữ giữa cột trái 45%, hàng pin + nhạc gom ở cột phải cho cân (đổi so với mẫu), không khối nào dời khi có / mất nhạc",
+          ps_face(W, H)),
+    frame("N2 · Có nhạc: trình phát hiện trên hàng pin ở cột phải", ps_face(W, H, "13", "36", "THỨ HAI", "9/11", media=True)),
+    frame("N3 · Cỡ 140 + màu riêng, thông báo mới, thời tiết cạnh ngày", ps_face(W, H, "09", "47", "WEDNESDAY", "30/4", 140, ("#80DEEA", "#4FB3BF", "#FFE082", "#FFCC80"), "#B3E5FC", latest=True, weather=True)),
+    frame("N4 · Đang sạc, 4 icon, tắt ngày", ps_face(W, H, "07", "40", "THỨ BẢY", "", charging=True, icons=4)),
+    ps_live_script(),
+]
+if ONLY in (None, "w_poster"):
+    poster_code = widget("Chủ đề Áp phích (Poster): giờ, phút, thứ, ngày chữ hẹp đậm căn trái, năm khung dọc và năm khung ngang", ps_defs(), poster_frames)
+    (OUT / "w_poster.html").write_text(poster_code, encoding="utf-8")
+    print("w_poster", len(poster_code))

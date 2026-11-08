@@ -7,6 +7,32 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-11-08 – Chủ đề Áp phích
+
+Thêm Áp phích (Poster) từ Text HyperOS (chủ đề 35) của Muviz Edge, số đo lấy từ `Mar24Screen`, `NoPadTextView` và layout `mar24_screen_layout` dọc / ngang.
+User duyệt mock: "Duyệt, giao Kiro" (Kiro CLI code, Claude review theo `jetpack-compose-performance` và `anr-audit-and-fix`). `check_theme.sh poster "Áp phích"`
+phần nhanh pass, `PosterMetricsTest`, `AodThemeSpecTest`, `AodThemeExpectationTest` pass, `check-rules` 0 vi phạm. Chưa chạy test máy vì không có máy ảo, chưa có
+ảnh chuẩn `androidTest/screenshots/themes/poster/` (chạy `--device` rồi `--record`). Chưa test trên máy thật.
+
+### Thêm
+
+- Bốn dòng chữ League Gothic căn trái: giờ + phút cỡ 1,2 × s, thứ in hoa và ngày `d/M` (hoặc `M/d` theo ngôn ngữ app) cỡ s, s = cạnh ngắn × 0,23 × cỡ (80–140,
+  mặc định 100; màn ngang lấy min(0,4 × bề ngang, chiều cao)); khung chữ ôm sát nét như `NoPadTextView`, giãn 0,02 em, cách 5 / 10 dp; giờ 12 giờ không AM/PM như mẫu.
+- Màu giờ đỏ cam `Vermilion`, phút `VermilionDeep` (đỏ cam tối 25,5% độ sáng, đúng quan hệ giờ / phút của mẫu), thứ, ngày xám sáng, pin & thông báo, nhạc `#BDBDBD`;
+  mọi màu dùng được gradient, gradient trải theo từng dòng chữ.
+- Dọc: khối chữ giữa vùng 55% trên lề 20 dp; trình phát (lùi · tên bài / nghệ sĩ in hoa giãn 0,38 em · tới, thanh tiến trình) hiện trên hàng pin 30 giây khi mở AOD
+  hoặc đổi bài, chạm màn bật / tắt; chạm hàng pin bật / tắt thông báo mới, thông báo mới thay hàng icon 10 giây; thời tiết cạnh ngày.
+- Vẽ: một `Layout` đo chữ bằng `Paint.getTextBounds` ở pha layout (`PosterTextBlock`), vẽ ở pha draw không cấp phát; chỉ recompose theo phút.
+
+### Thay đổi
+
+- Font Neumatic Black của mẫu không có dấu tiếng Việt (thứ tiếng Việt ra ô trống), thay bằng League Gothic (`league_gothic_regular.ttf`, Google Fonts, OFL), chữ hẹp đậm
+  gần nhất có tiếng Việt; Product Sans thay bằng Google Sans đã có. `make_static_fonts.py` bỏ qua trục `wght` khi font không có trục này.
+- Bỏ Theme Color vì mọi phần đã có màu riêng; Controls Color tách thành Pin & thông báo và Nhạc. Thứ, ngày, giờ quá dài ở cỡ lớn tự thu cho vừa bề ngang (mẫu để tràn bị cắt).
+- Ngang: hàng pin + trình phát gom ở cột phải neo đáy để không khối nào dời khi có / mất nhạc (mẫu để hàng pin dưới khối chữ và cho cột trái chiếm cả màn khi không có nhạc).
+- Chỉ thêm, không đổi chủ đề đang có: nhánh `POSTER` ở `AodThemeLayout` và `AodMediaControls`, màu `Vermilion` / `VermilionDeep`, `FontFamilyLeagueGothic`, chuỗi `theme_poster`,
+  `theme_tab_day`, `theme_color_day`, mẫu định dạng `aod_poster_*`.
+
 ## [Chưa phát hành] – 2026-11-08 – Làm lại chủ đề Pha trăng
 
 Đối chiếu lại `Jan23Screen`, `MoonSpace`, `StarField` và layout `jan23_screen_layout` dọc / ngang của app mẫu. User duyệt mock: "Duyệt, giao Kiro"
