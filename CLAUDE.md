@@ -308,6 +308,8 @@ qua `AppBottomAdSlot` đặt dưới thanh (slot tự chừa thanh điều hư�
   vào CLAUDE.md, kèm một check trong `tools/check-rules.sh` nếu grep được; không ghi vào skill.
   Giữ CLAUDE.md ngắn (khoảng 200 dòng), không tách `.claude/rules/`: chỉ ghi thứ code và README
   không nói.
+- Code do agent viết (Kiro, subagent, cả Claude tự viết): trước khi báo xong phải đối chiếu skill `jetpack-compose-performance`
+  (code Compose) và `anr-audit-and-fix` (rủi ro ANR), sửa vi phạm rồi mới coi là xong.
 - **Mặc định tự làm, không tạo agent** (agent phải đọc lại toàn bộ ngữ cảnh, tốn token). Skill có
   bước giao cho `compose-implementer` (`design-tokens`, `compose-optimizer`) thì tự làm theo file
   agent đó. Chỉ dùng agent khi user bảo; agent đang chạy cùng việc thì SendMessage tiếp.

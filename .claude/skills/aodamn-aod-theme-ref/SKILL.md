@@ -57,6 +57,8 @@ typeface hay vòng lặp giờ thật. Phần riêng mới lấy mẫu từ ch�
 
 Code dùng chung (ngoài nhánh `when` của chủ đề) chỉ thêm, có mặc định giữ hành vi cũ, và **hỏi user trước** khi sửa.
 
+Code do agent viết (Kiro, subagent, cả Claude tự viết): review diff xong thì gọi skill `jetpack-compose-performance` và `anr-audit-and-fix`, đối chiếu các mục liên quan với từng composable và từng đường chạy trên main thread của chủ đề, sửa vi phạm trước khi sang bước 4 (user yêu cầu, từ Pha trăng).
+
 ### 4. Đăng ký ở mọi chỗ
 Theo [references/registration.md](references/registration.md): danh sách đủ mọi chỗ trong code và docs phải có tên chủ đề
 mới (README có hơn 10 chỗ liệt kê tên chủ đề, dễ sót).
