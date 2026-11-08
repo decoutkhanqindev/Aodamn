@@ -66,6 +66,8 @@ STATIC_FONTS = {
     "bebas_neue": [400],
     "tomorrow": [500],
     "rajdhani": [700],
+    # Thay MTPixel Display của Điểm ảnh (không có trên Google Fonts); chỉ vẽ chữ số nên không cần tiếng Việt
+    "silkscreen": [400],
 }
 
 

@@ -67,6 +67,10 @@ val FontFamilyLeagueGothic = FontFamily(
     Font(R.font.league_gothic_regular, FontWeight.Normal),
 )
 
+val FontFamilySilkscreen = FontFamily(
+    Font(R.font.silkscreen_regular, FontWeight.Normal),
+)
+
 val FontFamilyTomorrow = FontFamily(
     Font(R.font.tomorrow_medium, FontWeight.Medium),
 )

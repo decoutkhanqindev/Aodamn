@@ -7,6 +7,30 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-11-08 – Chủ đề Điểm ảnh
+
+Thêm Điểm ảnh (Pixel) từ Big Retro (chủ đề 36) của Muviz Edge, số đo lấy từ `Apr24Screen`, `NoPadTextView` và layout `apr24_screen_layout` dọc / ngang.
+User duyệt mock: "Duyệt, giao Kiro" (Kiro CLI code, Claude review theo `jetpack-compose-performance` và `anr-audit-and-fix`). `check_theme.sh pixel "Điểm ảnh"`
+phần nhanh pass, `PixelMetricsTest`, `AodThemeSpecTest`, `AodThemeExpectationTest` pass, `check-rules` 0 vi phạm. Chưa chạy test máy vì không có máy ảo, chưa có
+ảnh chuẩn `androidTest/screenshots/themes/pixel/` (chạy `--device` rồi `--record`). Chưa test trên máy thật.
+
+### Thêm
+
+- Giờ `HH:mm` (12 giờ `hh:mm` không AM/PM như mẫu) chữ pixel Silkscreen, cỡ = cạnh ngắn × 0,18 × cỡ (80–120, mặc định 100; màn ngang lấy min(0,4 × bề ngang,
+  chiều cao)), giãn 0,02 em, khung chữ ôm sát nét; kiểu Đặc / Viền (nét 2,5% cỡ chữ) như Clock Style của mẫu. Ngày `dd MMM, EEEE` in hoa Google Sans 13sp giãn 0,48 em
+  trên giờ cách 23 dp, thời tiết cùng dòng; cụm căn giữa, đáy ở 27% chiều cao.
+- Màu giờ xanh lân quang `Phosphor` (`#4CFF72`), ngày xám sáng, pin & thông báo, nhạc `#BDBDBD`; mọi màu dùng được gradient.
+- Phần đáy, nhạc hiện trên hàng pin 30 giây, thông báo mới 10 giây, bố cục ngang giống Áp phích.
+- Vẽ: một `Layout` đo giờ bằng `Paint.getTextBounds` ở pha layout (`PixelClockBlock`), vẽ ở pha draw không cấp phát, đổi kiểu / cỡ vẽ lại ngay.
+
+### Thay đổi
+
+- Font MTPixel Display của mẫu không có trên Google Fonts, thay bằng Silkscreen (`silkscreen_regular.ttf`, Google Fonts, OFL), đo khớp nhất trong các font pixel; chỉ vẽ
+  chữ số nên không cần tiếng Việt. Product Sans thay bằng Google Sans.
+- Bỏ Theme Color vì mọi phần đã có màu riêng; Controls Color tách thành Pin & thông báo và Nhạc. Ngang: hàng pin + trình phát gom ở cột phải như Áp phích.
+- Chỉ thêm, không đổi chủ đề đang có: nhánh `PIXEL` ở `AodThemeLayout` và `AodMediaControls`, màu `Phosphor`, `FontFamilySilkscreen`, chuỗi `theme_pixel`, mẫu định dạng
+  `aod_pixel_*`.
+
 ## [Chưa phát hành] – 2026-11-08 – Chủ đề Áp phích
 
 Thêm Áp phích (Poster) từ Text HyperOS (chủ đề 35) của Muviz Edge, số đo lấy từ `Mar24Screen`, `NoPadTextView` và layout `mar24_screen_layout` dọc / ngang.

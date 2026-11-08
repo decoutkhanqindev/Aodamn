@@ -25,6 +25,7 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.mono.MonoThemeSp
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.moonphase.MoonPhaseThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.orbit.OrbitThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.pebble.PebbleThemeSpec
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.pixel.PixelThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.poster.PosterThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.quarters.QuartersThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.ripple.RippleThemeSpec
@@ -68,7 +69,8 @@ enum class AodThemeValue(
     ECLIPSE(id = "eclipse", nameRes = R.string.theme_eclipse, spec = EclipseThemeSpec),
     BLINKY(id = "blinky", nameRes = R.string.theme_blinky, spec = BlinkyThemeSpec),
     MOON_PHASE(id = "moon_phase", nameRes = R.string.theme_moon_phase, spec = MoonPhaseThemeSpec),
-    POSTER(id = "poster", nameRes = R.string.theme_poster, spec = PosterThemeSpec);
+    POSTER(id = "poster", nameRes = R.string.theme_poster, spec = PosterThemeSpec),
+    PIXEL(id = "pixel", nameRes = R.string.theme_pixel, spec = PixelThemeSpec);
 
     companion object {
         val DEFAULT = CLASSIC

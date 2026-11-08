@@ -81,6 +81,7 @@
     <string name="theme_blinky">Chớp mắt</string>
     <string name="theme_moon_phase">Pha trăng</string>
     <string name="theme_poster">Áp phích</string>
+    <string name="theme_pixel">Điểm ảnh</string>
     <string name="aod_jersey_date_first_pattern">dd</string>
     <string name="aod_jersey_date_second_pattern">MM</string>
     <string name="aod_bezel_weekday_pattern">EEEE</string>

@@ -61,6 +61,7 @@ code dịch ngược, không lấy asset (font, ảnh, Lottie) từ APK. APK và
 | Đơn cách (`MONO`) | **31 · Nov23 "Space Mono"** | làm từ danh mục này (2026-10-29), số đo lấy từ layout `nov23_screen_layout` dọc / ngang / `Nov23Screen` / `NoPadTextView` / font Space Mono trong APK |
 | Khung (`FRAME`) | **10 · Feb22 "Box Clock"** | làm từ danh mục này (2026-10-29), số đo lấy từ layout `feb22_screen_layout` dọc / ngang / `Feb22Screen` / font Josefin Sans trong APK |
 | Lời (`WORDS`) | **5 · Sep21 "Text Clock"** | làm từ danh mục này (2026-10-29), số đo lấy từ layout `sep21_screen_layout` dọc / ngang / `Sep21Screen` / font Lato 1.104 trong APK |
+| Điểm ảnh (`PIXEL`) | **36 · Apr24 "Big Retro"** | làm từ danh mục này (2026-11-08), số đo lấy từ layout `apr24_screen_layout` dọc / ngang / `Apr24Screen` / `NoPadTextView` / font MTPixel Display trong APK |
 | Áp phích (`POSTER`) | **35 · Mar24 "Text HyperOS"** | làm từ danh mục này (2026-11-08), số đo lấy từ layout `mar24_screen_layout` dọc / ngang / `Mar24Screen` / `NoPadTextView` / font Neumatic Black trong APK |
 
 ## Danh mục đủ 44 chủ đề
@@ -105,7 +106,7 @@ text view chung) hoặc font dùng trong code; "chữ (font layout)" nghĩa là 
 | 33 | Jan24 | Dual Timezone | Time Zone, Clock Style, Color 1, Color 2 | – | SimpleAnalogClock | chọn múi giờ | chưa có |
 | 34 | Feb24 | Long HyperOS | Clock Style, Clock Size, Hour Color, Minute Color, Date Color, Controls Color | – | chữ (font layout) | – | **Tháp** (`TOWER`) |
 | 35 | Mar24 | Text HyperOS | Clock Size, Theme Color | Hour, Minute, Day, Date, Controls | chữ (font layout) | – | **Áp phích** (`POSTER`) |
-| 36 | Apr24 | Big Retro | Clock Style, Clock Size, Clock Color, Theme Color | Date, Controls | chữ (font layout) | – | chưa có |
+| 36 | Apr24 | Big Retro | Clock Style, Clock Size, Clock Color, Theme Color | Date, Controls | chữ (font layout) | – | **Điểm ảnh** (`PIXEL`) |
 | 37 | May24 | Fill HyperOS | Clock Size, Hour Color, Minute Color, Date Color, Controls Color | – | chữ (font layout) | – | **Số áo** (`JERSEY`) |
 | 38 | Jun24 | M3 Expressive | Clock Style, Background, Color 1, Color 2, Clock Size | – | chữ (font layout) | – | **Thẻ** (`CARD`) |
 | 39 | Jul24 | Nothing Wide | Clock Style, Color 1, Color 2, Date Color, Controls Color | – | NothingWideClock | – | chưa có |
@@ -314,6 +315,12 @@ mỗi phút (`AodViewModel`), nên phần chạy theo giây của app mẫu ph�
   màn. Màu: Theme `#CFD8DC`, phút = Theme tối 25,5% độ sáng. Hành vi: nhạc hiện khi mở AOD / đổi bài, ẩn sau AOD_CONTROLS_TIMEOUT (mặc định 30 giây), chạm màn bật /
   tắt, bấm nút giữ thêm; thông báo mới thay hàng icon `NOTIFY_TIME_MS` (10 giây), chạm hàng pin bật / tắt; không có dạng tiết kiệm riêng. Neumatic Black không có dấu
   tiếng Việt nên thay bằng League Gothic (hẹp đậm gần nhất có tiếng Việt, nét mảnh hơn khoảng 13%); ngang gom pin + nhạc ở cột phải (user duyệt).
+- ~~**36 · Big Retro**~~ (`Apr24Screen`, `apr24_screen_layout` dọc / ngang, đã làm thành Điểm ảnh 2026-11-08): giờ `HH:mm` / `hh:mm` là `NoPadTextView` MTPixel
+  Display, cỡ = cạnh ngắn × 0,18 × cỡ (80–120, mặc định 100; ngang lấy min(0,4 × bề ngang, chiều cao)), giãn 0,02 em; Clock Style 1 / 2 = đặc / viền nét 2,5% cỡ
+  chữ (`NoPadTextView.l(0,025, viền)`); ngày `dd MMM, EEEE` in hoa Product Sans 13sp giãn 0,48 trên giờ cách 23 dp; cụm ngày + giờ căn giữa, neo đáy vùng 27%
+  trên. Phần đáy, ngang, nhạc / thông báo giống hệt Text HyperOS. Màu: Clock `#FFFFFF` (gradient được), Theme `#CFD8DC`, Date, Controls. MTPixel Display không có trên
+  Google Fonts nên thay bằng Silkscreen (đo khớp nhất: "09:03" rộng 5,05 so với 4,90 lần chiều cao, nét 0,214 so với 0,194; chỉ vẽ chữ số nên không cần tiếng
+  Việt); ngang gom pin + nhạc ở cột phải như Áp phích (user duyệt).
 Để sau: 33 Dual Timezone (cần control chọn múi giờ), 16 / 22 (cần ô nhập chữ), ~~chủ đề giờ bằng chữ~~ (đã làm thành Lời bằng ICU spellout có sẵn), 6 Visualizer (cần quyền `RECORD_AUDIO`, phải hỏi trước), 8 / 11 / 21 (hiệu ứng, hạt: công sức
 lớn), 17 / 26 / 27 (cần chọn font mở thay font độc quyền). 18 / 41 dùng Google Sans: font này nay có trên Google Fonts (OFL, Vành
 dùng bản Bold), Google Sans Flex cũng có, nên không còn vướng font.

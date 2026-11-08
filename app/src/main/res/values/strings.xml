@@ -88,6 +88,7 @@
     <string name="theme_blinky">Blinky</string>
     <string name="theme_moon_phase">Moon Phase</string>
     <string name="theme_poster">Poster</string>
+    <string name="theme_pixel">Pixel</string>
     <string name="theme_in_use">In use</string>
     <string name="theme_edit">Edit</string>
     <string name="theme_saved">Theme saved</string>
@@ -229,6 +230,9 @@
     <string name="aod_blinky_media" translatable="false">%1$s - %2$s</string>
     <string name="aod_blinky_no_notification">No notifications</string>
     <string name="aod_blinky_no_media">No music playing</string>
+    <string name="aod_pixel_notification" translatable="false">%1$s: %2$s</string>
+    <string name="aod_pixel_time_12h" translatable="false">hh:mm</string>
+    <string name="aod_pixel_date_pattern" translatable="false">dd MMM, EEEE</string>
 
     <!-- Tab Edge Light -->
     <string name="edge_light_soon_title">Edge Light is coming soon</string>

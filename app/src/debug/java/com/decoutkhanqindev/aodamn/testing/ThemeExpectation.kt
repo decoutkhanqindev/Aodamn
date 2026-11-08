@@ -137,6 +137,14 @@ object ThemeTestCatalog {
             isLiveInPreview = false,
         ),
         ThemeExpectation(
+            theme = AodThemeValue.PIXEL,
+            optionKeys = listOf("style", "clock_size", "clock_color", "date_color", "status_color", "media_color"),
+            components = setOf(AodComponentValue.DATE, AodComponentValue.BATTERY, AodComponentValue.WEATHER, AodComponentValue.NOTIFICATIONS, AodComponentValue.MEDIA),
+            ownBlocks = setOf(AodBlockValue.DATE, AodBlockValue.STATUS, AodBlockValue.MEDIA),
+            hasNotificationContent = true,
+            isLiveInPreview = false,
+        ),
+        ThemeExpectation(
             theme = AodThemeValue.ORBIT,
             optionKeys = listOf("size", "digital", "hour_color", "minute_color", "second_color", "clock_color", "date_color", "status_color", "media_color"),
             components = setOf(

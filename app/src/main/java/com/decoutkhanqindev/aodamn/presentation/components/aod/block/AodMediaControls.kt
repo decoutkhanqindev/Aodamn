@@ -57,6 +57,7 @@ import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.mono.AodMon
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.moonphase.AodMoonPhaseMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.orbit.AodOrbitMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.pebble.AodPebbleMedia
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.pixel.AodPixelMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.poster.AodPosterMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.quarters.AodQuartersMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.ripple.AodRippleMedia
@@ -99,6 +100,7 @@ fun AodMediaControls(
 
                 AodThemeValue.MOON_PHASE -> AodMoonPhaseMedia(media = target, config = theme.config, onIntent = onIntent)
                 AodThemeValue.POSTER -> AodPosterMedia(media = target, config = theme.config, onIntent = onIntent)
+                AodThemeValue.PIXEL -> AodPixelMedia(media = target, config = theme.config, onIntent = onIntent)
 
                 AodThemeValue.PEBBLE -> AodPebbleMedia(media = target, config = theme.config, onIntent = onIntent)
                 AodThemeValue.CAPSULE -> AodCapsuleMedia(media = target, config = theme.config, onIntent = onIntent)

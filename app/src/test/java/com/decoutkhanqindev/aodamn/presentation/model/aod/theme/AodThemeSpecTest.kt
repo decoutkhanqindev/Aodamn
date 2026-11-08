@@ -24,6 +24,8 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.mono.MonoThemeSp
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.moonphase.MoonPhaseThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.orbit.OrbitThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.pebble.AodTileStyleValue
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.pixel.AodPixelStyleValue
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.pixel.PixelThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.poster.PosterThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.quarters.AodQuartersDigitStyleValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.quarters.QuartersThemeSpec
@@ -102,6 +104,7 @@ class AodThemeSpecTest {
                     AodThemeValue.ECLIPSE,
                     AodThemeValue.MOON_PHASE,
                     AodThemeValue.POSTER,
+                    AodThemeValue.PIXEL,
                     AodThemeValue.BLINKY,
                 )
             val hasSharedLatest = AodBlockValue.STATUS !in theme.spec.ownBlocks && theme != AodThemeValue.FLIP
@@ -911,6 +914,38 @@ class AodThemeSpecTest {
                 PosterThemeSpec.DateColor,
                 PosterThemeSpec.StatusColor,
                 PosterThemeSpec.MediaColor,
+            ),
+            spec.options,
+        )
+    }
+
+    @Test
+    fun `pixel keeps every reference option and fixed compact blocks`() {
+        val spec = AodThemeValue.PIXEL.spec
+        assertEquals(
+            setOf(
+                AodComponentValue.DATE,
+                AodComponentValue.BATTERY,
+                AodComponentValue.WEATHER,
+                AodComponentValue.NOTIFICATIONS,
+                AodComponentValue.MEDIA,
+            ),
+            spec.components,
+        )
+        assertEquals(setOf(AodBlockValue.DATE, AodBlockValue.STATUS, AodBlockValue.MEDIA), spec.ownBlocks)
+        assertEquals(true, spec.hasNotificationContent)
+        assertEquals(false, spec.isLiveInPreview)
+        assertEquals(AodPixelStyleValue.FILLED, PixelThemeSpec.Style.default)
+        assertEquals(80..120, PixelThemeSpec.ClockSize.range)
+        assertEquals(100, PixelThemeSpec.ClockSize.default)
+        assertEquals(
+            listOf(
+                PixelThemeSpec.Style,
+                PixelThemeSpec.ClockSize,
+                PixelThemeSpec.ClockColor,
+                PixelThemeSpec.DateColor,
+                PixelThemeSpec.StatusColor,
+                PixelThemeSpec.MediaColor,
             ),
             spec.options,
         )

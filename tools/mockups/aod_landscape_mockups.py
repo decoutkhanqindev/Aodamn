@@ -6177,3 +6177,150 @@ if ONLY in (None, "w_poster"):
     poster_code = widget("Chủ đề Áp phích (Poster): giờ, phút, thứ, ngày chữ hẹp đậm căn trái, năm khung dọc và năm khung ngang", ps_defs(), poster_frames)
     (OUT / "w_poster.html").write_text(poster_code, encoding="utf-8")
     print("w_poster", len(poster_code))
+
+
+# ------------------------------------------------------------------ ĐIỂM ẢNH (Big Retro của Muviz Edge, Apr24Screen)
+# Giờ HH:mm (12 giờ hh:mm, không AM/PM) font pixel Silkscreen (thay MTPixel Display, chỉ vẽ chữ số), cỡ s = cạnh ngắn × 0,18 × cỡ
+# (ngang lấy min(0,4 × bề ngang, chiều cao)), giãn 0,02 em, khung ôm nét như NoPadTextView; kiểu viền vẽ nét 2,5% cỡ chữ. Ngày
+# "dd MMM, EEEE" in hoa Google Sans 13 sp giãn 0,48 em, cách giờ 23 dp, thời tiết cùng dòng. Dọc: cụm ngày + giờ căn giữa, đáy ở 27%
+# chiều cao; cụm nhạc + pin neo đáy như Áp phích. Ngang: cụm ngày + giờ giữa cột trái 45%, nhạc + pin ở cột phải (giống Áp phích).
+PX_FONT = TTFont(ROOT / "tools/fonts/static/silkscreen_regular.ttf")
+from fontTools.ttLib.removeOverlaps import removeOverlaps as px_remove_overlaps  # noqa: E402
+px_remove_overlaps(PX_FONT)
+PX_UPM = PX_FONT["head"].unitsPerEm
+PX_CMAP = PX_FONT.getBestCmap()
+PX_GLYPHS = PX_FONT.getGlyphSet()
+PX_HMTX = PX_FONT["hmtx"]
+PX_CLOCK = "#4CFF72"
+PX_DATE = "#CED4DA"
+PX_REF = "#CFD8DC"
+PX_USED = set()
+
+
+def px_glyph_def(ch):
+    pen = SVGPathPen(PX_GLYPHS)
+    PX_GLYPHS[PX_CMAP[ord(ch)]].draw(TransformPen(pen, (1, 0, 0, -1, 0, 0)))
+    return f'<path id="pxg{ord(ch)}" d="{pen.getCommands()}"/>'
+
+
+def px_ink(text):
+    x, box = 0.0, None
+    for ch in text:
+        name = PX_CMAP[ord(ch)]
+        pen = BoundsPen(PX_GLYPHS)
+        PX_GLYPHS[name].draw(pen)
+        if pen.bounds:
+            b = (pen.bounds[0] + x, pen.bounds[1], pen.bounds[2] + x, pen.bounds[3])
+            box = b if box is None else (min(box[0], b[0]), min(box[1], b[1]), max(box[2], b[2]), max(box[3], b[3]))
+        x += PX_HMTX[name][0] + .02 * PX_UPM
+    return box
+
+
+def px_clock(cx, top, text, size, color, outline):
+    k = size / PX_UPM
+    x0, y0, x1, y1 = px_ink(text)
+    width, height = (x1 - x0) * k, (y1 - y0) * k
+    pen_x = cx - width / 2 - x0 * k
+    base = top + y1 * k
+    s, cursor = "", 0.0
+    for ch in text:
+        PX_USED.add(ch)
+        s += f'<use href="#pxg{ord(ch)}"' + (f' x="{round(cursor)}"' if cursor else "") + "/>"
+        cursor += PX_HMTX[PX_CMAP[ord(ch)]][0] + .02 * PX_UPM
+    paint = f'fill="none" stroke="{color}" stroke-width="25" stroke-linejoin="miter"' if outline else f'fill="{color}"'
+    return f'<g class="px-c" {paint} transform="translate({f(pen_x)} {f(base)}) scale({k:.4f})">{s}</g>', height
+
+
+def px_date_row(cx, base, date, color, weather):
+    tail = (12 + 18 + 5 + ps_gs_width("28°", 14)) if weather else 0
+    width = (ps_gs_width(date, 13, .48) if date else 0) + tail - (12 if not date and weather else 0)
+    x = cx - width / 2
+    s = ""
+    if date:
+        s += ps_text(x, base, date, 13, color, .48, "start")
+        x += ps_gs_width(date, 13, .48) + 12
+    if weather:
+        s += f'<use href="#psi-w" transform="translate({f(x)} {f(base - 13)}) scale(.07)" fill="{color}"/>' + ps_text(x + 23, base, "28°", 14, color, anchor="start")
+    return s
+
+
+def px_face(width, height, time="08:30", date="08 THG 11, CHỦ NHẬT", size=100, outline=False, clock=PX_CLOCK, date_color=PX_DATE, text=PS_TEXT,
+            media=False, latest=False, charging=False, icons=3, weather=False, is_date_shown=True, ref=False):
+    is_landscape = width > height
+    s = min(width * .4 if is_landscape else width, height) * size / 100 * .18
+    clock_h = px_clock(0, 0, time, s, clock, outline)[1]
+    has_date_row = is_date_shown or weather
+    block = clock_h + (9.4 + 23 if has_date_row else 0)
+    if is_landscape:
+        left_w = width * .45
+        cx = (width if (ref and not media) else left_w) / 2
+        top = ((height - (62 if ref else 0)) - block) / 2
+    else:
+        cx = width / 2
+        top = height * .27 - block
+    out = ""
+    if has_date_row:
+        out += px_date_row(cx, top + 9.4, date if is_date_shown else "", date_color, weather)
+    g, _ = px_clock(cx, top + (9.4 + 23 if has_date_row else 0), time, s, clock, outline)
+    out += g
+    if is_landscape:
+        status_cy = height - 35 - 8.5
+        if ref:
+            dcx = cx
+            media_cy = height - 35 - 2 - 30 - 20
+        else:
+            dcx = left_w + (width - left_w) / 2
+            media_cy = status_cy - 8.5 - 30 - 2 - 30 - 20
+        media_l, media_r = left_w + 40, width - 40
+    else:
+        bottom = height * .95
+        status_cy = bottom - 10 - 8.5
+        dcx = width / 2
+        media_cy = bottom - 10 - 17 - 40 - 2 - 30 - 20
+        media_l, media_r = 0, width
+    details = ps_latest(dcx, status_cy, text) if latest else ps_status(dcx, status_cy, text, charging, icons)
+    media_svg = ps_media(media_l, media_r, media_cy, text, "THAT COOL SONG", "IT'S ARTIST")
+    media_g = f'<g class="px-m"{"" if media else " style=" + chr(34) + "display:none" + chr(34)}>{media_svg}</g>'
+    return f'<g class="px" style="cursor:pointer"><rect width="{width}" height="{height}" fill="transparent"/>{out}{details}{media_g}</g>'
+
+
+def px_defs():
+    return f'<path id="psi-w" d="{ec_vector("ic_cloud_sun_fill")}"/>' + "".join(px_glyph_def(ch) for ch in sorted(PX_USED))
+
+
+def px_live_script():
+    return ('<style>.psx{font-family:"Google Sans";white-space:pre}</style>'
+            '<script>(function(){document.querySelectorAll(".px").forEach(function(G){var m=G.querySelector(".px-m");'
+            'G.addEventListener("click",function(){var on=m.style.display=="none";m.style.display=on?"":"none";'
+            'if(on&&m.animate)m.animate([{transform:"translateY(17px)",opacity:0},{transform:"none",opacity:1}],{duration:200,easing:"ease-out"})})})})();</script>')
+
+
+pixel_frames = [
+    '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400&display=swap">',
+    '<div style="font-size:0">',
+    frame_portrait("App mẫu (Big Retro) vẽ lại: giờ trắng, ngày + nhạc + pin màu Theme #CFD8DC; nhạc trên hàng pin",
+                   px_face(PW, PH, "09:03", "19 AUG, TUESDAY", clock="#FFFFFF", date_color=PX_REF, text=PX_REF, media=True, icons=4, ref=True)),
+    frame_portrait("D1 · Mặc định (thẻ ở lưới): giờ pixel xanh lân quang, ngày xám sáng trên giờ; cụm căn giữa, đáy ở 27% chiều cao; hàng pin neo đáy. Chạm khung: hiện / ẩn nhạc",
+                   px_face(PW, PH)),
+    frame_portrait("D2 · Có nhạc: trình phát hiện trên hàng pin 30 giây khi mở AOD hoặc đổi bài (như Áp phích). 24 giờ",
+                   px_face(PW, PH, "13:36", "09 THG 11, THỨ HAI", media=True)),
+    frame_portrait("D3 · Kiểu Viền (Style 2 của mẫu), cỡ 120, màu riêng; thông báo mới thay hàng icon 10 giây, thời tiết cùng dòng ngày",
+                   px_face(PW, PH, "09:47", "19 AUG, TUESDAY", 120, True, "#FFB27A", "#FFE082", "#B3E5FC", latest=True, weather=True)),
+    frame_portrait("D4 · Đang sạc, 4 icon, tắt ngày: giờ đứng yên vì cụm neo đáy",
+                   px_face(PW, PH, "07:40", charging=True, icons=4, is_date_shown=False)),
+    frame_portrait("D5 · Cỡ nhỏ nhất 80, 12 giờ (\"hh:mm\" không AM/PM như mẫu), không thông báo",
+                   px_face(PW, PH, "11:05", "13 THG 11, THỨ SÁU", 80, icons=0)),
+    '</div>',
+    frame("N0 · App mẫu ngang: ngày + giờ + hàng pin ở cột trái 45%, nhạc ở cột phải; không có nhạc thì cột trái chiếm cả màn",
+          px_face(W, H, "09:03", "19 AUG, TUESDAY", clock="#FFFFFF", date_color=PX_REF, text=PX_REF, media=True, icons=4, ref=True)),
+    frame("N1 · Mặc định ngang: ngày + giờ giữa cột trái 45%, hàng pin + nhạc gom ở cột phải như Áp phích (đổi so với mẫu), không khối nào dời khi có / mất nhạc",
+          px_face(W, H)),
+    frame("N2 · Có nhạc: trình phát trên hàng pin ở cột phải", px_face(W, H, "13:36", "09 THG 11, THỨ HAI", media=True)),
+    frame("N3 · Kiểu Viền, cỡ 120, màu riêng, thông báo mới, thời tiết", px_face(W, H, "09:47", "19 AUG, TUESDAY", 120, True, "#FFB27A", "#FFE082", "#B3E5FC", latest=True, weather=True)),
+    frame("N4 · Đang sạc, 4 icon, tắt ngày", px_face(W, H, "07:40", charging=True, icons=4, is_date_shown=False)),
+    px_live_script(),
+]
+if ONLY in (None, "w_pixel"):
+    pixel_code = widget("Chủ đề Điểm ảnh (Pixel): giờ chữ pixel to, ngày trên giờ, năm khung dọc và năm khung ngang", px_defs(), pixel_frames)
+    (OUT / "w_pixel.html").write_text(pixel_code, encoding="utf-8")
+    print("w_pixel", len(pixel_code))
