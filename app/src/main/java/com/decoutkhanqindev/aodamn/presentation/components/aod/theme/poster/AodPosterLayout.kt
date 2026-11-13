@@ -44,6 +44,7 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.info.BatteryUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodPanelBlockValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeValue
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.component.AodComponentValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.poster.PosterThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodIntent
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
@@ -140,7 +141,7 @@ private fun PosterFace(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             AnimatedVisibility(
-                visible = isMediaShown && hasMedia,
+                visible = hasMedia && (isMediaShown || state.isPreviewShown(AodComponentValue.MEDIA)),
                 enter = slideInVertically(tween(PosterMetrics.SWAP_MILLIS)) { slidePx } + fadeIn(tween(PosterMetrics.SWAP_MILLIS)),
                 exit = fadeOut(tween(PosterMetrics.SWAP_MILLIS)),
             ) {
@@ -163,7 +164,7 @@ private fun PosterFace(
             PosterDetails(
                 state = state,
                 isLandscape = isLandscape,
-                isLatestShown = isLatestShown,
+                isLatestShown = isLatestShown || state.isPreviewFocused(AodComponentValue.NOTIFICATIONS),
                 onTap = {
                     if (isLatestShown) {
                         isLatestShown = false

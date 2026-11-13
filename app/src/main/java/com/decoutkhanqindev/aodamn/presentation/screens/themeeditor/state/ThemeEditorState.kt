@@ -6,6 +6,7 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeConfig
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeTab
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeValue
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.component.AodComponentValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.isSame
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.tabOf
 import com.decoutkhanqindev.aodamn.presentation.model.customize.CustomizeDraftUiModel
@@ -34,6 +35,11 @@ data class ThemeEditorState(
 
     val hasChanges: Boolean
         get() = !theme.spec.isSame(config, savedConfig)
+
+    val previewComponent: AodComponentValue?
+        get() = selectedTab?.block
+            ?.takeIf { isEditing }
+            ?.let { block -> AodComponentValue.entries.firstOrNull { component -> component.ownBlock == block } }
 
     fun focusedOn(block: AodBlockValue?): ThemeEditorState {
         val tab = theme.spec.tabOf(block) ?: return this

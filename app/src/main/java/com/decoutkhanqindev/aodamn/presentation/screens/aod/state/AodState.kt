@@ -14,6 +14,7 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.settings.AodExtrasUiMo
 import com.decoutkhanqindev.aodamn.presentation.model.aod.settings.interaction.AodActionValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.settings.interaction.AodGestureValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.settings.interaction.AodInteractionUiModel
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.component.AodComponentValue
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -40,10 +41,17 @@ data class AodState(
     val isPreview: Boolean = false,
     val isStill: Boolean = false,
     val motionCount: Int = 0,
+    val previewComponent: AodComponentValue? = null,
 ) {
     val isClockLive: Boolean
         get() = !isPreview || (appearance.theme.value.spec.isLiveInPreview && !isStill)
 
     val isExitHintVisible: Boolean
         get() = isHintVisible && interaction.actionOf(AodGestureValue.DOUBLE_TAP) == AodActionValue.CLOSE
+
+    fun isPreviewShown(component: AodComponentValue): Boolean =
+        isPreview && !isStill && (previewComponent == null || previewComponent == component)
+
+    fun isPreviewFocused(component: AodComponentValue): Boolean =
+        isPreview && !isStill && previewComponent == component
 }

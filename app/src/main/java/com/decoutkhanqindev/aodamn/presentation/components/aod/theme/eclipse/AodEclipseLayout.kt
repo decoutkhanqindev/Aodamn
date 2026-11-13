@@ -154,7 +154,7 @@ private fun EclipseFace(
         )
 
         AnimatedContent(
-            targetState = isMediaShown && hasMedia,
+            targetState = hasMedia && (isMediaShown || state.isPreviewFocused(AodComponentValue.MEDIA)),
             modifier = if (isLandscape) {
                 Modifier
                     .align(Alignment.BottomCenter)
@@ -193,7 +193,7 @@ private fun EclipseFace(
                 EclipseDetails(
                     state = state,
                     isLandscape = isLandscape,
-                    isLatestShown = isLatestShown,
+                    isLatestShown = isLatestShown || state.isPreviewFocused(AodComponentValue.NOTIFICATIONS),
                     onTap = {
                         if (isLatestShown) {
                             isLatestShown = false

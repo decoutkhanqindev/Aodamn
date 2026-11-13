@@ -107,6 +107,7 @@ data class CustomizePreviewSamples(
             interaction = PreviewInteraction,
             isPreview = true,
             isStill = isStill,
+            previewComponent = shownComponent,
             extras = extras.copy(
                 memo = if (extras.memo.isBlank() && (shownComponent == AodComponentValue.MEMO || isThemePreviewMemo())) {
                     samples.memo

@@ -7,6 +7,22 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-11-13 – Sửa xem trước trình phát của các chủ đề mới
+
+User báo: bật trình phát ở Tùy chỉnh (sau khi cấp quyền truy cập thông báo) thì khung xem trước không hiện trình phát ở các chủ đề mới.
+Nguyên nhân: Áp phích, Điểm ảnh, Nhật thực, Pha trăng, Chớp mắt chỉ hiện trình phát / thông báo mới khi bài hát / thông báo đổi
+rồi tự ẩn sau 30 / 10 giây; ở xem trước bài mẫu được tính là đã thấy nên không bao giờ hiện, bật trong lúc xem thì hiện 30 giây rồi mất.
+
+### Sửa
+
+- `AodState.previewComponent` (mặc định `null`): khối đang mở tab ở Tùy chỉnh / màn chủ đề; `isPreviewShown` / `isPreviewFocused` chỉ đúng khi là xem
+  trước và không phải thẻ đứng yên (`isStill`), nên AOD thật và thẻ ở lưới / tab AOD không đổi gì (test `AodStatePreviewTest`).
+- Áp phích, Điểm ảnh: xem trước luôn hiện trình phát khi khối nhạc bật (trình phát nằm trên dòng pin, không che gì); thông báo mới thay
+  dòng pin khi đang mở tab Thông báo.
+- Nhật thực, Pha trăng, Chớp mắt: trình phát / thông báo mới chiếm chỗ cụm ngày + pin nên chỉ hiện khi đang mở tab Nhạc / Thông báo; còn lại giữ
+  ngày + pin như thẻ đã duyệt.
+- Màn chủ đề truyền khối của tab đang sửa vào xem trước (`ThemeEditorState.previewComponent`): tab Nhạc thấy trình phát, tab Pin thấy dòng pin.
+
 ## [Chưa phát hành] – 2026-11-08 – Chủ đề Điểm ảnh
 
 Thêm Điểm ảnh (Pixel) từ Big Retro (chủ đề 36) của Muviz Edge, số đo lấy từ `Apr24Screen`, `NoPadTextView` và layout `apr24_screen_layout` dọc / ngang.

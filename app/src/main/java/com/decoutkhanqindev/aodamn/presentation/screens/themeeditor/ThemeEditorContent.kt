@@ -55,7 +55,7 @@ fun ThemeEditorContent(
     onIntent: (ThemeEditorIntent) -> Unit,
     bannerAd: @Composable () -> Unit,
 ) {
-    val preview = rememberAodPreview(draft = state.preview)
+    val preview = rememberAodPreview(draft = state.preview, shownComponent = state.previewComponent)
 
     var isPeeking by remember { mutableStateOf(false) }
 

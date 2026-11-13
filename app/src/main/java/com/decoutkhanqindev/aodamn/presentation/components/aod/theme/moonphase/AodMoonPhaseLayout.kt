@@ -185,7 +185,7 @@ private fun MoonPhaseFace(
         )
 
         AnimatedContent(
-            targetState = isMediaShown && hasMedia,
+            targetState = hasMedia && (isMediaShown || state.isPreviewFocused(AodComponentValue.MEDIA)),
             modifier = Modifier.moonBand(isLandscape),
             transitionSpec = {
                 if (targetState) {
@@ -229,7 +229,7 @@ private fun MoonPhaseFace(
                 } else {
                     MoonPhaseDetails(
                         state = state,
-                        isLatestShown = isLatestShown,
+                        isLatestShown = isLatestShown || state.isPreviewFocused(AodComponentValue.NOTIFICATIONS),
                         onTap = {
                             if (isLatestShown) {
                                 isLatestShown = false

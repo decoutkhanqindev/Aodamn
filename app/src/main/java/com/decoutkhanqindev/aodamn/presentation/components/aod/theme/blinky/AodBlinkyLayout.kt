@@ -138,6 +138,13 @@ private fun BlinkyFace(
         }
     }
 
+    val shownLine = when {
+        !state.isPreview || state.isStill -> line
+        hasMedia && state.isPreviewFocused(AodComponentValue.MEDIA) -> BlinkyLineValue.MEDIA
+        state.notifications.latest != null && state.isPreviewFocused(AodComponentValue.NOTIFICATIONS) -> BlinkyLineValue.NOTIFICATION
+        else -> BlinkyLineValue.STATUS
+    }
+
     LaunchedEffect(line, lineStamp, hasMedia) {
         val holdMillis = BlinkyMetrics.lineHoldMillis(line, hasMedia) ?: return@LaunchedEffect
         delay(holdMillis)
@@ -187,7 +194,7 @@ private fun BlinkyFace(
 
                 BlinkyLine(
                     state = state,
-                    line = line,
+                    line = shownLine,
                     onPlayPause = {
                         onIntent(AodIntent.PlayPauseMedia)
                         lineStamp++

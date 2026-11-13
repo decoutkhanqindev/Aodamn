@@ -44,6 +44,7 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.info.BatteryUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodPanelBlockValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeValue
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.component.AodComponentValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.pixel.PixelThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodIntent
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
@@ -140,7 +141,7 @@ private fun PixelFace(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             AnimatedVisibility(
-                visible = isMediaShown && hasMedia,
+                visible = hasMedia && (isMediaShown || state.isPreviewShown(AodComponentValue.MEDIA)),
                 enter = slideInVertically(tween(PixelMetrics.SWAP_MILLIS)) { slidePx } + fadeIn(tween(PixelMetrics.SWAP_MILLIS)),
                 exit = fadeOut(tween(PixelMetrics.SWAP_MILLIS)),
             ) {
@@ -163,7 +164,7 @@ private fun PixelFace(
             PixelDetails(
                 state = state,
                 isLandscape = isLandscape,
-                isLatestShown = isLatestShown,
+                isLatestShown = isLatestShown || state.isPreviewFocused(AodComponentValue.NOTIFICATIONS),
                 onTap = {
                     if (isLatestShown) {
                         isLatestShown = false
