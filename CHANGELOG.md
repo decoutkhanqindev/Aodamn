@@ -10,18 +10,53 @@ Mã nguồn demo FakeAOD không nằm trong repo này.
 ## [Chưa phát hành] – 2026-11-13 – Sửa xem trước trình phát của các chủ đề mới
 
 User báo: bật trình phát ở Tùy chỉnh (sau khi cấp quyền truy cập thông báo) thì khung xem trước không hiện trình phát ở các chủ đề mới.
-Nguyên nhân: Áp phích, Điểm ảnh, Nhật thực, Pha trăng, Chớp mắt chỉ hiện trình phát / thông báo mới khi bài hát / thông báo đổi
+Nguyên nhân: Áp phích, Điểm ảnh, Nhật thực, Pha trăng, Chớp mắt (và Kinh tuyến) chỉ hiện trình phát / thông báo mới khi bài hát / thông báo đổi
 rồi tự ẩn sau 30 / 10 giây; ở xem trước bài mẫu được tính là đã thấy nên không bao giờ hiện, bật trong lúc xem thì hiện 30 giây rồi mất.
 
 ### Sửa
 
 - `AodState.previewComponent` (mặc định `null`): khối đang mở tab ở Tùy chỉnh / màn chủ đề; `isPreviewShown` / `isPreviewFocused` chỉ đúng khi là xem
   trước và không phải thẻ đứng yên (`isStill`), nên AOD thật và thẻ ở lưới / tab AOD không đổi gì (test `AodStatePreviewTest`).
-- Áp phích, Điểm ảnh: xem trước luôn hiện trình phát khi khối nhạc bật (trình phát nằm trên dòng pin, không che gì); thông báo mới thay
+- Áp phích, Điểm ảnh, Kinh tuyến: xem trước luôn hiện trình phát khi khối nhạc bật (trình phát nằm trên dòng pin, không che gì); thông báo mới thay
   dòng pin khi đang mở tab Thông báo.
 - Nhật thực, Pha trăng, Chớp mắt: trình phát / thông báo mới chiếm chỗ cụm ngày + pin nên chỉ hiện khi đang mở tab Nhạc / Thông báo; còn lại giữ
   ngày + pin như thẻ đã duyệt.
 - Màn chủ đề truyền khối của tab đang sửa vào xem trước (`ThemeEditorState.previewComponent`): tab Nhạc thấy trình phát, tab Pin thấy dòng pin.
+
+## [Chưa phát hành] – 2026-11-13 – Chủ đề Kinh tuyến
+
+Thêm Kinh tuyến (Meridian) từ Dual Timezone (chủ đề 33) của Muviz Edge, số đo lấy từ `Jan24Screen`, `SimpleAnalogClock` và layout `jan24_screen_layout` dọc /
+ngang. Mock sửa ba lượt theo góp ý (nhạc màn ngang xuống dưới thẻ, rồi gom mọi khối thành một cụm cột phải tự căn giữa); user duyệt: "ở màn ngang thay vì start thì đưa
+các blocks center nhé, cho noti, barterry, ... nhé, kh cần render lại, code lun đủ múi giờ" (Kiro CLI code, Claude review theo `jetpack-compose-performance` và
+`anr-audit-and-fix`). `check_theme.sh meridian "Kinh tuyến"` phần nhanh pass, `MeridianMetricsTest`, `AodZoneOptionTest`, `AodThemeSpecTest`,
+`AodThemeExpectationTest`, `AodThemeContractTest` pass, `check-rules` 0 vi phạm. Chưa chạy test máy vì không có máy ảo, chưa có ảnh chuẩn
+`androidTest/screenshots/themes/meridian/` (chạy `--device` rồi `--record`). Chưa test trên máy thật.
+
+### Thêm
+
+- Hai thẻ bo 40 dp, viền 2 dp, rộng 150 dp (nhân theo cạnh ngắn màn / 393 dp): mặt kim (vòng nét 4,5% nửa cạnh, kim phút 0,8r, kim giờ 0,5r có bóng `#444`, đuôi
+  0,1r, đầu tròn), giờ số 18 sp (`HH:mm` / `hh:mm a`) và nhãn 11 sp mờ 0,65 in hoa; thẻ đầu giờ máy "TẠI ĐÂY", thẻ hai giờ của múi đã chọn kèm tên thành phố. Bốn
+  kiểu thẻ như Clock Style của mẫu: Viền mờ, Nổi thẻ đầu, Nền mờ (mặc định), Viền đậm. Ngày `EEEE • dd MMM` in hoa 18 sp mờ 0,9.
+- Tuỳ chọn múi giờ chọn được mọi múi giờ như mẫu: loại tuỳ chọn mới `AodZoneOption` (lưu Int = `hashCode` của tên múi, đọc lại bằng bảng tên múi của máy, test kiểm
+  không trùng mã), dòng "Múi giờ" ở màn chủ đề mở sheet danh sách chia theo châu lục, tên thành phố theo ngôn ngữ app (ICU `TimeZoneNames`), kèm GMT±, cuộn sẵn tới
+  múi đang chọn; danh sách dựng ngoài main thread khi mở sheet. Theo góp ý của user ("list múi giờ cái đang được select thì đưa lên đầu và thêm search"):
+  múi đang chọn ghim trên cùng dưới tiêu đề "Đang chọn", ô tìm theo tên thành phố, mã múi hoặc GMT (không phân biệt hoa thường, dấu tiếng Việt, dấu trừ).
+- Màu thẻ xanh dừa cạn `Periwinkle` (`#8C9EFF`), mặt số, ngày, pin & thông báo `GreyE4`, nhạc `GreyCE`; mọi màu dùng được gradient.
+- Trình phát như mẫu: tên bài 17 sp / nghệ sĩ 14 sp tối hơn 30%, lùi · phát (đĩa tròn 36 dp) · tới, thanh 6 dp có khe 5 dp; hiện 30 giây khi mở AOD hoặc đổi bài, chạm
+  màn bật / tắt; thông báo mới thay dòng pin 10 giây.
+- Font Google Sans Flex bo tròn đậm 700 (`google_sans_flex_round_bold.ttf`, cắt từ file variable đã có): Flex Round của mẫu chính là Google Sans Flex ROND 100.
+- Icon `globe-hemisphere-west` (thường + đặc) cho tab Múi giờ.
+
+### Thay đổi
+
+- Mặc định đổi cho thẻ ở lưới nổi hơn: múi thứ hai New York (mẫu lấy múi của máy nên hai thẻ giống nhau), kiểu Nền mờ (mẫu Viền mờ), màu thẻ xanh dừa cạn (mẫu xám).
+- Màu: Color 1 / Color 2 của mẫu thành màu thẻ / mặt số; ngày, pin & thông báo, nhạc có màu riêng.
+- Dọc: hai thẻ đúng tâm màn, ngày + thời tiết cách đỉnh 60 dp (mẫu đặt thẻ + ngày giữa 60% trên); trình phát + dòng pin neo đáy 40 dp như mẫu. Ngang: hai thẻ giữa cột
+  trái 55% như mẫu; cột phải là một cụm căn giữa (ngày + thời tiết cùng dòng, dòng pin hoặc thông báo mới, trình phát) luôn ở giữa theo chiều cao (mẫu neo đáy).
+- Bỏ Sự kiện, Ghi nhớ, Nét vẽ: không đặt cân được ở cột phải màn ngang.
+- Chỉ thêm, không đổi chủ đề đang có: nhánh `MERIDIAN` ở `AodThemeLayout` và `AodMediaControls`, `AodZoneOption` + nhánh ở `AodThemeOptionList`, `ThemeOptionCases`,
+  test hợp đồng; icon đặc của tab ở `AppEditorTab`; màu `Periwinkle`, `FontFamilyGoogleSansFlexRound`, chuỗi `theme_meridian`, `theme_opt_zone`, `zone_*`, mẫu
+  định dạng `aod_meridian_*`.
 
 ## [Chưa phát hành] – 2026-11-08 – Chủ đề Điểm ảnh
 

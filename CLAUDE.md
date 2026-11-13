@@ -59,7 +59,7 @@ bắt buộc (compiler không chặn hộ):
 - Runtime AOD (`presentation/aod/`, `data/device/`) mã hoá hành vi phụ thuộc ROM: đọc README › Các
   quyết định thiết kế và lịch sử commit của file trước khi sửa.
 - Chủ đề AOD (`model/aod/theme/`): một chủ đề = mục `AodThemeValue` (id lưu, không đổi) + `AodThemeSpec`
-  (tab và thuộc tính `AodThemeOption`: lựa chọn / màu / khoảng số / bật tắt, giá trị Int trong
+  (tab và thuộc tính `AodThemeOption`: lựa chọn / màu / khoảng số / bật tắt / múi giờ, giá trị Int trong
   `AodThemeConfig`; khối tự vẽ `ownBlocks`; khối dùng chung có hiện `components`) ở `model/aod/theme/<chủ đề>/` +
   phần vẽ ở `components/aod/theme/<chủ đề>/` nối vào `AodPortrait` / `AodLandscape` (bố cục dọc, ngang
   riêng từng chủ đề, `theme/AodThemeLayout.kt`; ngang dựng trên bố cục chung theo khối đang hiện `AodLandscapePlan` +

@@ -129,6 +129,10 @@ val FontFamilyGoogleSansFlexRounded = FontFamily(
     Font(R.font.google_sans_flex_rounded_extrablack, FontWeight(1000)),
 )
 
+val FontFamilyGoogleSansFlexRound = FontFamily(
+    Font(R.font.google_sans_flex_round_bold, FontWeight.Bold),
+)
+
 val FontFamilyLato = FontFamily(
     Font(R.font.lato_thin, FontWeight.Thin),
     Font(R.font.lato_light, FontWeight.Light),

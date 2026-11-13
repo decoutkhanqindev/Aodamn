@@ -8,6 +8,7 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.AodGradient
 import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.toStoredClockColor
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import java.util.TimeZone
 
 interface AodThemeChoice {
     val code: Int
@@ -115,4 +116,21 @@ class AodToggleOption(
     override fun encode(value: Boolean): Int = if (value) 1 else 0
 
     override fun decode(raw: Int?): Boolean = raw?.let { it != 0 } ?: default
+}
+
+@Immutable
+class AodZoneOption(
+    override val key: String,
+    @param:StringRes override val labelRes: Int,
+    override val default: String,
+) : AodThemeOption<String> {
+    override fun encode(value: String): Int = value.hashCode()
+
+    override fun decode(raw: Int?): String = raw?.let { code -> zoneIdsByCode[code] } ?: default
+
+    companion object {
+        private val zoneIdsByCode: Map<Int, String> by lazy {
+            TimeZone.getAvailableIDs().associateBy { id -> id.hashCode() }
+        }
+    }
 }

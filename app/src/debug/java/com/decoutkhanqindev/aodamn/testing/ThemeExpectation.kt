@@ -9,6 +9,7 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeConfig
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeOption
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodToggleOption
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodZoneOption
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.component.AodComponentValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.options
 
@@ -145,6 +146,14 @@ object ThemeTestCatalog {
             isLiveInPreview = false,
         ),
         ThemeExpectation(
+            theme = AodThemeValue.MERIDIAN,
+            optionKeys = listOf("style", "card_color", "dial_color", "zone", "date_color", "status_color", "media_color"),
+            components = setOf(AodComponentValue.DATE, AodComponentValue.BATTERY, AodComponentValue.WEATHER, AodComponentValue.NOTIFICATIONS, AodComponentValue.MEDIA),
+            ownBlocks = setOf(AodBlockValue.DATE, AodBlockValue.STATUS, AodBlockValue.MEDIA),
+            hasNotificationContent = true,
+            isLiveInPreview = false,
+        ),
+        ThemeExpectation(
             theme = AodThemeValue.ORBIT,
             optionKeys = listOf("size", "digital", "hour_color", "minute_color", "second_color", "clock_color", "date_color", "status_color", "media_color"),
             components = setOf(
@@ -174,6 +183,7 @@ object ThemeOptionCases {
             option.encodeSolid(option.default),
             option.encodeGradient(gradientOf(option)),
         )
+        is AodZoneOption -> listOf(option.default, otherZone(option)).map { id -> mapOf(option.key to option.encode(id)) }
     }
 
     fun changed(option: AodThemeOption<*>): Map<String, Int?> = when (option) {
@@ -184,7 +194,11 @@ object ThemeOptionCases {
         is AodRangeOption -> mapOf(option.key to if (option.default != option.range.last) option.range.last else option.range.first)
         is AodToggleOption -> mapOf(option.key to option.encode(!option.default))
         is AodColorOption -> option.encodeGradient(gradientOf(option))
+        is AodZoneOption -> mapOf(option.key to option.encode(otherZone(option)))
     }
+
+    private fun otherZone(option: AodZoneOption): String =
+        if (option.default == "Asia/Tokyo") "Europe/London" else "Asia/Tokyo"
 
     private fun gradientOf(option: AodColorOption) =
         if (option.key.contains("card") || option.key.contains("background") || option.key.contains("face")) {

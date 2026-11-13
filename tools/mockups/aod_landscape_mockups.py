@@ -6324,3 +6324,234 @@ if ONLY in (None, "w_pixel"):
     pixel_code = widget("Chủ đề Điểm ảnh (Pixel): giờ chữ pixel to, ngày trên giờ, năm khung dọc và năm khung ngang", px_defs(), pixel_frames)
     (OUT / "w_pixel.html").write_text(pixel_code, encoding="utf-8")
     print("w_pixel", len(pixel_code))
+
+
+# ------------------------------------------------------------------ KINH TUYẾN (Dual Timezone của Muviz Edge, Jan24Screen)
+# Hai thẻ bo 40 dp, viền 2 dp, rộng 150 dp (đệm 15, mặt kim 100 dp cách 10), mỗi thẻ: mặt kim SimpleAnalogClock (vòng nét 4,5% nửa cạnh,
+# kim phút −0,1r → 0,8r, kim giờ −0,1r → 0,5r có bóng #444), giờ số 18 sp và nhãn 11 sp mờ 0,65 in hoa (thẻ đầu "Tại đây", thẻ hai tên thành
+# phố của múi giờ). Font Flex Round của mẫu = Google Sans Flex wght 700, ROND 100. Bốn kiểu thẻ: viền mờ (α 50), thẻ đầu có nền (α 30),
+# cả hai có nền, viền đậm. Ngày "EEEE • dd MMM" in hoa 18 sp. Trình phát: tên 17 sp / nghệ sĩ 14 sp Google Sans, trước · phát · sau, thanh
+# 6 dp có khe 5 dp. Dọc bên mình: hai thẻ đúng tâm màn, ngày + thời tiết cách đỉnh 60 dp, trình phát + dòng pin neo đáy 40 dp như mẫu.
+# Ngang: như app mẫu, hai thẻ giữa cột trái 55%; cột phải là một cụm căn giữa cột (ngày + thời tiết cùng dòng, dòng pin hoặc thông
+# báo mới, trình phát), cả cụm luôn căn giữa theo chiều cao nên bật / tắt khối không làm lệch, hai thẻ không dời.
+DZ_FONT = BzFont(instancer.instantiateVariableFont(TTFont(ROOT / "tools/fonts/variable/google_sans_flex_variable.ttf"),
+                                                   {"wght": 700, "ROND": 100, "wdth": 100}, inplace=False), "dzt")
+DZ_GS = BzFont(TTFont(ROOT / "app/src/main/res/font/google_sans_regular.ttf"), "psx")
+DZ_LINE = 1.252
+DZ_ASC = .966
+DZ_ACCENT = "#8C9EFF"
+DZ_DIAL = "#E4E4E4"
+DZ_MEDIA = "#CED4DA"
+DZ_REF1 = "#CFD8DC"
+DZ_REF2 = "#E4E4E4"
+DZ_CW = 150
+DZ_CH = 15 + 10 + 100 + 10 + DZ_LINE * 18 + DZ_LINE * 11 + 15
+
+
+def dz_hand(cx, cy, angle, length, color, shadow=False):
+    a = math.radians(angle)
+    dx, dy = math.sin(a), -math.cos(a)
+    flt = ' filter="url(#dzs)"' if shadow else ""
+    return (f'<line x1="{f(cx - 5 * dx)}" y1="{f(cy - 5 * dy)}" x2="{f(cx + length * dx)}" y2="{f(cy + length * dy)}" stroke="{color}" '
+            f'stroke-width="2.25" stroke-linecap="round"{flt}/>')
+
+
+def dz_dial(cx, cy, hour, minute, color):
+    s = f'<circle cx="{f(cx)}" cy="{f(cy)}" r="47.75" fill="none" stroke="{color}" stroke-width="2.25"/>'
+    s += dz_hand(cx, cy, minute * 6, 40, color)
+    return s + dz_hand(cx, cy, ((hour % 12) + minute / 60) * 30, 25, color, True)
+
+
+def dz_card(x0, y0, style, index, c1, c2, hour, minute, time, label):
+    fill = c1 if style == "fill" or (style == "first" and index == 0) else "none"
+    stroke_op = 1 if style == "bold" else .196
+    s = (f'<rect x="{f(x0 + 1)}" y="{f(y0 + 1)}" width="{DZ_CW - 2}" height="{f(DZ_CH - 2)}" rx="40" fill="{fill}"'
+         + (' fill-opacity=".118"' if fill != "none" else "") + f' stroke="{c1}" stroke-opacity="{stroke_op}" stroke-width="2"/>')
+    s += dz_dial(x0 + 75, y0 + 75, hour, minute, c2)
+    y = y0 + 135
+    s += DZ_FONT.text(x0 + 75, y + DZ_ASC * 18, time, 18, c1, "middle")
+    label = DZ_FONT.fit(label, 11, 120)
+    return s + DZ_FONT.text(x0 + 75, y + DZ_LINE * 18 + DZ_ASC * 11, label, 11, c1, "middle", .65)
+
+
+def dz_time(hm, is24):
+    h, m = hm
+    return f"{h:02d}:{m:02d}" if is24 else f"{(h % 12) or 12:02d}:{m:02d} {'SA' if h < 12 else 'CH'}"
+
+
+def dz_pair(cx, cy, gap, style, c1, c2, local, other, is24, label2, label1):
+    top = cy - DZ_CH / 2
+    left = cx - gap / 2 - DZ_CW
+    return (dz_card(left, top, style, 0, c1, c2, *local, dz_time(local, is24), label1)
+            + dz_card(cx + gap / 2, top, style, 1, c1, c2, *other, dz_time(other, is24), label2))
+
+
+def dz_weather(cx, base, color, size=16, left=None):
+    width = 20 + 5 + DZ_GS.width("28°", size)
+    x = cx - width / 2 if left is None else left
+    return (f'<use href="#dzi-w" transform="translate({f(x)} {f(base - 15)}) scale(.078)" fill="{color}"/>'
+            + DZ_GS.text(x + 25, base, "28°", size, color))
+
+
+def dz_status(cx, cy, color, charging, icons, left=None):
+    pct = "72%"
+    tw = DZ_GS.width(pct, 16)
+    dot = DZ_GS.width("•", 16)
+    total = 16 + 5 + tw + ((12 + dot + 12 - 10) + icons * 27 if icons else 0)
+    x = cx - total / 2 if left is None else left
+    s = ec_battery(x + 4.2, cy, color, charging) + DZ_GS.text(x + 21, cy + 5.6, pct, 16, color)
+    x += 21 + tw
+    if icons:
+        s += DZ_GS.text(x + 12, cy + 5.6, "•", 16, color)
+        x += 12 + dot + 12 - 10
+        for i in range(icons):
+            s += icon_shapes(color)[i % 3](x + 10 + i * 27, cy - 8.5, 17)
+    return s
+
+
+def dz_latest(cx, cy, color, left=None):
+    text = "Hanna: Đang về nhà nè"
+    width = 17 + 8 + DZ_GS.width(text, 15)
+    x = cx - width / 2 if left is None else left
+    return icon_shapes(color)[0](x, cy - 8.5, 17) + DZ_GS.text(x + 25, cy + 5.3, text, 15, color)
+
+
+def dz_buttons(cx, cy, color, dark):
+    def skip(c, d):
+        return (f'<path d="M{f(c - 5 * d)} {f(cy - 6)}l{f(9 * d)} 6l{f(-9 * d)} 6z" fill="{dark}" fill-opacity=".8"/>'
+                f'<rect x="{f(c + 4.5 * d - 1)}" y="{f(cy - 6)}" width="2" height="12" rx="1" fill="{dark}" fill-opacity=".8"/>')
+    play = (f'<circle cx="{f(cx)}" cy="{f(cy)}" r="18" fill="{color}"/>'
+            f'<rect x="{f(cx - 5.5)}" y="{f(cy - 7)}" width="4" height="14" rx="1" fill="#000"/>'
+            f'<rect x="{f(cx + 1.5)}" y="{f(cy - 7)}" width="4" height="14" rx="1" fill="#000"/>')
+    return skip(cx - 50.5, -1) + play + skip(cx + 50.5, 1)
+
+
+def dz_progress(left, right, y, color, p=.38):
+    end = left + (right - left) * p
+    return (f'<rect x="{f(left)}" y="{f(y)}" width="{f(end - left)}" height="6" rx="3" fill="{color}"/>'
+            f'<rect x="{f(end + 5)}" y="{f(y)}" width="{f(right - end - 5)}" height="6" rx="3" fill="{ec_mix(color, "#000000", .7)}"/>')
+
+
+def dz_media_row(left, right, top, color, dark, title="That Cool Song", artist="It's Artist"):
+    cy = top + 24
+    t = cy - (DZ_LINE * 17 + 2 + DZ_LINE * 14) / 2
+    s = DZ_GS.text(left + 2, t + DZ_ASC * 17, title, 17, color)
+    s += DZ_GS.text(left + 2, t + DZ_LINE * 17 + 2 + DZ_ASC * 14, artist, 14, dark, opacity=.8)
+    s += dz_buttons(right - 64, cy, color, dark)
+    return s + dz_progress(left, right, top + 48 + 12, color)
+
+
+def dz_face(width, height, local=(8, 30), other=(21, 30), label2="NEW YORK", style="fill", c1=DZ_ACCENT, c2=DZ_DIAL,
+            date="CHỦ NHẬT • 08 THG 11", date_color=DZ_DIAL, status=DZ_DIAL, music=DZ_MEDIA, is24=True, media=False, latest=False,
+            charging=False, icons=3, weather=False, is_date=True, ref=False, label1="TẠI ĐÂY"):
+    is_landscape = width > height
+    out = ""
+    if ref:
+        group = DZ_CH + 30 + DZ_LINE * 18
+        if is_landscape:
+            left_w = width * .55
+            top, cx, gap = (height - group) / 2, left_w / 2, (left_w - 40) / 2 - DZ_CW
+            l, r = left_w, width - 40
+        else:
+            top, cx, gap = (height * .6 - group) / 2, width / 2, width / 2 - DZ_CW
+            l, r = 40, width - 40
+        out += dz_pair(cx, top + DZ_CH / 2, gap, style, c1, c2, local, other, is24, label2, label1)
+        out += DZ_FONT.text(cx, top + DZ_CH + 30 + DZ_ASC * 18, date, 18, c2, "middle", .9)
+        status_cy = height - 40 - 9
+        out += dz_status((l + r) / 2, status_cy, c2, charging, icons)
+        media_svg = dz_media_row(l, r, status_cy - 9 - 40 - 66, c1, c2)
+    else:
+        dark = ec_mix(music, "#000000", .3)
+        cx, cy = width / 2, height / 2
+        gap = 46.5
+        if not is_landscape:
+            out += dz_pair(cx, cy, gap, style, c1, c2, local, other, is24, label2, label1)
+        if is_landscape:
+            left_w = width * .55
+            out = dz_pair(left_w / 2, cy, (left_w - 40) / 2 - DZ_CW, style, c1, c2, local, other, is24, label2, label1)
+            x0, x1 = left_w, width - 40
+            mid = (x0 + x1) / 2
+            has_top = is_date or weather
+            total = (DZ_LINE * 18 + 14 if has_top else 0) + 18 + (24 + 66 if media else 0)
+            y = (height - total) / 2
+            if has_top:
+                weather_w = 20 + 5 + DZ_GS.width("28°", 16)
+                line_w = (DZ_FONT.width(date, 18) if is_date else 0) + (weather_w + (14 if is_date else 0) if weather else 0)
+                wx = mid - line_w / 2
+                if is_date:
+                    out += DZ_FONT.text(wx, y + DZ_ASC * 18, date, 18, date_color, opacity=.9)
+                    wx += DZ_FONT.width(date, 18) + 14
+                if weather:
+                    out += dz_weather(0, y + DZ_ASC * 18, date_color, left=wx)
+                y += DZ_LINE * 18 + 14
+            out += dz_latest(mid, y + 9, status) if latest else dz_status(mid, y + 9, status, charging, icons)
+            if media:
+                out += dz_media_row(x0, x1, y + 18 + 24, music, dark)
+            return f'<g>{out}</g>'
+        else:
+            y = 60
+            if is_date:
+                out += DZ_FONT.text(cx, y + DZ_ASC * 18, date, 18, date_color, "middle", .9)
+                y += DZ_LINE * 18 + 12
+            if weather:
+                out += dz_weather(cx, y + 16, date_color)
+            status_cy = height - 40 - 9
+            out += dz_latest(cx, status_cy, status) if latest else dz_status(cx, status_cy, status, charging, icons)
+            media_svg = dz_media_row(40, width - 40, status_cy - 9 - 40 - 66, music, dark)
+    hidden = "" if media else ' style="display:none"'
+    return (f'<g class="dz" style="cursor:pointer"><rect width="{width}" height="{height}" fill="transparent"/>{out}'
+            f'<g class="dz-m"{hidden}>{media_svg}</g></g>')
+
+
+def dz_defs():
+    return (f'<path id="dzi-w" d="{ec_vector("ic_cloud_sun_fill")}"/>'
+            '<filter id="dzs" x="-50%" y="-50%" width="200%" height="200%">'
+            '<feDropShadow dx="0" dy="0" stdDeviation="1.1" flood-color="#444"/></filter>')
+
+
+def dz_live_script():
+    return ('<style>.psx{font-family:"Google Sans";white-space:pre}.dzt{font-family:"Google Sans Flex";font-weight:700;white-space:pre}</style>'
+            '<script>(function(){document.querySelectorAll(".dz").forEach(function(G){var m=G.querySelector(".dz-m");'
+            'G.addEventListener("click",function(){var on=m.style.display=="none";m.style.display=on?"":"none";'
+            'if(on&&m.animate)m.animate([{transform:"translateY(17px)",opacity:0},{transform:"none",opacity:1}],{duration:200,easing:"ease-out"})})})})();</script>')
+
+
+meridian_frames = [
+    '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400&display=swap">',
+    '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght,ROND@700,100&display=swap">',
+    '<div style="font-size:0">',
+    frame_portrait("App mẫu (Dual Timezone) vẽ lại: hai thẻ viền mờ + ngày giữa 60% trên, nhạc + dòng pin neo đáy; màu #CFD8DC / #E4E4E4",
+                   dz_face(PW, PH, (9, 40), (11, 40), "TOKYO", "outline", DZ_REF1, DZ_REF2, "THURSDAY • 29 AUG", media=True, icons=2,
+                           ref=True, label1="LOCAL")),
+    frame_portrait("D1 · Mặc định (thẻ ở lưới): kiểu Nền mờ, thẻ xanh dừa cạn, hai thẻ đúng tâm màn; ngày cách đỉnh 60 dp, dòng pin neo đáy. "
+                   "Múi thứ hai New York. Chạm khung: hiện / ẩn nhạc",
+                   dz_face(PW, PH)),
+    frame_portrait("D2 · Có nhạc: trình phát hiện trên dòng pin 30 giây khi mở AOD hoặc đổi bài. Kiểu Nổi thẻ đầu, múi London",
+                   dz_face(PW, PH, (13, 36), (6, 36), "LONDON", "first", media=True, date="THỨ HAI • 09 THG 11")),
+    frame_portrait("D3 · Kiểu Viền đậm, màu riêng; thông báo mới thay dòng pin 10 giây, thời tiết dòng riêng dưới ngày, múi Paris",
+                   dz_face(PW, PH, (9, 47), (3, 47), "PARIS", "bold", "#FFB27A", "#FFE082", date="THỨ BA • 10 THG 11",
+                           date_color="#B3E5FC", status="#B3E5FC", latest=True, weather=True)),
+    frame_portrait("D4 · Kiểu Viền mờ (mặc định của mẫu), 12 giờ có SA / CH, đang sạc, tắt ngày; múi Tokyo (+2 giờ)",
+                   dz_face(PW, PH, (22, 5), (0, 5), "TOKYO", "outline", is24=False, charging=True, icons=4, is_date=False)),
+    '</div>',
+    frame("N0 · App mẫu ngang: hai thẻ + ngày giữa cột trái 55%, nhạc + dòng pin neo đáy cột phải 45%",
+          dz_face(W, H, (9, 40), (11, 40), "TOKYO", "outline", DZ_REF1, DZ_REF2, "THURSDAY • 29 AUG", media=True, icons=2, ref=True,
+                  label1="LOCAL")),
+    frame("N1 · Mặc định ngang: hai thẻ giữa cột trái 55% như app mẫu; cột phải là một cụm căn giữa cột (ngày, dòng pin) luôn căn giữa theo chiều cao",
+          dz_face(W, H)),
+    frame("N2 · Có nhạc: trình phát vào cuối cụm cột phải, cả cụm tự căn giữa lại (trượt mượt), hai thẻ không dời",
+          dz_face(W, H, (13, 36), (6, 36), "LONDON", "first", media=True, date="THỨ HAI • 09 THG 11")),
+    frame("N3 · Viền đậm, màu riêng; thời tiết cùng dòng ngày, thông báo mới thay dòng pin",
+          dz_face(W, H, (9, 47), (3, 47), "PARIS", "bold", "#FFB27A", "#FFE082", date="THỨ BA • 10 THG 11", date_color="#B3E5FC",
+                  status="#B3E5FC", latest=True, weather=True)),
+    frame("N4 · Tắt ngày, 12 giờ, đang sạc: cụm cột phải chỉ còn dòng pin, vẫn ngang tâm hai thẻ",
+          dz_face(W, H, (22, 5), (0, 5), "TOKYO", "outline", is24=False, charging=True, icons=4, is_date=False)),
+    frame("N5 · Đủ khối: ngày + thời tiết, thông báo mới, nhạc; cụm cao nhất vẫn căn giữa, không chạm mép",
+          dz_face(W, H, (19, 12), (8, 12), "SYDNEY", "fill", date="THỨ TƯ • 11 THG 11", media=True, latest=True, weather=True)),
+    dz_live_script(),
+]
+if ONLY in (None, "w_meridian"):
+    meridian_code = widget("Chủ đề Kinh tuyến (Meridian): hai thẻ mặt kim hai múi giờ, năm khung dọc và năm khung ngang", dz_defs(),
+                           meridian_frames)
+    (OUT / "w_meridian.html").write_text(meridian_code, encoding="utf-8")
+    print("w_meridian", len(meridian_code))

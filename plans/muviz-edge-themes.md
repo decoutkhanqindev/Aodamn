@@ -63,6 +63,7 @@ code dịch ngược, không lấy asset (font, ảnh, Lottie) từ APK. APK và
 | Lời (`WORDS`) | **5 · Sep21 "Text Clock"** | làm từ danh mục này (2026-10-29), số đo lấy từ layout `sep21_screen_layout` dọc / ngang / `Sep21Screen` / font Lato 1.104 trong APK |
 | Điểm ảnh (`PIXEL`) | **36 · Apr24 "Big Retro"** | làm từ danh mục này (2026-11-08), số đo lấy từ layout `apr24_screen_layout` dọc / ngang / `Apr24Screen` / `NoPadTextView` / font MTPixel Display trong APK |
 | Áp phích (`POSTER`) | **35 · Mar24 "Text HyperOS"** | làm từ danh mục này (2026-11-08), số đo lấy từ layout `mar24_screen_layout` dọc / ngang / `Mar24Screen` / `NoPadTextView` / font Neumatic Black trong APK |
+| Kinh tuyến (`MERIDIAN`) | **33 · Jan24 "Dual Timezone"** | làm từ danh mục này (2026-11-13), số đo lấy từ layout `jan24_screen_layout` dọc / ngang / `Jan24Screen` / `SimpleAnalogClock` / font Flex Round trong APK |
 
 ## Danh mục đủ 44 chủ đề
 
@@ -103,7 +104,7 @@ text view chung) hoặc font dùng trong code; "chữ (font layout)" nghĩa là 
 | 30 | Oct23 | Coum Face Clock ⭐ | Clock Size, Ring Color, Clock Color, Controls Color | – | CoumTick | – | **Nhịp giây** (`TICK`) |
 | 31 | Nov23 | Space Mono | Clock Size, Hour Color, Minute Color, Theme Color | Date, Notification, Controls | chữ (font layout) | – | **Đơn cách** (`MONO`) |
 | 32 | Dec23 | Flex Round | Clock Style, Color 1, Color 2, Clock Size | – | chữ (font layout) | – | **Viên nang** (`CAPSULE`) |
-| 33 | Jan24 | Dual Timezone | Time Zone, Clock Style, Color 1, Color 2 | – | SimpleAnalogClock | chọn múi giờ | chưa có |
+| 33 | Jan24 | Dual Timezone | Time Zone, Clock Style, Color 1, Color 2 | – | SimpleAnalogClock | chọn múi giờ | **Kinh tuyến** (`MERIDIAN`) |
 | 34 | Feb24 | Long HyperOS | Clock Style, Clock Size, Hour Color, Minute Color, Date Color, Controls Color | – | chữ (font layout) | – | **Tháp** (`TOWER`) |
 | 35 | Mar24 | Text HyperOS | Clock Size, Theme Color | Hour, Minute, Day, Date, Controls | chữ (font layout) | – | **Áp phích** (`POSTER`) |
 | 36 | Apr24 | Big Retro | Clock Style, Clock Size, Clock Color, Theme Color | Date, Controls | chữ (font layout) | – | **Điểm ảnh** (`PIXEL`) |
@@ -321,7 +322,14 @@ mỗi phút (`AodViewModel`), nên phần chạy theo giây của app mẫu ph�
   trên. Phần đáy, ngang, nhạc / thông báo giống hệt Text HyperOS. Màu: Clock `#FFFFFF` (gradient được), Theme `#CFD8DC`, Date, Controls. MTPixel Display không có trên
   Google Fonts nên thay bằng Silkscreen (đo khớp nhất: "09:03" rộng 5,05 so với 4,90 lần chiều cao, nét 0,214 so với 0,194; chỉ vẽ chữ số nên không cần tiếng
   Việt); ngang gom pin + nhạc ở cột phải như Áp phích (user duyệt).
-Để sau: 33 Dual Timezone (cần control chọn múi giờ), 16 / 22 (cần ô nhập chữ), ~~chủ đề giờ bằng chữ~~ (đã làm thành Lời bằng ICU spellout có sẵn), 6 Visualizer (cần quyền `RECORD_AUDIO`, phải hỏi trước), 8 / 11 / 21 (hiệu ứng, hạt: công sức
+- ~~**33 · Dual Timezone**~~ (`Jan24Screen`, `SimpleAnalogClock`, `jan24_screen_layout` dọc / ngang, đã làm thành Kinh tuyến 2026-11-13): hai `MaterialCardView` bo
+  40 dp viền 2 dp cạnh nhau (mỗi thẻ đệm 15 dp, mặt kim 100 dp cách 10 dp, giờ `HH:mm` / `hh:mm a` 18 sp, nhãn 11 sp mờ 0,65 in hoa: "Local" và đoạn cuối mã múi giờ);
+  mặt kim vòng nét 0,045 nửa cạnh, kim phút −0,1r → 0,8r, kim giờ −0,1r → 0,5r có bóng `#444`, chỉ cập nhật khi đổi phút. Clock Style −6 / −7 / −8 / −9 = viền
+  mờ (α 50) / thẻ đầu có nền (α 30) / cả hai có nền / viền đậm; Color 1 `#CFD8DC` (chữ, viền, tên bài, nút phát, thanh), Color 2 `#E4E4E4` (kim, ngày, pin,
+  nghệ sĩ). Ngày `EEEE • dd MMM` in hoa 18 sp. Time Zone chọn trong mọi `TimeZone.getAvailableIDs()`, mặc định múi của máy. Dọc: thẻ + ngày giữa 60% trên, nhạc
+  + pin neo đáy 40 dp; ngang: thẻ + ngày cột trái 55%, nhạc + pin neo đáy cột phải. Font Flex Round = Google Sans Flex ROND 100 wght ~700. Bên mình: múi lưu bằng
+  `hashCode` (`AodZoneOption`), sheet chọn theo châu lục; dọc thẻ đúng tâm màn; ngang cụm cột phải căn giữa (user duyệt).
+Để sau: ~~33 Dual Timezone~~ (đã làm thành Kinh tuyến, thêm `AodZoneOption`), 16 / 22 (cần ô nhập chữ), ~~chủ đề giờ bằng chữ~~ (đã làm thành Lời bằng ICU spellout có sẵn), 6 Visualizer (cần quyền `RECORD_AUDIO`, phải hỏi trước), 8 / 11 / 21 (hiệu ứng, hạt: công sức
 lớn), 17 / 26 / 27 (cần chọn font mở thay font độc quyền). 18 / 41 dùng Google Sans: font này nay có trên Google Fonts (OFL, Vành
 dùng bản Bold), Google Sans Flex cũng có, nên không còn vướng font.
 

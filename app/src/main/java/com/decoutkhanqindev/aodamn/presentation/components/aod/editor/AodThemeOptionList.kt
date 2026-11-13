@@ -49,6 +49,7 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeConfig
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeOption
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeTab
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodToggleOption
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodZoneOption
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.pebble.AodShapeValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.pebble.PebbleThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.theme.Black
@@ -137,6 +138,8 @@ private fun ThemeOptionControl(
                 onOptionChange(option.key, option.encode(isChecked))
             },
         )
+
+        is AodZoneOption -> AodZonePicker(option = option, config = config, onOptionChange = onOptionChange)
     }
 }
 

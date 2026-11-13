@@ -89,6 +89,13 @@
     <string name="theme_moon_phase">Moon Phase</string>
     <string name="theme_poster">Poster</string>
     <string name="theme_pixel">Pixel</string>
+    <string name="theme_meridian">Meridian</string>
+    <string name="theme_opt_card_style">Card style</string>
+    <string name="meridian_style_outline">Soft outline</string>
+    <string name="meridian_style_first">First card filled</string>
+    <string name="meridian_style_filled">Filled</string>
+    <string name="meridian_style_bold">Bold outline</string>
+    <string name="aod_meridian_local">Local</string>
     <string name="theme_in_use">In use</string>
     <string name="theme_edit">Edit</string>
     <string name="theme_saved">Theme saved</string>
@@ -107,6 +114,22 @@
     <string name="theme_tab_status">Battery &amp; alerts</string>
     <string name="theme_tab_line">Line</string>
     <string name="theme_tab_day">Day</string>
+    <string name="theme_tab_zone">Time zone</string>
+    <string name="theme_opt_zone">Time zone</string>
+    <string name="zone_picker_title">Choose a time zone</string>
+    <string name="zone_selected">Selected</string>
+    <string name="zone_search_hint">Search city or GMT</string>
+    <string name="zone_search_clear">Clear search</string>
+    <string name="zone_search_empty">No time zone found</string>
+    <string name="zone_region_africa">Africa</string>
+    <string name="zone_region_america">Americas</string>
+    <string name="zone_region_antarctica">Antarctica</string>
+    <string name="zone_region_asia">Asia</string>
+    <string name="zone_region_atlantic">Atlantic</string>
+    <string name="zone_region_australia">Australia</string>
+    <string name="zone_region_europe">Europe</string>
+    <string name="zone_region_indian">Indian Ocean</string>
+    <string name="zone_region_pacific">Pacific</string>
     <string name="theme_opt_shape">Shape</string>
     <string name="theme_opt_tile_style">Style</string>
     <string name="tile_style_filled">Filled</string>
@@ -233,6 +256,9 @@
     <string name="aod_pixel_notification" translatable="false">%1$s: %2$s</string>
     <string name="aod_pixel_time_12h" translatable="false">hh:mm</string>
     <string name="aod_pixel_date_pattern" translatable="false">dd MMM, EEEE</string>
+    <string name="aod_meridian_time_12h" translatable="false">hh:mm a</string>
+    <string name="aod_meridian_date_pattern" translatable="false">EEEE • dd MMM</string>
+    <string name="aod_meridian_notification" translatable="false">%1$s: %2$s</string>
 
     <!-- Tab Edge Light -->
     <string name="edge_light_soon_title">Edge Light is coming soon</string>

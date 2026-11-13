@@ -20,6 +20,8 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.gradientline.Gra
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.gentle.AodGentleWeightValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.gentle.GentleThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.halfmoon.HalfMoonThemeSpec
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.meridian.AodMeridianStyleValue
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.meridian.MeridianThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.mono.MonoThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.moonphase.MoonPhaseThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.orbit.OrbitThemeSpec
@@ -105,6 +107,7 @@ class AodThemeSpecTest {
                     AodThemeValue.MOON_PHASE,
                     AodThemeValue.POSTER,
                     AodThemeValue.PIXEL,
+                    AodThemeValue.MERIDIAN,
                     AodThemeValue.BLINKY,
                 )
             val hasSharedLatest = AodBlockValue.STATUS !in theme.spec.ownBlocks && theme != AodThemeValue.FLIP
@@ -946,6 +949,39 @@ class AodThemeSpecTest {
                 PixelThemeSpec.DateColor,
                 PixelThemeSpec.StatusColor,
                 PixelThemeSpec.MediaColor,
+            ),
+            spec.options,
+        )
+    }
+
+    @Test
+    fun `meridian keeps every reference option and fixed compact blocks`() {
+        val spec = AodThemeValue.MERIDIAN.spec
+        assertEquals(
+            setOf(
+                AodComponentValue.DATE,
+                AodComponentValue.BATTERY,
+                AodComponentValue.WEATHER,
+                AodComponentValue.NOTIFICATIONS,
+                AodComponentValue.MEDIA,
+            ),
+            spec.components,
+        )
+        assertEquals(setOf(AodBlockValue.DATE, AodBlockValue.STATUS, AodBlockValue.MEDIA), spec.ownBlocks)
+        assertEquals(true, spec.hasNotificationContent)
+        assertEquals(false, spec.isLiveInPreview)
+        assertEquals(AodMeridianStyleValue.FILLED, MeridianThemeSpec.Style.default)
+        assertEquals(4, MeridianThemeSpec.Style.entries.size)
+        assertEquals("America/New_York", MeridianThemeSpec.Zone.default)
+        assertEquals(
+            listOf(
+                MeridianThemeSpec.Style,
+                MeridianThemeSpec.CardColor,
+                MeridianThemeSpec.DialColor,
+                MeridianThemeSpec.Zone,
+                MeridianThemeSpec.DateColor,
+                MeridianThemeSpec.StatusColor,
+                MeridianThemeSpec.MediaColor,
             ),
             spec.options,
         )

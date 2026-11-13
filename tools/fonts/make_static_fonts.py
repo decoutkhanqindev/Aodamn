@@ -54,6 +54,8 @@ FONTS = {
     # cắt từ cùng một file nguồn (bản Google Fonts đã cắt còn Latin + tiếng Việt, ghim opsz 18, slnt 0).
     "google_sans_flex": ([1000], {"wdth": 108, "ROND": 0}),
     "google_sans_flex_rounded": ([1000], {"wdth": 108, "ROND": 100}, "google_sans_flex"),
+    # Flex Round của Kinh tuyến chính là Google Sans Flex bo tròn: số 0 rộng 0,661 em, nét 0,156 em ở wght 700 (mẫu 0,662 / 0,161)
+    "google_sans_flex_round": ([700], {"wdth": 100, "ROND": 100}, "google_sans_flex"),
 }
 
 # họ font chỉ có bản tĩnh -> độ đậm có sẵn (file <họ font>_<độ đậm>.ttf ở tools/fonts/static)

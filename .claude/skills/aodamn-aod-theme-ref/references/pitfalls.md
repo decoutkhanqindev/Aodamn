@@ -48,6 +48,10 @@ Mỗi dòng là một lỗi đã xảy ra thật; kiểm từng dòng trước k
   `AodWeather`: `weather != null`, rỗng thì vẫn dựng một ô 0dp) và dùng lại cho cả quyết định ẩn cột / thu vùng. Lề mép màn (khoảng
   tới đáy, tới đỉnh) không thuộc luật này. Kiểm: tắt lần lượt ngày, pin, thông báo, nhạc, lịch, ghi nhớ ở cả dọc lẫn ngang, cụm còn
   lại vẫn căn đúng.
+- **Ngang: khối rải nhiều chỗ thì bật / tắt là lệch** (Kinh tuyến, loại A): mock đặt ngày cột trái, dòng pin cột phải, rồi nhạc dưới hai thẻ;
+  user: "khi quay ngang bật tắt blocks bị lệch", rồi "thay vì start thì đưa các blocks center". Cách đã duyệt cho chủ đề này: hai thẻ cố định
+  một cột, mọi khối gom thành một cụm ở cột kia, căn giữa cả ngang lẫn dọc, nhạc hiện thì cụm trượt mượt (`expandVertically`). Mock phải có
+  khung tắt ngày (chỉ còn dòng pin) và khung đủ khối để thấy cụm vẫn cân.
 
 ## Dùng lại
 

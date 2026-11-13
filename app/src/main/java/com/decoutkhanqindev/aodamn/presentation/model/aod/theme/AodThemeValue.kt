@@ -21,6 +21,7 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.gradientline.Gra
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.gentle.GentleThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.halfmoon.HalfMoonThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.jersey.JerseyThemeSpec
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.meridian.MeridianThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.mono.MonoThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.moonphase.MoonPhaseThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.orbit.OrbitThemeSpec
@@ -70,7 +71,8 @@ enum class AodThemeValue(
     BLINKY(id = "blinky", nameRes = R.string.theme_blinky, spec = BlinkyThemeSpec),
     MOON_PHASE(id = "moon_phase", nameRes = R.string.theme_moon_phase, spec = MoonPhaseThemeSpec),
     POSTER(id = "poster", nameRes = R.string.theme_poster, spec = PosterThemeSpec),
-    PIXEL(id = "pixel", nameRes = R.string.theme_pixel, spec = PixelThemeSpec);
+    PIXEL(id = "pixel", nameRes = R.string.theme_pixel, spec = PixelThemeSpec),
+    MERIDIAN(id = "meridian", nameRes = R.string.theme_meridian, spec = MeridianThemeSpec);
 
     companion object {
         val DEFAULT = CLASSIC

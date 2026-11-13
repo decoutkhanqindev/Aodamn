@@ -5,6 +5,7 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodColorOption
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodRangeOption
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeConfig
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodToggleOption
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodZoneOption
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.isDefault
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.isSame
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.options
@@ -48,6 +49,7 @@ class AodThemeExpectationTest {
                     is AodRangeOption -> listOf(option.range.first, option.default, option.range.last).distinct().size
                     is AodToggleOption -> 2
                     is AodColorOption -> 2
+                    is AodZoneOption -> 2
                 }
                 assertEquals("${expectation.theme.id}: ${option.key}", expectedCount, cases.size)
                 cases.forEach { raws ->

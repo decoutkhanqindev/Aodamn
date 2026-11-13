@@ -51,5 +51,6 @@ class AodThemeContractTest {
         is AodColorOption -> encode(default)
         is AodRangeOption -> encode(default)
         is AodToggleOption -> encode(default)
+        is AodZoneOption -> encode(default)
     }
 }

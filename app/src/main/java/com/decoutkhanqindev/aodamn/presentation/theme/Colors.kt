@@ -14,6 +14,7 @@ val Orange = Color(0xFFFFB27A)
 val Pink = Color(0xFFFF9EC4)
 val Vermilion = Color(0xFFFF6B3D)
 val Phosphor = Color(0xFF4CFF72)
+val Periwinkle = Color(0xFF8C9EFF)
 val VermilionDeep = Color(0xFFEB3800)
 
 val GreyED = Color(0xFFEDEDED)
