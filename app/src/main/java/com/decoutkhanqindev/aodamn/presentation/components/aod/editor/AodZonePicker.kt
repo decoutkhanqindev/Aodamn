@@ -31,7 +31,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -312,8 +311,6 @@ private fun ZoneSearchField(
     state: TextFieldState,
     modifier: Modifier = Modifier,
 ) {
-    val isEmpty by remember(state) { derivedStateOf { state.text.isEmpty() } }
-
     BasicTextField(
         state = state,
         modifier = modifier.fillMaxWidth(),
@@ -342,7 +339,7 @@ private fun ZoneSearchField(
                 )
 
                 Box(modifier = Modifier.weight(1f)) {
-                    if (isEmpty) {
+                    if (state.text.isEmpty()) {
                         Text(
                             text = stringResource(R.string.zone_search_hint),
                             color = Grey6E,
@@ -355,7 +352,7 @@ private fun ZoneSearchField(
                 }
 
                 AnimatedVisibility(
-                    visible = !isEmpty,
+                    visible = state.text.isNotEmpty(),
                     enter = fadeIn(),
                     exit = fadeOut(),
                 ) {
