@@ -111,7 +111,7 @@ private fun GradientLinePlayer(
     bottomGap: Dp = 0.dp,
 ) {
     AnimatedVisibility(
-        visible = state.media != null && AodComponentValue.MEDIA in state.appearance.theme.value.spec.components,
+        visible = state.shownMedia != null && AodComponentValue.MEDIA in state.appearance.theme.value.spec.components,
         modifier = modifier,
     ) {
         Box(modifier = Modifier.padding(bottom = bottomGap)) {
@@ -125,7 +125,7 @@ private fun GradientLineDetails(
     state: AodState,
     modifier: Modifier = Modifier,
 ) {
-    val latest = state.notifications.latest
+    val latest = state.shownLatest
 
     Column(
         modifier = modifier,

@@ -106,7 +106,7 @@ fun AodHeroInfoLandscape(
 ) {
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val side = (maxWidth / 2 - heroHalfWidth(maxWidth, maxHeight) - style.landscapeGap - style.sideMargin).coerceAtLeast(0.dp)
-        val hasMedia = state.media != null && AodComponentValue.MEDIA in state.appearance.theme.value.spec.components
+        val hasMedia = state.shownMedia != null && AodComponentValue.MEDIA in state.appearance.theme.value.spec.components
 
         hero(Modifier.fillMaxSize())
 
@@ -152,7 +152,7 @@ private fun HeroInfoDetails(
     val isDateShown = state.extras.isDateEnabled
     val isWeatherShown = state.weather != null && AodComponentValue.WEATHER in state.appearance.theme.value.spec.components
     val hasIcons = state.notifications.icons.isNotEmpty()
-    val latest = state.notifications.latest
+    val latest = state.shownLatest
 
     Column(modifier = Modifier.fillMaxWidth()) {
         AnimatedVisibility(visible = isDateShown || isWeatherShown) {
@@ -320,7 +320,7 @@ private fun HeroInfoPlayer(
     modifier: Modifier = Modifier,
 ) {
     AnimatedVisibility(
-        visible = state.media != null && AodComponentValue.MEDIA in state.appearance.theme.value.spec.components,
+        visible = state.shownMedia != null && AodComponentValue.MEDIA in state.appearance.theme.value.spec.components,
         modifier = modifier,
     ) {
         AodPanelBlock(block = AodPanelBlockValue.MEDIA, state = state, onIntent = onIntent)

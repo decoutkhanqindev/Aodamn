@@ -89,7 +89,7 @@ fun AodCompassLandscape(
     onIntent: (AodIntent) -> Unit,
 ) {
     val paints = rememberCompassPaints()
-    val hasMedia = state.media != null && AodComponentValue.MEDIA in state.appearance.theme.value.spec.components
+    val hasMedia = state.shownMedia != null && AodComponentValue.MEDIA in state.appearance.theme.value.spec.components
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val dial = maxHeight * (CompassMetrics.DIAL_FRACTION * state.appearance.theme.config[CompassThemeSpec.Size] / 100f)
@@ -183,7 +183,7 @@ private fun CompassStatus(
 ) {
     val color = state.appearance.theme.config[CompassThemeSpec.StatusColor]
     val brush = state.appearance.theme.config.gradientOf(CompassThemeSpec.StatusColor)?.toBrush()
-    val latest = state.notifications.latest
+    val latest = state.shownLatest
 
     AodStatusLine(
         battery = state.battery?.takeIf { state.extras.isBatteryEnabled },
@@ -267,7 +267,7 @@ private fun CompassPlayer(
     modifier: Modifier = Modifier,
 ) {
     AnimatedVisibility(
-        visible = state.media != null && AodComponentValue.MEDIA in state.appearance.theme.value.spec.components,
+        visible = state.shownMedia != null && AodComponentValue.MEDIA in state.appearance.theme.value.spec.components,
         modifier = modifier,
     ) {
         Box(modifier = Modifier.width(width)) {
@@ -280,7 +280,7 @@ private fun AodState.isDateRowShown(): Boolean =
     extras.isDateEnabled || (weather != null && AodComponentValue.WEATHER in appearance.theme.value.spec.components)
 
 private fun AodState.hasCompassStatus(): Boolean =
-    (battery != null && extras.isBatteryEnabled) || isFlashlightOn || notifications.icons.isNotEmpty() || notifications.latest != null
+    (battery != null && extras.isBatteryEnabled) || isFlashlightOn || notifications.icons.isNotEmpty() || shownLatest != null
 
 @Preview(widthDp = 393, heightDp = 873)
 @Composable

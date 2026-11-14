@@ -69,6 +69,7 @@ fun AodContent(
     backdropRotationZ: Float? = null,
 ) {
     val currentOnIntent by rememberUpdatedState(onIntent)
+    val currentState by rememberUpdatedState(state)
     val focusRequester = remember { FocusRequester() }
 
     SideEffect(Unit) {
@@ -101,6 +102,7 @@ fun AodContent(
                         .focusable()
                         .pointerInput(Unit) {
                             detectTapGestures(
+                                onTap = { currentOnIntent(AodIntent.ToggleAutoHideBlocks(isShown = !(currentState.isMediaShown || currentState.isLatestShown))) },
                                 onDoubleTap = { currentOnIntent(AodIntent.PerformGesture(AodGestureValue.DOUBLE_TAP)) },
                             )
                         }

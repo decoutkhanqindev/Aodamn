@@ -289,10 +289,13 @@ app xin, nên không có trong danh sách trên: `AodTileService` (`BIND_QUICK_S
   mỗi app một icon, tối đa 5, còn lại hiện "+N". Bật "Hiện nội dung thông báo mới nhất" thì dưới các
   icon có thêm tiêu đề và nội dung của thông báo mới nhất, theo đúng quy tắc của màn hình khóa: nội
   dung bị màn hình khóa ẩn thì ở đây ghi "Nội dung đã ẩn". Có thông báo mới khi đồng hồ đang hiện
-  thì 4 cạnh màn hình sáng nhấp nháy khoảng 4 giây, theo màu của app đó.
+  thì 4 cạnh màn hình sáng nhấp nháy khoảng 4 giây, theo màu của app đó. Tiêu đề và nội dung thông báo mới nhất hiện khi mở AOD
+  hoặc khi có thông báo mới, rồi tự ẩn như trình phát (cùng cài đặt Tự ẩn trình phát và thông báo); hàng icon vẫn hiện suốt.
 - **Nhạc** (cần quyền "Truy cập thông báo"): khi có app nhạc đang phát hoặc tạm dừng, đồng hồ hiện
   tên bài, nghệ sĩ và 3 nút Bài trước, Phát/Tạm dừng, Bài tiếp theo. Như chạm 2 lần, nút bị bỏ qua
-  khi cảm biến tiệm cận đang bị che. Chủ đề Sỏi có trình phát riêng: nút phát nằm trong khối hình màu
+  khi cảm biến tiệm cận đang bị che. Ở mọi chủ đề, trình phát hiện khi mở AOD lúc đang có nhạc, khi đổi bài hoặc khi bấm nút
+  trên trình phát, rồi tự ẩn sau thời gian ở Cài đặt › Tự ẩn trình phát và thông báo (mặc định 30 giây, "Không bao giờ" thì không ẩn); chạm
+  màn một lần để hiện / ẩn lại (chờ khoảng 0,3 giây vì phải phân biệt với chạm 2 lần). Màn ngang đổi bố cục theo lúc trình phát hiện / ẩn. Chủ đề Sỏi có trình phát riêng: nút phát nằm trong khối hình màu
   nhạc và thanh tiến trình gợn sóng lúc đang phát (app nhạc không báo độ dài bài thì không có thanh). Viên nang: nút
   phát tròn đặc màu nhạc, thanh tiến trình dày tách đôi (phần đã nghe, một khe nhỏ, phần còn lại). Thẻ: nút phát tròn
   đặc 48dp, thanh gợn sóng kiểu Material 3 Expressive lúc đang phát, dừng thì duỗi thẳng. Tháp: lùi · tên bài giãn chữ · tới,
@@ -307,28 +310,28 @@ app xin, nên không có trong danh sách trên: `AodTileService` (`BIND_QUICK_S
   nằm ngay trên dòng pin. Chồng số: như app mẫu, tên bài / nghệ sĩ tối hơn bên trái, nút phát / dừng và nút tới bên phải (không
   nút lùi), thanh tiến trình 1,5dp bên dưới; đổi bài thì tên trượt lên. Bốn số: như Chồng số (cùng trình phát của app mẫu). Rẻ
   quạt: như app mẫu, tên bài / nghệ sĩ tối hơn 40% bên trái, nút phát / dừng và nút tới bên phải, thanh tiến trình 1dp bên dưới,
-  hiện suốt khi có nhạc (app mẫu chỉ hiện một lúc theo hẹn giờ). Gáy sách: như app mẫu, tên bài / nghệ sĩ mảnh (Josefin Light) bên trái,
-  nút phát / dừng và nút tới, không nút lùi, không thanh tiến trình, hiện suốt khi có nhạc (app mẫu theo hẹn giờ). Kẹp giấy: như
+  tự ẩn theo cài đặt. Gáy sách: như app mẫu, tên bài / nghệ sĩ mảnh (Josefin Light) bên trái,
+  nút phát / dừng và nút tới, không nút lùi, không thanh tiến trình, tự ẩn theo cài đặt. Kẹp giấy: như
   app mẫu (cùng kiểu La bàn), nút lùi / tới hai đầu, tên bài / nghệ sĩ in hoa giãn chữ ở giữa (nghệ sĩ tối hơn 30%), không thanh tiến
-  trình, chạm tên bài để phát / dừng, dừng thì chữ mờ; hiện suốt khi có nhạc, dưới dòng pin (app mẫu thay cả khối chữ theo hẹn giờ). Phai:
-  như Rẻ quạt (cùng số đo app mẫu), lề 40dp trên dòng pin ở đáy, hiện suốt khi có nhạc (app mẫu theo hẹn giờ). Lời: như Phai
-  (cùng số đo app mẫu), lề 40dp, cách 30dp trên dòng pin ở đáy, hiện suốt khi có nhạc (app mẫu theo hẹn giờ). Khung: như app mẫu, nút
+  trình, chạm tên bài để phát / dừng, dừng thì chữ mờ; tự ẩn theo cài đặt, dưới dòng pin (app mẫu thay cả khối chữ theo hẹn giờ). Phai:
+  như Rẻ quạt (cùng số đo app mẫu), lề 40dp trên dòng pin ở đáy, tự ẩn theo cài đặt. Lời: như Phai
+  (cùng số đo app mẫu), lề 40dp, cách 30dp trên dòng pin ở đáy, tự ẩn theo cài đặt. Khung: như app mẫu, nút
   lùi / tới 35dp cách mép 30dp, tên bài / nghệ sĩ mảnh (Josefin Light) ở giữa, không thanh tiến trình, chạm tên bài để phát / dừng, dừng thì
-  chữ mờ; giữa vùng dưới, hiện suốt khi có nhạc (app mẫu theo hẹn giờ, hàng ôm sát tên bài). Đơn cách: như app mẫu, thanh tiến trình 1,5dp
-  ở trên, tên bài / nghệ sĩ in hoa Space Mono bên trái (nghệ sĩ tối hơn 30%), nút lùi · phát · tới bên phải, cuối khối dưới neo đáy, hiện suốt
-  khi có nhạc (app mẫu theo hẹn giờ). Quỹ đạo: như Kẹp giấy (cùng họ layout app mẫu), nút lùi / tới 40dp cách mép 40dp, tên bài / nghệ sĩ in
-  hoa giãn chữ ở giữa (nghệ sĩ tối hơn 30%), chạm tên bài để phát / dừng, dừng thì chữ mờ; dưới cùng khối chữ, hiện suốt khi có nhạc.
+  chữ mờ; giữa vùng dưới, tự ẩn theo cài đặt. Đơn cách: như app mẫu, thanh tiến trình 1,5dp
+  ở trên, tên bài / nghệ sĩ in hoa Space Mono bên trái (nghệ sĩ tối hơn 30%), nút lùi · phát · tới bên phải, cuối khối dưới neo đáy, tự ẩn
+  theo cài đặt. Quỹ đạo: như Kẹp giấy (cùng họ layout app mẫu), nút lùi / tới 40dp cách mép 40dp, tên bài / nghệ sĩ in
+  hoa giãn chữ ở giữa (nghệ sĩ tối hơn 30%), chạm tên bài để phát / dừng, dừng thì chữ mờ; dưới cùng khối chữ, tự ẩn theo cài đặt.
   Dịu: xếp dọc như app mẫu, tên bài / nghệ sĩ in hoa giãn chữ ở giữa (nghệ sĩ tối hơn 30%), thanh tiến trình 1,5dp, lùi 38 · phát 45 · tới 38dp
-  cách 40dp, dừng thì chữ mờ; neo đáy trên dòng pin, hiện suốt khi có nhạc (app mẫu theo hẹn giờ).
+  cách 40dp, dừng thì chữ mờ; neo đáy trên dòng pin, tự ẩn theo cài đặt.
   Thẻ lật không có trình phát: cặp thẻ cỡ 100 đã chiếm gần hết chiều cao màn ngang, thêm nhạc sẽ ép hoặc dời đồng hồ. Chớp mắt gộp mọi thứ vào
-  một dòng phụ như app mẫu: pin + ngày + thời tiết, thay bằng thông báo mới 10 giây hoặc bài hát 30 giây, chạm màn để đổi, chạm dòng nhạc để phát / dừng (không có nút
+  một dòng phụ như app mẫu: pin + ngày + thời tiết, thay bằng thông báo mới theo thời gian tự ẩn hoặc bài hát (thời gian theo Cài đặt › Tự ẩn trình phát và thông báo), chạm màn để đổi, chạm dòng nhạc để phát / dừng (không có nút
   trước / sau và thanh tiến trình); hàng icon thông báo ngay dưới dòng. Không có sự kiện, ghi nhớ, nét vẽ vì bố cục chỉ có một dòng.
-  Nhật thực: trình phát dạng chữ, chevron mảnh như app mẫu, thay chỗ cụm chi tiết 30 giây khi mở AOD hoặc đổi bài, chạm màn để đổi qua lại; thông báo mới ẩn trình phát và hiện dòng thông báo 10 giây.
-  Pha trăng: trình phát dạng chữ hoa như Nhật thực, thay hàng pin • icon 30 giây khi mở AOD hoặc đổi bài, chạm màn để đổi qua lại; thông báo mới ẩn trình phát và thay hàng pin 10 giây.
-  Áp phích: trình phát chữ hoa giãn rộng có thanh tiến trình như app mẫu, hiện phía trên hàng pin (không thay chỗ) 30 giây khi mở AOD hoặc đổi bài, chạm màn để bật / tắt; thông báo mới thay hàng icon 10 giây.
-  Điểm ảnh: trình phát giống Áp phích, hiện phía trên hàng pin 30 giây khi mở AOD hoặc đổi bài, chạm màn để bật / tắt.
+  Nhật thực: trình phát dạng chữ, chevron mảnh như app mẫu, thay chỗ cụm chi tiết khi mở AOD hoặc đổi bài, chạm màn để đổi qua lại; thông báo mới ẩn trình phát và hiện dòng thông báo theo thời gian tự ẩn.
+  Pha trăng: trình phát dạng chữ hoa như Nhật thực, thay hàng pin • icon khi mở AOD hoặc đổi bài, chạm màn để đổi qua lại; thông báo mới ẩn trình phát và thay hàng pin theo thời gian tự ẩn.
+  Áp phích: trình phát chữ hoa giãn rộng có thanh tiến trình như app mẫu, hiện phía trên hàng pin (không thay chỗ) khi mở AOD hoặc đổi bài, chạm màn để bật / tắt; thông báo mới thay hàng icon theo thời gian tự ẩn.
+  Điểm ảnh: trình phát giống Áp phích, hiện phía trên hàng pin khi mở AOD hoặc đổi bài, chạm màn để bật / tắt.
   Kinh tuyến: trình phát như app mẫu, tên bài / nghệ sĩ bên trái (nghệ sĩ tối hơn 30%), nút lùi · phát (đĩa tròn) · tới, thanh tiến trình 6dp có khe; dọc hiện phía trên
-  dòng pin, ngang ở cuối cụm cột phải; 30 giây khi mở AOD hoặc đổi bài, chạm màn để bật / tắt.
+  dòng pin, ngang ở cuối cụm cột phải; hiện khi mở AOD hoặc đổi bài, chạm màn để bật / tắt.
 - **Thông tin thêm** (mục "Thông tin thêm trên đồng hồ", mặc định tắt hết): thời tiết hiện tại (icon
   trời và nhiệt độ) cạnh ngày; tối đa 2 sự kiện còn lại trong hôm nay từ lịch của máy (giờ bắt đầu
   hoặc "Cả ngày", rồi tên sự kiện); một ghi nhớ ngắn; một hình vẽ nhanh bằng ngón tay, hiện theo màu
@@ -398,6 +401,7 @@ Lưu trong `DataStoreManager` (file `aodamn_prefs`), mỗi tùy chọn một key
 | Độ sáng                                     | `aod_brightness_percent`   | 1%            | Từ 1 đến 100%, đặt `screenBrightness` của cửa sổ đồng hồ bằng phần trăm / 100. 1% bằng mức "giảm độ sáng" của bản trước |
 | Tối màn hình khi máy ở trong túi hoặc bị úp | `is_aod_proximity_enabled` | Bật           | Cảm biến tiệm cận bị che liên tục 3 giây thì đồng hồ chuyển sang đen                                                    |
 | Tối màn hình sau                            | `aod_timeout_minutes`      | Không bao giờ | Từ 0 (không bao giờ) đến 120 phút, mỗi nấc 5 phút                                                                       |
+| Tự ẩn trình phát và thông báo               | `aod_auto_hide_seconds`    | 30 giây       | Từ 0 (không bao giờ) đến 60 giây, mỗi nấc 10 giây; trình phát và thông báo mới nhất trên AOD tự ẩn sau thời gian này, chạm màn để hiện lại |
 
 Mục "Thông báo trên đồng hồ", chỉ có tác dụng khi đã cấp quyền "Truy cập thông báo":
 
@@ -1281,7 +1285,7 @@ chọn theo các khối đang có dữ liệu, dùng chung cho mọi chủ đề
     từ 0 lên, giờ giãn ra, sau đó đứng yên và chỉ đổi theo phút. Sửa: màu Vầng, Bóng, Xoay theo giờ hoặc khóa 0–360°, Độ lộ theo giờ hoặc khóa 0–100%, màu chữ số, ngày, pin & thông báo, nhạc; màu nào
     cũng có tab Gradient, Vầng gradient thì quầng đi từ màu đầu tới màu cuối. Đặt máy 12 giờ: 21:47 hiện "09:47". Áp dụng rồi khóa máy: hiệu ứng mở chạy đúng một lần, không chạy lại khi đổi phút; 08:00 vành
     sáng hướng 8 giờ, 12:00 lộ nhiều nhất, 00:00 lộ ít nhất. Có nhạc: trình phát thay cụm chi tiết 30 giây, chạm tên bài để phát / dừng (dừng thì mờ), chevron đổi bài. Chạm màn: đổi chi tiết ↔ nhạc. Chạm cụm chi
-    tiết: hiện / ẩn thông báo mới nhất. Thông báo mới: ẩn nhạc, dòng thông báo thay hàng pin • icon 10 giây. Tắt pin khi không có thông báo: ngày hạ sát đáy cụm, không còn khoảng thừa. Có ảnh nền: vẫn thấy ảnh mờ
+    tiết: hiện / ẩn thông báo mới nhất. Thông báo mới: ẩn nhạc, dòng thông báo thay hàng pin • icon theo thời gian tự ẩn. Tắt pin khi không có thông báo: ngày hạ sát đáy cụm, không còn khoảng thừa. Có ảnh nền: vẫn thấy ảnh mờ
     trong đĩa. Tùy chỉnh khi dùng Nhật thực: không có Sự kiện, Ghi nhớ, Nét vẽ; Ngày, Pin, Thông báo, Nhạc dẫn sang tab màu ở màn chủ đề. Xoay ngang: đĩa + giờ ở trên, dải chi tiết ở đáy, đổi sang nhạc đĩa không
     dời. Các chủ đề khác không đổi gì.
 25ac. Chủ đề Dịu: tab AOD › Chủ đề › Dịu: thẻ ở lưới là "08" trên "30" Nunito Đậm, giờ Xanh sương, phút sáng, ngày + icon ở trên, trình phát + pin ở đáy.
@@ -1293,7 +1297,7 @@ chọn theo các khối đang có dữ liệu, dùng chung cho mọi chủ đề
 25ad. Chủ đề Chớp mắt: tab AOD › Chủ đề › Chớp mắt: thẻ ở lưới đứng yên, hai mắt nhỏ màu Orchid đúng tâm, giờ Rubik + dòng pin · ngày ở vùng đáy. Mở chủ đề: mắt chớp cách
     nhau 0,2–5,2 giây, không ngủ. Sửa: Cỡ mắt 70–140, Cỡ đồng hồ 17–30, kéo về 17 thì giờ ẩn nhưng dòng phụ không dời; màu mắt, đồng hồ, ngày, pin & thông báo, nhạc; màu
     nào cũng có tab Gradient. Đặt máy 12 giờ: 21:47 hiện "09:47". Áp dụng rồi khóa máy: mở AOD mắt chớp ngay. Chạm màn: mắt mở, dòng phụ đổi pin + ngày → thông báo → nhạc, chạm
-    hai lần vẫn thoát AOD. Có thông báo mới: mắt chớp, dòng phụ hiện thông báo 10 giây. Đổi bài hoặc mở AOD khi đang có nhạc: dòng phụ hiện bài 30 giây; chạm dòng nhạc thì phát / dừng,
+    hai lần vẫn thoát AOD. Có thông báo mới: mắt chớp, dòng phụ hiện thông báo theo thời gian tự ẩn. Đổi bài hoặc mở AOD khi đang có nhạc: dòng phụ hiện bài 30 giây; chạm dòng nhạc thì phát / dừng,
     dừng thì dòng mờ. Cắm sạc: icon pin đổi, mắt chớp. Để yên máy trên bàn 1–6 phút (đêm 11–60 giây): mắt nheo dần 12 giây, giật mở hai lần rồi nhắm hẳn; nhấc máy là mắt mở. Tắt
     ngày và pin: giờ không dời. Tùy chỉnh khi dùng Chớp mắt: không có Sự kiện, Ghi nhớ, Nét vẽ; Ngày, Pin, Thông báo, Nhạc dẫn sang tab màu ở màn chủ đề. Xoay ngang: cùng bố cục, cỡ
     lớn nhất vẫn không chạm mép. Các chủ đề khác không đổi gì.
@@ -1301,28 +1305,35 @@ chọn theo các khối đang có dữ liệu, dùng chung cho mọi chủ đề
     cả bầu trời xoay 8 phút một vòng, sao lớn lấp lánh, sao băng bay ngẫu nhiên, giờ trượt lên và ngày trượt xuống 1 giây khi mở. Giờ Exo 2 vàng `hh.mma` (24 giờ `HH.mmHRS`), ngày căn
     phải theo mép giờ ở màn dọc. Sửa: màu và cỡ giờ, màu và cỡ trăng, Peek 0 (pha theo âm lịch hôm nay) rồi 1, 25, 50 (khuyết, nửa, tròn), Xoay 0 và 359, màu sao băng, hạt sao, ngày, pin &
     thông báo, nhạc; màu nào cũng có tab Gradient. Tắt ngày: giờ không dời. Có nhạc: trình phát thay hàng pin • icon 30 giây, chevron đổi bài, dừng thì mờ. Chạm màn: đổi chi tiết ↔ nhạc.
-    Chạm hàng pin: hiện / ẩn thông báo mới nhất. Thông báo mới: ẩn nhạc, dòng thông báo thay hàng pin 10 giây. Tùy chỉnh khi dùng Pha trăng: không có Sự kiện, Ghi nhớ, Nét vẽ. Xoay ngang:
+    Chạm hàng pin: hiện / ẩn thông báo mới nhất. Thông báo mới: ẩn nhạc, dòng thông báo thay hàng pin theo thời gian tự ẩn. Tùy chỉnh khi dùng Pha trăng: không có Sự kiện, Ghi nhớ, Nét vẽ. Xoay ngang:
     trăng bên trái, giờ + ngày bên phải, đổi sang nhạc không khối nào dời. Để AOD vài phút: không giật, máy không nóng hơn Nhật thực rõ rệt. Các chủ đề khác không đổi gì.
 25af. Chủ đề Áp phích: tab AOD › Chủ đề › Áp phích: thẻ ở lưới là bốn dòng chữ hẹp đậm căn trái, giờ đỏ cam, phút đỏ cam đậm, thứ + ngày xám sáng, hàng pin
     neo đáy. Sửa: cỡ 80 và 140 (thứ dài như "WEDNESDAY" tự thu cho vừa bề ngang, không bị cắt), màu giờ, phút, thứ, ngày, pin & thông báo, nhạc; màu nào cũng có tab
     Gradient và gradient trải theo từng dòng chữ. Đặt máy 12 giờ: 21:47 hiện "09 47" không AM/PM; ngôn ngữ app tiếng Việt: thứ "CHỦ NHẬT" đủ dấu, ngày "8/11"; tiếng Anh
     (Mỹ): ngày "11/8". Tắt ngày: thứ vẫn còn, khối chữ căn lại giữa vùng trên; bật thời tiết: nằm cạnh ngày (tắt ngày thì dưới dòng thứ). Có nhạc: trình phát hiện trên hàng
     pin 30 giây khi mở AOD hoặc đổi bài, hàng pin không dời; chạm màn bật / tắt trình phát, bấm nút thì giữ thêm 30 giây. Chạm hàng pin: hiện / ẩn thông báo mới nhất; thông báo
-    mới thay hàng icon 10 giây. Tùy chỉnh khi dùng Áp phích: không có Sự kiện, Ghi nhớ, Nét vẽ. Xoay ngang: khối chữ căn trái cột trái, hàng pin + trình phát ở cột phải
+    mới thay hàng icon theo thời gian tự ẩn. Tùy chỉnh khi dùng Áp phích: không có Sự kiện, Ghi nhớ, Nét vẽ. Xoay ngang: khối chữ căn trái cột trái, hàng pin + trình phát ở cột phải
     neo đáy. Các chủ đề khác không đổi gì.
 25ag. Chủ đề Điểm ảnh: tab AOD › Chủ đề › Điểm ảnh: thẻ ở lưới là giờ chữ pixel to màu xanh lân quang, ngày in hoa nhỏ phía trên, hàng pin neo đáy. Sửa: kiểu Đặc /
     Viền (viền là nét mảnh quanh từng khối pixel), cỡ 80 và 120, màu giờ, ngày, pin & thông báo, nhạc; màu nào cũng có tab Gradient. Đặt máy 12 giờ: 21:47 hiện
     "09:47" không AM/PM; ngôn ngữ app tiếng Việt: ngày "08 THG 11, CHỦ NHẬT". Tắt ngày: giờ không dời (cụm neo đáy ở 27% chiều cao); bật thời tiết: cùng dòng ngày. Có
     nhạc: trình phát hiện trên hàng pin 30 giây khi mở AOD hoặc đổi bài, hàng pin không dời; chạm màn bật / tắt trình phát. Chạm hàng pin: hiện / ẩn thông báo mới nhất;
-    thông báo mới thay hàng icon 10 giây. Đổi Đặc ↔ Viền ở màn chủ đề: giờ đổi ngay, không chờ sang phút. Tùy chỉnh khi dùng Điểm ảnh: không có Sự kiện, Ghi nhớ,
+    thông báo mới thay hàng icon theo thời gian tự ẩn. Đổi Đặc ↔ Viền ở màn chủ đề: giờ đổi ngay, không chờ sang phút. Tùy chỉnh khi dùng Điểm ảnh: không có Sự kiện, Ghi nhớ,
     Nét vẽ. Xoay ngang: ngày + giờ giữa cột trái, hàng pin + trình phát ở cột phải neo đáy. Các chủ đề khác không đổi gì.
 25ah. Chủ đề Kinh tuyến: tab AOD › Chủ đề › Kinh tuyến: thẻ ở lưới là hai thẻ bo tròn nền mờ xanh dừa cạn, mỗi thẻ một mặt kim + giờ số; thẻ đầu "TẠI ĐÂY",
     thẻ hai "NEW YORK" theo múi New York. Sửa › Múi giờ: bấm dòng múi giờ mở sheet chia theo châu lục (tên thành phố theo ngôn ngữ app, kèm GMT±), múi đang chọn
     ghim trên cùng; gõ "da nang", "gmt+9" hoặc "tokyo" vào ô tìm thì lọc đúng, không thấy thì hiện "Không tìm thấy múi giờ"; chọn Tokyo thì thẻ hai đổi ngay giờ và nhãn "TOKYO"; chọn múi có 30 / 45 phút lẻ (Kolkata, Kathmandu) thì giờ và kim lệch đúng. Kiểu thẻ: Viền mờ /
     Nổi thẻ đầu / Nền mờ / Viền đậm; màu thẻ, mặt số, ngày, pin & thông báo, nhạc; màu nào cũng có tab Gradient. Đặt máy 12 giờ: giờ số có SA / CH. Ngôn ngữ app tiếng
     Việt: ngày "CHỦ NHẬT • 08 THG 11". Đổi múi giờ của máy (Cài đặt › Ngày giờ): thẻ đầu theo giờ máy mới, thẻ hai giữ múi đã chọn. Có nhạc: trình phát hiện trên dòng pin
-    30 giây khi mở AOD hoặc đổi bài, chạm màn bật / tắt. Chạm dòng pin: hiện / ẩn thông báo mới nhất; thông báo mới thay dòng pin 10 giây. Tùy chỉnh khi dùng Kinh tuyến:
+    30 giây khi mở AOD hoặc đổi bài, chạm màn bật / tắt. Chạm dòng pin: hiện / ẩn thông báo mới nhất; thông báo mới thay dòng pin theo thời gian tự ẩn. Tùy chỉnh khi dùng Kinh tuyến:
     không có Sự kiện, Ghi nhớ, Nét vẽ. Xoay ngang: hai thẻ giữa cột trái, cụm ngày / pin / trình phát căn giữa cột phải. Các chủ đề khác không đổi gì.
+25ai. Tự ẩn trình phát và thông báo: mở một app nhạc, phát một bài, có sẵn một thông báo rồi tắt màn hình. Mặc định (Cài đặt › Tự ẩn trình phát và
+    thông báo = 30 giây): trình phát và thông báo mới nhất hiện, sau 30 giây cùng ẩn (hàng icon thông báo vẫn còn); chạm màn một lần thì cả hai hiện lại
+    (trễ khoảng 0,3 giây), chạm lần nữa thì ẩn; chạm 2 lần vẫn làm đúng thao tác đã chọn (thoát AOD). Đang ẩn mà đổi bài: trình phát hiện lại; có thông báo
+    mới: thông báo hiện lại; bấm nút phát / tới: trình phát đếm lại từ đầu. Chỉnh thành 10 giây và "Không bao giờ": ẩn sau 10 giây / không tự ẩn (chạm màn
+    vẫn ẩn được). Thử ở một chủ đề cũ (Rẻ quạt, cả xoay ngang: bố cục đổi khi khối ẩn / hiện) và một chủ đề mới (Áp phích: thông báo mới ẩn trình phát;
+    chạm hàng pin bật / tắt thông báo). Chớp mắt: dòng nhạc / thông báo giữ theo thời gian đã chọn. Khung xem trước ở Tùy chỉnh, màn chủ đề và thẻ ở
+    tab AOD không đổi gì.
 25f. Overlay mới (không còn hộp thoại / nút Material): mọi sheet có thanh kéo dải màu mint → xanh → tím; mép trên màn
     hình không có viền sáng khi sheet hiện. Đặt lại (tab AOD › Chủ đề, Tùy chỉnh, màn chủ đề): sheet có hình điện thoại với huy hiệu mũi tên xoay, nút
     "Đặt lại" mint, Hủy bằng chữ. Màn chủ đề đang sửa, Back khi còn thay đổi: "Lưu trước khi thoát?" với Lưu rồi thoát (lưu,

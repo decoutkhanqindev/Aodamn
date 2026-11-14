@@ -87,7 +87,7 @@ fun AodClipLandscape(
     onIntent: (AodIntent) -> Unit,
 ) {
     val config = state.appearance.theme.config
-    val hasMedia = state.media != null && AodComponentValue.MEDIA in state.appearance.theme.value.spec.components
+    val hasMedia = state.shownMedia != null && AodComponentValue.MEDIA in state.appearance.theme.value.spec.components
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val radius = min(maxWidth, maxHeight) / 2 * (config[ClipThemeSpec.Size] / ClipMetrics.SIZE_DIVISOR)
@@ -166,7 +166,7 @@ private fun ClipStatus(
 ) {
     val color = state.appearance.theme.config[ClipThemeSpec.StatusColor]
     val brush = state.appearance.theme.config.gradientOf(ClipThemeSpec.StatusColor)?.toBrush()
-    val latest = state.notifications.latest
+    val latest = state.shownLatest
 
     AodStatusLine(
         battery = state.battery?.takeIf { state.extras.isBatteryEnabled },
@@ -256,7 +256,7 @@ private fun ClipPlayer(
     modifier: Modifier = Modifier,
 ) {
     AnimatedVisibility(
-        visible = state.media != null && AodComponentValue.MEDIA in state.appearance.theme.value.spec.components,
+        visible = state.shownMedia != null && AodComponentValue.MEDIA in state.appearance.theme.value.spec.components,
         modifier = modifier,
     ) {
         Box(modifier = Modifier.width(width)) {

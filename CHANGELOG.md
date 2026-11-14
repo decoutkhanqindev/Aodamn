@@ -7,6 +7,27 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-11-14 – Tự ẩn trình phát và thông báo
+
+Theo app mẫu (Muviz Edge: cài đặt chung thời gian giữ trình phát 10–60 giây, có "Never"); user duyệt plan `plans/aod-media-auto-hide.md`: "hãy thực hiện như đề xuất
+nhé chấp nhận đổi nhiều những mang lại hiệu ứng tốt cho app hơn", rồi mở rộng sang thông báo mới nhất (`plans/aod-notification-auto-hide.md`, "làm thêm nhé,
+hướng 1", "Dùng chung một thanh").
+
+### Thêm
+
+- Cài đặt › Tự ẩn trình phát và thông báo (`aod_auto_hide_seconds`, 0–60 giây, nấc 10, mặc định 30, 0 = Không bao giờ), ngay dưới Tối màn hình sau.
+- `AodHold` trong `AodViewModel`, một cho trình phát, một cho thông báo mới nhất: hiện khi mở AOD, khi đổi bài / có thông báo khác hoặc bấm nút trên
+  trình phát, tự ẩn hết giờ; chạm màn một lần (`AodIntent.ToggleAutoHideBlocks`) hiện / ẩn cả hai. `AodState.isMediaShown` / `isLatestShown` mặc định
+  `true` (`shownMedia`, `shownLatest`) nên khung xem trước, thẻ và ảnh chuẩn test không đổi (test `AodHoldTest`).
+
+### Đổi
+
+- Chủ đề trước đây hiện trình phát và thông báo mới nhất suốt (Rẻ quạt, Chuỗi, Sỏi, La bàn…) giờ tự ẩn theo cài đặt; hàng icon vẫn hiện; bố cục ngang
+  chuyển theo khối đang hiện.
+- Áp phích, Điểm ảnh, Kinh tuyến, Nhật thực, Pha trăng bỏ hẹn giờ riêng (nhạc 30 giây, thông báo 10 giây) và chạm màn riêng, dùng điều khiển chung;
+  thông báo mới vẫn ẩn trình phát, chạm hàng / dòng pin vẫn bật / tắt thông báo. Chớp mắt giữ dòng nhạc / thông báo theo thời gian đã chọn
+  (Không bao giờ thì giữ tới khi chạm đổi dòng).
+
 ## [Chưa phát hành] – 2026-11-13 – Sửa xem trước trình phát của các chủ đề mới
 
 User báo: bật trình phát ở Tùy chỉnh (sau khi cấp quyền truy cập thông báo) thì khung xem trước không hiện trình phát ở các chủ đề mới.

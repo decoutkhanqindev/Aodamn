@@ -196,7 +196,7 @@ private fun MonoStatus(state: AodState) {
     val config = state.appearance.theme.config
     val color = config[MonoThemeSpec.StatusColor]
     val brush = config.gradientOf(MonoThemeSpec.StatusColor)?.toBrush()
-    val latest = state.notifications.latest
+    val latest = state.shownLatest
 
     AodStatusLine(
         battery = state.battery?.takeIf { state.extras.isBatteryEnabled },
@@ -256,7 +256,7 @@ private fun AodState.hasMonoExtras(): Boolean {
 }
 
 private fun AodState.hasMonoStatus(): Boolean =
-    (battery != null && extras.isBatteryEnabled) || isFlashlightOn || notifications.icons.isNotEmpty() || notifications.latest != null
+    (battery != null && extras.isBatteryEnabled) || isFlashlightOn || notifications.icons.isNotEmpty() || shownLatest != null
 
 private fun AodState.hasMonoInfo(): Boolean = hasMonoStatus() || isMonoMediaShown() || hasMonoExtras()
 

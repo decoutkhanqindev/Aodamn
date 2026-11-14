@@ -124,7 +124,7 @@ fun AodSectorLandscape(
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val reach = minOf(maxWidth, maxHeight) / 2 * (state.appearance.theme.config[SectorThemeSpec.Size] / 100f) * SectorMetrics.MINUTE_END
         val zone = (maxWidth / 2 - reach).coerceAtLeast(0.dp)
-        val hasMedia = state.media != null && AodComponentValue.MEDIA in state.appearance.theme.value.spec.components
+        val hasMedia = state.shownMedia != null && AodComponentValue.MEDIA in state.appearance.theme.value.spec.components
 
         Box(
             modifier = Modifier
@@ -267,7 +267,7 @@ private fun SectorDate(state: AodState) {
 
 @Composable
 private fun SectorLatest(state: AodState) {
-    val latest = state.notifications.latest
+    val latest = state.shownLatest
     val isWeatherShown = state.weather != null && AodComponentValue.WEATHER in state.appearance.theme.value.spec.components
     val hasTopGap = state.extras.isDateEnabled || isWeatherShown || state.notifications.icons.isNotEmpty()
 
@@ -340,7 +340,7 @@ private fun SectorPlayer(
     onIntent: (AodIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    AnimatedVisibility(visible = state.media != null && AodComponentValue.MEDIA in state.appearance.theme.value.spec.components) {
+    AnimatedVisibility(visible = state.shownMedia != null && AodComponentValue.MEDIA in state.appearance.theme.value.spec.components) {
         Box(modifier = modifier) {
             AodPanelBlock(block = AodPanelBlockValue.MEDIA, state = state, onIntent = onIntent)
         }

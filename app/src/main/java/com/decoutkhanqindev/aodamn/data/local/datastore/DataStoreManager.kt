@@ -66,6 +66,11 @@ class DataStoreManager(
     val aodTimeoutMinutes: StateFlow<Int?> =
         aodTimeoutMinutesKey.asStateFlow(default = DEFAULT_AOD_TIMEOUT_MINUTES)
 
+    private val aodAutoHideSecondsKey: Preferences.Key<Int> =
+        intPreferencesKey(AOD_AUTO_HIDE_SECONDS_KEY)
+    val aodAutoHideSeconds: StateFlow<Int?> =
+        aodAutoHideSecondsKey.asStateFlow(default = DEFAULT_AOD_AUTO_HIDE_SECONDS)
+
     private val aodMinBatteryKey: Preferences.Key<Int> = intPreferencesKey(AOD_MIN_BATTERY_KEY)
     val aodMinBattery: StateFlow<Int?> =
         aodMinBatteryKey.asStateFlow(default = DEFAULT_AOD_MIN_BATTERY)
@@ -273,6 +278,10 @@ class DataStoreManager(
         edit { prefs -> prefs[aodTimeoutMinutesKey] = value }
     }
 
+    fun saveAodAutoHideSeconds(value: Int) {
+        edit { prefs -> prefs[aodAutoHideSecondsKey] = value }
+    }
+
     fun saveAodMinBattery(value: Int) {
         edit { prefs -> prefs[aodMinBatteryKey] = value }
     }
@@ -434,6 +443,7 @@ class DataStoreManager(
         private const val AOD_BRIGHTNESS_PERCENT_KEY = "aod_brightness_percent"
         private const val IS_AOD_PROXIMITY_ENABLED_KEY = "is_aod_proximity_enabled"
         private const val AOD_TIMEOUT_MINUTES_KEY = "aod_timeout_minutes"
+        private const val AOD_AUTO_HIDE_SECONDS_KEY = "aod_auto_hide_seconds"
         private const val AOD_MIN_BATTERY_KEY = "aod_min_battery"
         private const val AOD_CHARGING_RULE_KEY = "aod_charging_rule"
         private const val IS_AOD_SCHEDULE_ENABLED_KEY = "is_aod_schedule_enabled"
@@ -481,6 +491,7 @@ class DataStoreManager(
         const val DEFAULT_AOD_BRIGHTNESS_PERCENT = 1
         const val DEFAULT_IS_AOD_PROXIMITY_ENABLED = true
         const val DEFAULT_AOD_TIMEOUT_MINUTES = 0
+        const val DEFAULT_AOD_AUTO_HIDE_SECONDS = 30
         const val DEFAULT_AOD_MIN_BATTERY = 0
         private const val DEFAULT_AOD_CHARGING_RULE = 0
         const val DEFAULT_IS_AOD_SCHEDULE_ENABLED = false

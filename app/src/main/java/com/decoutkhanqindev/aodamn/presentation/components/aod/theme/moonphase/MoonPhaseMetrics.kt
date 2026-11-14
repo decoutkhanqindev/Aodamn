@@ -21,8 +21,6 @@ object MoonPhaseMetrics {
     const val STILL_SEED = 4319
     const val MINUTE_MILLIS = 60_000L
     const val TICK_SLACK_MILLIS = 50L
-    const val MEDIA_HOLD_MILLIS = 30_000L
-    const val LATEST_HOLD_MILLIS = 10_000L
     const val SWAP_MILLIS = 200
     const val FADE_MILLIS = 300
     const val OPEN_MILLIS = 1_000

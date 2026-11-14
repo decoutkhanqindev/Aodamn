@@ -145,8 +145,8 @@ private fun BlinkyFace(
         else -> BlinkyLineValue.STATUS
     }
 
-    LaunchedEffect(line, lineStamp, hasMedia) {
-        val holdMillis = BlinkyMetrics.lineHoldMillis(line, hasMedia) ?: return@LaunchedEffect
+    LaunchedEffect(line, lineStamp, hasMedia, state.autoHideSeconds) {
+        val holdMillis = BlinkyMetrics.lineHoldMillis(line, hasMedia, state.autoHideSeconds) ?: return@LaunchedEffect
         delay(holdMillis)
         line = BlinkyLineValue.STATUS
     }

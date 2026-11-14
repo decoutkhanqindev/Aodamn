@@ -16,7 +16,7 @@ fill: battery-charging music-note flashlight clock device-mobile gear-six check-
 fill: calendar-blank battery-full image paint-brush note-pencil bell calendar-check cloud-sun music-notes sparkle timer text-aa magic-wand line-vertical globe-hemisphere-west
 
 # Ô icon ở màn Cài đặt, thẻ quyền, thẻ giao diện
-duotone: sun eye-closed timer device-rotate plugs-connected calendar-dots battery-warning
+duotone: sun eye-closed timer device-rotate music-notes plugs-connected calendar-dots battery-warning
 duotone: hand-tap arrow-fat-lines-up arrow-fat-lines-down speaker-high speaker-low arrow-u-up-left hand-waving moon
 duotone: stack lock-simple picture-in-picture bell bell-ringing calendar map-pin translate pencil-simple sparkle crown-simple
 

@@ -129,7 +129,7 @@ private fun TickNotifications(
     val config = state.appearance.theme.config
     val color = config[TickThemeSpec.NotificationsColor]
     val brush = config.gradientOf(TickThemeSpec.NotificationsColor)?.toBrush()
-    val latest = state.notifications.latest
+    val latest = state.shownLatest
     val hasIcons = state.notifications.icons.isNotEmpty()
 
     Column(
@@ -218,7 +218,7 @@ private fun TickPlayer(
     modifier: Modifier = Modifier,
 ) {
     AnimatedVisibility(
-        visible = state.media != null && AodComponentValue.MEDIA in state.appearance.theme.value.spec.components,
+        visible = state.shownMedia != null && AodComponentValue.MEDIA in state.appearance.theme.value.spec.components,
         modifier = modifier,
     ) {
         Box(modifier = Modifier.padding(bottom = if (state.isTickBatteryShown()) TickMetrics.PlayerGap else 0.dp)) {

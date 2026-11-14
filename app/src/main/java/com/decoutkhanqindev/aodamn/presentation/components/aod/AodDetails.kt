@@ -228,8 +228,8 @@ fun AodState.shownPanelBlocks(): ImmutableList<AodPanelBlockValue> =
                 AodPanelBlockValue.EVENTS -> events.isNotEmpty()
                 AodPanelBlockValue.MEMO -> extras.memo.isNotBlank()
                 AodPanelBlockValue.DRAWING -> drawing != null
-                AodPanelBlockValue.NOTIFICATION -> notifications.latest != null
-                AodPanelBlockValue.MEDIA -> media != null
+                AodPanelBlockValue.NOTIFICATION -> shownLatest != null
+                AodPanelBlockValue.MEDIA -> shownMedia != null
             }
         }
         .toImmutableList()

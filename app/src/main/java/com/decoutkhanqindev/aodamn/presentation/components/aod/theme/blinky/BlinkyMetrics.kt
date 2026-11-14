@@ -33,8 +33,6 @@ object BlinkyMetrics {
     const val NIGHT_START_HOUR = 22
     const val NIGHT_END_HOUR = 6
     const val LINE_FADE_MILLIS = 300
-    const val NOTIFICATION_HOLD_MILLIS = 10_000L
-    const val MEDIA_HOLD_MILLIS = 30_000L
     const val EMPTY_MEDIA_HOLD_MILLIS = 1_000L
 
     val LineIconSize = 16.dp
@@ -74,9 +72,13 @@ object BlinkyMetrics {
     fun blinkGapMillis(random: Random = Random.Default): Long =
         (BLINK_GAP_MIN_MILLIS + random.nextInt(BLINK_GAP_SPAN_MILLIS)).toLong()
 
-    fun lineHoldMillis(line: BlinkyLineValue, hasMedia: Boolean): Long? = when (line) {
+    fun lineHoldMillis(line: BlinkyLineValue, hasMedia: Boolean, holdSeconds: Int): Long? = when (line) {
         BlinkyLineValue.STATUS -> null
-        BlinkyLineValue.NOTIFICATION -> NOTIFICATION_HOLD_MILLIS
-        BlinkyLineValue.MEDIA -> if (hasMedia) MEDIA_HOLD_MILLIS else EMPTY_MEDIA_HOLD_MILLIS
+        BlinkyLineValue.NOTIFICATION -> if (holdSeconds == 0) null else holdSeconds * 1_000L
+        BlinkyLineValue.MEDIA -> if (hasMedia) {
+            if (holdSeconds == 0) null else holdSeconds * 1_000L
+        } else {
+            EMPTY_MEDIA_HOLD_MILLIS
+        }
     }
 }

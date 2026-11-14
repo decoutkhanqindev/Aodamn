@@ -156,7 +156,7 @@ private fun HalfMoonColumn(
     val isWeatherShown = state.weather != null && AodComponentValue.WEATHER in state.appearance.theme.value.spec.components
     val statusColor = config[HalfMoonThemeSpec.StatusColor]
     val statusBrush = config.gradientOf(HalfMoonThemeSpec.StatusColor)?.toBrush()
-    val latest = state.notifications.latest
+    val latest = state.shownLatest
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         AnimatedVisibility(visible = isDateShown) {
@@ -267,7 +267,7 @@ private fun HalfMoonPlayer(
     modifier: Modifier = Modifier,
 ) {
     AnimatedVisibility(
-        visible = state.media != null && AodComponentValue.MEDIA in state.appearance.theme.value.spec.components,
+        visible = state.shownMedia != null && AodComponentValue.MEDIA in state.appearance.theme.value.spec.components,
         modifier = modifier,
     ) {
         Box(modifier = Modifier.width(width)) {
@@ -282,7 +282,7 @@ private fun AodState.hasHalfMoonColumn(): Boolean =
         (battery != null && extras.isBatteryEnabled) ||
         isFlashlightOn ||
         notifications.icons.isNotEmpty() ||
-        notifications.latest != null
+        shownLatest != null
 
 @Preview(widthDp = 393, heightDp = 873)
 @Composable

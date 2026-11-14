@@ -71,7 +71,7 @@ fun AodSpinePortrait(
     state: AodState,
     onIntent: (AodIntent) -> Unit,
 ) {
-    val hasMedia = state.media != null && AodComponentValue.MEDIA in state.appearance.theme.value.spec.components
+    val hasMedia = state.shownMedia != null && AodComponentValue.MEDIA in state.appearance.theme.value.spec.components
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val unit = minOf(maxWidth, maxHeight) / SpineMetrics.BASE_WIDTH
@@ -290,7 +290,7 @@ private fun SpineStatus(state: AodState) {
 @Composable
 private fun SpineLatest(state: AodState) {
     val config = state.appearance.theme.config
-    val latest = state.notifications.latest
+    val latest = state.shownLatest
 
     AnimatedVisibility(
         visible = latest != null,
@@ -324,7 +324,7 @@ private fun SpinePlayer(
     state: AodState,
     onIntent: (AodIntent) -> Unit,
 ) {
-    AnimatedVisibility(visible = state.media != null && AodComponentValue.MEDIA in state.appearance.theme.value.spec.components) {
+    AnimatedVisibility(visible = state.shownMedia != null && AodComponentValue.MEDIA in state.appearance.theme.value.spec.components) {
         Box(
             modifier = Modifier
                 .widthIn(max = SpineMetrics.PlayerMaxWidth)

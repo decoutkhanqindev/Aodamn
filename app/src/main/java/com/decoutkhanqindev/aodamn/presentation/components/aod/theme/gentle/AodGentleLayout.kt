@@ -125,7 +125,7 @@ private fun GentleDetails(
     val config = state.appearance.theme.config
     val isDateEnabled = state.extras.isDateEnabled
     val isGentleWeatherShown = state.isGentleWeatherShown()
-    val latest = state.notifications.latest
+    val latest = state.shownLatest
 
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         AnimatedVisibility(visible = state.hasGentleDateRow()) {

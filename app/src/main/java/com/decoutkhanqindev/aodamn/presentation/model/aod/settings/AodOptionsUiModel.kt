@@ -13,12 +13,15 @@ data class AodOptionsUiModel(
     val brightnessPercent: Int = DataStoreManager.DEFAULT_AOD_BRIGHTNESS_PERCENT,
     val isProximityEnabled: Boolean = DataStoreManager.DEFAULT_IS_AOD_PROXIMITY_ENABLED,
     val timeoutMinutes: Int = DataStoreManager.DEFAULT_AOD_TIMEOUT_MINUTES,
+    val autoHideSeconds: Int = DataStoreManager.DEFAULT_AOD_AUTO_HIDE_SECONDS,
 ) {
     companion object {
         const val BRIGHTNESS_MIN_PERCENT = 1
         const val BRIGHTNESS_MAX_PERCENT = 100
         const val TIMEOUT_STEP_MINUTES = 5
         const val TIMEOUT_MAX_MINUTES = 120
+        const val AUTO_HIDE_STEP_SECONDS = 10
+        const val AUTO_HIDE_MAX_SECONDS = 60
     }
 }
 
@@ -36,4 +39,6 @@ fun DataStoreManager.observeAodOptions(): Flow<AodOptionsUiModel> = combine(
         isProximityEnabled = isProximityEnabled,
         timeoutMinutes = timeoutMinutes,
     )
+}.combine(aodAutoHideSeconds.filterNotNull()) { options, seconds ->
+    options.copy(autoHideSeconds = seconds)
 }

@@ -49,10 +49,12 @@ class BlinkyMetricsTest {
 
     @Test
     fun `line holds match each content type`() {
-        assertNull(BlinkyMetrics.lineHoldMillis(BlinkyLineValue.STATUS, hasMedia = false))
-        assertEquals(10_000L, BlinkyMetrics.lineHoldMillis(BlinkyLineValue.NOTIFICATION, hasMedia = false))
-        assertEquals(30_000L, BlinkyMetrics.lineHoldMillis(BlinkyLineValue.MEDIA, hasMedia = true))
-        assertEquals(1_000L, BlinkyMetrics.lineHoldMillis(BlinkyLineValue.MEDIA, hasMedia = false))
+        assertNull(BlinkyMetrics.lineHoldMillis(BlinkyLineValue.STATUS, hasMedia = false, holdSeconds = 30))
+        assertEquals(30_000L, BlinkyMetrics.lineHoldMillis(BlinkyLineValue.NOTIFICATION, hasMedia = false, holdSeconds = 30))
+        assertNull(BlinkyMetrics.lineHoldMillis(BlinkyLineValue.NOTIFICATION, hasMedia = false, holdSeconds = 0))
+        assertEquals(30_000L, BlinkyMetrics.lineHoldMillis(BlinkyLineValue.MEDIA, hasMedia = true, holdSeconds = 30))
+        assertEquals(1_000L, BlinkyMetrics.lineHoldMillis(BlinkyLineValue.MEDIA, hasMedia = false, holdSeconds = 30))
+        assertNull(BlinkyMetrics.lineHoldMillis(BlinkyLineValue.MEDIA, hasMedia = true, holdSeconds = 0))
     }
 
     @Test

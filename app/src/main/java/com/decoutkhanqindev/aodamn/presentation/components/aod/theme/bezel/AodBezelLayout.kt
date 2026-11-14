@@ -77,7 +77,7 @@ fun AodBezelLandscape(
     onIntent: (AodIntent) -> Unit,
 ) {
     val paints = rememberBezelPaints()
-    val hasMedia = state.media != null && AodComponentValue.MEDIA in state.appearance.theme.value.spec.components
+    val hasMedia = state.shownMedia != null && AodComponentValue.MEDIA in state.appearance.theme.value.spec.components
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val start = maxWidth * BezelMetrics.LANDSCAPE_START

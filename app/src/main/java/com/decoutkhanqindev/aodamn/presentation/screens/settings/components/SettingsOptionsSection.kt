@@ -64,6 +64,22 @@ fun SettingsOptionsSection(
 
         SettingsDivider()
 
+        SettingsSliderItem(
+            label = stringResource(R.string.opt_auto_hide),
+            valueText = if (options.autoHideSeconds == 0) {
+                stringResource(R.string.value_never)
+            } else {
+                stringResource(R.string.value_seconds, options.autoHideSeconds)
+            },
+            progress = { options.autoHideSeconds },
+            valueRange = 0..AodOptionsUiModel.AUTO_HIDE_MAX_SECONDS,
+            step = AodOptionsUiModel.AUTO_HIDE_STEP_SECONDS,
+            onProgressChange = { onIntent(SettingsIntent.Options.ChangeAutoHide(it)) },
+            iconRes = R.drawable.ic_music_notes_duotone,
+        )
+
+        SettingsDivider()
+
         SettingsSwitchItem(
             iconRes = R.drawable.ic_device_rotate_duotone,
             label = stringResource(R.string.opt_landscape),

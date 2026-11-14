@@ -270,9 +270,11 @@
     <string name="section_display">Display</string>
     <string name="opt_brightness">Brightness</string>
     <string name="opt_timeout">Go dark after</string>
+    <string name="opt_auto_hide">Auto-hide player &amp; notifications</string>
     <string name="opt_min_battery">Skip the clock on low battery</string>
     <string name="value_percent" translatable="false">%1$d%%</string>
     <string name="value_minutes">%1$d min</string>
+    <string name="value_seconds">%1$d sec</string>
     <string name="value_never">Never</string>
     <string name="value_off">Off</string>
     <string name="value_below_percent">Below %1$d%%</string>

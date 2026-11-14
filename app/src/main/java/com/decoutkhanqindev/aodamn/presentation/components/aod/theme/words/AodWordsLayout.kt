@@ -97,7 +97,7 @@ fun AodWordsLandscape(
     onIntent: (AodIntent) -> Unit,
 ) {
     val hasIcons = state.notifications.icons.isNotEmpty()
-    val hasLatest = state.notifications.latest != null
+    val hasLatest = state.shownLatest != null
     val hasMedia = state.isWordsMediaShown()
     val playerGap = when {
         hasLatest -> WordsMetrics.LandscapeLatestGap
@@ -209,7 +209,7 @@ private fun WordsLatest(
     state: AodState,
     gap: Dp,
 ) {
-    val latest = state.notifications.latest
+    val latest = state.shownLatest
 
     AnimatedVisibility(
         visible = latest != null,

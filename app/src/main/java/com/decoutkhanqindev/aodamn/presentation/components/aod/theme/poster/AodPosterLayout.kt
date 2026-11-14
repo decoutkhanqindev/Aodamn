@@ -10,25 +10,18 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.gestures.awaitEachGesture
-import androidx.compose.foundation.gestures.awaitFirstDown
-import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
@@ -49,7 +42,6 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.poster.PosterThe
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodIntent
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodState
 import com.decoutkhanqindev.aodamn.presentation.theme.FontFamilyGoogleSans
-import kotlinx.coroutines.delay
 
 @Composable
 fun AodPosterPortrait(
@@ -75,65 +67,21 @@ private fun PosterFace(
 ) {
     val latest = state.notifications.latest
     val hasMedia = state.media != null
-    val currentHasMedia by rememberUpdatedState(hasMedia)
     val latestStamp = latest?.let { content -> listOf(content.key, content.title, content.text) }
-    val trackStamp = state.media?.let { media -> listOf(media.title, media.artist) }
-    var isMediaShown by remember { mutableStateOf(false) }
-    var isLatestShown by remember { mutableStateOf(false) }
-    var mediaStamp by remember { mutableIntStateOf(0) }
-    var latestHoldStamp by remember { mutableIntStateOf(0) }
     var seenLatest by remember { mutableStateOf(latestStamp) }
-    var seenTrack by remember { mutableStateOf(if (state.isPreview) trackStamp else null) }
 
     SideEffect(latestStamp) {
         if (latestStamp != seenLatest) {
             seenLatest = latestStamp
             if (latestStamp != null) {
-                isMediaShown = false
-                isLatestShown = true
-                latestHoldStamp++
+                if (!state.isPreview) onIntent(AodIntent.ToggleMediaControls(isShown = false))
             }
-        }
-    }
-
-    SideEffect(trackStamp) {
-        if (trackStamp != seenTrack) {
-            seenTrack = trackStamp
-            if (trackStamp != null) {
-                isMediaShown = true
-                mediaStamp++
-            }
-        }
-    }
-
-    if (isMediaShown) {
-        LaunchedEffect(mediaStamp) {
-            delay(PosterMetrics.MEDIA_HOLD_MILLIS)
-            isMediaShown = false
-        }
-    }
-
-    if (isLatestShown) {
-        LaunchedEffect(latestHoldStamp) {
-            delay(PosterMetrics.LATEST_HOLD_MILLIS)
-            isLatestShown = false
         }
     }
 
     val slidePx = with(LocalDensity.current) { PosterMetrics.SwapSlide.roundToPx() }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .posterTap(isEnabled = state.isClockLive) {
-                if (isMediaShown) {
-                    isMediaShown = false
-                } else if (currentHasMedia) {
-                    isMediaShown = true
-                    mediaStamp++
-                }
-            },
-    ) {
+    Box(modifier = Modifier.fillMaxSize()) {
         AodPosterText(state = state, isLandscape = isLandscape)
 
         Column(
@@ -141,7 +89,7 @@ private fun PosterFace(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             AnimatedVisibility(
-                visible = hasMedia && (isMediaShown || state.isPreviewShown(AodComponentValue.MEDIA)),
+                visible = hasMedia && ((!state.isPreview && state.isMediaShown) || state.isPreviewShown(AodComponentValue.MEDIA)),
                 enter = slideInVertically(tween(PosterMetrics.SWAP_MILLIS)) { slidePx } + fadeIn(tween(PosterMetrics.SWAP_MILLIS)),
                 exit = fadeOut(tween(PosterMetrics.SWAP_MILLIS)),
             ) {
@@ -153,10 +101,7 @@ private fun PosterFace(
                     AodPanelBlock(
                         block = AodPanelBlockValue.MEDIA,
                         state = state,
-                        onIntent = { intent ->
-                            onIntent(intent)
-                            mediaStamp++
-                        },
+                        onIntent = onIntent,
                     )
                 }
             }
@@ -164,29 +109,9 @@ private fun PosterFace(
             PosterDetails(
                 state = state,
                 isLandscape = isLandscape,
-                isLatestShown = isLatestShown || state.isPreviewFocused(AodComponentValue.NOTIFICATIONS),
-                onTap = {
-                    if (isLatestShown) {
-                        isLatestShown = false
-                    } else if (latest != null) {
-                        isLatestShown = true
-                        latestHoldStamp++
-                    }
-                },
+                isLatestShown = (!state.isPreview && state.isLatestShown) || state.isPreviewFocused(AodComponentValue.NOTIFICATIONS),
+                onTap = { if (latest != null || state.isLatestShown) onIntent(AodIntent.ToggleLatestNotification(isShown = !state.isLatestShown)) },
             )
-        }
-    }
-}
-
-private fun Modifier.posterTap(
-    isEnabled: Boolean,
-    onTap: () -> Unit,
-): Modifier {
-    if (!isEnabled) return this
-    return pointerInput(Unit) {
-        awaitEachGesture {
-            awaitFirstDown(requireUnconsumed = false)
-            if (waitForUpOrCancellation() != null) onTap()
         }
     }
 }

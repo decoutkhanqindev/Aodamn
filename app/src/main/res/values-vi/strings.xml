@@ -245,8 +245,10 @@
     <string name="section_display">Hiển thị</string>
     <string name="opt_brightness">Độ sáng</string>
     <string name="opt_timeout">Tối màn hình sau</string>
+    <string name="opt_auto_hide">Tự ẩn trình phát và thông báo</string>
     <string name="opt_min_battery">Bỏ qua đồng hồ khi pin yếu</string>
     <string name="value_minutes">%1$d phút</string>
+    <string name="value_seconds">%1$d giây</string>
     <string name="value_never">Không bao giờ</string>
     <string name="value_off">Tắt</string>
     <string name="value_below_percent">Dưới %1$d%%</string>

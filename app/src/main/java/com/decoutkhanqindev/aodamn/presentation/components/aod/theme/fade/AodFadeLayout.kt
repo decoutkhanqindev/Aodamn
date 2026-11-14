@@ -112,7 +112,7 @@ fun AodFadeLandscape(
     onIntent: (AodIntent) -> Unit,
 ) {
     val config = state.appearance.theme.config
-    val hasMedia = state.media != null && AodComponentValue.MEDIA in state.appearance.theme.value.spec.components
+    val hasMedia = state.shownMedia != null && AodComponentValue.MEDIA in state.appearance.theme.value.spec.components
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val weight = config[FadeThemeSpec.Weight]
@@ -302,7 +302,7 @@ private fun FadeLatest(
     hasTopGap: Boolean,
     gap: Dp = FadeMetrics.LatestGap,
 ) {
-    val latest = state.notifications.latest
+    val latest = state.shownLatest
 
     AnimatedVisibility(
         visible = latest != null,
@@ -375,7 +375,7 @@ private fun FadePlayer(
     onIntent: (AodIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    AnimatedVisibility(visible = state.media != null && AodComponentValue.MEDIA in state.appearance.theme.value.spec.components) {
+    AnimatedVisibility(visible = state.shownMedia != null && AodComponentValue.MEDIA in state.appearance.theme.value.spec.components) {
         Box(modifier = modifier) {
             AodPanelBlock(block = AodPanelBlockValue.MEDIA, state = state, onIntent = onIntent)
         }
@@ -389,7 +389,7 @@ private fun AodState.hasFadeDateLine(): Boolean = extras.isDateEnabled || isFade
 
 private fun AodState.hasFadeRow(): Boolean = hasFadeDateLine() || notifications.icons.isNotEmpty()
 
-private fun AodState.hasFadeStatus(): Boolean = notifications.icons.isNotEmpty() || notifications.latest != null
+private fun AodState.hasFadeStatus(): Boolean = notifications.icons.isNotEmpty() || shownLatest != null
 
 private fun AodState.isFadeBatteryShown(): Boolean = (battery != null && extras.isBatteryEnabled) || isFlashlightOn
 

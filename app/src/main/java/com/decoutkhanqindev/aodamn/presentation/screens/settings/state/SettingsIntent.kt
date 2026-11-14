@@ -12,6 +12,7 @@ sealed interface SettingsIntent {
         data class ChangeBrightness(val percent: Int) : Options
         data class ToggleProximity(val isEnabled: Boolean) : Options
         data class ChangeTimeout(val minutes: Int) : Options
+        data class ChangeAutoHide(val seconds: Int) : Options
         data class ToggleLandscape(val isEnabled: Boolean) : Options
     }
 

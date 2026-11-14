@@ -86,6 +86,7 @@ class SettingsViewModel(
             )
 
             is SettingsIntent.Options.ChangeTimeout -> dataStoreManager.saveAodTimeoutMinutes(intent.minutes)
+            is SettingsIntent.Options.ChangeAutoHide -> dataStoreManager.saveAodAutoHideSeconds(intent.seconds)
             is SettingsIntent.Options.ToggleLandscape -> dataStoreManager.saveIsAodLandscape(intent.isEnabled)
         }
     }

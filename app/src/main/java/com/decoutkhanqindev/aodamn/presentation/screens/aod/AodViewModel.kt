@@ -20,6 +20,8 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.WallpaperVa
 import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.currentAodAppearance
 import com.decoutkhanqindev.aodamn.presentation.model.aod.info.BatteryUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.info.CalendarEventUiModel
+import com.decoutkhanqindev.aodamn.presentation.model.aod.info.MediaUiModel
+import com.decoutkhanqindev.aodamn.presentation.model.aod.info.NotificationContentUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.info.glowColorArgb
 import com.decoutkhanqindev.aodamn.presentation.model.aod.info.toAodNotificationsUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.info.toUiModel
@@ -73,6 +75,8 @@ class AodViewModel(
             ?: DataStoreManager.DEFAULT_IS_AOD_PROXIMITY_ENABLED
     private val timeoutMinutes =
         dataStoreManager.aodTimeoutMinutes.value ?: DataStoreManager.DEFAULT_AOD_TIMEOUT_MINUTES
+    private val autoHideSeconds =
+        dataStoreManager.aodAutoHideSeconds.value ?: DataStoreManager.DEFAULT_AOD_AUTO_HIDE_SECONDS
     private val rules = dataStoreManager.currentAodRules()
     private val notificationOptions =
         dataStoreManager.currentAodNotificationOptions().shownIn(state.value.appearance.theme.value.spec)
@@ -86,6 +90,12 @@ class AodViewModel(
     private var motionJob: Job? = null
     private var nextEventsReloadMillis = 0L
     private var nextWeatherRefreshMillis = 0L
+    private val mediaHold = AodHold<MediaUiModel>(viewModelScope, autoHideSeconds, isSame = { a, b -> a.title == b.title && a.artist == b.artist }) { isShown ->
+        updateState { copy(isMediaShown = isShown) }
+    }
+    private val latestHold = AodHold<NotificationContentUiModel>(viewModelScope, autoHideSeconds, isSame = { a, b -> a.key == b.key && a.title == b.title && a.text == b.text }) { isShown ->
+        updateState { copy(isLatestShown = isShown) }
+    }
 
     init {
         observeBattery()
@@ -115,9 +125,26 @@ class AodViewModel(
         when (intent) {
             is AodIntent.PerformGesture -> performGesture(intent.gesture)
             is AodIntent.ToggleMotionWatch -> toggleMotionWatch(intent.isEnabled)
-            is AodIntent.PlayPauseMedia -> mediaStateManager.playPause()
-            is AodIntent.SkipToPreviousTrack -> mediaStateManager.skipToPrevious()
-            is AodIntent.SkipToNextTrack -> mediaStateManager.skipToNext()
+            is AodIntent.ToggleMediaControls -> mediaHold.toggle(intent.isShown)
+            is AodIntent.ToggleLatestNotification -> latestHold.toggle(intent.isShown)
+            is AodIntent.ToggleAutoHideBlocks -> {
+                mediaHold.toggle(intent.isShown)
+                latestHold.toggle(intent.isShown)
+            }
+            is AodIntent.PlayPauseMedia -> {
+                mediaStateManager.playPause()
+                mediaHold.extend()
+            }
+
+            is AodIntent.SkipToPreviousTrack -> {
+                mediaStateManager.skipToPrevious()
+                mediaHold.extend()
+            }
+
+            is AodIntent.SkipToNextTrack -> {
+                mediaStateManager.skipToNext()
+                mediaHold.extend()
+            }
         }
     }
 
@@ -194,13 +221,9 @@ class AodViewModel(
         viewModelScope.launch {
             notificationStateManager.notifications.collectCatching(
                 block = { notifications ->
-                    updateState {
-                        copy(
-                            notifications = notifications.toAodNotificationsUiModel(
-                                notificationOptions
-                            )
-                        )
-                    }
+                    val mappedNotifications = notifications.toAodNotificationsUiModel(notificationOptions)
+                    updateState { copy(notifications = mappedNotifications) }
+                    latestHold.onChange(mappedNotifications.latest)
                 },
                 catch = { e -> Timber.tag(tag).e(e.stackTraceToString()) },
             )
@@ -219,7 +242,11 @@ class AodViewModel(
     private fun observeMedia() {
         viewModelScope.launch {
             mediaStateManager.playback.collectCatching(
-                block = { playback -> updateState { copy(media = playback?.toUiModel()) } },
+                block = { playback ->
+                    val media = playback?.toUiModel()
+                    updateState { copy(media = media) }
+                    mediaHold.onChange(media)
+                },
                 catch = { e -> Timber.tag(tag).e(e.stackTraceToString()) },
             )
         }
@@ -448,6 +475,10 @@ class AodViewModel(
             interaction = dataStoreManager.currentAodInteraction(),
             extras = dataStoreManager.currentAodExtras().shownIn(AodThemeValue.fromId(dataStoreManager.aodThemeId.value).spec),
             wallpaper = WallpaperValue.fromCode(dataStoreManager.aodWallpaper.value),
+            autoHideSeconds = dataStoreManager.aodAutoHideSeconds.value
+                ?: DataStoreManager.DEFAULT_AOD_AUTO_HIDE_SECONDS,
+            isMediaShown = false,
+            isLatestShown = false,
             battery = batteryStateManager.readLevelPercent()?.let { percent ->
                 BatteryUiModel(
                     percent = percent,

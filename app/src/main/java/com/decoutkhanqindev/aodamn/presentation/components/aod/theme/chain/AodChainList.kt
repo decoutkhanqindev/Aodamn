@@ -82,7 +82,7 @@ fun AodChainList(
     val battery = state.battery?.takeIf { state.extras.isBatteryEnabled }
     val isDateShown = isStatusShown && (state.extras.isDateEnabled || isWeatherShown)
     val isBatteryShown = isStatusShown && (battery != null || state.isFlashlightOn)
-    val isNotificationsShown = isStatusShown && (state.notifications.latest != null || state.notifications.icons.isNotEmpty())
+    val isNotificationsShown = isStatusShown && (state.shownLatest != null || state.notifications.icons.isNotEmpty())
     val isMemoShown = isExtrasShown && state.hasChainMemo()
     val isEventsShown = isExtrasShown && state.hasChainEvents()
     val last = listOf(isDateShown, isBatteryShown, isNotificationsShown, isMemoShown, isEventsShown).lastIndexOf(true)
@@ -108,9 +108,9 @@ fun AodChainList(
             isLast = last == 2,
             color = notificationsColor,
             gradient = config.gradientOf(ChainThemeSpec.NotificationsColor),
-            dotCenter = if (state.notifications.latest != null) titleCenter else ChainMetrics.IconSize / 2,
+            dotCenter = if (state.shownLatest != null) titleCenter else ChainMetrics.IconSize / 2,
         ) {
-            ChainNotifications(notifications = state.notifications, color = notificationsColor, brush = notificationsBrush)
+            ChainNotifications(notifications = state.shownNotifications, color = notificationsColor, brush = notificationsBrush)
         }
 
         val memoColor = config[ChainThemeSpec.MemoColor]

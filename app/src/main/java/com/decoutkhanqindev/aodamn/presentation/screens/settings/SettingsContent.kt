@@ -96,6 +96,7 @@ private fun SettingsContentPreview() {
                     isCustomBrightness = true,
                     brightnessPercent = 20,
                     timeoutMinutes = 30,
+                    autoHideSeconds = 30,
                 ),
                 rules = SettingsRulesState(settings = AodRulesUiModel(chargingRule = ChargingRuleValue.PLUGGED)),
                 permissions = persistentListOf(

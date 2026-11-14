@@ -194,7 +194,7 @@ private fun FrameStatus(
     val config = state.appearance.theme.config
     val color = config[FrameThemeSpec.StatusColor]
     val brush = config.gradientOf(FrameThemeSpec.StatusColor)?.toBrush()
-    val latest = state.notifications.latest
+    val latest = state.shownLatest
 
     AodStatusLine(
         battery = state.battery?.takeIf { state.extras.isBatteryEnabled },
@@ -241,7 +241,7 @@ private fun FramePlayer(
     onIntent: (AodIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    AnimatedVisibility(visible = state.media != null && AodComponentValue.MEDIA in state.appearance.theme.value.spec.components) {
+    AnimatedVisibility(visible = state.shownMedia != null && AodComponentValue.MEDIA in state.appearance.theme.value.spec.components) {
         Box(modifier = modifier) {
             AodPanelBlock(block = AodPanelBlockValue.MEDIA, state = state, onIntent = onIntent)
         }
@@ -249,7 +249,7 @@ private fun FramePlayer(
 }
 
 private fun AodState.hasFrameStatus(): Boolean =
-    (battery != null && extras.isBatteryEnabled) || isFlashlightOn || notifications.icons.isNotEmpty() || notifications.latest != null
+    (battery != null && extras.isBatteryEnabled) || isFlashlightOn || notifications.icons.isNotEmpty() || shownLatest != null
 
 private fun AodState.hasFrameExtras(): Boolean {
     val components = appearance.theme.value.spec.components

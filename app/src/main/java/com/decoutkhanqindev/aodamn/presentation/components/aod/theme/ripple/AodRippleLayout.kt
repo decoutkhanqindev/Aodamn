@@ -98,7 +98,7 @@ fun AodRippleLandscape(
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val reach = rippleFaceReach(state, minOf(maxWidth, maxHeight))
         val side = (maxWidth / 2 - reach - RippleMetrics.LandscapeGap * 2).coerceAtLeast(0.dp)
-        val hasMedia = state.media != null && AodComponentValue.MEDIA in state.appearance.theme.value.spec.components
+        val hasMedia = state.shownMedia != null && AodComponentValue.MEDIA in state.appearance.theme.value.spec.components
 
         RippleDial(state = state)
 
@@ -157,7 +157,7 @@ private fun RippleNotifications(
     maxWidth: Dp,
 ) {
     val config = state.appearance.theme.config
-    val latest = state.notifications.latest
+    val latest = state.shownLatest
     val hasIcons = state.notifications.icons.isNotEmpty()
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -235,7 +235,7 @@ private fun RipplePlayer(
     state: AodState,
     onIntent: (AodIntent) -> Unit,
 ) {
-    AnimatedVisibility(visible = state.media != null && AodComponentValue.MEDIA in state.appearance.theme.value.spec.components) {
+    AnimatedVisibility(visible = state.shownMedia != null && AodComponentValue.MEDIA in state.appearance.theme.value.spec.components) {
         AodPanelBlock(block = AodPanelBlockValue.MEDIA, state = state, onIntent = onIntent)
     }
 }

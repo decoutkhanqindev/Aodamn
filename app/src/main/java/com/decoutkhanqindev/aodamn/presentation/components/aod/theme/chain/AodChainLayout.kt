@@ -83,7 +83,7 @@ fun AodChainLandscape(
 ) {
     val glyphs = rememberChainGlyphs()
     val hasExtras = state.hasChainMemo() || state.hasChainEvents()
-    val hasMedia = state.media != null && AodComponentValue.MEDIA in state.appearance.theme.value.spec.components
+    val hasMedia = state.shownMedia != null && AodComponentValue.MEDIA in state.appearance.theme.value.spec.components
 
     Crossfade(targetState = hasExtras to hasMedia, label = "AodChainLandscape") { (isExtrasShown, isMediaShown) ->
         val hero: @Composable () -> Unit = { ChainHero(state = state, glyphs = glyphs) }
