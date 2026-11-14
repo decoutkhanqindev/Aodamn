@@ -31,12 +31,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -72,10 +74,15 @@ import com.decoutkhanqindev.aodamn.presentation.theme.NeutralVariant30
 import com.decoutkhanqindev.aodamn.presentation.theme.RoundedCornerShape12dp
 import com.decoutkhanqindev.aodamn.presentation.theme.RoundedCornerShape16dp
 import com.decoutkhanqindev.aodamn.presentation.theme.TitleMedium
+import com.decoutkhanqindev.aodamn.utils.collectCatching
 import com.decoutkhanqindev.aodamn.utils.withContextCatching
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import timber.log.Timber
 import java.util.TimeZone
 
@@ -158,7 +165,7 @@ private fun AodZoneSheet(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, FlowPreview::class)
 @Composable
 private fun ZoneList(
     selectedId: String,
@@ -183,7 +190,18 @@ private fun ZoneList(
         (LocalWindowInfo.current.containerSize.height * 0.6f).toDp()
     }
     val queryState = rememberTextFieldState()
-    val query = AodZoneUiModel.searchKeyOf(queryState.text.toString())
+    var query by remember { mutableStateOf("") }
+
+    LaunchedEffect(queryState) {
+        snapshotFlow { queryState.text.toString() }
+            .map { text -> AodZoneUiModel.searchKeyOf(text) }
+            .debounce { key -> if (key.isEmpty()) 0L else 300L }
+            .distinctUntilChanged()
+            .collectCatching(
+                block = { key -> query = key },
+                catch = { e -> Timber.tag(tag).e(e.stackTraceToString()) },
+            )
+    }
 
     ZoneSearchField(
         state = queryState,
@@ -294,6 +312,8 @@ private fun ZoneSearchField(
     state: TextFieldState,
     modifier: Modifier = Modifier,
 ) {
+    val isEmpty by remember(state) { derivedStateOf { state.text.isEmpty() } }
+
     BasicTextField(
         state = state,
         modifier = modifier.fillMaxWidth(),
@@ -322,7 +342,7 @@ private fun ZoneSearchField(
                 )
 
                 Box(modifier = Modifier.weight(1f)) {
-                    if (state.text.isEmpty()) {
+                    if (isEmpty) {
                         Text(
                             text = stringResource(R.string.zone_search_hint),
                             color = Grey6E,
@@ -335,7 +355,7 @@ private fun ZoneSearchField(
                 }
 
                 AnimatedVisibility(
-                    visible = state.text.isNotEmpty(),
+                    visible = !isEmpty,
                     enter = fadeIn(),
                     exit = fadeOut(),
                 ) {
