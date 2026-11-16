@@ -83,6 +83,12 @@
     <string name="theme_poster">Áp phích</string>
     <string name="theme_pixel">Điểm ảnh</string>
     <string name="theme_meridian">Kinh tuyến</string>
+    <string name="theme_glass">Kính</string>
+    <string name="glass_style_regular">Thường</string>
+    <string name="glass_style_rounded">Bo tròn</string>
+    <string name="glass_style_stencil">Khuôn tô</string>
+    <string name="glass_style_serif">Có chân</string>
+    <string name="glass_style_rails">Đường ray</string>
     <string name="theme_opt_card_style">Kiểu thẻ</string>
     <string name="meridian_style_outline">Viền mờ</string>
     <string name="meridian_style_first">Nổi thẻ đầu</string>
@@ -443,6 +449,8 @@
     <string name="aod_chain_battery_full">Đã sạc đầy</string>
     <string name="aod_sector_battery_charging">"%1$d%%  ·  Đang sạc"</string>
     <string name="aod_sector_battery_full">"%1$d%%  ·  Đã sạc đầy"</string>
+    <string name="aod_glass_battery_charging">"%1$d%%  ·  Đang sạc"</string>
+    <string name="aod_glass_battery_full">"%1$d%%  ·  Đã sạc đầy"</string>
     <string name="aod_fade_battery_charging">"%1$d%%  ·  Đang sạc"</string>
     <string name="aod_fade_battery_full">"%1$d%%  ·  Đã sạc đầy"</string>
     <string name="aod_words_battery_charging">"%1$d%%  ·  Đang sạc"</string>

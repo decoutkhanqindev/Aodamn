@@ -27,6 +27,9 @@ light: sun moon-stars cloud-sun cloud-moon cloud cloud-fog drop cloud-rain cloud
 # Trình phát nhạc của chủ đề Sỏi: nét đặc hợp chữ số đậm của khối
 fill: play pause skip-back skip-forward
 
+# Thẻ nhạc kiểu iOS của chủ đề Kính: lùi / tới hai tam giác
+fill: rewind fast-forward
+
 # Sheet, hộp thoại, toast: icon từng lựa chọn (thao tác, nguồn điện), công cụ bảng vẽ, huy hiệu của hình minh hoạ
 regular: prohibit lock-key moon flashlight play-pause skip-back skip-forward infinity plugs-connected battery-charging eraser
 fill: shield-check warning-circle

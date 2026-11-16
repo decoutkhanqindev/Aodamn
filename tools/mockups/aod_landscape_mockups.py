@@ -6555,3 +6555,351 @@ if ONLY in (None, "w_meridian"):
                            meridian_frames)
     (OUT / "w_meridian.html").write_text(meridian_code, encoding="utf-8")
     print("w_meridian", len(meridian_code))
+
+
+# ------------------------------------------------------------------ KÍNH (iOS Lockscreen của Muviz Edge, Jun23Screen, jun23_screen_layout dọc / ngang)
+# Dọc: 40% trên là ngày "EEEE, d MMMM" 22 sp (NoPadTextView, mờ 0,9) cách 22 dp trên giờ "H:mm" Cỡ sp (70–110, mặc định 92), cụm căn giữa
+# vùng; 60% dưới neo đáy: thẻ thông báo (nền #801C1D25 bo 14, đệm 14, lề 18: hàng icon 18 dp cách 10 hoặc thông báo mới icon 18 + chữ 16 sp),
+# thẻ nhạc (bo 20, lề 18, đệm 14: ảnh bìa 60 dp bo 7 + tên 18 sp / nghệ sĩ 18 sp mờ 0,6 lấn -8 dp; hàng tiến trình cách 20 / 20: "0:18" 13% · thanh
+# 6 dp bo 6 (rãnh #E6262833) 73% · "-4:02" 14%, chữ 12 sp mờ 0,6 giãn 0,1; ba nút lùi / phát / tới 55 dp cách 45), dòng pin 16 sp mờ 0,9 cách đáy
+# 30 dp. Ngang: nửa trái ngày + giờ + pin, nửa phải thẻ thông báo + thẻ nhạc; nửa phải trống thì nửa trái chiếm cả màn. Năm kiểu chữ số SF Pro
+# Display Medium / SF Pro Rounded Semibold / SF Pro Stencil / New York Extra Large Heavy / SF Pro Rails (font của Apple) thay bằng Inter 500 /
+# Google Sans Flex bo tròn 700 / Allerta Stencil / Fraunces 900 (SOFT 0, WONK 0) / viền Inter 300; chữ phụ SF Pro Display thay bằng Inter.
+IO_INTER = TTFont(ROOT / "tools/fonts/variable/inter_variable.ttf")
+IO_TEXT_M = BzFont(instancer.instantiateVariableFont(IO_INTER, {"wght": 500, "opsz": 14}, inplace=False), "ioM")
+IO_TEXT_R = BzFont(instancer.instantiateVariableFont(IO_INTER, {"wght": 400, "opsz": 14}, inplace=False), "ioR")
+
+
+def io_clock_font(style):
+    if style == "regular":
+        return instancer.instantiateVariableFont(IO_INTER, {"wght": 500, "opsz": 32}, inplace=False)
+    if style == "rounded":
+        return instancer.instantiateVariableFont(TTFont(ROOT / "tools/fonts/variable/google_sans_flex_variable.ttf"),
+                                                 {"wght": 700, "wdth": 100, "ROND": 100}, inplace=False)
+    if style == "stencil":
+        return TTFont(ROOT / "tools/fonts/static/allerta_stencil_regular.ttf")
+    if style == "serif":
+        return instancer.instantiateVariableFont(TTFont(ROOT / "tools/fonts/variable/fraunces_variable.ttf"),
+                                                 {"wght": 900, "opsz": 144, "SOFT": 0, "WONK": 0}, inplace=False)
+    from fontTools.ttLib.removeOverlaps import removeOverlaps
+
+    font = instancer.instantiateVariableFont(IO_INTER, {"wght": 300, "opsz": 32}, inplace=False)
+    removeOverlaps(font, [font.getBestCmap()[ord(ch)] for ch in "0123456789:"])
+    return font
+
+
+IO_STYLES = ("regular", "rounded", "stencil", "serif", "rails")
+IO_STYLE_NAMES = {"regular": "Thường", "rounded": "Bo tròn", "stencil": "Khuôn tô", "serif": "Có chân", "rails": "Đường ray"}
+IO_GLYPHS = {}
+for _style in IO_STYLES:
+    _font = io_clock_font(_style)
+    _gs, _cmap, _upm = _font.getGlyphSet(), _font.getBestCmap(), _font["head"].unitsPerEm
+    for _ch in "0123456789:":
+        _bp, _sp = BoundsPen(_gs), SVGPathPen(_gs, ntos=lambda v: f"{v:.0f}")
+        _gs[_cmap[ord(_ch)]].draw(_bp)
+        _gs[_cmap[ord(_ch)]].draw(TransformPen(_sp, (1000 / _upm, 0, 0, 1000 / _upm, 0, 0)))
+        IO_GLYPHS[(_style, _ch)] = (_sp.getCommands(), _font["hmtx"][_cmap[ord(_ch)]][0] / _upm, [v / _upm for v in _bp.bounds])
+IO_RAIL = .02
+IO_USED = set()
+IO_N = [0]
+IO_WHITE = "#FFFFFF"
+IO_TEXT = "#E4E4E4"
+IO_ICE = "url(#ioIce)"
+IO_ROSE = "url(#ioRose)"
+IO_CARD = "#1C1D25"
+IO_TRACK = "#262833"
+IO_DATE = "Thứ Bảy, 15 tháng 11"
+IO_LATEST = "Mai: Tối nay đi ăn nhé, nhớ mang ô"
+
+
+def io_ink(text, style):
+    x, xs, top, bottom = 0.0, [], 0.0, 0.0
+    for ch in text:
+        _, adv, (x0, y0, x1, y1) = IO_GLYPHS[(style, ch)]
+        xs += [x + x0, x + x1]
+        top, bottom = max(top, y1), min(bottom, y0)
+        x += adv
+    return min(xs), top, max(xs), bottom
+
+
+def io_clock_h(text, size, style):
+    _, top, _, bottom = io_ink(text, style)
+    return (top - bottom) * size
+
+
+def io_clock(cx, top, text, size, style, color):
+    left, ink_top, right, ink_bottom = io_ink(text, style)
+    x0 = cx - (left + right) / 2 * size
+    base = top + ink_top * size
+    upm = 1000
+    k = size / upm
+    s, x = "", 0.0
+    for ch in text:
+        IO_USED.add((style, ch))
+        s += f'<use href="#io{style}{ord(ch)}" x="{f(x * upm)}"/>'
+        x += IO_GLYPHS[(style, ch)][1]
+    if style == "rails":
+        paint = f'fill="none" stroke="{{c}}" stroke-width="{f(IO_RAIL * upm)}"'
+    else:
+        paint = 'fill="{c}"'
+    group = f'<g transform="translate({f(x0)} {f(base)}) scale({k:.4f} {-k:.4f})" {{p}}>{s}</g>'
+    if not color.startswith("url("):
+        return f'<g opacity=".9">{group.format(p=paint.format(c=color))}</g>'
+    IO_N[0] += 1
+    mid = f"ioMask{IO_N[0]}"
+    box = (x0 + left * size - 4, base - ink_top * size - 4, (right - left) * size + 8, (ink_top - ink_bottom) * size + 8)
+    return (f'<mask id="{mid}" maskUnits="userSpaceOnUse">{group.format(p=paint.format(c="#FFFFFF"))}</mask>'
+            f'<rect x="{f(box[0])}" y="{f(box[1])}" width="{f(box[2])}" height="{f(box[3])}" fill="{color}" mask="url(#{mid})" opacity=".9"/>')
+
+
+def io_defs():
+    s = ""
+    for style, ch in sorted(IO_USED):
+        d = IO_GLYPHS[(style, ch)][0]
+        s += f'<path id="io{style}{ord(ch)}" d="{d}"/>'
+    s += ('<linearGradient id="ioIce" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C1FFF4"/><stop offset=".5" stop-color="#D9D9D9"/>'
+          '<stop offset="1" stop-color="#CA5353"/></linearGradient>'
+          '<linearGradient id="ioRose" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#AACC00"/><stop offset=".5" stop-color="#FF85A1"/>'
+          '<stop offset="1" stop-color="#FF85A1"/></linearGradient>'
+          '<linearGradient id="ioArt" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3D5A80"/><stop offset=".55" stop-color="#98C1D9"/>'
+          '<stop offset="1" stop-color="#EE6C4D"/></linearGradient>')
+    for key, (w, paused) in IO_CARDS.items():
+        s += f'<g id="{key}">{io_media_card_raw(0, w, 192, "currentColor", paused)}</g>'
+    return s
+
+
+def io_text_h(font, size):
+    return font.ink("Th", size)
+
+
+def io_date(cx, top, color, date, weather, anchor="middle"):
+    size = 22
+    _, t, _, _ = IO_TEXT_M.ink("ThBj", size)
+    base = top - t
+    text = date + ("  ·  " if weather and date else "")
+    width = IO_TEXT_M.width(text, size) + (52 if weather else 0)
+    x0 = cx - width / 2 if anchor == "middle" else (cx - width if anchor == "end" else cx)
+    s = IO_TEXT_M.text(x0, base, text, size, color, opacity=.9) if text else ""
+    if weather:
+        wx = x0 + IO_TEXT_M.width(text, size)
+        s += cloud(wx, base + 1, .62, color, 1.6) + IO_TEXT_M.text(wx + 25, base, "28°", size, color, opacity=.9)
+    return s, -t
+
+
+def io_events(cx, top, color):
+    size = 16
+    _, t, _, _ = IO_TEXT_M.ink("Th", size)
+    base = top - t
+    text = "14:00  Họp nhóm thiết kế"
+    width = 22 + IO_TEXT_M.width(text, size)
+    x0 = cx - width / 2
+    cal = (f'<rect x="{f(x0)}" y="{f(base - 13)}" width="15" height="14" rx="3" fill="none" stroke="{color}" stroke-width="1.5"/>'
+           f'<line x1="{f(x0)}" y1="{f(base - 9)}" x2="{f(x0 + 15)}" y2="{f(base - 9)}" stroke="{color}" stroke-width="1.5"/>')
+    return f'<g opacity=".9">{cal}</g>' + IO_TEXT_M.text(x0 + 22, base, text, size, color, opacity=.9), -t
+
+
+def io_battery(cx, bottom, color, charging, anchor="middle"):
+    text = "72%" + ("  ·  Đang sạc" if charging else "")
+    return IO_TEXT_M.text(cx, bottom, text, 16, color, anchor, .9)
+
+
+def io_icons(x, cy, color, n):
+    return "".join(icon_shapes(color)[i % 3](x + i * 28, cy - 9, 18) for i in range(n))
+
+
+def io_noti_card(cx, bottom, color, n, latest, max_w):
+    if latest:
+        text = IO_TEXT_M.fit(IO_LATEST, 16, max_w - 28 - 25)
+        inner = 25 + IO_TEXT_M.width(text, 16)
+    else:
+        inner = n * 18 + (n - 1) * 10
+    w, h = inner + 28, 47 if latest else 46
+    x0, y0 = cx - w / 2, bottom - h
+    s = f'<rect x="{f(x0)}" y="{f(y0)}" width="{f(w)}" height="{h}" rx="14" fill="{IO_CARD}" fill-opacity=".5"/>'
+    cy = y0 + h / 2
+    if latest:
+        s += icon_shapes(color)[0](x0 + 14, cy - 9, 18) + IO_TEXT_M.text(x0 + 14 + 25, cy + 6, text, 16, color)
+    else:
+        s += io_icons(x0 + 14, cy, color, n)
+    return s, h
+
+
+def io_buttons(cx, cy, color, paused):
+    s = ""
+    bx = cx - 100
+    s += (f'<path d="M{f(bx + 1)},{f(cy)} L{f(bx + 17)},{f(cy - 10)} V{f(cy + 10)} Z M{f(bx - 15)},{f(cy)} L{f(bx + 1)},{f(cy - 10)} '
+          f'V{f(cy + 10)} Z" fill="{color}" stroke="{color}" stroke-width="2" stroke-linejoin="round"/>')
+    if paused:
+        s += f'<path d="M{f(cx - 8)},{f(cy - 14)} L{f(cx + 14)},{f(cy)} L{f(cx - 8)},{f(cy + 14)} Z" fill="{color}" stroke="{color}" stroke-width="2" stroke-linejoin="round"/>'
+    else:
+        s += (f'<rect x="{f(cx - 11)}" y="{f(cy - 14)}" width="8" height="28" rx="2" fill="{color}"/>'
+              f'<rect x="{f(cx + 3)}" y="{f(cy - 14)}" width="8" height="28" rx="2" fill="{color}"/>')
+    fx = cx + 100
+    s += (f'<path d="M{f(fx - 1)},{f(cy)} L{f(fx - 17)},{f(cy - 10)} V{f(cy + 10)} Z M{f(fx + 15)},{f(cy)} L{f(fx - 1)},{f(cy - 10)} '
+          f'V{f(cy + 10)} Z" fill="{color}" stroke="{color}" stroke-width="2" stroke-linejoin="round"/>')
+    return s
+
+
+IO_CARDS = {}
+
+
+def io_media_card(left, right, bottom, color, paused=False):
+    key = f"ioCard{round(right - left)}{'p' if paused else ''}"
+    IO_CARDS[key] = (right - left, paused)
+    return f'<use href="#{key}" x="{f(left)}" y="{f(bottom - 192)}" style="color:{color}"/>'
+
+
+def io_media_card_raw(left, right, bottom, color, paused=False, title="That Cool Song", artist="It's Artist", progress=.07):
+    y0 = bottom - 192
+    w = right - left
+    s = f'<rect x="{f(left)}" y="{f(y0)}" width="{f(w)}" height="192" rx="20" fill="{IO_CARD}" fill-opacity=".5"/>'
+    ax, ay = left + 14, y0 + 14
+    s += (f'<rect x="{f(ax)}" y="{f(ay)}" width="60" height="60" rx="7" fill="url(#ioArt)"/>'
+          f'<circle cx="{f(ax + 41)}" cy="{f(ay + 20)}" r="9" fill="#FFFFFF" fill-opacity=".55"/>')
+    tx = ax + 60 + 14
+    tw = right - 14 - tx
+    s += IO_TEXT_M.text(tx, ay + 29.5, IO_TEXT_M.fit(title, 18, tw), 18, color)
+    s += IO_TEXT_R.text(tx, ay + 43.5 + 6, IO_TEXT_R.fit(artist, 18, tw), 18, color, opacity=.6)
+    inner = w - 28
+    py = y0 + 14 + 60 + 20 + 4.5
+    e_cx, b_l, b_r, r_cx = left + 14 + inner * .065, left + 14 + inner * .13, left + 14 + inner * .86, left + 14 + inner * .93
+    s += (IO_TEXT_R.text(e_cx, py + 4.3, "0:18", 12, color, "middle", .6)
+          + f'<rect x="{f(b_l)}" y="{f(py - 3)}" width="{f(b_r - b_l)}" height="6" rx="3" fill="{IO_TRACK}" fill-opacity=".9"/>'
+          + f'<rect x="{f(b_l)}" y="{f(py - 3)}" width="{f(max((b_r - b_l) * progress, 6))}" height="6" rx="3" fill="{color}"/>'
+          + IO_TEXT_R.text(r_cx, py + 4.3, "-4:02", 12, color, "middle", .6))
+    s += io_buttons((left + right) / 2, y0 + 14 + 60 + 20 + 9 + 20 + 27.5, color, paused)
+    return s
+
+
+def io_group(svg, kind, shown=True):
+    hidden = "" if shown else ' style="display:none"'
+    return f'<g class="io-{kind}"{hidden}>{svg}</g>'
+
+
+def io_face(width, height, time="8:30", style="serif", size=92, clock=IO_ICE, text=IO_TEXT, noti=None, media_color=None, battery=None,
+            date=IO_DATE, weather=False, events=False, icons=3, latest=False, media=False, paused=False, charging=False):
+    noti = noti or text
+    media_color = media_color or text
+    battery = battery or text
+    land = width > height
+    s = ""
+    ch = io_clock_h(time, size, style)
+    parts = []
+    if date or weather:
+        parts.append(("date", 22 * .74))
+    parts.append(("clock", ch))
+    if events:
+        parts.append(("events", 16 * .74))
+    has_right = bool(icons or latest or media)
+    if not land:
+        total = sum(h for _, h in parts) + 22 + (18 if events else 0)
+        y = height * .4 / 2 - total / 2
+        cx = width / 2
+        for kind, h in parts:
+            if kind == "date":
+                svg, h = io_date(cx, y, text, date, weather)
+                s += svg
+                y += h + 22
+            elif kind == "clock":
+                s += io_clock(cx, y, time, size, style, clock)
+                y += h + 18
+            else:
+                svg, _ = io_events(cx, y, text)
+                s += svg
+        bottom = height - 30
+        s += io_battery(cx, bottom, battery, charging)
+        _, bt, _, _ = IO_TEXT_M.ink("72%", 16)
+        card_bottom = bottom + bt - 10 - 18
+        media_svg = io_media_card(18, width - 18, card_bottom, media_color, paused)
+        s += io_group(media_svg, "m", media)
+        if icons or latest:
+            nb_shown = card_bottom - 192 - 36
+            card, _ = io_noti_card(cx, nb_shown if media else card_bottom, noti, icons, latest, width - 36)
+            s += io_group(card, "n")
+        return f'<g class="io" style="cursor:pointer"><rect width="{width}" height="{height}" fill="transparent"/>{s}</g>'
+    left_w = width / 2 if has_right else width
+    cx = left_w / 2
+    _, bt, _, _ = IO_TEXT_M.ink("72%", 16)
+    total = sum(h for _, h in parts) + 22 + (18 if events else 0) + 22 + (-bt)
+    y = height / 2 - total / 2
+    for kind, h in parts:
+        if kind == "date":
+            svg, h = io_date(cx, y, text, date, weather)
+            s += svg
+            y += h + 22
+        elif kind == "clock":
+            s += io_clock(cx, y, time, size, style, clock)
+            y += h + (18 if events else 22)
+        else:
+            svg, h = io_events(cx, y, text)
+            s += svg
+            y += h + 22
+    s += io_battery(cx, y - bt, battery, charging)
+    if has_right:
+        rl, rr = width / 2 + 18, width - 18
+        rcx = (rl + rr) / 2
+        noti_h = 47 if latest else 46
+        block = (noti_h if (icons or latest) else 0) + (36 if (icons or latest) and media else 0) + (192 if media else 0)
+        top = height / 2 - block / 2
+        if icons or latest:
+            card, _ = io_noti_card(rcx, top + noti_h, noti, icons, latest, rr - rl)
+            s += card
+            top += noti_h + 36
+        if media:
+            s += io_media_card(rl, rr, top + 192, media_color, paused)
+    return f'<g>{s}</g>'
+
+
+def io_strip():
+    s = ""
+    for i, style in enumerate(IO_STYLES):
+        cx = 88 + i * 174
+        s += io_clock(cx, 120, "8:30", 70, style, IO_ICE if style == "serif" else IO_TEXT)
+        s += IO_TEXT_M.text(cx, 260, IO_STYLE_NAMES[style], 16, IO_TEXT, "middle", .9)
+    return s
+
+
+def io_live_script():
+    return ('<style>.ioM{font-family:"Inter";font-weight:500;white-space:pre}.ioR{font-family:"Inter";font-weight:400;white-space:pre}</style>'
+            '<script>(function(){document.querySelectorAll(".io").forEach(function(G){var m=G.querySelector(".io-m");if(!m)return;'
+            'G.addEventListener("click",function(){var on=m.style.display=="none";m.style.display=on?"":"none";'
+            'if(on&&m.animate)m.animate([{transform:"translateY(40px)",opacity:0},{transform:"none",opacity:1}],{duration:250,easing:"ease-out"})})})})();</script>')
+
+
+ios_frames = [
+    '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap">',
+    frame("Năm kiểu đồng hồ (Kiểu đồng hồ, giữ đủ như app mẫu): Thường (Inter 500 thay SF Pro), Bo tròn (Google Sans Flex bo tròn thay SF Rounded), "
+          "Khuôn tô (Allerta Stencil thay SF Stencil), Có chân (Fraunces 900 thay New York, mặc định), Đường ray (viền Inter 300 thay SF Rails)", io_strip()),
+    '<div style="font-size:0">',
+    frame_portrait("App mẫu (iOS Lockscreen) vẽ lại bằng font thay thế: mọi phần trắng mờ 0,9, ngày + giờ giữa 40% trên, thẻ nhạc + pin neo đáy",
+                   io_face(PW, PH, "7:38", "serif", clock=IO_WHITE, text=IO_WHITE, date="Wednesday, 31 January", icons=0, media=True)),
+    frame_portrait("D1 · Mặc định (thẻ ở lưới): kiểu Có chân, giờ gradient Băng và lửa dọc (màu nhấn), chữ xám sáng; thẻ icon thông báo trên pin. "
+                   "Chạm khung: hiện / ẩn thẻ nhạc (tự ẩn theo cài đặt chung)",
+                   io_face(PW, PH)),
+    frame_portrait("D2 · Có nhạc: thẻ nhạc kiểu iOS (ảnh bìa, tên / nghệ sĩ, thời gian đã nghe / còn lại, lùi · dừng · tới), thẻ icon đẩy lên; kiểu Thường, 24 giờ",
+                   io_face(PW, PH, "13:36", "regular", clock=IO_TEXT, media=True)),
+    frame_portrait("D3 · Kiểu Bo tròn, cỡ 110, màu riêng (giờ gradient Chanh hồng, ngày, thông báo, nhạc, pin), thời tiết sau ngày, sự kiện dưới giờ, "
+                   "thông báo mới thay hàng icon",
+                   io_face(PW, PH, "9:47", "rounded", 110, IO_ROSE, "#FFE082", "#B3E5FC", "#CFD8DC", "#C5E1A5", weather=True, events=True, latest=True)),
+    frame_portrait("D4 · Kiểu Khuôn tô, cỡ 70, đang sạc, tắt ngày, không thông báo: chỉ còn giờ + pin",
+                   io_face(PW, PH, "7:40", "stencil", 70, IO_TEXT, date="", icons=0, charging=True)),
+    frame_portrait("D5 · Kiểu Đường ray (viền đôi), nhạc đang dừng (nút phát), 4 icon",
+                   io_face(PW, PH, "10:08", "rails", clock=IO_TEXT, icons=4, media=True, paused=True)),
+    '</div>',
+    frame("N0 · App mẫu ngang: nửa trái ngày + giờ + pin, nửa phải thẻ nhạc", io_face(W, H, "7:38", "serif", clock=IO_WHITE, text=IO_WHITE,
+                                                                                   date="Wednesday, 31 January", icons=0, media=True)),
+    frame("N1 · Mặc định ngang: nửa trái ngày + giờ + pin căn giữa, nửa phải thẻ icon căn giữa", io_face(W, H)),
+    frame("N2 · Có nhạc: thẻ icon + thẻ nhạc thành một cụm căn giữa nửa phải", io_face(W, H, "13:36", "regular", clock=IO_TEXT, media=True)),
+    frame("N3 · Bo tròn, cỡ 110, màu riêng, thời tiết, sự kiện, thông báo mới, có nhạc",
+          io_face(W, H, "9:47", "rounded", 110, IO_ROSE, "#FFE082", "#B3E5FC", "#CFD8DC", "#C5E1A5", weather=True, events=True, latest=True, media=True)),
+    frame("N4 · Không thông báo, không nhạc: nửa phải trống nên cụm ngày + giờ + pin ra giữa màn như app mẫu (Khuôn tô, đang sạc)",
+          io_face(W, H, "7:40", "stencil", 92, IO_TEXT, icons=0, charging=True)),
+    io_live_script(),
+]
+if ONLY in (None, "w_glass"):
+    import re
+    ios_code = widget("Chủ đề Kính (iOS Lockscreen): năm kiểu chữ số, thẻ thông báo và thẻ nhạc kiểu iOS, sáu khung dọc và năm khung ngang",
+                      io_defs(), ios_frames)
+    ios_code = re.sub(r' aria-label="[^"]*"', "", ios_code)
+    (OUT / "w_glass.html").write_text(ios_code, encoding="utf-8")
+    print("w_glass", len(ios_code))

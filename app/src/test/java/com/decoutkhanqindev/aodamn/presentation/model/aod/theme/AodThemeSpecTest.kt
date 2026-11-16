@@ -16,6 +16,8 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.fade.FadeThemeSp
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.flip.AodFlipStyleValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.flip.FlipThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.frame.FrameThemeSpec
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.glass.AodGlassStyleValue
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.glass.GlassThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.gradientline.GradientLineThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.gentle.AodGentleWeightValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.gentle.GentleThemeSpec
@@ -108,6 +110,7 @@ class AodThemeSpecTest {
                     AodThemeValue.POSTER,
                     AodThemeValue.PIXEL,
                     AodThemeValue.MERIDIAN,
+                    AodThemeValue.GLASS,
                     AodThemeValue.BLINKY,
                 )
             val hasSharedLatest = AodBlockValue.STATUS !in theme.spec.ownBlocks && theme != AodThemeValue.FLIP
@@ -985,6 +988,37 @@ class AodThemeSpecTest {
             ),
             spec.options,
         )
+    }
+
+    @Test
+    fun `glass keeps five clock styles and fixed lockscreen blocks`() {
+        val spec = AodThemeValue.GLASS.spec
+        assertEquals(
+            setOf(
+                AodComponentValue.DATE,
+                AodComponentValue.BATTERY,
+                AodComponentValue.WEATHER,
+                AodComponentValue.EVENTS,
+                AodComponentValue.NOTIFICATIONS,
+                AodComponentValue.MEDIA,
+            ),
+            spec.components,
+        )
+        assertEquals(false, AodComponentValue.MEMO in spec.components)
+        assertEquals(false, AodComponentValue.DRAWING in spec.components)
+        assertEquals(
+            listOf(
+                AodGlassStyleValue.REGULAR,
+                AodGlassStyleValue.ROUNDED,
+                AodGlassStyleValue.STENCIL,
+                AodGlassStyleValue.SERIF,
+                AodGlassStyleValue.RAILS,
+            ),
+            GlassThemeSpec.Style.entries,
+        )
+        assertEquals(AodGlassStyleValue.SERIF, GlassThemeSpec.Style.default)
+        assertEquals(70..110, GlassThemeSpec.ClockSize.range)
+        assertEquals(92, GlassThemeSpec.ClockSize.default)
     }
 
     @Test

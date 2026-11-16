@@ -151,6 +151,24 @@ val FontFamilySpaceMono = FontFamily(
     Font(R.font.space_mono_regular, FontWeight.Normal),
 )
 
+val FontFamilyInter = FontFamily(
+    Font(R.font.inter_regular, FontWeight.Normal),
+    Font(R.font.inter_medium, FontWeight.Medium),
+)
+
+val FontFamilyInterDisplay = FontFamily(
+    Font(R.font.inter_display_light, FontWeight.Light),
+    Font(R.font.inter_display_medium, FontWeight.Medium),
+)
+
+val FontFamilyFrauncesDisplay = FontFamily(
+    Font(R.font.fraunces_display_black, FontWeight.Black),
+)
+
+val FontFamilyAllertaStencil = FontFamily(
+    Font(R.font.allerta_stencil_regular, FontWeight.Normal),
+)
+
 private val MaterialTypeScale = androidx.compose.material3.Typography()
 
 val DisplaySmall = MaterialTypeScale.displaySmall.copy(fontFamily = FontFamilyPlusJakartaSans)

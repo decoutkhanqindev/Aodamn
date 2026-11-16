@@ -64,6 +64,7 @@ code dịch ngược, không lấy asset (font, ảnh, Lottie) từ APK. APK và
 | Điểm ảnh (`PIXEL`) | **36 · Apr24 "Big Retro"** | làm từ danh mục này (2026-11-08), số đo lấy từ layout `apr24_screen_layout` dọc / ngang / `Apr24Screen` / `NoPadTextView` / font MTPixel Display trong APK |
 | Áp phích (`POSTER`) | **35 · Mar24 "Text HyperOS"** | làm từ danh mục này (2026-11-08), số đo lấy từ layout `mar24_screen_layout` dọc / ngang / `Mar24Screen` / `NoPadTextView` / font Neumatic Black trong APK |
 | Kinh tuyến (`MERIDIAN`) | **33 · Jan24 "Dual Timezone"** | làm từ danh mục này (2026-11-13), số đo lấy từ layout `jan24_screen_layout` dọc / ngang / `Jan24Screen` / `SimpleAnalogClock` / font Flex Round trong APK |
+| Kính (`GLASS`) | **26 · Jun23 "iOS Lockscreen"** | làm từ danh mục này (2026-11-16), số đo lấy từ layout `jun23_screen_layout` dọc / ngang / `Jun23Screen` / `TimeProgressBarRounded` / năm font SF Pro, New York trong APK (chỉ đo) |
 
 ## Danh mục đủ 44 chủ đề
 
@@ -97,7 +98,7 @@ text view chung) hoặc font dùng trong code; "chữ (font layout)" nghĩa là 
 | 23 | Mar23 | Big Overlap Clock | Clock Style, Clock Size, Color 1, Color 2, Theme Color | Color 3, Color 4, Date, Notification, Controls, Battery Status | BigPixel2Clock | – | **Chồng số** (`BIG_OVERLAP`) |
 | 24 | Apr23 | Android 14 Analog Clock | Text Style, Clock Style, Clock Size, Color 1, Color 2, Theme Color | Color 3, Date, Notification, Controls, Battery Status | PilotBold2Tick, PixelAnalogClock | – | **Bốn số** (`QUARTERS`) |
 | 25 | May23 | Ambitio Face ⭐ | Clock Style, Clock Size, Color 1, Color 2, Controls Color | – | AmbitioClock | – | **La bàn** (`COMPASS`) |
-| 26 | Jun23 | iOS Lockscreen | Clock Style, Clock Size, Clock Color, Theme Color | Date, Notification, Controls, Battery Status | chữ: 5 font iOS | font độc quyền | chưa có |
+| 26 | Jun23 | iOS Lockscreen | Clock Style, Clock Size, Clock Color, Theme Color | Date, Notification, Controls, Battery Status | chữ: 5 font iOS | font độc quyền | **Kính** (`GLASS`) |
 | 27 | Jul23 | Nothing(2) | Clock Size, Theme Color | Clock, Date, Notification, Controls, Battery Status | chữ: ndot47 | font độc quyền | chưa có |
 | 28 | Aug23 | Bullet List | Clock Size, Theme Color | Clock, Date, Battery Status, Notification, Controls | Aug23Clock | – | **Chuỗi** (`CHAIN`) |
 | 29 | Sep23 | Gradient Line Clock | Clock Size, Dash Color, Theme Color | Position, Clock, Battery Status, Notification, Controls | Sep23Clock | – | **Dải màu** (`GRADIENT_LINE`) |
@@ -329,8 +330,15 @@ mỗi phút (`AodViewModel`), nên phần chạy theo giây của app mẫu ph�
   nghệ sĩ). Ngày `EEEE • dd MMM` in hoa 18 sp. Time Zone chọn trong mọi `TimeZone.getAvailableIDs()`, mặc định múi của máy. Dọc: thẻ + ngày giữa 60% trên, nhạc
   + pin neo đáy 40 dp; ngang: thẻ + ngày cột trái 55%, nhạc + pin neo đáy cột phải. Font Flex Round = Google Sans Flex ROND 100 wght ~700. Bên mình: múi lưu bằng
   `hashCode` (`AodZoneOption`), sheet chọn theo châu lục; dọc thẻ đúng tâm màn; ngang cụm cột phải căn giữa (user duyệt).
+- ~~**26 · iOS Lockscreen**~~ (`Jun23Screen`, `jun23_screen_layout` dọc + ngang, đã làm thành Kính 2026-11-16): dọc 40% trên ngày `EEEE, d MMMM` 22sp mờ 0,9 cách 22dp
+  trên giờ `H:mm` / `h:mm` Cỡ sp (70–110, mặc định 92, `NoPadTextView`, gradient được); 60% dưới neo đáy: thẻ thông báo (`MaterialCardView` nền `#801C1D25` bo 14,
+  đệm 14, lề 18: hàng icon 18dp hoặc thông báo mới 16sp), thẻ nhạc (bo 20: ảnh bìa 60dp bo 7, tên / nghệ sĩ 18sp mờ 0,6 lấn -8dp, `TimeProgressBarRounded` 6dp
+  rãnh `#E6262833` giữa "m:ss" / "-m:ss" 12sp, ba nút iOS 55dp cách 45), pin 16sp cách đáy 30dp; ngang 50 / 50, nửa phải trống thì nửa trái chiếm cả màn.
+  Clock Style -6..-10 = SF Pro Display Medium / SF Pro Rounded Semibold / SF Pro Stencil / New York Extra Large Heavy / SF Pro Rails (font của Apple, chỉ đo):
+  bên mình Inter 500 / Google Sans Flex bo tròn 700 / Allerta Stencil / Fraunces 900 SOFT 0 / viền Inter 300 đã gộp phần chồng; chữ phụ Inter. Mặc định kiểu
+  Có chân như ảnh thẻ `screen_jun_23.png`, giờ gradient Băng và lửa; bỏ Theme Color, ghi nhớ, nét vẽ; thêm thời tiết sau ngày, sự kiện dưới giờ (user duyệt).
 Để sau: ~~33 Dual Timezone~~ (đã làm thành Kinh tuyến, thêm `AodZoneOption`), 16 / 22 (cần ô nhập chữ), ~~chủ đề giờ bằng chữ~~ (đã làm thành Lời bằng ICU spellout có sẵn), 6 Visualizer (cần quyền `RECORD_AUDIO`, phải hỏi trước), 8 / 11 / 21 (hiệu ứng, hạt: công sức
-lớn), 17 / 26 / 27 (cần chọn font mở thay font độc quyền). 18 / 41 dùng Google Sans: font này nay có trên Google Fonts (OFL, Vành
+lớn), 17 / 27 (cần chọn font mở thay font độc quyền; ~~26~~ đã làm thành Kính). 18 / 41 dùng Google Sans: font này nay có trên Google Fonts (OFL, Vành
 dùng bản Bold), Google Sans Flex cũng có, nên không còn vướng font.
 
 Không cần chụp ảnh chủ đề từ app mẫu: số đo lấy từ layout XML, code của chủ đề và thông số font trong APK

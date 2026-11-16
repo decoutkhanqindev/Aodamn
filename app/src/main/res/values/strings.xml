@@ -90,6 +90,12 @@
     <string name="theme_poster">Poster</string>
     <string name="theme_pixel">Pixel</string>
     <string name="theme_meridian">Meridian</string>
+    <string name="theme_glass">Glass</string>
+    <string name="glass_style_regular">Regular</string>
+    <string name="glass_style_rounded">Rounded</string>
+    <string name="glass_style_stencil">Stencil</string>
+    <string name="glass_style_serif">Serif</string>
+    <string name="glass_style_rails">Rails</string>
     <string name="theme_opt_card_style">Card style</string>
     <string name="meridian_style_outline">Soft outline</string>
     <string name="meridian_style_first">First card filled</string>
@@ -259,6 +265,13 @@
     <string name="aod_meridian_time_12h" translatable="false">hh:mm a</string>
     <string name="aod_meridian_date_pattern" translatable="false">EEEE • dd MMM</string>
     <string name="aod_meridian_notification" translatable="false">%1$s: %2$s</string>
+    <string name="aod_glass_date_pattern" translatable="false">EEEE, d MMMM</string>
+    <string name="aod_glass_separator" translatable="false">"  ·  "</string>
+    <string name="aod_glass_time_24h" translatable="false">H:mm</string>
+    <string name="aod_glass_time_12h" translatable="false">h:mm</string>
+    <string name="aod_glass_notification" translatable="false">%1$s: %2$s</string>
+    <string name="aod_glass_elapsed" translatable="false">%1$d:%2$02d</string>
+    <string name="aod_glass_remaining" translatable="false">-%1$d:%2$02d</string>
 
     <!-- Tab Edge Light -->
     <string name="edge_light_soon_title">Edge Light is coming soon</string>
@@ -538,6 +551,8 @@
     <string name="aod_chain_battery_full">Charged</string>
     <string name="aod_sector_battery_charging">"%1$d%%  ·  Charging"</string>
     <string name="aod_sector_battery_full">"%1$d%%  ·  Charged"</string>
+    <string name="aod_glass_battery_charging">"%1$d%%  ·  Charging"</string>
+    <string name="aod_glass_battery_full">"%1$d%%  ·  Charged"</string>
     <string name="aod_fade_battery_charging">"%1$d%%  ·  Charging"</string>
     <string name="aod_fade_battery_full">"%1$d%%  ·  Charged"</string>
     <string name="aod_words_battery_charging">"%1$d%%  ·  Charging"</string>

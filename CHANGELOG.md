@@ -7,6 +7,38 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-11-16 – Chủ đề Kính
+
+Thêm Kính (Glass) từ iOS Lockscreen (chủ đề 26) của Muviz Edge, số đo lấy từ `Jun23Screen`, `TimeProgressBarRounded`, layout `jun23_screen_layout` dọc / ngang và
+năm font SF Pro / New York trong APK (chỉ đo, không lấy file). User duyệt mock: "Duyệt, code đi" (Kiro CLI code, Claude review theo `jetpack-compose-performance` và
+`anr-audit-and-fix`, sửa độ mờ 0,9 của đồng hồ bị mất và khoảng giữa thẻ thông báo với dòng pin khi không có nhạc). `check_theme.sh glass "Kính"`
+phần nhanh pass (compile, option / pairwise / lưu cấu hình, `AodThemeSpecTest`, đăng ký code + docs), `check-rules` 0 vi phạm, thư mục chủ đề cũ không đổi. Chưa chạy test máy
+vì không có máy ảo đang chạy, chưa có ảnh chuẩn `androidTest/screenshots/themes/glass/` (chạy `--device` rồi `--record`). Chưa test trên máy thật.
+
+### Thêm
+
+- Dọc như màn khoá iOS của mẫu: ngày `EEEE, d MMMM` (Inter 22 sp, mờ 0,9) cách 22 dp trên giờ `H:mm` / `h:mm` (không số 0 đầu, không SA / CH), cụm giữa vùng 40%
+  trên; neo đáy cách 30 dp: thẻ thông báo (nền `#801C1D25` bo 14 dp: hàng icon 18 dp, thông báo mới trượt từ trên thay hàng icon, chạm thẻ để hiện / ẩn), thẻ nhạc,
+  dòng pin "72%  ·  Đang sạc". Ngang 50 / 50 như mẫu: ngày + giờ + pin giữa nửa trái, các thẻ giữa nửa phải; nửa phải trống thì cụm trái trượt ra giữa màn.
+- Năm kiểu đồng hồ như Clock Style của mẫu, đo sát nét chữ như `NoPadTextView` (`GlassClockBlock`): Thường (Inter Display 500 thay SF Pro Display Medium), Bo tròn
+  (Google Sans Flex bo tròn 700 có sẵn thay SF Pro Rounded Semibold), Khuôn tô (Allerta Stencil thay SF Pro Stencil), Có chân (Fraunces 900 góc nhọn thay New York
+  Extra Large Heavy), Đường ray (viền 2% cỡ chữ quanh Inter Display 300 đã gộp phần chồng thay SF Pro Rails). Cỡ 70–110, mặc định 92.
+- Thẻ nhạc kiểu iOS: ảnh bìa 60 dp bo 7 dp (hiện dần khi đổi), tên bài / nghệ sĩ 18 sp (nghệ sĩ mờ 0,6) trượt lên khi đổi bài, thời gian đã nghe / còn lại cập nhật
+  mỗi giây khi đang phát, thanh tiến trình 6 dp, ba nút lùi · phát · tới 55 dp cách 45 dp (icon Phosphor `rewind` / `fast-forward` đặc mới); tự ẩn theo cài đặt
+  chung như mẫu, không bị thông báo mới ẩn đi (mẫu giữ cả hai thẻ).
+- Màu đồng hồ, ngày, thông báo, pin, nhạc riêng, màu nào cũng dùng được gradient; thời tiết cùng dòng ngày, một dòng sự kiện dưới giờ (như widget màn khoá iOS).
+- Font tải từ Google Fonts (OFL): Inter (bản variable cắt còn Latin + tiếng Việt, sinh `inter_regular`, `inter_medium`, `inter_display_light` đã gộp phần chồng,
+  `inter_display_medium`), Allerta Stencil (chép nguyên file vì tên dành riêng "Allerta"); `fraunces_display_black` cắt từ Fraunces đã có (SOFT 0, WONK 0, opsz
+  144). `make_static_fonts.py` thêm `REMOVE_OVERLAPS` cho họ vẽ viền.
+
+### Thay đổi
+
+- Mặc định đổi cho thẻ ở lưới nổi hơn: kiểu Có chân như ảnh thẻ của mẫu (mẫu mặc định chữ thường), giờ gradient Băng và lửa từ trên xuống (mẫu trắng); chữ phụ GreyE4.
+- Bỏ Theme Color của mẫu: mỗi phần một màu riêng. Bỏ Ghi nhớ, Nét vẽ: màn khoá iOS không có, vùng dưới giờ chỉ đủ một dòng widget.
+- Chỉ thêm, không đổi chủ đề đang có: nhánh `GLASS` ở `AodThemeLayout` và `AodMediaControls`, mục `GLASS` cuối `AodThemeValue`, `ThemeExpectation`,
+  `AodThemeSpecTest`; màu `GlassCard`, `GlassTrack`; hình `RoundedCornerShape7dp` / `14dp` / `20dp`; họ font `FontFamilyInter`, `FontFamilyInterDisplay`,
+  `FontFamilyFrauncesDisplay`, `FontFamilyAllertaStencil`; chuỗi `theme_glass`, `glass_style_*`, `aod_glass_*`.
+
 ## [Chưa phát hành] – 2026-11-14 – Tự ẩn trình phát và thông báo
 
 Theo app mẫu (Muviz Edge: cài đặt chung thời gian giữ trình phát 10–60 giây, có "Never"); user duyệt plan `plans/aod-media-auto-hide.md`: "hãy thực hiện như đề xuất

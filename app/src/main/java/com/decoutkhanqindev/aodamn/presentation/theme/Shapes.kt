@@ -3,9 +3,12 @@ package com.decoutkhanqindev.aodamn.presentation.theme
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.unit.dp
 
+val RoundedCornerShape7dp = RoundedCornerShape(7.dp)
 val RoundedCornerShape8dp = RoundedCornerShape(8.dp)
 val RoundedCornerShape12dp = RoundedCornerShape(12.dp)
+val RoundedCornerShape14dp = RoundedCornerShape(14.dp)
 val RoundedCornerShape16dp = RoundedCornerShape(16.dp)
+val RoundedCornerShape20dp = RoundedCornerShape(20.dp)
 val RoundedCornerShape24dp = RoundedCornerShape(24.dp)
 val RoundedCornerTopShape16dp = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
 val RoundedCornerTopShape24dp = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)

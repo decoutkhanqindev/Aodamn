@@ -56,7 +56,16 @@ FONTS = {
     "google_sans_flex_rounded": ([1000], {"wdth": 108, "ROND": 100}, "google_sans_flex"),
     # Flex Round của Kinh tuyến chính là Google Sans Flex bo tròn: số 0 rộng 0,661 em, nét 0,156 em ở wght 700 (mẫu 0,662 / 0,161)
     "google_sans_flex_round": ([700], {"wdth": 100, "ROND": 100}, "google_sans_flex"),
+    # Kính thay SF Pro của app mẫu (font của Apple): Inter cùng dáng, đủ tiếng Việt (bản Google Fonts đã cắt còn Latin + tiếng Việt, giữ trục).
+    # Chữ phụ opsz 14; chữ số đồng hồ opsz 32 (bản Display), 300 vẽ viền cho kiểu Đường ray nên gộp phần chồng của glyph (REMOVE_OVERLAPS).
+    "inter": ([400, 500], {"opsz": 14}),
+    "inter_display": ([300, 500], {"opsz": 32}, "inter"),
+    # Kiểu Có chân của Kính thay New York Extra Large Heavy: Fraunces 900 góc nhọn (SOFT 0, WONK 0), opsz 144; họ riêng vì họ fraunces ghim SOFT 100
+    "fraunces_display": ([900], {"opsz": 144, "SOFT": 0, "WONK": 0}, "fraunces"),
 }
+
+# họ font vẽ viền (TextStyle.drawStyle = Stroke): gộp phần chồng của glyph khi tách để nét không lộ cạnh bên trong (cần pip install skia-pathops)
+REMOVE_OVERLAPS = {"inter_display"}
 
 # họ font chỉ có bản tĩnh -> độ đậm có sẵn (file <họ font>_<độ đậm>.ttf ở tools/fonts/static)
 STATIC_FONTS = {
@@ -70,6 +79,8 @@ STATIC_FONTS = {
     "rajdhani": [700],
     # Thay MTPixel Display của Điểm ảnh (không có trên Google Fonts); chỉ vẽ chữ số nên không cần tiếng Việt
     "silkscreen": [400],
+    # Kiểu Khuôn tô của Kính thay SF Pro Stencil; tên dành riêng "Allerta" nên chép nguyên file, chỉ vẽ chữ số nên không cần tiếng Việt
+    "allerta_stencil": [400],
 }
 
 
@@ -86,7 +97,8 @@ def main(families):
             location.update(pinned)
             if "wght" in axes:
                 location["wght"] = min(max(weight, axes["wght"].minValue), axes["wght"].maxValue)
-            static = instancer.instantiateVariableFont(font, location, inplace=False)
+            overlap = instancer.OverlapMode.REMOVE if family in REMOVE_OVERLAPS else instancer.OverlapMode.KEEP_AND_SET_FLAGS
+            static = instancer.instantiateVariableFont(font, location, inplace=False, overlap=overlap)
             target = OUT / f"{family}_{NAMES[weight]}.ttf"
             static.save(target)
             print(f"{target.name}  {target.stat().st_size // 1024} KB")

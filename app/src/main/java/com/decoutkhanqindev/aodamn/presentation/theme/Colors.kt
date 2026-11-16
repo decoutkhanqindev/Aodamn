@@ -109,6 +109,8 @@ val GradientSilverMiddle = Color(0xFFBBBBBB)
 val GradientSilverEnd = Color(0xFFFFFFFF)
 
 val GreyE4 = Color(0xFFE4E4E4)
+val GlassCard = Color(0x801C1D25)
+val GlassTrack = Color(0xE6262833)
 
 val Neutral12 = Color(0xFF211F26)
 val NeutralVariant30 = Color(0xFF49454F)
