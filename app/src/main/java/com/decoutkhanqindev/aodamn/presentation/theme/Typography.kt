@@ -169,6 +169,14 @@ val FontFamilyAllertaStencil = FontFamily(
     Font(R.font.allerta_stencil_regular, FontWeight.Normal),
 )
 
+val FontFamilyDoto = FontFamily(
+    Font(R.font.doto_black, FontWeight.Black),
+)
+
+val FontFamilyTiny5 = FontFamily(
+    Font(R.font.tiny5_regular, FontWeight.Normal),
+)
+
 private val MaterialTypeScale = androidx.compose.material3.Typography()
 
 val DisplaySmall = MaterialTypeScale.displaySmall.copy(fontFamily = FontFamilyPlusJakartaSans)

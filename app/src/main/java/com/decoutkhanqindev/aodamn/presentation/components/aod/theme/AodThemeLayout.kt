@@ -19,6 +19,8 @@ import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.clip.AodCli
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.clip.AodClipPortrait
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.compass.AodCompassLandscape
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.compass.AodCompassPortrait
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.dot.AodDotLandscape
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.dot.AodDotPortrait
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.eclipse.AodEclipseLandscape
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.eclipse.AodEclipsePortrait
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.fade.AodFadeLandscape
@@ -107,6 +109,7 @@ fun AodPortrait(
         AodThemeValue.PIXEL -> AodPixelPortrait(state = state, onIntent = onIntent)
         AodThemeValue.MERIDIAN -> AodMeridianPortrait(state = state, onIntent = onIntent)
         AodThemeValue.GLASS -> AodGlassPortrait(state = state, onIntent = onIntent)
+        AodThemeValue.DOT -> AodDotPortrait(state = state, onIntent = onIntent)
     }
 }
 
@@ -148,5 +151,6 @@ fun AodLandscape(
         AodThemeValue.PIXEL -> AodPixelLandscape(state = state, onIntent = onIntent)
         AodThemeValue.MERIDIAN -> AodMeridianLandscape(state = state, onIntent = onIntent)
         AodThemeValue.GLASS -> AodGlassLandscape(state = state, onIntent = onIntent)
+        AodThemeValue.DOT -> AodDotLandscape(state = state, onIntent = onIntent)
     }
 }

@@ -13,6 +13,7 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.chain.ChainTheme
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.classic.ClassicThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.clip.ClipThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.compass.CompassThemeSpec
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.dot.DotThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.eclipse.EclipseThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.fade.FadeThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.flip.FlipThemeSpec
@@ -74,7 +75,8 @@ enum class AodThemeValue(
     POSTER(id = "poster", nameRes = R.string.theme_poster, spec = PosterThemeSpec),
     PIXEL(id = "pixel", nameRes = R.string.theme_pixel, spec = PixelThemeSpec),
     MERIDIAN(id = "meridian", nameRes = R.string.theme_meridian, spec = MeridianThemeSpec),
-    GLASS(id = "glass", nameRes = R.string.theme_glass, spec = GlassThemeSpec);
+    GLASS(id = "glass", nameRes = R.string.theme_glass, spec = GlassThemeSpec),
+    DOT(id = "dot", nameRes = R.string.theme_dot, spec = DotThemeSpec);
 
     companion object {
         val DEFAULT = CLASSIC

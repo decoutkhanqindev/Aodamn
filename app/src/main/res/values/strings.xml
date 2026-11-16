@@ -91,6 +91,7 @@
     <string name="theme_pixel">Pixel</string>
     <string name="theme_meridian">Meridian</string>
     <string name="theme_glass">Glass</string>
+    <string name="theme_dot">Dot</string>
     <string name="glass_style_regular">Regular</string>
     <string name="glass_style_rounded">Rounded</string>
     <string name="glass_style_stencil">Stencil</string>
@@ -157,6 +158,7 @@
     <string name="theme_color_character">Character</string>
     <string name="theme_color_battery">Battery</string>
     <string name="theme_color_notifications">Alerts</string>
+    <string name="theme_color_separator">Separator</string>
     <string name="theme_color_memo">Memo</string>
     <string name="theme_color_events">Events</string>
     <string name="theme_color_hour">Hour</string>
@@ -272,6 +274,12 @@
     <string name="aod_glass_notification" translatable="false">%1$s: %2$s</string>
     <string name="aod_glass_elapsed" translatable="false">%1$d:%2$02d</string>
     <string name="aod_glass_remaining" translatable="false">-%1$d:%2$02d</string>
+    <string name="aod_dot_date_pattern" translatable="false">EEE, dd MMM</string>
+    <string name="aod_dot_separator" translatable="false">"  ·  "</string>
+    <string name="aod_dot_hour_24h" translatable="false">HH</string>
+    <string name="aod_dot_hour_12h" translatable="false">hh</string>
+    <string name="aod_dot_minute" translatable="false">mm</string>
+    <string name="aod_dot_notification" translatable="false">%1$s: %2$s</string>
 
     <!-- Tab Edge Light -->
     <string name="edge_light_soon_title">Edge Light is coming soon</string>

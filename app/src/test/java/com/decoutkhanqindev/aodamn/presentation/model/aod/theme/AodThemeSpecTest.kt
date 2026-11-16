@@ -9,6 +9,7 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.blinky.BlinkyThe
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.clip.ClipThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.compass.AodCompassStyleValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.compass.CompassThemeSpec
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.dot.DotThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.eclipse.EclipseThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.component.AodComponentValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.fade.AodFadeWeightValue
@@ -111,6 +112,7 @@ class AodThemeSpecTest {
                     AodThemeValue.PIXEL,
                     AodThemeValue.MERIDIAN,
                     AodThemeValue.GLASS,
+                    AodThemeValue.DOT,
                     AodThemeValue.BLINKY,
                 )
             val hasSharedLatest = AodBlockValue.STATUS !in theme.spec.ownBlocks && theme != AodThemeValue.FLIP
@@ -1019,6 +1021,16 @@ class AodThemeSpecTest {
         assertEquals(AodGlassStyleValue.SERIF, GlassThemeSpec.Style.default)
         assertEquals(70..110, GlassThemeSpec.ClockSize.range)
         assertEquals(92, GlassThemeSpec.ClockSize.default)
+    }
+
+    @Test
+    fun `dot keeps the reference clock size and excludes unsupported blocks`() {
+        val spec = AodThemeValue.DOT.spec
+        assertEquals(70..130, DotThemeSpec.ClockSize.range)
+        assertEquals(100, DotThemeSpec.ClockSize.default)
+        assertEquals(false, AodComponentValue.EVENTS in spec.components)
+        assertEquals(false, AodComponentValue.MEMO in spec.components)
+        assertEquals(false, AodComponentValue.DRAWING in spec.components)
     }
 
     @Test

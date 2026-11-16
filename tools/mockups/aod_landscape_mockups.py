@@ -6557,6 +6557,317 @@ if ONLY in (None, "w_meridian"):
     print("w_meridian", len(meridian_code))
 
 
+
+# ------------------------------------------------------------------ CHẤM (Nothing(1) của Muviz Edge, Sep22Screen)
+# Giờ "HH" trên hai chấm ngang trên phút "mm", xếp dọc giữa màn. App mẫu dùng NDot 47 (chữ số 5 × 7 chấm, cao 1,556 em, cỡ 0,5 × Cỡ sp)
+# và NDot 55 (hai chấm ".  ." 0,9 × Cỡ sp, cách số 15 dp); hai font này không có trên Google Fonts nên thay bằng Doto (lưới 5 × 7 chấm,
+# wght 900, ROND 100): chữ số cao 0,778 × Cỡ dp như mẫu, chấm đường kính 0,09 × Cỡ, hai chấm cách tâm 0,54 × Cỡ. Ngày "EEE, dd MMM"
+# in hoa, tên bài / nghệ sĩ / thông báo mới / pin bằng Tiny5 bo tròn (ROND 100: chữ chấm như NDot 55, đủ tiếng Việt; Doto thiếu dấu).
+# Icon nhạc ghép chấm như app mẫu (lưới 11 hàng), icon thông báo / tia sét / thời tiết và thanh tiến trình cũng thành chấm (user). Dọc như mẫu: 15% trên (ngày +
+# hàng icon / thông báo mới, đáy vùng), 55% giữa đồng hồ, 30% dưới trình phát (cách 35 dp) + pin cách đáy 35 dp. Ngang (đổi so với mẫu):
+# đồng hồ giữa màn, ngày + thông báo cột trái, trình phát + pin cột phải.
+NT_VAR = instancer.instantiateVariableFont(TTFont(ROOT / "tools/fonts/variable/doto_variable.ttf"), {"wght": 900, "ROND": 100})
+NT_CMAP = NT_VAR.getBestCmap()
+NT_GLYPHS = NT_VAR.getGlyphSet()
+NT_ADV = 600
+NT_INK_H = 690
+NT_USED = set()
+NT_WHITE = "#FFFFFF"
+NT_RED = "#D71921"
+NT_GREY = "#E4E4E4"
+NT_TITLE = "THAT COOL SONG"
+NT_ARTIST = "IT" + chr(39) + "S ARTIST"
+
+
+def nt_glyph_def(ch):
+    pen = BoundsPen(NT_GLYPHS)
+    rec = __import__("fontTools.pens.recordingPen", fromlist=["DecomposingRecordingPen"]).DecomposingRecordingPen(NT_GLYPHS)
+    NT_GLYPHS[NT_CMAP[ord(ch)]].draw(rec)
+    dots, pts = [], []
+    for op, args in rec.value:
+        if op == "moveTo":
+            pts = [args[0]]
+        elif op in ("lineTo", "qCurveTo", "curveTo"):
+            pts += [a for a in args if a]
+        elif op in ("closePath", "endPath"):
+            xs, ys = [q[0] for q in pts], [q[1] for q in pts]
+            dots.append(f'M{round((min(xs) + max(xs)) / 2)} {-round((min(ys) + max(ys)) / 2)}h0')
+    return f'<path id="ntg{ord(ch)}" d="{"".join(dots)}" fill="none" stroke="currentColor" stroke-width="90" stroke-linecap="round"/>'
+
+
+def nt_digits(cx, top, text, height, color):
+    k = height / NT_INK_H
+    width = (NT_ADV * (len(text) - 1) + 490) * k
+    x0 = cx - width / 2 - 5 * k
+    s = ""
+    for i, ch in enumerate(text):
+        NT_USED.add(ch)
+        s += f'<use href="#ntg{ord(ch)}"' + (f' x="{NT_ADV * i}"' if i else "") + "/>"
+    return f'<g color="{color}" transform="translate({f(x0)} {f(top + 695 * k)}) scale({k:.4f})">{s}</g>'
+
+
+def nt_clock_h(size):
+    return 2 * .778 * size + 2 * 15 + .09 * size
+
+
+def nt_clock(cx, cy, hh, mm, size, c_hour, c_min, c_dots):
+    d, h = .09 * size, .778 * size
+    top = cy - nt_clock_h(size) / 2
+    s = nt_digits(cx, top, hh, h, c_hour)
+    dy = top + h + 15 + d / 2
+    s += (f'<circle cx="{f(cx - .27 * size)}" cy="{f(dy)}" r="{f(d / 2)}" fill="{c_dots}"/>'
+          f'<circle cx="{f(cx + .27 * size)}" cy="{f(dy)}" r="{f(d / 2)}" fill="{c_dots}"/>')
+    return s + nt_digits(cx, dy + d / 2 + 15, mm, h, c_min)
+
+
+NT_TINY = instancer.instantiateVariableFont(TTFont(ROOT / "tools/fonts/variable/tiny5_variable.ttf"),
+                                           {"ROND": 100, "wght": 400, "wdth": 100, "BLED": 0, "JITT": 0}, inplace=False)
+NT_T_CMAP = NT_TINY.getBestCmap()
+NT_T_GLYPHS = NT_TINY.getGlyphSet()
+NT_T_UPM = NT_TINY["head"].unitsPerEm
+NT_T_USED = set()
+NT_ICONS = {
+    "bubble": ["#######", "#######", "#######", "#######", "#######", "  ##   ", " #     "],
+    "mail": ["#######", "##   ##", "# # # #", "#  #  #", "#     #", "#######"],
+    "send": ["      #", "    ###", "  #### ", "###### ", "  ###  ", "  # #  ", "  #    "],
+    "bolt": ["   ##", "  ## ", " ##  ", "#####", "  ## ", " ##  ", "##   "],
+    "cloud": ["  ###  ", " ##### ", "#######", "#######"],
+}
+
+
+def nt_t_def(ch):
+    rec = __import__("fontTools.pens.recordingPen", fromlist=["DecomposingRecordingPen"]).DecomposingRecordingPen(NT_T_GLYPHS)
+    NT_T_GLYPHS[NT_T_CMAP[ord(ch)]].draw(rec)
+    dots, pts = [], []
+    for op, args in rec.value:
+        if op == "moveTo":
+            pts = [args[0]]
+        elif op in ("lineTo", "qCurveTo", "curveTo"):
+            pts += [a for a in args if a]
+        elif op in ("closePath", "endPath"):
+            xs, ys = [q[0] for q in pts], [q[1] for q in pts]
+            dots.append(f'M{round((min(xs) + max(xs)) / 2)} {round((min(ys) + max(ys)) / 2)}h0')
+    return f'<path id="t{ord(ch)}" d="{"".join(dots)}" fill="none" stroke="currentColor" stroke-width="128" stroke-linecap="round"/>'
+
+
+def nt_t_width(text, size, spacing=0.0):
+    return sum(NT_TINY["hmtx"][NT_T_CMAP[ord(ch)]][0] for ch in text) / NT_T_UPM * size + spacing * size * len(text)
+
+
+NT_TEXTS = {}
+
+
+def nt_tiny(x, base, text, size, color, anchor="start", spacing=0.0, opacity=1.0):
+    width = nt_t_width(text, size, spacing)
+    x0 = x - width / 2 if anchor == "middle" else (x - width if anchor == "end" else x)
+    key = (text, spacing)
+    if key not in NT_TEXTS:
+        s, cursor = "", 0.0
+        for ch in text:
+            if ch != " ":
+                NT_T_USED.add(ch)
+                s += f'<use href="#t{ord(ch)}"' + (f' x="{cursor:.0f}"' if cursor else "") + "/>"
+            cursor += NT_TINY["hmtx"][NT_T_CMAP[ord(ch)]][0] + spacing * NT_T_UPM
+        NT_TEXTS[key] = (f"x{len(NT_TEXTS)}", s)
+    k = size / NT_T_UPM
+    o = "" if opacity == 1 else f' opacity="{opacity}"'
+    return f'<use href="#{NT_TEXTS[key][0]}" color="{color}"{o} transform="translate({f(x0)} {f(base)}) scale({k:.4f} {-k:.4f})"/>'
+
+
+def nt_tiny_fit(text, size, spacing, width):
+    while nt_t_width(text, size, spacing) > width and len(text) > 1:
+        text = text[:-2].rstrip() + "…"
+    return text
+
+
+def nt_grid(rows, x, top, pitch, color, opacity=1.0):
+    r = pitch * .36
+    o = "" if opacity == 1 else f' opacity="{opacity}"'
+    return f'<g fill="{color}"{o}>' + "".join(
+        f'<circle cx="{f(x + c * pitch + pitch / 2)}" cy="{f(top + i * pitch + pitch / 2)}" r="{f(r)}"/>'
+        for i, row in enumerate(rows) for c, v in enumerate(row) if v == "#") + "</g>"
+
+
+NT_ICON_USED = set()
+
+
+def nt_icon_def(kind):
+    d = "".join(f'M{c + .5:g} {i + .5:g}h0' for i, row in enumerate(NT_ICONS[kind]) for c, v in enumerate(row) if v == "#")
+    return f'<path id="nti{kind}" d="{d}" fill="none" stroke="currentColor" stroke-width=".72" stroke-linecap="round"/>'
+
+
+def nt_icon(kind, x, cy, h, color):
+    NT_ICON_USED.add(kind)
+    pitch = h / len(NT_ICONS[kind])
+    return f'<use href="#nti{kind}" color="{color}" transform="translate({f(x)} {f(cy - h / 2)}) scale({pitch:.3f})"/>'
+
+
+NT_MEDIA_COLS = {
+    "play": [(c, range(c, 11 - c)) for c in range(6)],
+    "next": [(c, range(c, 11 - c)) for c in range(6)] + [(6.3, range(11))],
+    "pause": [(c, range(11)) for c in (0, 1, 4, 5)],
+}
+NT_MEDIA_USED = set()
+
+
+def nt_media_def(kind):
+    d = "".join(f'M{c + .5:g} {i + .5:g}h0' for c, rs in NT_MEDIA_COLS[kind] for i in rs)
+    return f'<path id="ntm{kind}" d="{d}" fill="none" stroke="currentColor" stroke-width=".7" stroke-linecap="round"/>'
+
+
+def nt_media_icon(kind, cx, cy, h, color):
+    NT_MEDIA_USED.add(kind)
+    pitch = h / 11
+    width = (max(c for c, _ in NT_MEDIA_COLS[kind]) + 1) * pitch
+    return f'<use href="#ntm{kind}" color="{color}" transform="translate({f(cx - width / 2)} {f(cy - h / 2)}) scale({pitch:.3f})"/>'
+
+
+def nt_dot_bar(left, right, cy, color, progress=.38):
+    pitch = 5
+    n = int((right - left) // pitch)
+    done = round(n * progress)
+    x0 = left + pitch / 2
+    mid = x0 + done * pitch
+    end = x0 + (n - 1) * pitch
+    line = '<line x1="{a}" y1="{y}" x2="{b}" y2="{y}" stroke="{c}" stroke-width="3.6" stroke-linecap="round" stroke-dasharray="0 5"{o}/>'
+    return (line.format(a=f(x0), b=f(mid - pitch + .1), y=f(cy), c=color, o="")
+            + line.format(a=f(mid), b=f(end + .1), y=f(cy), c=color, o=' opacity=".3"'))
+
+
+def nt_date_row(x, base, date, color, weather, anchor="middle"):
+    text = date + ("  ·  " if weather and date else "")
+    tw = nt_t_width(text, 20)
+    total = tw + (16 + 6 + nt_t_width("28°", 20) if weather else 0)
+    x0 = x - total / 2 if anchor == "middle" else (x - total if anchor == "end" else x)
+    s = nt_tiny(x0, base, text, 20, color) if text else ""
+    if weather:
+        s += nt_icon("cloud", x0 + tw, base - 6, 9, color) + nt_tiny(x0 + tw + 22, base, "28°", 20, color)
+    return s
+
+
+def nt_icons_row(x, cy, color, n, anchor="middle"):
+    width = n * 18 + (n - 1) * 10
+    x0 = x - width / 2 if anchor == "middle" else (x - width if anchor == "end" else x)
+    kinds = ["bubble", "mail", "send"]
+    return "".join(nt_icon(kinds[i % 3], x0 + i * 28, cy, 18, color) for i in range(n))
+
+
+def nt_latest(x, cy, color, maxw, anchor="middle"):
+    text = nt_tiny_fit("MAI: TỐI NAY ĐI ĂN NHÉ, NHỚ MANG Ô", 17, 0, maxw - 25)
+    width = 25 + nt_t_width(text, 17)
+    x0 = x - width / 2 if anchor == "middle" else (x - width if anchor == "end" else x)
+    return nt_icon("bubble", x0, cy, 18, color) + nt_tiny(x0 + 25, cy + 5.5, text, 17, color)
+
+
+def nt_player(left, right, top, color, paused=False):
+    dark = ec_mix(color, "#000000", .3)
+    tw = right - left - 46 - 20 - 41
+    s = (nt_tiny(left, top + 17, nt_tiny_fit(NT_TITLE, 17, .05, tw), 17, color, spacing=.05)
+         + nt_tiny(left, top + 17 + 4 + 16, nt_tiny_fit(NT_ARTIST, 15, .07, tw), 15, dark, spacing=.07))
+    cy = top + 20
+    px, nx = right - 41 - 10 - 23, right - 20.5
+    s += nt_media_icon("play" if paused else "pause", px, cy, 26, color) + nt_media_icon("next", nx, cy, 21, color)
+    return s + nt_dot_bar(left, right, top + 46 + 15 + 1.5, color)
+
+
+def nt_battery(x, base, color, charging, anchor="middle"):
+    width = nt_t_width("72%", 15, .03) + (16 if charging else 0)
+    x0 = x - width / 2 if anchor == "middle" else (x - width if anchor == "end" else x)
+    s = nt_icon("bolt", x0, base - 5.5, 11, color) if charging else ""
+    return s + nt_tiny(x0 + (16 if charging else 0), base, "72%", 15, color, spacing=.03, opacity=1 if charging else .8)
+
+
+def nt_media_group(svg, shown):
+    hidden = "" if shown else ' style="display:none"'
+    return f'<g class="nt-m"{hidden}>{svg}</g>'
+
+
+def nt_face(width, height, hh="08", mm="30", date="CN, 08 THG 11", size=100, c_hour=NT_WHITE, c_min=NT_WHITE, c_dots=NT_RED,
+            c_text=NT_GREY, media=False, latest=False, charging=False, icons=3, weather=False, is_date_shown=True, ref=False):
+    land = width > height
+    s = ""
+    if not land:
+        top_end = height * .15
+        cy = top_end + height * .55 / 2
+        s += nt_clock(width / 2, cy, hh, mm, size, c_hour, c_min, c_dots)
+        row_cy = top_end - 9
+        if is_date_shown or weather:
+            s += nt_date_row(width / 2, row_cy - 9 - 8 - 4, date if is_date_shown else "", c_text, weather)
+        s += nt_latest(width / 2, row_cy, c_text, width - 80) if latest else nt_icons_row(width / 2, row_cy, c_text, icons)
+        bat_base = height - 35 - 4
+        s += nt_battery(width / 2, bat_base, c_text, charging)
+        s += nt_media_group(nt_player(40, width - 40, bat_base - 15 - 35 - 64, c_text), media)
+        return f'<g class="nt" style="cursor:pointer"><rect width="{width}" height="{height}" fill="transparent"/>{s}</g>'
+    if ref:
+        cx = width / 4
+        s += nt_clock(cx, height / 2, hh, mm, size * .9, c_hour, c_min, c_dots)
+        s += nt_date_row(cx, 30 + 16, date, c_text, False)
+        s += nt_battery(cx, height - 30 - 4, c_text, charging)
+        rl, rr = width / 2 + 40, width - 40
+        s += nt_icons_row(rl, height - 40 - 64 - 30 - 20 - 9, c_text, icons, "start")
+        s += f'<rect x="{f(rl)}" y="{f(height - 40 - 64 - 30 - 10)}" width="{f(rr - rl)}" height="1" fill="{ec_mix(c_text, "#000000", .5)}"/>'
+        s += nt_player(rl, rr, height - 40 - 64, c_text)
+        return f'<g>{s}</g>'
+    cx, cy = width / 2, height / 2
+    s += nt_clock(cx, cy, hh, mm, size * .9, c_hour, c_min, c_dots)
+    clock_half = (NT_ADV + 490) / NT_INK_H * .778 * size * .9 / 2
+    lr = cx - clock_half - 48
+    rl, rr = cx + clock_half + 48, width - 40
+    items = ([("date", 20)] if is_date_shown or weather else []) + [("noti", 18)]
+    total = sum(h for _, h in items) + 18 * (len(items) - 1)
+    y = cy - total / 2
+    for kind, h in items:
+        if kind == "date":
+            s += nt_date_row(lr, y + 16, date if is_date_shown else "", c_text, weather, "end")
+        else:
+            s += nt_latest(lr, y + 9, c_text, lr - 40, "end") if latest else nt_icons_row(lr, y + 9, c_text, icons, "end")
+        y += h + 18
+    block_h = (64 + 30 if media else 0) + 15
+    y = cy - block_h / 2
+    s += nt_media_group(nt_player(rl, rr, y, c_text), media)
+    s += nt_battery(rl, (y + 64 + 30 + 12) if media else (cy + 5), c_text, charging, "start")
+    return f'<g class="nt" style="cursor:pointer"><rect width="{width}" height="{height}" fill="transparent"/>{s}</g>'
+
+
+def nt_defs():
+    return "".join(nt_glyph_def(ch) for ch in sorted(NT_USED)) + "".join(nt_t_def(ch) for ch in sorted(NT_T_USED)) + "".join(f'<g id="{i}">{v}</g>' for i, v in NT_TEXTS.values()) + "".join(nt_media_def(k) for k in sorted(NT_MEDIA_USED)) + "".join(nt_icon_def(k) for k in sorted(NT_ICON_USED))
+
+
+def nt_live_script():
+    return ('<script>(function(){document.querySelectorAll(".nt").forEach(function(G){var m=G.querySelector(".nt-m");if(!m)return;'
+            'G.addEventListener("click",function(){var on=m.style.display=="none";m.style.display=on?"":"none";'
+            'if(on&&m.animate)m.animate([{transform:"translateY(17px)",opacity:0},{transform:"none",opacity:1}],{duration:250,easing:"ease-out"})})})})();</script>')
+
+
+nothing_frames = [
+    '<div style="font-size:0">',
+    frame_portrait("App mẫu (Nothing(1)) vẽ lại: mọi phần màu Theme trắng, chữ nhỏ NDot 55; trình phát + pin ở 30% dưới",
+                   nt_face(PW, PH, "22", "24", "THU, 26 JAN", c_dots=NT_WHITE, c_text=NT_WHITE, media=True, icons=4)),
+    frame_portrait("D1 · Mặc định (thẻ ở lưới): giờ trên phút trắng, hai chấm đỏ #D71921 (màu nhấn), ngày + icon xám sáng; đồng hồ giữa vùng 55%. Chạm khung: hiện / ẩn nhạc",
+                   nt_face(PW, PH)),
+    frame_portrait("D2 · Có nhạc: trình phát chữ chấm (tên / nghệ sĩ trái, nút dừng + tới ghép chấm phải, thanh tiến trình chấm) trên dòng pin, tự ẩn theo cài đặt; 24 giờ",
+                   nt_face(PW, PH, "13", "36", "T2, 09 THG 11", media=True)),
+    frame_portrait("D3 · Cỡ 130, màu riêng từng phần (giờ, phút, hai chấm, chữ); thông báo mới thay hàng icon; thời tiết cùng dòng ngày",
+                   nt_face(PW, PH, "09", "47", "T3, 10 THG 11", 130, "#FFE082", "#B3E5FC", "#FF8A65", "#CFD8DC", latest=True, weather=True)),
+    frame_portrait("D4 · Cỡ 70, đang sạc (dòng pin sáng hẳn, mờ 0,8 khi không sạc như mẫu), 4 icon, tắt ngày",
+                   nt_face(PW, PH, "07", "40", charging=True, icons=4, is_date_shown=False, size=70)),
+    '</div>',
+    frame("N0 · App mẫu ngang: ngày + đồng hồ + pin ở nửa trái, hàng icon + vạch + trình phát ở nửa phải",
+          nt_face(W, H, "22", "24", "THU, 26 JAN", c_dots=NT_WHITE, c_text=NT_WHITE, icons=4, ref=True)),
+    frame("N1 · Mặc định ngang (đổi so với mẫu): đồng hồ giữa màn; ngày + hàng icon căn phải cột trái, dòng pin cột phải; giữa theo chiều cao",
+          nt_face(W, H)),
+    frame("N2 · Có nhạc: trình phát + pin là một cụm căn giữa cột phải", nt_face(W, H, "13", "36", "T2, 09 THG 11", media=True)),
+    frame("N3 · Cỡ 130, màu riêng, thông báo mới, thời tiết, có nhạc",
+          nt_face(W, H, "09", "47", "T3, 10 THG 11", 130, "#FFE082", "#B3E5FC", "#FF8A65", "#CFD8DC", latest=True, weather=True, media=True)),
+    frame("N4 · Cỡ 70, đang sạc, 4 icon, tắt ngày", nt_face(W, H, "07", "40", charging=True, icons=4, is_date_shown=False, size=70)),
+    nt_live_script(),
+]
+if ONLY in (None, "w_dot"):
+    nothing_code = widget("Chủ đề Chấm (Dot): giờ trên phút chấm 5 × 7, hai chấm đỏ giữa, năm khung dọc và năm khung ngang", nt_defs(), nothing_frames)
+    (OUT / "w_dot.html").write_text(nothing_code, encoding="utf-8")
+    print("w_dot", len(nothing_code))
+
+
 # ------------------------------------------------------------------ KÍNH (iOS Lockscreen của Muviz Edge, Jun23Screen, jun23_screen_layout dọc / ngang)
 # Dọc: 40% trên là ngày "EEEE, d MMMM" 22 sp (NoPadTextView, mờ 0,9) cách 22 dp trên giờ "H:mm" Cỡ sp (70–110, mặc định 92), cụm căn giữa
 # vùng; 60% dưới neo đáy: thẻ thông báo (nền #801C1D25 bo 14, đệm 14, lề 18: hàng icon 18 dp cách 10 hoặc thông báo mới icon 18 + chữ 16 sp),

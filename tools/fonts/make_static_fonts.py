@@ -62,6 +62,10 @@ FONTS = {
     "inter_display": ([300, 500], {"opsz": 32}, "inter"),
     # Kiểu Có chân của Kính thay New York Extra Large Heavy: Fraunces 900 góc nhọn (SOFT 0, WONK 0), opsz 144; họ riêng vì họ fraunces ghim SOFT 100
     "fraunces_display": ([900], {"opsz": 144, "SOFT": 0, "WONK": 0}, "fraunces"),
+    # Chữ số chấm 5 × 7 của Chấm thay NDot 47 của app mẫu (font của Nothing): Doto đậm nhất, chấm tròn; chỉ vẽ chữ số nên không cần tiếng Việt
+    "doto": ([900], {"ROND": 100}),
+    # Chữ phụ của Chấm thay NDot 55: Tiny5 bo tròn tối đa thành chữ chấm, đủ tiếng Việt (bản Google Fonts đã cắt còn Latin + tiếng Việt)
+    "tiny5": ([400], {"ROND": 100, "BLED": 0, "JITT": 0, "wdth": 100}),
 }
 
 # họ font vẽ viền (TextStyle.drawStyle = Stroke): gộp phần chồng của glyph khi tách để nét không lộ cạnh bên trong (cần pip install skia-pathops)

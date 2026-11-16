@@ -7,6 +7,36 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-11-16 – Chủ đề Chấm
+
+Thêm Chấm (Dot) từ Nothing(1) (chủ đề 17) của Muviz Edge, số đo lấy từ `Sep22Screen`, layout `sep22_screen_layout` dọc / ngang, font NDot 47 / NDot 55 và icon
+`nothing_*_btn` trong APK (chỉ đo, không lấy file). User muốn nội dung trình phát cũng thành chấm như chữ: "tôi ty app đối thôi music controll content cũng có
+hiệu uunwgs như text", "cả icon nữa nhé", "thanh nhạc lun"; duyệt mock: "Duyệt, code đi" (Kiro CLI code, Claude review theo `jetpack-compose-performance` và
+`anr-audit-and-fix`: sửa công thức cỡ chữ đồng hồ, lấy mẫu icon theo trung bình từng ô 4 × 4 để icon nét mảnh không mất chấm, chuỗi ngăn cách riêng).
+`check_theme.sh dot "Chấm"` phần nhanh pass (compile, option / pairwise / lưu cấu hình, `AodThemeSpecTest`, đăng ký code + docs), `check-rules` 0 vi phạm, thư mục
+chủ đề cũ không đổi. Chưa chạy test máy (không có máy ảo đang chạy), chưa có ảnh chuẩn `androidTest/screenshots/themes/dot/`. Chưa test trên máy thật.
+
+### Thêm
+
+- Dọc 15% / 55% / 30% như mẫu: ngày `EEE, dd MMM` in hoa 20 sp + hàng icon 18 dp ở đáy vùng trên (lề 40 dp); giữa là giờ "HH" (12 giờ "hh", vẫn 2 số) trên hai
+  chấm trên "mm", chữ số cao 0,778 × Cỡ, hai chấm 0,09 × Cỡ lệch ±0,27 × Cỡ, cách số 15 dp (`AodDotClock` đo sát nét chữ); vùng dưới: trình phát cách 35 dp trên
+  dòng pin 15 sp (mờ 0,8 khi không sạc, tia sét chấm khi sạc) cách đáy 35 dp. Ngang: đồng hồ giữa màn, ngày + icon căn phải cột trái, trình phát + pin cột phải.
+- Mọi chữ là chữ chấm: Doto 900 bo tròn thay NDot 47 cho đồng hồ, Tiny5 bo tròn (đủ tiếng Việt) thay NDot 55 cho ngày, thông báo, tên bài / nghệ sĩ, pin.
+- Icon cũng thành chấm (user): icon thông báo và thời tiết lấy mẫu thành lưới 7 × 7 (`sampleDots`), nút phát / dừng / tới ghép từ lưới chấm 11 hàng như
+  `nothing_*_btn`, thanh tiến trình là hàng chấm 5 dp (phần chưa nghe mờ 0,3, đảo chiều khi RTL).
+- Thông báo mới nhất thay hàng icon (trượt từ trên), chữ in hoa "APP: NỘI DUNG"; chạm dòng ngày / icon để hiện / ẩn; trình phát và thông báo tự ẩn theo cài đặt chung.
+- Màu giờ, phút, hai chấm, ngày, thông báo, pin, nhạc riêng, màu nào cũng dùng được gradient; Cỡ 70–130 (bước 2, mặc định 100); thời tiết cùng dòng ngày.
+- Font tải từ Google Fonts (OFL): Doto (sinh `doto_black`, ROND 100), Tiny5 (bản variable cắt còn Latin + tiếng Việt, sinh `tiny5_regular`, ROND 100, BLED 0,
+  JITT 0); giấy phép `licenses/Doto-OFL.txt`, `licenses/Tiny5-OFL.txt`.
+
+### Thay đổi
+
+- Mặc định nổi hơn cho thẻ ở lưới: hai chấm màu nhấn đỏ `#D71921` (mẫu theo một màu Theme chung), giờ / phút trắng, chữ phụ GreyE4.
+- Bỏ Theme Color của mẫu: mỗi phần một màu riêng. Bỏ Sự kiện, Ghi nhớ: vùng 15% trên chỉ đủ ngày + một hàng, cột hai bên đồng hồ ở màn ngang hẹp; bỏ Nét vẽ:
+  không có chỗ cho khối lớn. Ngang đặt đồng hồ giữa màn thay vì 50 / 50 của mẫu (user duyệt mock).
+- Chỉ thêm, không đổi chủ đề đang có: nhánh `DOT` ở `AodThemeLayout` và `AodMediaControls`, mục `DOT` cuối `AodThemeValue`, `ThemeExpectation`,
+  `AodThemeSpecTest`; màu `DotRed`; họ font `FontFamilyDoto`, `FontFamilyTiny5`; chuỗi `theme_dot`, `theme_color_separator`, `aod_dot_*`.
+
 ## [Chưa phát hành] – 2026-11-16 – Chủ đề Kính
 
 Thêm Kính (Glass) từ iOS Lockscreen (chủ đề 26) của Muviz Edge, số đo lấy từ `Jun23Screen`, `TimeProgressBarRounded`, layout `jun23_screen_layout` dọc / ngang và

@@ -84,6 +84,7 @@
     <string name="theme_pixel">Điểm ảnh</string>
     <string name="theme_meridian">Kinh tuyến</string>
     <string name="theme_glass">Kính</string>
+    <string name="theme_dot">Chấm</string>
     <string name="glass_style_regular">Thường</string>
     <string name="glass_style_rounded">Bo tròn</string>
     <string name="glass_style_stencil">Khuôn tô</string>
@@ -153,6 +154,7 @@
     <string name="theme_color_character">Nhân vật</string>
     <string name="theme_color_battery">Pin</string>
     <string name="theme_color_notifications">Thông báo</string>
+    <string name="theme_color_separator">Hai chấm</string>
     <string name="theme_color_memo">Ghi nhớ</string>
     <string name="theme_color_events">Sự kiện</string>
     <string name="theme_color_hour">Giờ</string>

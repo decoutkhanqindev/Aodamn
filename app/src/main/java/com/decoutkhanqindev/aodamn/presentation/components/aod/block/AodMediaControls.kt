@@ -47,6 +47,7 @@ import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.card.AodCar
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.chain.AodChainMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.clip.AodClipMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.compass.AodCompassMedia
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.dot.AodDotMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.eclipse.AodEclipseMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.fade.AodFadeMedia
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.frame.AodFrameMedia
@@ -105,6 +106,7 @@ fun AodMediaControls(
                 AodThemeValue.PIXEL -> AodPixelMedia(media = target, config = theme.config, onIntent = onIntent)
                 AodThemeValue.MERIDIAN -> AodMeridianMedia(media = target, config = theme.config, onIntent = onIntent)
                 AodThemeValue.GLASS -> AodGlassMedia(media = target, config = theme.config, onIntent = onIntent)
+                AodThemeValue.DOT -> AodDotMedia(media = target, config = theme.config, onIntent = onIntent)
 
                 AodThemeValue.PEBBLE -> AodPebbleMedia(media = target, config = theme.config, onIntent = onIntent)
                 AodThemeValue.CAPSULE -> AodCapsuleMedia(media = target, config = theme.config, onIntent = onIntent)
