@@ -6,6 +6,8 @@ import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -46,14 +48,15 @@ import kotlin.math.roundToInt
 
 @Composable
 fun SplashContent(bannerAd: @Composable () -> Unit) {
-    val enterDuration = 600
+    val logoState = remember { MutableTransitionState(false).apply { targetState = true } }
     val titleState = remember { MutableTransitionState(false).apply { targetState = true } }
+    val loadingState = remember { MutableTransitionState(false).apply { targetState = true } }
     val loadingProgress = remember { Animatable(0f) }
 
     LaunchedEffect(loadingProgress) {
         loadingProgress.animateTo(
             targetValue = LOADING_PROGRESS_CAP.toFloat(),
-            animationSpec = tween(durationMillis = 5000),
+            animationSpec = tween(durationMillis = 5000, delayMillis = 1800),
         )
     }
 
@@ -67,19 +70,24 @@ fun SplashContent(bannerAd: @Composable () -> Unit) {
                 .padding(bottom = 64.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            AppLottie(
-                resId = R.raw.lottie_device_edge_light,
-                modifier = Modifier.size(300.dp),
-            )
+            AnimatedVisibility(
+                visibleState = logoState,
+                enter = fadeIn(animationSpec = tween(durationMillis = 700)) +
+                    scaleIn(animationSpec = tween(durationMillis = 700), initialScale = 0.85f),
+            ) {
+                AppLottie(
+                    resId = R.raw.lottie_device_edge_light,
+                    modifier = Modifier.size(300.dp),
+                )
+            }
 
             AnimatedVisibility(
                 visibleState = titleState,
                 modifier = Modifier.offset(y = (-32).dp),
-                enter = fadeIn(animationSpec = tween(durationMillis = enterDuration)) +
-                        expandVertically(
-                            animationSpec = tween(durationMillis = enterDuration),
-                            expandFrom = Alignment.Top,
-                        ),
+                enter = expandVertically(
+                    animationSpec = tween(durationMillis = 600, delayMillis = 900),
+                    expandFrom = Alignment.Top,
+                ) + fadeIn(animationSpec = tween(durationMillis = 500, delayMillis = 1100)),
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
@@ -106,7 +114,13 @@ fun SplashContent(bannerAd: @Composable () -> Unit) {
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth(),
         ) {
-            SplashLoading(progress = { loadingProgress.value })
+            AnimatedVisibility(
+                visibleState = loadingState,
+                enter = fadeIn(animationSpec = tween(durationMillis = 500, delayMillis = 1800)) +
+                    slideInVertically(animationSpec = tween(durationMillis = 500, delayMillis = 1800)) { height -> height / 4 },
+            ) {
+                SplashLoading(progress = { loadingProgress.value })
+            }
 
             AppBottomAdSlot(background = Color.Transparent, content = bannerAd)
         }
