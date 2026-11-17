@@ -64,7 +64,7 @@ data class AodState(
         get() = isHintVisible && interaction.actionOf(AodGestureValue.DOUBLE_TAP) == AodActionValue.CLOSE
 
     fun isPreviewShown(component: AodComponentValue): Boolean =
-        isPreview && !isStill && (previewComponent == null || previewComponent == component)
+            isPreview && (previewComponent == null || previewComponent == component)
 
     fun isPreviewFocused(component: AodComponentValue): Boolean =
         isPreview && !isStill && previewComponent == component

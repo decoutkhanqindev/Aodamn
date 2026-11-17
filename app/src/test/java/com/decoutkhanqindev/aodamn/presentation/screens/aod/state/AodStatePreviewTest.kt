@@ -23,12 +23,14 @@ class AodStatePreviewTest {
     }
 
     @Test
-    fun `still thumbnails never force preview blocks`() {
-        val state = AodState(isPreview = true, isStill = true, previewComponent = AodComponentValue.MEDIA)
+    fun `still thumbnails show the same blocks as the resting preview but focus none`() {
+        val thumbnail = AodState(isPreview = true, isStill = true)
+        val resting = AodState(isPreview = true)
 
         AodComponentValue.entries.forEach { component ->
-            assertFalse(state.isPreviewShown(component))
-            assertFalse(state.isPreviewFocused(component))
+            assertEquals(resting.isPreviewShown(component), thumbnail.isPreviewShown(component))
+            assertTrue(thumbnail.isPreviewShown(component))
+            assertFalse(thumbnail.isPreviewFocused(component))
         }
     }
 

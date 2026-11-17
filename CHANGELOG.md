@@ -7,6 +7,19 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-11-17 – Thẻ chủ đề hiện trình phát như màn chủ đề
+
+User báo: "tôi thấy các theme mới không phần hiện music controll ở preivew trong list? nhưng bấm vào preview thì có? đây là lỗi", yêu cầu "details có thì
+list cũng có". Nguyên nhân: bản sửa ngày 2026-11-13 cho `isPreviewShown` trả `false` ở thẻ đứng yên (`isStill`) để thẻ không đổi, nên Áp phích, Điểm ảnh,
+Kinh tuyến, Kính, Chấm có trình phát ở màn chủ đề (lúc chưa mở tab) nhưng thẻ ở tab AOD thì không.
+
+### Sửa
+
+- `AodState.isPreviewShown` không loại thẻ đứng yên nữa: thẻ chỉ dừng chuyển động, khối hiện đúng như màn chủ đề lúc chưa mở tab; `isPreviewFocused`
+  vẫn chỉ đúng ở khung xem trước đang mở tab (test `AodStatePreviewTest`). Thẻ Áp phích, Điểm ảnh, Kinh tuyến, Kính, Chấm và thẻ thiết kế đang dùng có
+  trình phát mẫu; Nhật thực, Pha trăng, Chớp mắt không đổi (màn chủ đề cũng chỉ hiện trình phát khi mở tab Nhạc), các chủ đề cũ không dùng hàm này.
+- Ghi quy tắc vào CLAUDE.md và README › Thêm chủ đề mới: thẻ hiện đủ khối như màn chủ đề.
+
 ## [Chưa phát hành] – 2026-11-16 – Chủ đề Chấm
 
 Thêm Chấm (Dot) từ Nothing(1) (chủ đề 17) của Muviz Edge, số đo lấy từ `Sep22Screen`, layout `sep22_screen_layout` dọc / ngang, font NDot 47 / NDot 55 và icon

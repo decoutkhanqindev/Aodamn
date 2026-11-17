@@ -593,7 +593,9 @@ chủ đề mới không cần màn riêng; chỉ tách màn khi chủ đề c�
      chọn hay tính năng của app mẫu: lập danh sách mọi tuỳ chọn (`Z()` / `V()`, `catalog.json`) và hành vi của chủ đề, mock nêu
      từng mục là giữ / đổi / bỏ, đổi hay bỏ phải có lý do và user đồng ý (ghi ở CHANGELOG không tính). Khung xem trước
      dùng giờ mẫu; chủ đề có chuyển động theo giờ thật như app mẫu bật `AodThemeSpec.isLiveInPreview` (mặt số đọc
-     `AodState.isClockLive`) để chạy theo giờ thật ở màn chủ đề, Tùy chỉnh; thẻ thu nhỏ ở tab AOD luôn đứng yên (`isStill`). Chỗ nào làm
+     `AodState.isClockLive`) để chạy theo giờ thật ở màn chủ đề, Tùy chỉnh; thẻ thu nhỏ ở tab AOD luôn đứng yên (`isStill`) nhưng
+     hiện đủ khối như màn chủ đề lúc chưa mở tab (xem trước hiện khối qua `AodState.isPreviewShown`, chỉ tab đang mở mới dùng
+     `isPreviewFocused`). Chỗ nào làm
      xịn hơn app mẫu được thì cứ làm và nêu trong mock (La bàn: màu riêng từng vòng, chữ trình phát mờ khi dừng nhạc, mỗi vòng
      vẽ một lần vào layer rồi chỉ xoay nên chạy mỗi khung hình vẫn nhẹ, kiểu không vòng giây xoay mượt sang phút mới thay vì nhảy).
    - Phần chủ đề tự vẽ (`ownBlocks`): đồng hồ luôn tự vẽ; ngày, nhạc, dòng pin + thông báo, ghi nhớ, sự kiện nếu khác khối
@@ -1346,6 +1348,10 @@ chọn theo các khối đang có dữ liệu, dùng chung cho mọi chủ đề
     thanh tiến trình là hàng chấm chạy theo bài; tự ẩn theo cài đặt chung. Đang sạc: tia sét chấm trước "72%", dòng pin sáng hẳn (mờ 0,8 khi không sạc).
     Bật thời tiết: icon thời tiết chấm + nhiệt độ cùng dòng ngày. Tùy chỉnh khi dùng Chấm: không có Sự kiện, Ghi nhớ, Nét vẽ. Xoay ngang: đồng hồ giữa màn,
     ngày + icon căn phải cột trái, trình phát + pin cột phải. Các chủ đề khác không đổi gì.
+25al. Thẻ chủ đề khớp màn chủ đề: tab AOD › Chủ đề: thẻ Áp phích, Điểm ảnh, Kinh tuyến, Kính, Chấm có trình phát mẫu như khi bấm vào
+    thẻ (màn chủ đề lúc chưa mở tab nào); thẻ Nhật thực, Pha trăng, Chớp mắt vẫn là ngày + pin như màn chủ đề (trình phát chỉ hiện khi mở tab
+    Nhạc). Thẻ thiết kế đang dùng ở tab AOD với một trong 5 chủ đề trên và trình phát bật ở Tùy chỉnh: thẻ cũng có trình phát. Thẻ vẫn đứng yên,
+    các chủ đề cũ không đổi gì.
 25ai. Tự ẩn trình phát và thông báo: mở một app nhạc, phát một bài, có sẵn một thông báo rồi tắt màn hình. Mặc định (Cài đặt › Tự ẩn trình phát và
     thông báo = 30 giây): trình phát và thông báo mới nhất hiện, sau 30 giây cùng ẩn (hàng icon thông báo vẫn còn); chạm màn một lần thì cả hai hiện lại
     (trễ khoảng 0,3 giây), chạm lần nữa thì ẩn; chạm 2 lần vẫn làm đúng thao tác đã chọn (thoát AOD). Đang ẩn mà đổi bài: trình phát hiện lại; có thông báo
