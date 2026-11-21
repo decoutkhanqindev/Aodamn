@@ -16,6 +16,7 @@ import com.decoutkhanqindev.aodamn.data.device.screen.ScreenStateManager
 import com.decoutkhanqindev.aodamn.data.local.datastore.DataStoreManager
 import com.decoutkhanqindev.aodamn.data.local.image.AodImageManager
 import com.decoutkhanqindev.aodamn.data.local.locale.LanguageManager
+import com.decoutkhanqindev.aodamn.data.network.api.NetworkJson
 import com.decoutkhanqindev.aodamn.data.network.api.OpenMeteoApiService
 import com.decoutkhanqindev.aodamn.data.network.connectivity.NetworkManager
 import com.decoutkhanqindev.aodamn.data.repository.CalendarRepositoryImpl
@@ -34,7 +35,6 @@ import com.decoutkhanqindev.aodamn.presentation.screens.language.LanguageViewMod
 import com.decoutkhanqindev.aodamn.presentation.screens.permission.PermissionViewModel
 import com.decoutkhanqindev.aodamn.presentation.screens.settings.SettingsViewModel
 import com.decoutkhanqindev.aodamn.presentation.screens.themeeditor.ThemeEditorViewModel
-import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import org.koin.android.ext.koin.androidApplication
 import org.koin.core.module.dsl.viewModel
@@ -62,11 +62,10 @@ val managerModule = module {
 }
 
 val networkModule = module {
-    single { Json { ignoreUnknownKeys = true } }
     single {
         Retrofit.Builder()
             .baseUrl(OpenMeteoApiService.BASE_URL)
-            .addConverterFactory(get<Json>().asConverterFactory("application/json".toMediaType()))
+            .addConverterFactory(NetworkJson.asConverterFactory("application/json".toMediaType()))
             .build()
     }
     single { get<Retrofit>().create(OpenMeteoApiService::class.java) }

@@ -25,6 +25,8 @@ các cách test của project vào skill `unit-testing`, có render preview đ�
 - Cấu hình chủ đề và kiểu từng khối lưu thành map JSON trong `aod_appearance` thay chuỗi `khoá=giá trị`; bỏ đường đọc dạng cũ (`toAodConfigString`,
   `LegacyClockColors`, `ClockFaceValue.fromCode`, `ClockFontValue.fromCode`), nên Cổ điển lúc chưa lưu lấy mặc định của `ClassicThemeSpec`.
 - Không migrate: cùng file `aodamn_prefs` nhưng key cũ không còn được đọc, nên máy đang cài sẽ về mặc định khi cập nhật (gồm cả onboarding và ngôn ngữ).
+- `Json` của Retrofit thành `val` cấp file `NetworkJson` (`data/network/api`), song song `PrefsJson`; Koin bỏ binding `Json` trần để không ai inject nhầm
+  cấu hình mạng, và không còn tạo `Json` ngay trong biểu thức (cảnh báo "Redundant creation of Json format" của IDE). Hai cấu hình giữ riêng vì Prefs là định dạng dữ liệu đã lưu.
 
 ### Thêm
 
