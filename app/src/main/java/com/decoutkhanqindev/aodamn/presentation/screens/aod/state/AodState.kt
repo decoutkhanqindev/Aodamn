@@ -3,7 +3,7 @@ package com.decoutkhanqindev.aodamn.presentation.screens.aod.state
 import android.graphics.Bitmap
 import androidx.annotation.ColorInt
 import androidx.compose.runtime.Immutable
-import com.decoutkhanqindev.aodamn.data.local.datastore.DataStoreManager
+import com.decoutkhanqindev.aodamn.data.local.datastore.model.AodOptionsPrefs
 import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.AodAppearanceUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.WallpaperValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.info.AodNotificationsUiModel
@@ -36,7 +36,7 @@ data class AodState(
     val media: MediaUiModel? = null,
     val isMediaShown: Boolean = true,
     val isLatestShown: Boolean = true,
-    val autoHideSeconds: Int = DataStoreManager.DEFAULT_AOD_AUTO_HIDE_SECONDS,
+    val autoHideSeconds: Int = AodOptionsPrefs.DEFAULT.autoHideSeconds,
     val isFlashlightOn: Boolean = false,
     val isHintVisible: Boolean = true,
     val isGlowing: Boolean = false,

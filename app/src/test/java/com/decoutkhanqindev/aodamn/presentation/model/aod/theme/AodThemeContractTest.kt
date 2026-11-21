@@ -1,7 +1,7 @@
 package com.decoutkhanqindev.aodamn.presentation.model.aod.theme
 
 import com.decoutkhanqindev.aodamn.testing.ThemeOptionCases
-import kotlinx.collections.immutable.toPersistentMap
+import com.decoutkhanqindev.aodamn.testing.storedAndRestored
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -39,8 +39,7 @@ class AodThemeContractTest {
     fun `every changed theme config survives storage round trip`() {
         selectedThemes.forEach { theme ->
             val changed = ThemeOptionCases.maximum(theme)
-            val stored = changed.values.toAodConfigString()
-            val restored = AodThemeConfig(stored.toAodConfigValues().toPersistentMap())
+            val restored = changed.storedAndRestored(theme)
 
             assertTrue("${theme.id}: cấu hình không khôi phục được", theme.spec.isSame(changed, restored))
         }

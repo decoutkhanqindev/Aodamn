@@ -26,8 +26,4 @@ enum class ClockFontValue(
     ROUNDED(code = 4, labelRes = R.string.clock_font_rounded, fontFamily = FontFamilyComfortaa),
     CONDENSED(code = 5, labelRes = R.string.clock_font_condensed, fontFamily = FontFamilyBigShouldersDisplay),
     GEOMETRIC(code = 6, labelRes = R.string.clock_font_geometric, fontFamily = FontFamilyJosefinSans);
-
-    companion object {
-        fun fromCode(code: Int?): ClockFontValue = entries.find { it.code == code } ?: DEFAULT
-    }
 }

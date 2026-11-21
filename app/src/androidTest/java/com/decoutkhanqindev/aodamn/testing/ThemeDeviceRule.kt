@@ -48,11 +48,11 @@ class ThemeDeviceRule : TestRule {
 
         val dataStoreManager = GlobalContext.get().get<DataStoreManager>()
         dataStoreManager.saveIsFirstOpen(false)
-        dataStoreManager.saveIsAodEnabled(false)
+        dataStoreManager.updateAodOptions { options -> options.copy(isEnabled = false) }
         runBlocking {
             withTimeout(5_000L) {
                 dataStoreManager.isFirstOpen.filterNotNull().first { isFirstOpen -> !isFirstOpen }
-                dataStoreManager.isAodEnabled.filterNotNull().first { isEnabled -> !isEnabled }
+                dataStoreManager.aodOptions.filterNotNull().first { options -> !options.isEnabled }
             }
         }
     }

@@ -17,11 +17,13 @@ import com.decoutkhanqindev.aodamn.data.device.battery.BatteryStateManager
 import com.decoutkhanqindev.aodamn.data.device.pickup.PickupGestureManager
 import com.decoutkhanqindev.aodamn.data.device.screen.ScreenStateManager
 import com.decoutkhanqindev.aodamn.data.local.datastore.DataStoreManager
+import com.decoutkhanqindev.aodamn.data.local.datastore.model.AodInteractionPrefs
+import com.decoutkhanqindev.aodamn.data.local.datastore.model.AodRulesPrefs
 import com.decoutkhanqindev.aodamn.data.local.locale.LanguageManager
 import com.decoutkhanqindev.aodamn.presentation.MainActivity
 import com.decoutkhanqindev.aodamn.presentation.model.aod.info.WakeResultValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.settings.rules.AodScheduleUiModel
-import com.decoutkhanqindev.aodamn.presentation.model.aod.settings.rules.currentAodRules
+import com.decoutkhanqindev.aodamn.presentation.model.aod.settings.rules.toUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.language.LanguageValue
 import com.decoutkhanqindev.aodamn.utils.Tag
 import com.decoutkhanqindev.aodamn.utils.collectCatching
@@ -116,11 +118,11 @@ class AodService : Service(), Tag {
     }
 
     private fun shouldEnter(): Boolean {
-        if (dataStoreManager.isAodEnabled.value != true) return false
+        if (dataStoreManager.aodOptions.value?.isEnabled != true) return false
         if (screenStateManager.isInteractive) return false
         if (audioStateManager.isBusyNow()) return false
 
-        return dataStoreManager.currentAodRules().allows(
+        return (dataStoreManager.aodRules.value ?: AodRulesPrefs.DEFAULT).toUiModel().allows(
             batteryPercent = batteryStateManager.readLevelPercent(),
             isCharging = batteryStateManager.readIsCharging() == true,
             isPlugged = batteryStateManager.readIsPlugged(),
@@ -148,8 +150,7 @@ class AodService : Service(), Tag {
     }
 
     private fun armRaiseToWake() {
-        val isEnabled = dataStoreManager.isAodRaiseToWakeEnabled.value
-            ?: DataStoreManager.DEFAULT_IS_AOD_RAISE_TO_WAKE_ENABLED
+        val isEnabled = (dataStoreManager.aodInteraction.value ?: AodInteractionPrefs.DEFAULT).isRaiseToWakeEnabled
         if (!isEnabled || !pickupGestureManager.isSupported) return
         raiseToWakeJob = scope.launch {
             pickupGestureManager.pickups.firstOrNull() ?: return@launch

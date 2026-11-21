@@ -8,9 +8,9 @@ import com.decoutkhanqindev.aodamn.presentation.base.BaseViewModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodBlockValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeConfig
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeValue
-import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.currentAodThemeConfigs
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.isDefault
-import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.saveAodThemeConfig
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.themeConfigOf
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.withThemeConfig
 import com.decoutkhanqindev.aodamn.presentation.model.permission.PermissionValue
 import com.decoutkhanqindev.aodamn.presentation.model.permission.hasRequiredPermissions
 import com.decoutkhanqindev.aodamn.presentation.model.permission.requiredAodPermissions
@@ -20,7 +20,6 @@ import com.decoutkhanqindev.aodamn.presentation.screens.themeeditor.state.ThemeE
 import com.decoutkhanqindev.aodamn.presentation.screens.themeeditor.state.ThemeEditorState
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -142,9 +141,9 @@ class ThemeEditorViewModel(
 
     private fun load() {
         viewModelScope.launch {
-            dataStoreManager.aodThemeConfigs.filterNotNull().first()
-            val config = dataStoreManager.currentAodThemeConfigs().getValue(state.value.theme)
-            val activeId = dataStoreManager.aodThemeId.filterNotNull().first()
+            val appearance = dataStoreManager.aodAppearance.filterNotNull().first()
+            val config = appearance.themeConfigOf(state.value.theme)
+            val activeId = appearance.themeId
             updateState {
                 copy(
                     config = config,
@@ -175,10 +174,11 @@ class ThemeEditorViewModel(
 
     private fun saveTheme() {
         if (state.value.isApplying) return
+        val theme = state.value.theme
         val config = state.value.config
         viewModelScope.launch {
             updateState { copy(isApplying = true, selectedTab = null, history = history.copy(isDiscardConfirmVisible = false)) }
-            dataStoreManager.saveAodThemeConfig(state.value.theme, config).join()
+            dataStoreManager.updateAodAppearance { appearance -> appearance.withThemeConfig(theme, config) }.join()
             clearHistory()
             updateState { copy(isApplying = false, savedConfig = config, isEditing = false) }
             publish(config)
@@ -196,10 +196,10 @@ class ThemeEditorViewModel(
         }
         viewModelScope.launch {
             updateState { copy(isApplying = true) }
-            listOfNotNull(
-                dataStoreManager.saveAodThemeConfig(current.theme, current.config).takeIf { current.hasChanges },
-                dataStoreManager.saveAodThemeId(current.theme.id),
-            ).joinAll()
+            dataStoreManager.updateAodAppearance { appearance ->
+                val configured = if (current.hasChanges) appearance.withThemeConfig(current.theme, current.config) else appearance
+                configured.copy(themeId = current.theme.id)
+            }.join()
             updateState { copy(isApplying = false, isActive = true, savedConfig = current.config) }
             sendEffect(ThemeEditorEffect.ShowMessage(R.string.theme_applied))
         }

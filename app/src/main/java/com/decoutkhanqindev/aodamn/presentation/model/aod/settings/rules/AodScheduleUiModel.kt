@@ -1,16 +1,16 @@
 package com.decoutkhanqindev.aodamn.presentation.model.aod.settings.rules
 
 import androidx.compose.runtime.Immutable
-import com.decoutkhanqindev.aodamn.data.local.datastore.DataStoreManager
+import com.decoutkhanqindev.aodamn.data.local.datastore.model.AodRulesPrefs
 import java.time.Instant
 import java.time.LocalTime
 import java.time.ZoneId
 
 @Immutable
 data class AodScheduleUiModel(
-    val isEnabled: Boolean = DataStoreManager.DEFAULT_IS_AOD_SCHEDULE_ENABLED,
-    val startMinute: Int = DataStoreManager.DEFAULT_AOD_SCHEDULE_START_MINUTE,
-    val endMinute: Int = DataStoreManager.DEFAULT_AOD_SCHEDULE_END_MINUTE,
+    val isEnabled: Boolean = AodRulesPrefs.DEFAULT.isScheduleEnabled,
+    val startMinute: Int = AodRulesPrefs.DEFAULT.scheduleStartMinute,
+    val endMinute: Int = AodRulesPrefs.DEFAULT.scheduleEndMinute,
 ) {
     fun isActiveAt(minuteOfDay: Int): Boolean = when {
         !isEnabled || startMinute == endMinute -> true

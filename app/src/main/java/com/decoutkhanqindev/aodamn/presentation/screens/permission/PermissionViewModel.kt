@@ -63,7 +63,7 @@ class PermissionViewModel(
         refreshPermissions()
         viewModelScope.launch {
             when {
-                isGranted -> if (dataStoreManager.isAodEnabled.value == true) sendEffect(
+                isGranted -> if (dataStoreManager.aodOptions.value?.isEnabled == true) sendEffect(
                     PermissionEffect.StartAodService
                 )
 

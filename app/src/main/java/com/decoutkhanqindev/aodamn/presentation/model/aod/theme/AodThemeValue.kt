@@ -3,10 +3,10 @@ package com.decoutkhanqindev.aodamn.presentation.model.aod.theme
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Immutable
 import com.decoutkhanqindev.aodamn.R
-import com.decoutkhanqindev.aodamn.data.local.datastore.DataStoreManager
+import com.decoutkhanqindev.aodamn.data.local.datastore.model.AodAppearancePrefs
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.bezel.BezelThemeSpec
-import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.blinky.BlinkyThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.bigoverlap.BigOverlapThemeSpec
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.blinky.BlinkyThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.capsule.CapsuleThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.card.CardThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.chain.ChainThemeSpec
@@ -18,9 +18,9 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.eclipse.EclipseT
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.fade.FadeThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.flip.FlipThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.frame.FrameThemeSpec
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.gentle.GentleThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.glass.GlassThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.gradientline.GradientLineThemeSpec
-import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.gentle.GentleThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.halfmoon.HalfMoonThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.jersey.JerseyThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.meridian.MeridianThemeSpec
@@ -44,7 +44,7 @@ enum class AodThemeValue(
     @param:StringRes val nameRes: Int,
     val spec: AodThemeSpec,
 ) {
-    CLASSIC(id = DataStoreManager.DEFAULT_AOD_THEME_ID, nameRes = R.string.theme_classic, spec = ClassicThemeSpec),
+    CLASSIC(id = AodAppearancePrefs.DEFAULT_THEME_ID, nameRes = R.string.theme_classic, spec = ClassicThemeSpec),
     PEBBLE(id = "pebble", nameRes = R.string.theme_pebble, spec = PebbleThemeSpec),
     JERSEY(id = "jersey", nameRes = R.string.theme_jersey, spec = JerseyThemeSpec),
     CAPSULE(id = "capsule", nameRes = R.string.theme_capsule, spec = CapsuleThemeSpec),

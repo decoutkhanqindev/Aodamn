@@ -1,87 +1,92 @@
 ---
 name: unit-testing
-description: Smart Kotlin unit testing with auto-detection, coverage analysis, and AI edge cases. Use when generating tests for UseCases, mappers / UiModel logic and MVI ViewModels, analyzing test coverage gaps, or discovering edge cases.
+description: How Aodamn is tested, layer by layer. JVM unit tests (Prefs JSON parse, Prefs / cache → UiModel / domain mappers, enum ids, pure rules, ViewModel Intent → State), Compose @Preview render with the Android CLI to compare UI before / after without a device, on-device theme tests (androidTest + Dropshots via check_theme.sh) and static checks. Use when writing or updating tests, adding logic a unit test can reach, changing UI that needs a before / after image, or deciding which test layer a change needs.
 ---
 
-## Platform Tooling
+# Testing Aodamn
 
-- Use AskUserQuestion for blocking user choices or confirmations.
-- Use WebFetch/WebSearch for current external docs or public web research.
-- Use the Agent tool with subagent_type for delegation.
-- Use Skill tool when chaining to another installed skill.
+`CLAUDE.md` is the source of truth; when this skill disagrees, follow `CLAUDE.md`. Do the work yourself, no agents
+(CLAUDE.md › Skills và agent).
 
-# Kotlin Unit Test
+## Which layer a change needs
 
-Project-specific skill for intelligent Kotlin unit testing.
+| Change | Run | Where |
+|---|---|---|
+| Any change | `./gradlew :app:compileDebugKotlin` + `bash tools/check-rules.sh` (0 vi phạm) | static |
+| Logic a JVM test can reach: parse, mapper, enum id, rule, pure helper, Intent → State | write the test in the same change, `./gradlew :app:testDebugUnitTest` must pass | `app/src/test/…`, same package as the source |
+| API that androidTest uses (`DataStoreManager`, theme config helpers, `ThemeExpectation`) | `./gradlew :app:compileDebugAndroidTestKotlin` | `app/src/androidTest/…/testing/` |
+| Compose UI | render the touched `@Preview`s before and after, look at both | Android CLI, section 2 |
+| AOD theme or shared block drawing | `check_theme.sh` fast, then `--device` on an idle emulator | section 3 |
+| Release gate | `lint`, every unit test, full device suite | not per change |
 
-## When to Use
+Real-device checks (Xiaomi permission pages, lock screen, sensors) are the user's: stop at build + tests and hand over the
+commands, never `adb install` on their phone.
 
-- Generating tests for business logic: `domain/usecase`, mappers and UiModel logic in
-  `presentation/model` and `data/mapper`, ViewModels (Intent → State / Effect)
-- Analyzing test coverage gaps
-- Discovering edge cases for existing code
-- Before writing new tests to understand what's missing
+## 1. JVM unit tests
 
-## Workflow
+- JUnit 4 + `kotlinx-coroutines-test`. MockK / Turbine are not dependencies (adding them needs the user's OK): hand fakes
+  at the Repository interface, no mocks of UseCases or final classes.
+- No comments in test code; the backtick name says the behaviour.
+- Patterns and per-area case tables: `references/test-patterns.md`. Edge-case prompts: `references/edge-case-discovery.md`.
+- Gaps: `python scripts/analyze_kotlin.py units <file.kt>` · `python scripts/analyze_kotlin.py coverage <src_dir> <test_dir>`.
+- Extend the suite that owns the area instead of starting a parallel one:
 
-1. **Analyze class**: `python scripts/analyze_kotlin.py units <file.kt>`
-2. **Check coverage**: `python scripts/analyze_kotlin.py coverage <source_dir> <test_dir>`
-3. **Discover edge cases**: Load `references/edge-case-discovery.md`
-4. **Write tests**: Follow patterns in `references/test-patterns.md`
+| Area | Suite |
+|---|---|
+| Every DataStore group (`XxxPrefs`): defaults, round trip, broken JSON | `data/local/datastore/PrefsJsonTest` |
+| Prefs → UiModel, stored enum ids, writes back to Prefs | `presentation/model/aod/settings/AodSettingsUiMapperTest` |
+| Schedule / charging / battery rules | `presentation/model/aod/settings/rules/AodRulesUiModelTest` |
+| Theme config stored in `AodAppearancePrefs`, components | `presentation/model/aod/theme/AodAppearanceMappingTest` |
+| Theme specs, options, contract, landscape plan | `AodThemeSpecTest`, `AodThemeContractTest`, `AodColorOptionTest`, `AodZoneOptionTest`, `AodLandscapePlanTest` |
+| Every theme option / pair / reset / storage (JVM side of the device harness) | `testing/AodThemeExpectationTest` |
+| Theme geometry helpers | `presentation/components/aod/theme/<theme>/*MetricsTest` |
+| Weather cache → domain | `data/mapper/WeatherCacheMapperTest` |
 
-## Script Commands
+Code that touches Android (DataStore, Context, Manager) is split so the pure part is testable: `PrefsJson.decodeOrNull`,
+`XxxPrefs.toUiModel()`, `AodInteractionPrefs.withAction`, `AodAppearancePrefs.withThemeConfig`. A ViewModel that needs a
+Manager is a concrete Android dependency: move its rule into the UiModel / Prefs helper and test it there.
+
+## 2. Compose preview render (Android CLI)
+
+The `android` CLI builds the module and renders `@Preview` functions to PNG, optionally with a component-tree JSON, with
+no device or emulator ([preview render](https://developer.android.com/tools/agents/android-cli/commands/preview_render),
+[preview list](https://developer.android.com/tools/agents/android-cli/commands/preview_list),
+[preview](https://developer.android.com/tools/agents/android-cli/commands/preview)). Checked with CLI 1.1.16717390
+(`$ANDROID_HOME/cmdline-tools/latest/bin/android`), Nov 2026.
 
 ```bash
-# Analyze single file - extract testable units
-python scripts/analyze_kotlin.py units app/src/main/java/com/decoutkhanqindev/aodamn/domain/usecase/RefreshWeatherUseCase.kt
-
-# Analyze coverage gaps between source and test directories
-python scripts/analyze_kotlin.py coverage app/src/main/java/com/decoutkhanqindev/aodamn/domain app/src/test/java/com/decoutkhanqindev/aodamn/domain
+android preview list :app
+android preview render :app --fqn=com.decoutkhanqindev.aodamn.presentation.screens.settings.SettingsContentKt.SettingsContentPreview --output=<dir>
+android preview render :app --fqn=<fqn1> --fqn=<fqn2> --component-tree --output=<dir>
 ```
 
-## Output Format
+- `--fqn` is `<package>.<File>Kt.<PreviewFunction>`, repeatable. `list` shows `private` previews too (about 20 s here).
+- Output: `<dir>/<package path>/<File>Kt/<Preview>_0.png`, plus `_0.json` with `--component-tree` (bounds, component
+  names, source locations, semantics, parameters, modifiers). `--no-image` only works with `--component-tree`.
+  `-f json` gives a machine-readable result.
+- `--daemon` keeps the renderer up until 10 minutes of inactivity. Its process holds stdout open, so never pipe it
+  (`| tail`, `| sed`): the command never returns. Run it unpiped and read the files under `--output`.
+- Before / after: render into `<scratchpad>/previews/before`, make the change, render the same FQNs into `…/after`, open
+  both PNGs with Read and compare; for spacing / size compare `bounds` in the two JSON trees. Renders are never committed.
+- A state with no preview cannot be rendered: add a `private` preview for each state the change touches (Content
+  previews wrap `Theme`; AOD screen previews do not, CLAUDE.md › Compose và theme).
+- This is a look-and-compare step, not a regression suite: nothing is stored as a golden. Theme goldens live in Dropshots
+  (section 3). Roborazzi / the screenshot-test plugin were tried and removed; adding one back needs the user's OK.
+- Background: Compose previews ([docs](https://developer.android.com/develop/ui/compose/tooling/previews)); the Android Dev
+  Summit post of 28 Oct 2026 reports agents using `android preview` finished UI tasks 77% faster with up to 3x fewer
+  tokens ([blog](https://developer.android.com/blog/posts/android-dev-summit-26-developer-tools-performance)).
 
-JSON structured output for parsing:
+## 3. On device (androidTest)
 
-```json
-{
-  "class_name": "SomeClass",
-  "methods": [...],
-  "dependencies": [...],
-  "coverage": {"tested": [], "missing": []}
-}
-```
+- Harness in `app/src/{debug,androidTest}/java/com/decoutkhanqindev/aodamn/testing/`: `ThemeExpectation` (debug source,
+  read by JVM and device tests), `ThemeDeviceRule`, `ThemeTestActivity`, Dropshots screenshot tests, flow / editor /
+  behaviour / motion tests.
+- Run through `bash .claude/skills/aodamn-aod-theme-ref/scripts/check_theme.sh <pkg> "<Tên Việt>"` with `--device`,
+  `--editor`, `--blocks`, `--record…` on an idle API 37 emulator; groups, pass stamps and record rules:
+  `.claude/skills/aodamn-aod-theme-ref/references/testing.md`. Never call `connectedDebugAndroidTest` bare for one theme.
+- Record goldens only after looking at the new images; a failing image is never recorded as the new truth.
 
-## References
+## 4. Static
 
-| File                                | Purpose                           |
-|-------------------------------------|-----------------------------------|
-| `references/test-patterns.md`       | JUnit4 + MockK + Turbine patterns |
-| `references/edge-case-discovery.md` | AI prompts for finding edge cases |
-
-## Integration
-
-This skill is standalone. If a dedicated test agent is added later, put it in `.claude/agents/` and
-delegate with the Agent tool.
-
-## Project notes (Aodamn)
-
-`CLAUDE.md` at the project root is the source of truth; when this skill and `CLAUDE.md` disagree,
-follow `CLAUDE.md`.
-
-- Tests live in `app/src/test/java/com/decoutkhanqindev/aodamn/...`, mirroring the source
-  package (CLAUDE.md › Thư viện, log, test).
-- Already in the project: JUnit 4, `kotlinx-coroutines-test`. MockK and Turbine are NOT dependencies
-  yet — adding them needs the user's approval (CLAUDE.md hard rules); without them, write fakes by
-  hand.
-- Fake at the Repository interface boundary (`domain/repository`); do not mock UseCases or final
-  classes. Managers are concrete Android classes — test ViewModels that depend on them with
-  instrumented tests, or extract the pure logic into the UiModel / mapper and unit-test that.
-- UseCases return `Result<T>` built with `suspendRunCatching`; assert `isSuccess` /
-  `exceptionOrNull()`.
-- ViewModels extend `BaseViewModel` and launch in `viewModelScope`: set
-  `Dispatchers.setMain(StandardTestDispatcher(testScheduler))`, send intents with `onIntent(...)` (
-  clustered screens use the full path, e.g. `CustomizeIntent.History.UndoChange`), then read
-  `state.value` / collect `effect`.
-- Repository implementations switch to `Dispatchers.IO` inside `withContextCatching`; that work runs
-  outside virtual time, so keep Repository tests small or test through a fake.
+`compileDebugKotlin` and `check-rules.sh` after every change; `compileDebugAndroidTestKotlin` when a shared API moved;
+`lint` at the release gate. A new rule from the user goes into CLAUDE.md plus a grep check in `tools/check-rules.sh`.

@@ -24,7 +24,7 @@ class BootReceiver : BroadcastReceiver(), KoinComponent {
         val pendingResult = goAsync()
         CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
             try {
-                if (dataStoreManager.isAodEnabled.filterNotNull().first()) AodService.start(context)
+                if (dataStoreManager.aodOptions.filterNotNull().first().isEnabled) AodService.start(context)
             } finally {
                 pendingResult.finish()
             }

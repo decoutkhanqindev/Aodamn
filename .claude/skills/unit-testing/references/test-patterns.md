@@ -1,114 +1,103 @@
-# Test Patterns
+# Test Patterns (Aodamn)
 
-## Test Class Template
+JUnit 4 + `kotlinx-coroutines-test`. MockK / Turbine are not dependencies (adding them needs the user's OK), so write
+hand fakes at the Repository interface. No comments in test code either (CLAUDE.md): the test name says what it checks.
+
+## Class template
 
 ```kotlin
+package com.decoutkhanqindev.aodamn.data.local.datastore
 
+import kotlinx.serialization.KSerializer
+import org.junit.Assert.assertEquals
 import org.junit.Test
-import org.junit.Before
-import org.junit.After
-import org.junit.Assert.*
-import io.mockk.*
-import kotlinx.coroutines.test.runTest
-import app.cash.turbine.test
 
-class {ClassName}Test {
+class PrefsJsonTest {
 
-    private lateinit var sut: {ClassName}
-    private val mockDep = mockk<Dependency>(relaxed = true)
-
-    @Before
-    fun setUp() {
-        clearAllMocks()
-        sut = {ClassName}(mockDep)
+    @Test
+    fun `empty json gives the defaults for every group`() {
+        assertEquals(AodOptionsPrefs.DEFAULT, decode(AodOptionsPrefs.serializer(), "{}"))
     }
+
+    private fun <T> decode(serializer: KSerializer<T>, raw: String): T =
+        requireNotNull(PrefsJson.decodeOrNull(serializer, raw)) { raw }
+}
+```
+
+- Name: backtick sentence of the behaviour (`stored gesture actions override defaults and unknown entries are skipped`).
+- One behaviour per test; group several asserts only when they describe the same rule (all entries of one enum).
+- Assert messages carry the case id when looping (`assertEquals(gesture.id, expected, ui.actionOf(gesture))`).
+
+## DataStore JSON (`data/local/datastore`)
+
+Settings have no domain model: each group is one `@Serializable XxxPrefs` with non-null defaults and `DEFAULT`, decoded
+with the app's `PrefsJson`. Every group gets these cases in `PrefsJsonTest`:
+
+| Case | Expectation |
+|---|---|
+| `"{}"` | equals `XxxPrefs.DEFAULT` |
+| `DEFAULT` values | pinned literally in `defaults match the product decisions`; a changed default is a product decision, so the test changes on purpose |
+| Non-default prefs → encode → decode | equals the original, every field |
+| Only some fields stored | stored ones kept, the rest from `DEFAULT` |
+| Unknown keys | ignored |
+| `null` on a non-null field | the field's default (`coerceInputValues`) |
+| Broken JSON, empty string, wrong type (`"bright"` for an Int, array for a map) | `PrefsJson.decodeOrNull` returns `null`; the manager then logs and uses `DEFAULT` |
+| Encode | every field written (`encodeDefaults`), so a saved choice equal to today's default survives a later default change |
+
+A new group adds: empty JSON → `DEFAULT`, the defaults pin, a round trip.
+
+## Prefs → UiModel (`presentation/model`)
+
+- UiModel defaults equal the mapped Prefs defaults: `assertEquals(AodOptionsPrefs.DEFAULT.toUiModel(), AodOptionsUiModel())`.
+- Every field mapped: build Prefs with no default values and compare to the expected UiModel.
+- Enums stored by `id`: pin the id list literally (`listOf("always", "plugged", "on_battery")`) so renaming an entry cannot
+  change what is stored; `fromId(entry.id) == entry` for every entry; unknown and `null` ids fall back (`ALWAYS`) or are
+  skipped (`fromIdOrNull` → the gesture's `defaultAction`).
+- Writes back to Prefs (`withAction`, `withThemeConfig`, `withComponents`): the stored ids, other entries untouched, and a
+  save → `toUiModel()` round trip for every entry.
+
+## Cache / DTO → domain (`data/mapper`)
+
+Business data from outside the app (weather, events) still maps to domain in `data/mapper`: incomplete input → `null` or
+the documented fallback, optional fields defaulted (`WeatherCacheMapperTest`).
+
+## Pure rules and helpers
+
+- Boundary values: start included / end excluded, wrap past midnight, `null` inputs (`isPlugged = null`), equal bounds.
+- Collections: keys complete after a merge (`AodGestureValue.entries.toSet()`), other entries untouched after an update.
+
+## Theme storage round trip
+
+Use `testing/StoredThemeConfig.kt` › `AodThemeConfig.storedAndRestored(theme)`: it goes through
+`AodAppearancePrefs.DEFAULT.withThemeConfig` → JSON → `PrefsJson.decodeOrNull` → `themeConfigOf(theme)`, the same path
+as the app.
+
+## ViewModel (Intent → State / Effect)
+
+Only ViewModels whose constructor takes UseCases can run on the JVM; fake the Repository under the real UseCase.
+
+```kotlin
+@OptIn(ExperimentalCoroutinesApi::class)
+class XxxViewModelTest {
 
     @After
     fun tearDown() {
-        unmockkAll()
+        Dispatchers.resetMain()
     }
 
     @Test
-    fun `{methodName} should {behavior} when {condition}`() = runTest {
-        // Arrange
-        // Act
-        // Assert
+    fun `select item updates state`() = runTest {
+        Dispatchers.setMain(StandardTestDispatcher(testScheduler))
+        val viewModel = XxxViewModel(GetXxxUseCase(FakeXxxRepository()))
+
+        viewModel.onIntent(XxxIntent.SelectItem(item))
+        advanceUntilIdle()
+
+        assertEquals(item, viewModel.state.value.selectedItem)
     }
 }
 ```
 
-## MockK Patterns
-
-```kotlin
-// Relaxed mock (auto-return defaults)
-private val mockDep = mockk<Dependency>(relaxed = true)
-
-// Suspend function mocking
-coEvery { mockDep.suspendFn(any()) } returns Result.success(value)
-
-// Regular function mocking
-every { mockDep.regularFn(any()) } returns value
-
-// Capture arguments
-val slot = slot<String>()
-coEvery { mockDep.fn(capture(slot)) } returns Unit
-
-// Verification
-coVerify(exactly = 1) { mockDep.suspendFn(any()) }
-verify(exactly = 0) { mockDep.neverCalledFn() }
-```
-
-## Turbine Flow Testing
-
-```kotlin
-// Single emission
-viewModel.stateFlow.test {
-    val state = awaitItem()
-    assertEquals(expected, state.field)
-    cancelAndIgnoreRemainingEvents()
-}
-
-// Multiple emissions
-flow.test {
-    assertEquals(first, awaitItem())
-    assertEquals(second, awaitItem())
-    awaitComplete()
-}
-
-// Error emission
-flow.test {
-    val error = awaitError()
-    assertTrue(error is ExpectedException)
-}
-```
-
-## Statistical Testing
-
-```kotlin
-// For random behavior verification
-repeat(50) {
-    val result = randomFunction()
-    assertTrue(result in expectedRange)
-}
-```
-
-## Test Naming
-
-Use backtick descriptive names:
-
-- `{methodName} should {behavior} when {condition}`
-- `{methodName} should throw exception when invalid input`
-- `{methodName} should emit updated state after action`
-
-## File Location
-
-```
-Source: app/src/main/java/com/decoutkhanqindev/aodamn/{path}/{Class}.kt
-Test:   app/src/test/java/com/decoutkhanqindev/aodamn/{path}/{Class}Test.kt
-```
-
-## Run Tests
-
-```bash
-./gradlew test --tests "*{TestClassName}*"
-```
+Clustered screens send the full path (`CustomizeIntent.History.UndoChange`). Managers (`DataStoreManager`,
+`PermissionManager`…) are concrete Android classes: a ViewModel that needs one is checked on device (`androidTest`), or
+its rule moves into the UiModel / Prefs helper and is unit-tested there.

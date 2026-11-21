@@ -11,13 +11,19 @@ import com.decoutkhanqindev.aodamn.data.device.motion.MotionManager
 import com.decoutkhanqindev.aodamn.data.device.notification.NotificationStateManager
 import com.decoutkhanqindev.aodamn.data.device.proximity.ProximityManager
 import com.decoutkhanqindev.aodamn.data.local.datastore.DataStoreManager
+import com.decoutkhanqindev.aodamn.data.local.datastore.model.AodAppearancePrefs
+import com.decoutkhanqindev.aodamn.data.local.datastore.model.AodExtrasPrefs
+import com.decoutkhanqindev.aodamn.data.local.datastore.model.AodInteractionPrefs
+import com.decoutkhanqindev.aodamn.data.local.datastore.model.AodNotificationOptionsPrefs
+import com.decoutkhanqindev.aodamn.data.local.datastore.model.AodOptionsPrefs
+import com.decoutkhanqindev.aodamn.data.local.datastore.model.AodRulesPrefs
 import com.decoutkhanqindev.aodamn.data.local.image.AodImageManager
 import com.decoutkhanqindev.aodamn.domain.usecase.GetUpcomingEventsUseCase
 import com.decoutkhanqindev.aodamn.domain.usecase.ObserveWeatherUseCase
 import com.decoutkhanqindev.aodamn.domain.usecase.RefreshWeatherUseCase
 import com.decoutkhanqindev.aodamn.presentation.base.BaseViewModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.WallpaperValue
-import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.currentAodAppearance
+import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.toUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.info.BatteryUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.info.CalendarEventUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.info.MediaUiModel
@@ -25,14 +31,13 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.info.NotificationConte
 import com.decoutkhanqindev.aodamn.presentation.model.aod.info.glowColorArgb
 import com.decoutkhanqindev.aodamn.presentation.model.aod.info.toAodNotificationsUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.info.toUiModel
-import com.decoutkhanqindev.aodamn.presentation.model.aod.settings.currentAodExtras
-import com.decoutkhanqindev.aodamn.presentation.model.aod.settings.currentAodNotificationOptions
 import com.decoutkhanqindev.aodamn.presentation.model.aod.settings.interaction.AodActionValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.settings.interaction.AodGestureValue
-import com.decoutkhanqindev.aodamn.presentation.model.aod.settings.interaction.currentAodInteraction
+import com.decoutkhanqindev.aodamn.presentation.model.aod.settings.interaction.toUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.settings.rules.AodScheduleUiModel
-import com.decoutkhanqindev.aodamn.presentation.model.aod.settings.rules.currentAodRules
+import com.decoutkhanqindev.aodamn.presentation.model.aod.settings.rules.toUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.settings.shownIn
+import com.decoutkhanqindev.aodamn.presentation.model.aod.settings.toUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeValue
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodEffect
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.state.AodIntent
@@ -70,16 +75,14 @@ class AodViewModel(
     initialState = initialState(dataStoreManager, batteryStateManager),
 ) {
 
-    private val isProximityEnabled =
-        dataStoreManager.isAodProximityEnabled.value
-            ?: DataStoreManager.DEFAULT_IS_AOD_PROXIMITY_ENABLED
-    private val timeoutMinutes =
-        dataStoreManager.aodTimeoutMinutes.value ?: DataStoreManager.DEFAULT_AOD_TIMEOUT_MINUTES
-    private val autoHideSeconds =
-        dataStoreManager.aodAutoHideSeconds.value ?: DataStoreManager.DEFAULT_AOD_AUTO_HIDE_SECONDS
-    private val rules = dataStoreManager.currentAodRules()
-    private val notificationOptions =
-        dataStoreManager.currentAodNotificationOptions().shownIn(state.value.appearance.theme.value.spec)
+    private val options = dataStoreManager.aodOptions.value ?: AodOptionsPrefs.DEFAULT
+    private val isProximityEnabled = options.isProximityEnabled
+    private val timeoutMinutes = options.timeoutMinutes
+    private val autoHideSeconds = options.autoHideSeconds
+    private val rules = (dataStoreManager.aodRules.value ?: AodRulesPrefs.DEFAULT).toUiModel()
+    private val notificationOptions = (dataStoreManager.aodNotificationOptions.value ?: AodNotificationOptionsPrefs.DEFAULT)
+        .toUiModel()
+        .shownIn(state.value.appearance.theme.value.spec)
 
     private var isDarkUntilUncovered = false
     private var isCovered = false
@@ -469,22 +472,26 @@ class AodViewModel(
         private fun initialState(
             dataStoreManager: DataStoreManager,
             batteryStateManager: BatteryStateManager,
-        ): AodState = AodState(
-            nowMillis = System.currentTimeMillis(),
-            appearance = dataStoreManager.currentAodAppearance(),
-            interaction = dataStoreManager.currentAodInteraction(),
-            extras = dataStoreManager.currentAodExtras().shownIn(AodThemeValue.fromId(dataStoreManager.aodThemeId.value).spec),
-            wallpaper = WallpaperValue.fromCode(dataStoreManager.aodWallpaper.value),
-            autoHideSeconds = dataStoreManager.aodAutoHideSeconds.value
-                ?: DataStoreManager.DEFAULT_AOD_AUTO_HIDE_SECONDS,
-            isMediaShown = false,
-            isLatestShown = false,
-            battery = batteryStateManager.readLevelPercent()?.let { percent ->
-                BatteryUiModel(
-                    percent = percent,
-                    isCharging = batteryStateManager.readIsCharging() == true
-                )
-            },
-        )
+        ): AodState {
+            val appearance = dataStoreManager.aodAppearance.value ?: AodAppearancePrefs.DEFAULT
+            return AodState(
+                nowMillis = System.currentTimeMillis(),
+                appearance = appearance.toUiModel(),
+                interaction = (dataStoreManager.aodInteraction.value ?: AodInteractionPrefs.DEFAULT).toUiModel(),
+                extras = (dataStoreManager.aodExtras.value ?: AodExtrasPrefs.DEFAULT)
+                    .toUiModel()
+                    .shownIn(AodThemeValue.fromId(appearance.themeId).spec),
+                wallpaper = WallpaperValue.fromCode(appearance.wallpaperCode),
+                autoHideSeconds = (dataStoreManager.aodOptions.value ?: AodOptionsPrefs.DEFAULT).autoHideSeconds,
+                isMediaShown = false,
+                isLatestShown = false,
+                battery = batteryStateManager.readLevelPercent()?.let { percent ->
+                    BatteryUiModel(
+                        percent = percent,
+                        isCharging = batteryStateManager.readIsCharging() == true
+                    )
+                },
+            )
+        }
     }
 }

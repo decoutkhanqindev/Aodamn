@@ -7,8 +7,8 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.isDefault
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.isSame
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.options
-import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.observeAodThemeConfigs
-import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.saveAodThemeConfig
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.themeConfigOf
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.withThemeConfig
 import com.decoutkhanqindev.aodamn.presentation.screens.themeeditor.ThemeEditorViewModel
 import com.decoutkhanqindev.aodamn.presentation.screens.themeeditor.state.ThemeEditorIntent
 import kotlinx.coroutines.flow.filterNotNull
@@ -38,12 +38,13 @@ class AodThemeEditorBehaviorTest {
     private suspend fun assertSavedConfig(expectation: ThemeExpectation) {
         val dataStoreManager = GlobalContext.get().get<DataStoreManager>()
         val permissionManager = GlobalContext.get().get<PermissionManager>()
-        dataStoreManager.saveAodThemeConfig(expectation.theme, AodThemeConfig()).join()
-        dataStoreManager.saveAodThemeId(AodThemeValue.DEFAULT.id).join()
+        dataStoreManager.updateAodAppearance { appearance ->
+            appearance.withThemeConfig(expectation.theme, AodThemeConfig()).copy(themeId = AodThemeValue.DEFAULT.id)
+        }.join()
         withTimeout(10_000L) {
-            dataStoreManager.aodThemeId.filterNotNull().first { id -> id == AodThemeValue.DEFAULT.id }
-            dataStoreManager.observeAodThemeConfigs().first { configs ->
-                expectation.theme.spec.isDefault(configs.getValue(expectation.theme))
+            dataStoreManager.aodAppearance.filterNotNull().first { appearance ->
+                appearance.themeId == AodThemeValue.DEFAULT.id &&
+                    expectation.theme.spec.isDefault(appearance.themeConfigOf(expectation.theme))
             }
         }
 
@@ -69,9 +70,9 @@ class AodThemeEditorBehaviorTest {
         assertTrue(expectation.theme.spec.isSame(changed, viewModel.state.value.config))
         viewModel.onIntent(ThemeEditorIntent.ApplyTheme)
         withTimeout(10_000L) {
-            dataStoreManager.aodThemeId.filterNotNull().first { id -> id == expectation.theme.id }
-            dataStoreManager.observeAodThemeConfigs().first { configs ->
-                expectation.theme.spec.isSame(changed, configs.getValue(expectation.theme))
+            dataStoreManager.aodAppearance.filterNotNull().first { appearance ->
+                appearance.themeId == expectation.theme.id &&
+                    expectation.theme.spec.isSame(changed, appearance.themeConfigOf(expectation.theme))
             }
         }
         val applied = withTimeout(10_000L) {

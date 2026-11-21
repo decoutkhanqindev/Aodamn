@@ -1,19 +1,16 @@
 package com.decoutkhanqindev.aodamn.presentation.model.aod.settings
 
 import androidx.compose.runtime.Immutable
-import com.decoutkhanqindev.aodamn.data.local.datastore.DataStoreManager
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filterNotNull
+import com.decoutkhanqindev.aodamn.data.local.datastore.model.AodOptionsPrefs
 
 @Immutable
 data class AodOptionsUiModel(
-    val isEnabled: Boolean = DataStoreManager.DEFAULT_IS_AOD_ENABLED,
-    val isCustomBrightness: Boolean = DataStoreManager.DEFAULT_IS_AOD_CUSTOM_BRIGHTNESS,
-    val brightnessPercent: Int = DataStoreManager.DEFAULT_AOD_BRIGHTNESS_PERCENT,
-    val isProximityEnabled: Boolean = DataStoreManager.DEFAULT_IS_AOD_PROXIMITY_ENABLED,
-    val timeoutMinutes: Int = DataStoreManager.DEFAULT_AOD_TIMEOUT_MINUTES,
-    val autoHideSeconds: Int = DataStoreManager.DEFAULT_AOD_AUTO_HIDE_SECONDS,
+    val isEnabled: Boolean = AodOptionsPrefs.DEFAULT.isEnabled,
+    val isCustomBrightness: Boolean = AodOptionsPrefs.DEFAULT.isCustomBrightness,
+    val brightnessPercent: Int = AodOptionsPrefs.DEFAULT.brightnessPercent,
+    val isProximityEnabled: Boolean = AodOptionsPrefs.DEFAULT.isProximityEnabled,
+    val timeoutMinutes: Int = AodOptionsPrefs.DEFAULT.timeoutMinutes,
+    val autoHideSeconds: Int = AodOptionsPrefs.DEFAULT.autoHideSeconds,
 ) {
     companion object {
         const val BRIGHTNESS_MIN_PERCENT = 1
@@ -25,20 +22,11 @@ data class AodOptionsUiModel(
     }
 }
 
-fun DataStoreManager.observeAodOptions(): Flow<AodOptionsUiModel> = combine(
-    isAodEnabled.filterNotNull(),
-    isAodCustomBrightness.filterNotNull(),
-    aodBrightnessPercent.filterNotNull(),
-    isAodProximityEnabled.filterNotNull(),
-    aodTimeoutMinutes.filterNotNull(),
-) { isEnabled, isCustomBrightness, brightnessPercent, isProximityEnabled, timeoutMinutes ->
-    AodOptionsUiModel(
-        isEnabled = isEnabled,
-        isCustomBrightness = isCustomBrightness,
-        brightnessPercent = brightnessPercent,
-        isProximityEnabled = isProximityEnabled,
-        timeoutMinutes = timeoutMinutes,
-    )
-}.combine(aodAutoHideSeconds.filterNotNull()) { options, seconds ->
-    options.copy(autoHideSeconds = seconds)
-}
+fun AodOptionsPrefs.toUiModel(): AodOptionsUiModel = AodOptionsUiModel(
+    isEnabled = isEnabled,
+    isCustomBrightness = isCustomBrightness,
+    brightnessPercent = brightnessPercent,
+    isProximityEnabled = isProximityEnabled,
+    timeoutMinutes = timeoutMinutes,
+    autoHideSeconds = autoHideSeconds,
+)

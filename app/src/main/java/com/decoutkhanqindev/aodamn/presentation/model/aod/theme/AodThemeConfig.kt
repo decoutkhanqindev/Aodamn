@@ -11,13 +11,6 @@ import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.collections.immutable.toImmutableList
 
-fun String?.toAodConfigValues(): Map<String, Int> = orEmpty().split(',').mapNotNull { pair ->
-    val value = pair.substringAfter('=', missingDelimiterValue = "").toIntOrNull() ?: return@mapNotNull null
-    pair.substringBefore('=') to value
-}.toMap()
-
-fun Map<String, Int>.toAodConfigString(): String = entries.joinToString(separator = ",") { (key, value) -> "$key=$value" }
-
 @Immutable
 data class AodThemeConfig(val values: PersistentMap<String, Int> = persistentMapOf()) {
     operator fun <T> get(option: AodThemeOption<T>): T = option.decode(values[option.key])

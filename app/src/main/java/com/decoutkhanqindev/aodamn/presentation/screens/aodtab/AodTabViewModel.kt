@@ -16,7 +16,9 @@ import com.decoutkhanqindev.aodamn.presentation.screens.aodtab.state.AodTabPermi
 import com.decoutkhanqindev.aodamn.presentation.screens.aodtab.state.AodTabState
 import com.decoutkhanqindev.aodamn.utils.collectCatching
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -62,7 +64,7 @@ class AodTabViewModel(
 
     private fun observeAodEnabled() {
         viewModelScope.launch {
-            dataStoreManager.isAodEnabled.filterNotNull().collectCatching(
+            dataStoreManager.aodOptions.filterNotNull().map { options -> options.isEnabled }.distinctUntilChanged().collectCatching(
                 block = { isEnabled -> updateState { copy(isLoading = false, isAodEnabled = isEnabled) } },
                 catch = { e -> Timber.tag(tag).e(e.stackTraceToString()) },
             )
@@ -80,7 +82,7 @@ class AodTabViewModel(
     private fun resetTheme() {
         updateState { copy(isThemeResetConfirmVisible = false) }
         viewModelScope.launch {
-            dataStoreManager.saveAodThemeId(AodThemeValue.DEFAULT.id).join()
+            dataStoreManager.updateAodAppearance { appearance -> appearance.copy(themeId = AodThemeValue.DEFAULT.id) }.join()
             refreshDesign()
             sendEffect(AodTabEffect.ShowMessage(R.string.aod_tab_theme_reset_done))
         }
@@ -96,7 +98,7 @@ class AodTabViewModel(
 
     private fun toggleAod(isEnabled: Boolean) {
         if (isEnabled) showPermissionSheet()
-        dataStoreManager.saveIsAodEnabled(isEnabled)
+        dataStoreManager.updateAodOptions { options -> options.copy(isEnabled = isEnabled) }
         viewModelScope.launch {
             sendEffect(if (isEnabled) AodTabEffect.StartAodService else AodTabEffect.StopAodService)
         }
@@ -126,7 +128,7 @@ class AodTabViewModel(
         refreshPermissions()
         viewModelScope.launch {
             when {
-                isGranted -> if (dataStoreManager.isAodEnabled.value == true) sendEffect(AodTabEffect.StartAodService)
+                isGranted -> if (dataStoreManager.aodOptions.value?.isEnabled == true) sendEffect(AodTabEffect.StartAodService)
                 else -> sendEffect(AodTabEffect.OpenNotificationSettings)
             }
         }

@@ -1,14 +1,11 @@
 package com.decoutkhanqindev.aodamn.presentation.model.aod.settings.rules
 
 import androidx.compose.runtime.Immutable
-import com.decoutkhanqindev.aodamn.data.local.datastore.DataStoreManager
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filterNotNull
+import com.decoutkhanqindev.aodamn.data.local.datastore.model.AodRulesPrefs
 
 @Immutable
 data class AodRulesUiModel(
-    val minBattery: Int = DataStoreManager.DEFAULT_AOD_MIN_BATTERY,
+    val minBattery: Int = AodRulesPrefs.DEFAULT.minBatteryPercent,
     val chargingRule: ChargingRuleValue = ChargingRuleValue.ALWAYS,
     val schedule: AodScheduleUiModel = AodScheduleUiModel(),
 ) {
@@ -31,31 +28,12 @@ data class AodRulesUiModel(
     }
 }
 
-fun DataStoreManager.currentAodRules(): AodRulesUiModel = AodRulesUiModel(
-    minBattery = aodMinBattery.value ?: DataStoreManager.DEFAULT_AOD_MIN_BATTERY,
-    chargingRule = ChargingRuleValue.fromCode(aodChargingRule.value),
+fun AodRulesPrefs.toUiModel(): AodRulesUiModel = AodRulesUiModel(
+    minBattery = minBatteryPercent,
+    chargingRule = ChargingRuleValue.fromId(chargingRule),
     schedule = AodScheduleUiModel(
-        isEnabled = isAodScheduleEnabled.value ?: DataStoreManager.DEFAULT_IS_AOD_SCHEDULE_ENABLED,
-        startMinute = aodScheduleStartMinute.value
-            ?: DataStoreManager.DEFAULT_AOD_SCHEDULE_START_MINUTE,
-        endMinute = aodScheduleEndMinute.value ?: DataStoreManager.DEFAULT_AOD_SCHEDULE_END_MINUTE,
+        isEnabled = isScheduleEnabled,
+        startMinute = scheduleStartMinute,
+        endMinute = scheduleEndMinute,
     ),
 )
-
-fun DataStoreManager.observeAodRules(): Flow<AodRulesUiModel> = combine(
-    aodMinBattery.filterNotNull(),
-    aodChargingRule.filterNotNull(),
-    isAodScheduleEnabled.filterNotNull(),
-    aodScheduleStartMinute.filterNotNull(),
-    aodScheduleEndMinute.filterNotNull(),
-) { minBattery, chargingRule, isScheduleEnabled, scheduleStartMinute, scheduleEndMinute ->
-    AodRulesUiModel(
-        minBattery = minBattery,
-        chargingRule = ChargingRuleValue.fromCode(chargingRule),
-        schedule = AodScheduleUiModel(
-            isEnabled = isScheduleEnabled,
-            startMinute = scheduleStartMinute,
-            endMinute = scheduleEndMinute,
-        ),
-    )
-}

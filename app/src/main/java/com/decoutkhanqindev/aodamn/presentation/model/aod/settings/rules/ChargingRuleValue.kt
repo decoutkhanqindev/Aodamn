@@ -7,13 +7,13 @@ import com.decoutkhanqindev.aodamn.R
 
 @Immutable
 enum class ChargingRuleValue(
-    val code: Int,
+    val id: String,
     @param:StringRes val labelRes: Int,
     @param:DrawableRes val iconRes: Int,
 ) {
-    ALWAYS(code = 0, labelRes = R.string.charging_rule_always, iconRes = R.drawable.ic_infinity),
-    PLUGGED(code = 1, labelRes = R.string.charging_rule_plugged, iconRes = R.drawable.ic_battery_charging),
-    ON_BATTERY(code = 2, labelRes = R.string.charging_rule_on_battery, iconRes = R.drawable.ic_battery_full);
+    ALWAYS(id = "always", labelRes = R.string.charging_rule_always, iconRes = R.drawable.ic_infinity),
+    PLUGGED(id = "plugged", labelRes = R.string.charging_rule_plugged, iconRes = R.drawable.ic_battery_charging),
+    ON_BATTERY(id = "on_battery", labelRes = R.string.charging_rule_on_battery, iconRes = R.drawable.ic_battery_full);
 
     fun allows(isPlugged: Boolean?): Boolean = when (this) {
         ALWAYS -> true
@@ -22,6 +22,6 @@ enum class ChargingRuleValue(
     }
 
     companion object {
-        fun fromCode(code: Int?): ChargingRuleValue = entries.find { it.code == code } ?: ALWAYS
+        fun fromId(id: String?): ChargingRuleValue = entries.find { it.id == id } ?: ALWAYS
     }
 }

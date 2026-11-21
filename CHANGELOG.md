@@ -7,6 +7,36 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-11-21 – DataStore gom theo cụm JSON
+
+User: "tôi thấy trong data store có khá nhiều key lẻ, tôi gôm thành 1 key nhưng chứa value json dùng kotlin serializable để parse", "bạn đưng quan
+tâm đén data cũ, cứ sửa thẳng code kh migrate", "kh nhất thiết pải dùng usecase đâu, có thể dùng inject datastoremanager như hiện tại cũng dc", rồi bỏ
+lớp domain: "tôi nghĩ kh cần domain models cho data store đâu, map thẳng sang ui model lun". Thêm yêu cầu viết unit test cho mọi logic test được và gom
+các cách test của project vào skill `unit-testing`, có render preview để so UI.
+
+### Đổi
+
+- `DataStoreManager` lưu mỗi cụm cài đặt một key JSON (`app_shell`, `aod_options`, `aod_rules`, `aod_notification_options`, `aod_interaction`,
+  `aod_extras`, `aod_appearance`, `weather_cache`) thay cho các key lẻ, parse bằng kotlinx-serialization (`PrefsJson`: bỏ key lạ, `null` lấy mặc định của
+  trường, ghi đủ mọi trường để lựa chọn đã lưu không đổi theo khi mặc định đổi). Ghi là đọc – sửa – ghi trong một `edit` (`updateXxx { it.copy(…) }`);
+  JSON hỏng thì cả cụm về mặc định và ghi log.
+- Cài đặt không có model domain / UseCase: `XxxPrefs` (trường non-null có mặc định, `DEFAULT`) map thẳng sang UiModel bằng `toUiModel()`; enum lưu id
+  cố định viết thường (`ChargingRuleValue`, `AodActionValue`, `AodGestureValue` có `id` / `fromId`, cử chỉ tự mang `defaultAction`).
+- Cấu hình chủ đề và kiểu từng khối lưu thành map JSON trong `aod_appearance` thay chuỗi `khoá=giá trị`; bỏ đường đọc dạng cũ (`toAodConfigString`,
+  `LegacyClockColors`, `ClockFaceValue.fromCode`, `ClockFontValue.fromCode`), nên Cổ điển lúc chưa lưu lấy mặc định của `ClassicThemeSpec`.
+- Không migrate: cùng file `aodamn_prefs` nhưng key cũ không còn được đọc, nên máy đang cài sẽ về mặc định khi cập nhật (gồm cả onboarding và ngôn ngữ).
+
+### Thêm
+
+- Unit test `PrefsJsonTest`, `AodSettingsUiMapperTest`, `AodRulesUiModelTest`, `AodAppearanceMappingTest`, `WeatherCacheMapperTest`; test cấu hình chủ đề
+  đi qua JSON thật (`storedAndRestored`). `testDebugUnitTest` 159 test pass, `compileDebugAndroidTestKotlin` pass.
+- CLAUDE.md: DataStore theo cụm JSON, code có logic test được thì viết unit test cùng lúc. `check-rules` thêm: key DataStore lẻ, presentation import
+  mapper của data, domain import data / presentation / ads / Koin, kotlinx-serialization ngoài chỗ cho phép (44 rule, 0 vi phạm).
+- Skill `unit-testing` thành nơi tra cách test của project: chọn tầng test, bộ test theo vùng, render `@Preview` bằng Android CLI để so ảnh trước / sau,
+  test máy qua `check_theme.sh`.
+
+Chưa test trên máy thật.
+
 ## [Chưa phát hành] – 2026-11-17 – Thẻ chủ đề hiện trình phát như màn chủ đề
 
 User báo: "tôi thấy các theme mới không phần hiện music controll ở preivew trong list? nhưng bấm vào preview thì có? đây là lỗi", yêu cầu "details có thì

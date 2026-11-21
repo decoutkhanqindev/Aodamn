@@ -12,10 +12,10 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.WallpaperVa
 import com.decoutkhanqindev.aodamn.presentation.model.aod.settings.AodExtrasUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeConfig
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.component.AodComponentSpec
-import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.component.saveAodComponents
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.component.withComponents
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.isSame
-import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.observeAodTheme
-import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.saveAodThemeConfig
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.toThemeUiModel
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.withThemeConfig
 import com.decoutkhanqindev.aodamn.presentation.model.customize.CustomizeAppearanceUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.customize.CustomizeDecorUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.customize.CustomizeDraftUiModel
@@ -345,7 +345,7 @@ class CustomizeViewModel(
     private fun refreshTheme() {
         if (isFirstOpen || state.value.isLoading) return
         viewModelScope.launch {
-            val theme = dataStoreManager.observeAodTheme().first()
+            val theme = dataStoreManager.aodAppearance.filterNotNull().first().toThemeUiModel()
             if (theme == initialDraft.appearance.clock.theme) return@launch
             initialDraft = initialDraft.withTheme(theme)
             val undone = undoStack.map { draft -> draft.withTheme(theme) }
@@ -550,9 +550,11 @@ class CustomizeViewModel(
         saveAppearance(draft.appearance, initial.appearance)
         saveInfo(draft.info, initial.info)
         if (draft.effects.isEdgeGlowEnabled != initial.effects.isEdgeGlowEnabled) {
-            dataStoreManager.saveIsAodEdgeGlowEnabled(draft.effects.isEdgeGlowEnabled)
+            dataStoreManager.updateAodNotificationOptions { options ->
+                options.copy(isEdgeGlowEnabled = draft.effects.isEdgeGlowEnabled)
+            }
         }
-        if (draft.decor.memo != initial.decor.memo) dataStoreManager.saveAodMemo(draft.decor.memo)
+        if (draft.decor.memo != initial.decor.memo) dataStoreManager.updateAodExtras { extras -> extras.copy(memo = draft.decor.memo) }
         val isBackgroundSaved = saveBackground(draft.decor, initial.decor)
         val isDrawingSaved = saveDrawing(draft.decor.drawing, initial.decor.drawing)
         return isBackgroundSaved && isDrawingSaved
@@ -564,35 +566,54 @@ class CustomizeViewModel(
     ) {
         val chosen = draft.clock.theme
         val previous = initial.clock.theme
-        with(dataStoreManager) {
-            if (chosen.value != previous.value || !chosen.value.spec.isSame(chosen.config, previous.config)) {
-                saveAodThemeConfig(chosen.value, chosen.config)
+        val isThemeChanged = chosen.value != previous.value
+        val isConfigChanged = isThemeChanged || !chosen.value.spec.isSame(chosen.config, previous.config)
+        val isComponentsChanged = !AodComponentSpec.isSame(draft.clock.components.config, initial.clock.components.config)
+        if (isConfigChanged || isComponentsChanged) {
+            dataStoreManager.updateAodAppearance { appearance ->
+                val configured = if (isConfigChanged) appearance.withThemeConfig(chosen.value, chosen.config) else appearance
+                val themed = if (isThemeChanged) configured.copy(themeId = chosen.value.id) else configured
+                if (isComponentsChanged) themed.withComponents(draft.clock.components) else themed
             }
-            if (chosen.value != previous.value) saveAodThemeId(chosen.value.id)
-            if (!AodComponentSpec.isSame(draft.clock.components.config, initial.clock.components.config)) {
-                saveAodComponents(draft.clock.components)
+        }
+        if (draft.isDateEnabled != initial.isDateEnabled || draft.isBatteryEnabled != initial.isBatteryEnabled) {
+            dataStoreManager.updateAodExtras { extras ->
+                extras.copy(
+                    isDateEnabled = draft.isDateEnabled.changedFrom(initial.isDateEnabled) ?: extras.isDateEnabled,
+                    isBatteryEnabled = draft.isBatteryEnabled.changedFrom(initial.isBatteryEnabled) ?: extras.isBatteryEnabled,
+                )
             }
-            if (draft.isDateEnabled != initial.isDateEnabled) saveIsAodDateEnabled(draft.isDateEnabled)
-            if (draft.isBatteryEnabled != initial.isBatteryEnabled) saveIsAodBatteryEnabled(draft.isBatteryEnabled)
         }
     }
 
     private suspend fun saveInfo(draft: CustomizeInfoUiModel, initial: CustomizeInfoUiModel) {
-        with(dataStoreManager) {
-            if (draft.isNotificationIconsEnabled != initial.isNotificationIconsEnabled) {
-                saveIsAodNotificationIconsEnabled(draft.isNotificationIconsEnabled)
+        val isNotificationsChanged = draft.isNotificationIconsEnabled != initial.isNotificationIconsEnabled ||
+            draft.isNotificationContentEnabled != initial.isNotificationContentEnabled ||
+            draft.isMediaControlsEnabled != initial.isMediaControlsEnabled
+        if (isNotificationsChanged) {
+            dataStoreManager.updateAodNotificationOptions { options ->
+                options.copy(
+                    isIconsEnabled = draft.isNotificationIconsEnabled.changedFrom(initial.isNotificationIconsEnabled)
+                        ?: options.isIconsEnabled,
+                    isContentEnabled = draft.isNotificationContentEnabled.changedFrom(initial.isNotificationContentEnabled)
+                        ?: options.isContentEnabled,
+                    isMediaControlsEnabled = draft.isMediaControlsEnabled.changedFrom(initial.isMediaControlsEnabled)
+                        ?: options.isMediaControlsEnabled,
+                )
             }
-            if (draft.isNotificationContentEnabled != initial.isNotificationContentEnabled) {
-                saveIsAodNotificationContentEnabled(draft.isNotificationContentEnabled)
+        }
+        val isExtrasChanged = draft.isCalendarEnabled != initial.isCalendarEnabled ||
+            draft.isWeatherFahrenheit != initial.isWeatherFahrenheit ||
+            draft.isWeatherEnabled != initial.isWeatherEnabled
+        if (isExtrasChanged) {
+            dataStoreManager.updateAodExtras { extras ->
+                extras.copy(
+                    isCalendarEnabled = draft.isCalendarEnabled.changedFrom(initial.isCalendarEnabled) ?: extras.isCalendarEnabled,
+                    isWeatherFahrenheit = draft.isWeatherFahrenheit.changedFrom(initial.isWeatherFahrenheit)
+                        ?: extras.isWeatherFahrenheit,
+                    isWeatherEnabled = draft.isWeatherEnabled.changedFrom(initial.isWeatherEnabled) ?: extras.isWeatherEnabled,
+                )
             }
-            if (draft.isMediaControlsEnabled != initial.isMediaControlsEnabled) {
-                saveIsAodMediaControlsEnabled(draft.isMediaControlsEnabled)
-            }
-            if (draft.isCalendarEnabled != initial.isCalendarEnabled) saveIsAodCalendarEnabled(draft.isCalendarEnabled)
-            if (draft.isWeatherFahrenheit != initial.isWeatherFahrenheit) {
-                saveIsAodWeatherFahrenheit(draft.isWeatherFahrenheit)
-            }
-            if (draft.isWeatherEnabled != initial.isWeatherEnabled) saveIsAodWeatherEnabled(draft.isWeatherEnabled)
         }
         if (draft.isWeatherEnabled && !initial.isWeatherEnabled) {
             refreshWeatherUseCase(nowMillis = System.currentTimeMillis(), isForced = true)
@@ -613,20 +634,24 @@ class CustomizeViewModel(
                     sendEffect(CustomizeEffect.ShowMessage(R.string.background_save_failed, isError = true))
                     return false
                 }
-                dataStoreManager.saveAodWallpaper(WallpaperValue.NONE_CODE)
+                saveWallpaper(WallpaperValue.NONE_CODE)
             }
 
             wallpaper != null -> {
-                dataStoreManager.saveAodWallpaper(wallpaper.code)
+                saveWallpaper(wallpaper.code)
                 aodImageManager.removeBackground()
             }
 
             else -> {
-                dataStoreManager.saveAodWallpaper(WallpaperValue.NONE_CODE)
+                saveWallpaper(WallpaperValue.NONE_CODE)
                 aodImageManager.removeBackground()
             }
         }
         return true
+    }
+
+    private fun saveWallpaper(code: Int) {
+        dataStoreManager.updateAodAppearance { appearance -> appearance.copy(wallpaperCode = code) }
     }
 
     private suspend fun saveDrawing(drawing: Bitmap?, initialDrawing: Bitmap?): Boolean {
@@ -639,6 +664,8 @@ class CustomizeViewModel(
         }
         return true
     }
+
+    private fun Boolean.changedFrom(initial: Boolean): Boolean? = takeIf { this != initial }
 
     private companion object {
         const val GLOW_PREVIEW_MILLIS = 3_000L

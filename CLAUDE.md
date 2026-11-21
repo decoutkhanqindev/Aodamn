@@ -45,7 +45,8 @@ bắt buộc (compiler không chặn hộ):
 - `domain/` (model, repository interface, usecase) thuần Kotlin: KHÔNG `android.*`, `androidx.*`,
   Compose, Koin, `data`, `presentation`, `ads`.
 - `data/` (repository Impl, `local/`, `network/`, `device/`, `mapper/`): KHÔNG `presentation`,
-  Compose, `ads`. Retrofit + kotlinx-serialization chỉ trong `data/network/api`.
+  Compose, `ads`. Retrofit chỉ trong `data/network/api`; kotlinx-serialization chỉ ở `data/network/api` (DTO),
+  `data/local/datastore` (Prefs JSON), destination Navigation và `di/`.
 - `presentation/` (`aod/`, `screens/<màn>/`, `components/`, `model/`, `navigation/`, `theme/`,
   `base/`, `effects/`): dùng `domain`, Manager ở `data/` và `ads/`; KHÔNG `data` Impl / Repository /
   DataSource.
@@ -235,15 +236,18 @@ bắt buộc (compiler không chặn hộ):
   `null` để báo lỗi.
 - Manager = 1 class `XxxManager` (không interface + `Impl`), Koin `single`, tự tạo scope
   `SupervisorJob() + Dispatchers.IO/Default`, expose `StateFlow` nóng, lỗi xử lý trong manager
-  (không trả `Result`), chỉ primitive / ISO code qua biên. Signal hạ tầng mới → manager mới, không
+  (không trả `Result`), chỉ primitive / ISO code qua biên (riêng `DataStoreManager` trả `XxxPrefs` của cụm cài đặt). Signal hạ tầng mới → manager mới, không
   UseCase / Repository / `object` trong `utils/`. Manager tín hiệu thiết bị (`data/device/`) dùng
   `WhileSubscribed(replayExpirationMillis = 0)`. Dùng ở Screen / host bằng `koinInject()`, ViewModel
   / Repository qua constructor, Activity / Service bằng `by inject()`; `KoinComponent` chỉ ở
   `AdsManager`, `AdUnit`, `BootReceiver`.
-- `DataStoreManager`: mỗi key 1 `StateFlow` primitive (không gộp data class, không enum / mapper),
-  thêm key theo mẫu có sẵn. Giá trị khởi đầu `null` = chưa đọc xong: đọc 1 lần bằng `.value` (`null`
-  → `DEFAULT_*`) hoặc `filterNotNull().first()`. `save*` chạy trên scope của manager nên không bị
-  huỷ khi rời màn. Phải là 1 instance.
+- `DataStoreManager`: mỗi cụm cài đặt 1 key chứa JSON (`JsonPrefs`), không thêm key lẻ: `@Serializable XxxPrefs` ở
+  `data/local/datastore/model/` (trường non-null có mặc định + `DEFAULT`, enum lưu id cố định viết thường). Không có model
+  domain / UseCase cho cài đặt: nơi dùng inject manager, presentation map thẳng `XxxPrefs.toUiModel()` (id ↔ enum `XxxValue`
+  bằng `id` / `fromId`, ghi ngược bằng hàm trên Prefs như `withAction`). Expose `StateFlow<XxxPrefs?>` +
+  `updateXxx { it.copy(…) }` (đọc – sửa – ghi trong một `edit`); app-shell (ngôn ngữ, lần đầu mở…) vẫn là `StateFlow`
+  primitive. `null` = chưa đọc xong: đọc 1 lần bằng `.value ?: XxxPrefs.DEFAULT` hoặc `filterNotNull().first()`. Ghi chạy
+  trên scope của manager nên không bị huỷ khi rời màn. Phải là 1 instance.
 
 ## Ngôn ngữ, onboarding, resources
 
@@ -300,7 +304,9 @@ qua `AppBottomAdSlot` đặt dưới thanh (slot tự chừa thanh điều hư�
 - **Không viết comment** (`//`, `/* */`, KDoc) trong Kotlin / Gradle, chỉ thêm khi user yêu cầu; ngoại lệ duy nhất
   `// TODO:`. Lý do / ngữ cảnh ghi ở commit message, CHANGELOG, README.
 - Test: fake tại biên interface Repository, không mock UseCase / class final. Ưu tiên UseCase,
-  ViewModel (Intent → State / Effect), mapper.
+  ViewModel (Intent → State / Effect), mapper. Code có logic test được bằng unit test (parse / mapper, rule tính toán,
+  hàm thuần, Intent → State) thì viết test cùng lúc và `testDebugUnitTest` phải pass trước khi báo xong; phần dính
+  Android thì tách logic thuần ra để test (vd `PrefsJson.decodeOrNull`). Cách test của project: skill `unit-testing`.
 
 ## Skills và agent
 

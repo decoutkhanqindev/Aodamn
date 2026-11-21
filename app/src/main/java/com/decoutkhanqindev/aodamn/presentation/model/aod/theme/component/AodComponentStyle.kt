@@ -6,7 +6,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import com.decoutkhanqindev.aodamn.R
-import com.decoutkhanqindev.aodamn.data.local.datastore.DataStoreManager
+import com.decoutkhanqindev.aodamn.data.local.datastore.model.AodAppearancePrefs
 import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.AodGradient
 import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.ClockFontValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodBlockValue
@@ -18,14 +18,9 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeChoice
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeConfig
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeOption
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeTab
-import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.toAodConfigString
-import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.toAodConfigValues
 import com.decoutkhanqindev.aodamn.presentation.theme.GreyB4
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentMap
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.map
 
 @Immutable
 enum class AodComponentValue(
@@ -162,14 +157,8 @@ data class AodComponentsUiModel(val config: AodThemeConfig = AodThemeConfig()) {
     }
 }
 
-private fun String?.toComponents(): AodComponentsUiModel =
-    AodComponentsUiModel(AodThemeConfig(toAodConfigValues().toPersistentMap()))
+fun AodAppearancePrefs.toComponentsUiModel(): AodComponentsUiModel =
+    AodComponentsUiModel(AodThemeConfig(componentStyles.toPersistentMap()))
 
-fun DataStoreManager.currentAodComponents(): AodComponentsUiModel = aodComponentStyles.value.toComponents()
-
-fun DataStoreManager.observeAodComponents(): Flow<AodComponentsUiModel> =
-    aodComponentStyles.filterNotNull().map { raw -> raw.toComponents() }
-
-fun DataStoreManager.saveAodComponents(components: AodComponentsUiModel) {
-    saveAodComponentStyles(components.config.values.toAodConfigString())
-}
+fun AodAppearancePrefs.withComponents(components: AodComponentsUiModel): AodAppearancePrefs =
+    copy(componentStyles = components.config.values)

@@ -7,19 +7,19 @@ import com.decoutkhanqindev.aodamn.R
 
 @Immutable
 enum class AodActionValue(
-    val code: Int,
+    val id: String,
     @param:StringRes val labelRes: Int,
     @param:DrawableRes val iconRes: Int,
 ) {
-    NONE(code = 0, labelRes = R.string.aod_action_none, iconRes = R.drawable.ic_prohibit),
-    CLOSE(code = 1, labelRes = R.string.aod_action_close, iconRes = R.drawable.ic_lock_key),
-    GO_DARK(code = 2, labelRes = R.string.aod_action_go_dark, iconRes = R.drawable.ic_moon),
-    FLASHLIGHT(code = 3, labelRes = R.string.aod_action_flashlight, iconRes = R.drawable.ic_flashlight),
-    PLAY_PAUSE(code = 4, labelRes = R.string.aod_action_play_pause, iconRes = R.drawable.ic_play_pause),
-    PREVIOUS_TRACK(code = 5, labelRes = R.string.aod_action_previous_track, iconRes = R.drawable.ic_skip_back),
-    NEXT_TRACK(code = 6, labelRes = R.string.aod_action_next_track, iconRes = R.drawable.ic_skip_forward);
+    NONE(id = "none", labelRes = R.string.aod_action_none, iconRes = R.drawable.ic_prohibit),
+    CLOSE(id = "close", labelRes = R.string.aod_action_close, iconRes = R.drawable.ic_lock_key),
+    GO_DARK(id = "go_dark", labelRes = R.string.aod_action_go_dark, iconRes = R.drawable.ic_moon),
+    FLASHLIGHT(id = "flashlight", labelRes = R.string.aod_action_flashlight, iconRes = R.drawable.ic_flashlight),
+    PLAY_PAUSE(id = "play_pause", labelRes = R.string.aod_action_play_pause, iconRes = R.drawable.ic_play_pause),
+    PREVIOUS_TRACK(id = "previous_track", labelRes = R.string.aod_action_previous_track, iconRes = R.drawable.ic_skip_back),
+    NEXT_TRACK(id = "next_track", labelRes = R.string.aod_action_next_track, iconRes = R.drawable.ic_skip_forward);
 
     companion object {
-        fun fromCode(code: Int?): AodActionValue = entries.find { it.code == code } ?: NONE
+        fun fromIdOrNull(id: String?): AodActionValue? = entries.find { it.id == id }
     }
 }

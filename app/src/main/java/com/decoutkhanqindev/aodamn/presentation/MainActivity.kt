@@ -62,7 +62,7 @@ class MainActivity : ComponentActivity() {
 
     private fun startAodServiceIfEnabled() {
         lifecycleScope.launch {
-            if (dataStoreManager.isAodEnabled.filterNotNull().first()) {
+            if (dataStoreManager.aodOptions.filterNotNull().first().isEnabled) {
                 AodService.start(this@MainActivity)
             }
         }

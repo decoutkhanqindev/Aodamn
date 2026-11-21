@@ -21,7 +21,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import timber.log.Timber
@@ -39,7 +41,7 @@ class AodTileService : TileService(), Tag {
         super.onStartListening()
         listeningJob?.cancel()
         listeningJob = scope.launch {
-            dataStoreManager.isAodEnabled.filterNotNull().collectCatching(
+            dataStoreManager.aodOptions.filterNotNull().map { options -> options.isEnabled }.distinctUntilChanged().collectCatching(
                 block = { isEnabled -> renderTile(isEnabled) },
                 catch = { e -> Timber.tag(tag).e(e.stackTraceToString()) },
             )
@@ -59,8 +61,8 @@ class AodTileService : TileService(), Tag {
     override fun onClick() {
         super.onClick()
         if (!permissionManager.requiredAodPermissions().hasRequiredPermissions) return
-        val isEnabled = !(dataStoreManager.isAodEnabled.value ?: return)
-        dataStoreManager.saveIsAodEnabled(isEnabled)
+        val isEnabled = !(dataStoreManager.aodOptions.value ?: return).isEnabled
+        dataStoreManager.updateAodOptions { options -> options.copy(isEnabled = isEnabled) }
         renderTile(isEnabled)
         when {
             !isEnabled -> AodService.stop(this)

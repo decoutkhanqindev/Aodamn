@@ -143,6 +143,18 @@ check "Timber trực tiếp trong ad unit con" \
 check "ManagerImpl / BaseAds" \
   "1 class cụ thể XxxManager / AdsManager" \
   'grep -rn "ManagerImpl\|BaseAds" $SRC --include="*.kt"'
+check "Key DataStore lẻ" \
+  "mỗi cụm cài đặt 1 key JSON qua JsonPrefs trong DataStoreManager" \
+  'grep -rn "booleanPreferencesKey\|intPreferencesKey\|longPreferencesKey\|floatPreferencesKey\|doublePreferencesKey\|stringSetPreferencesKey" $SRC --include="*.kt"'
+check "presentation dùng mapper của data" \
+  "Prefs → UiModel bằng toUiModel() ở presentation/model, mapper data chỉ cho DTO / cache → domain" \
+  'grep -rn "import .*\.data\.mapper\." $SRC --include="*.kt" | grep "/presentation/"'
+check "domain import data / presentation / ads / Koin" \
+  "domain chỉ Kotlin thuần, cài đặt (Prefs) không có model domain" \
+  'grep -rn "^import com\.decoutkhanqindev\.aodamn\.\(data\|presentation\|ads\)\.\|^import org\.koin\." $SRC --include="*.kt" | grep "/domain/"'
+check "kotlinx-serialization ngoài chỗ cho phép" \
+  "chỉ data/network/api, data/local/datastore, destination Navigation và di" \
+  'grep -rln "^import kotlinx\.serialization" $SRC --include="*.kt" | grep -v "/data/network/api/\|/data/local/datastore/\|/presentation/navigation/\|/di/"'
 
 # --- Comment ----------------------------------------------------------------------------------------
 check "Comment trong Kotlin / Gradle" \

@@ -2,15 +2,15 @@ package com.decoutkhanqindev.aodamn.data.repository
 
 import com.decoutkhanqindev.aodamn.data.device.location.DeviceLocationManager
 import com.decoutkhanqindev.aodamn.data.local.datastore.DataStoreManager
-import com.decoutkhanqindev.aodamn.data.mapper.weatherConditionOf
+import com.decoutkhanqindev.aodamn.data.mapper.toDomain
 import com.decoutkhanqindev.aodamn.data.network.api.OpenMeteoApiService
 import com.decoutkhanqindev.aodamn.domain.model.Weather
 import com.decoutkhanqindev.aodamn.domain.repository.WeatherRepository
 import com.decoutkhanqindev.aodamn.utils.Tag
 import com.decoutkhanqindev.aodamn.utils.withContextCatching
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
 import timber.log.Timber
 import kotlin.math.roundToInt
 
@@ -20,23 +20,8 @@ class WeatherRepositoryImpl(
     private val dataStoreManager: DataStoreManager,
 ) : WeatherRepository, Tag {
 
-    override fun observeWeather(): Flow<Weather?> = combine(
-        dataStoreManager.weatherTemperatureCelsius.filterNotNull(),
-        dataStoreManager.weatherCode.filterNotNull(),
-        dataStoreManager.isWeatherDay.filterNotNull(),
-        dataStoreManager.weatherUpdatedAtMillis.filterNotNull(),
-    ) { temperatureCelsius, code, isDay, updatedAtMillis ->
-        if (updatedAtMillis == DataStoreManager.DEFAULT_WEATHER_UPDATED_AT_MILLIS) {
-            null
-        } else {
-            Weather(
-                temperatureCelsius = temperatureCelsius,
-                condition = weatherConditionOf(code),
-                isDay = isDay,
-                updatedAtMillis = updatedAtMillis,
-            )
-        }
-    }
+    override fun observeWeather(): Flow<Weather?> =
+        dataStoreManager.weatherCache.filterNotNull().map { cache -> cache.toDomain() }
 
     override suspend fun refreshWeather(): Unit = withContextCatching(
         block = {

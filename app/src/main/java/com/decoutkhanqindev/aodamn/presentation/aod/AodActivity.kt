@@ -12,6 +12,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.ui.ComposeUiFlags
 import androidx.compose.ui.ExperimentalComposeUiApi
 import com.decoutkhanqindev.aodamn.data.local.datastore.DataStoreManager
+import com.decoutkhanqindev.aodamn.data.local.datastore.model.AodOptionsPrefs
 import com.decoutkhanqindev.aodamn.presentation.components.AppLanguageProvider
 import com.decoutkhanqindev.aodamn.presentation.components.AppTagProvider
 import com.decoutkhanqindev.aodamn.presentation.screens.aod.AodScreen
@@ -35,12 +36,9 @@ class AodActivity : ComponentActivity() {
             WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON,
         )
 
-        val isCustomBrightness =
-            dataStoreManager.isAodCustomBrightness.value
-                ?: DataStoreManager.DEFAULT_IS_AOD_CUSTOM_BRIGHTNESS
-        val brightnessPercent =
-            dataStoreManager.aodBrightnessPercent.value
-                ?: DataStoreManager.DEFAULT_AOD_BRIGHTNESS_PERCENT
+        val options = dataStoreManager.aodOptions.value ?: AodOptionsPrefs.DEFAULT
+        val isCustomBrightness = options.isCustomBrightness
+        val brightnessPercent = options.brightnessPercent
         normalBrightness = if (isCustomBrightness) {
             brightnessPercent / MAX_BRIGHTNESS_PERCENT
         } else {
@@ -50,7 +48,7 @@ class AodActivity : ComponentActivity() {
 
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         setBrightness(normalBrightness)
-        if (dataStoreManager.isAodLandscape.value == true) lockLandscape()
+        if (dataStoreManager.aodAppearance.value?.isLandscape == true) lockLandscape()
         setContent {
             AppLanguageProvider {
                 AppTagProvider(tag = "AodScreen") {

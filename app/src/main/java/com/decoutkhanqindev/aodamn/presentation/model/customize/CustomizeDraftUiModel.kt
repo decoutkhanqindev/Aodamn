@@ -4,15 +4,14 @@ import android.graphics.Bitmap
 import androidx.compose.runtime.Immutable
 import com.decoutkhanqindev.aodamn.data.device.permission.PermissionManager
 import com.decoutkhanqindev.aodamn.data.local.datastore.DataStoreManager
+import com.decoutkhanqindev.aodamn.data.local.datastore.model.AodExtrasPrefs
 import com.decoutkhanqindev.aodamn.data.local.image.AodImageManager
 import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.AodAppearanceUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.WallpaperValue
-import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.observeAodAppearance
+import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.toUiModel
+import com.decoutkhanqindev.aodamn.presentation.model.aod.settings.AodExtrasUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodBlockValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodThemeUiModel
-import com.decoutkhanqindev.aodamn.presentation.model.aod.settings.AodExtrasUiModel
-import com.decoutkhanqindev.aodamn.presentation.model.aod.settings.observeAodExtras
-import com.decoutkhanqindev.aodamn.presentation.model.aod.settings.observeAodNotificationOptions
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.filterNotNull
@@ -79,8 +78,8 @@ fun CustomizeDraftUiModel.enabledBlockTabs(): ImmutableList<CustomizeTabValue> {
 @Immutable
 data class CustomizeAppearanceUiModel(
     val clock: AodAppearanceUiModel = AodAppearanceUiModel(),
-    val isDateEnabled: Boolean = DataStoreManager.DEFAULT_IS_AOD_DATE_ENABLED,
-    val isBatteryEnabled: Boolean = DataStoreManager.DEFAULT_IS_AOD_BATTERY_ENABLED,
+    val isDateEnabled: Boolean = AodExtrasPrefs.DEFAULT.isDateEnabled,
+    val isBatteryEnabled: Boolean = AodExtrasPrefs.DEFAULT.isBatteryEnabled,
 )
 
 @Immutable
@@ -88,7 +87,7 @@ data class CustomizeDecorUiModel(
     val wallpaper: WallpaperValue? = null,
     val background: Bitmap? = null,
     val drawing: Bitmap? = null,
-    val memo: String = DataStoreManager.DEFAULT_AOD_MEMO,
+    val memo: String = AodExtrasPrefs.DEFAULT.memo,
 )
 
 @Immutable
@@ -97,7 +96,7 @@ data class CustomizeInfoUiModel(
     val isNotificationContentEnabled: Boolean = false,
     val isCalendarEnabled: Boolean = false,
     val isWeatherEnabled: Boolean = false,
-    val isWeatherFahrenheit: Boolean = DataStoreManager.DEFAULT_IS_AOD_WEATHER_FAHRENHEIT,
+    val isWeatherFahrenheit: Boolean = AodExtrasPrefs.DEFAULT.isWeatherFahrenheit,
     val isMediaControlsEnabled: Boolean = false,
 )
 
@@ -110,18 +109,19 @@ suspend fun DataStoreManager.loadCustomizeDraft(
     aodImageManager: AodImageManager,
     permissionManager: PermissionManager,
 ): CustomizeDraftUiModel {
-    val extras = observeAodExtras().first()
-    val notificationOptions = observeAodNotificationOptions().first()
+    val extras = aodExtras.filterNotNull().first()
+    val notificationOptions = aodNotificationOptions.filterNotNull().first()
+    val appearance = aodAppearance.filterNotNull().first()
     val hasNotificationAccess = permissionManager.isNotificationListenerEnabled()
 
     return CustomizeDraftUiModel(
         appearance = CustomizeAppearanceUiModel(
-            clock = observeAodAppearance().first(),
+            clock = appearance.toUiModel(),
             isDateEnabled = extras.isDateEnabled,
             isBatteryEnabled = extras.isBatteryEnabled,
         ),
         decor = CustomizeDecorUiModel(
-            wallpaper = WallpaperValue.fromCode(aodWallpaper.filterNotNull().first()),
+            wallpaper = WallpaperValue.fromCode(appearance.wallpaperCode),
             background = aodImageManager.loadBackground(),
             drawing = aodImageManager.loadDrawing(),
             memo = extras.memo,

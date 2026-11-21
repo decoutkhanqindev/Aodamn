@@ -9,9 +9,6 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.AodZoneOption
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.isDefault
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.isSame
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.options
-import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.toAodConfigString
-import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.toAodConfigValues
-import kotlinx.collections.immutable.toPersistentMap
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
@@ -54,8 +51,7 @@ class AodThemeExpectationTest {
                 assertEquals("${expectation.theme.id}: ${option.key}", expectedCount, cases.size)
                 cases.forEach { raws ->
                     val config = AodThemeConfig().withRaws(raws)
-                    val stored = config.values.toAodConfigString()
-                    val restored = AodThemeConfig(stored.toAodConfigValues().toPersistentMap())
+                    val restored = config.storedAndRestored(expectation.theme)
                     assertTrue("${expectation.theme.id}: ${option.key}", expectation.theme.spec.isSame(config, restored))
                 }
                 assertFalse("${expectation.theme.id}: ${option.key} không đổi", option.isDefault(AodThemeConfig().withRaws(ThemeOptionCases.changed(option))))
@@ -74,8 +70,7 @@ class AodThemeExpectationTest {
                         .withRaws(ThemeOptionCases.changed(second))
                     assertFalse("${expectation.theme.id}: ${first.key}", first.isDefault(changed))
                     assertFalse("${expectation.theme.id}: ${second.key}", second.isDefault(changed))
-                    val stored = changed.values.toAodConfigString()
-                    val restored = AodThemeConfig(stored.toAodConfigValues().toPersistentMap())
+                    val restored = changed.storedAndRestored(expectation.theme)
                     assertTrue(expectation.theme.id, expectation.theme.spec.isSame(changed, restored))
                     assertTrue(expectation.theme.id, expectation.theme.spec.isDefault(changed.without(options)))
                 }

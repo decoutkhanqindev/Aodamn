@@ -9,19 +9,19 @@ import com.decoutkhanqindev.aodamn.data.local.datastore.DataStoreManager
 import com.decoutkhanqindev.aodamn.data.local.locale.LanguageManager
 import com.decoutkhanqindev.aodamn.presentation.base.BaseViewModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.AodAppearanceUiModel
-import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.observeAodAppearance
+import com.decoutkhanqindev.aodamn.presentation.model.aod.appearance.toUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.info.WakeResultValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.settings.AodOptionsUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.settings.interaction.AodActionValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.settings.interaction.AodGestureValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.settings.interaction.AodInteractionUiModel
-import com.decoutkhanqindev.aodamn.presentation.model.aod.settings.interaction.observeAodInteraction
-import com.decoutkhanqindev.aodamn.presentation.model.aod.settings.interaction.saveGestureAction
-import com.decoutkhanqindev.aodamn.presentation.model.aod.settings.observeAodOptions
+import com.decoutkhanqindev.aodamn.presentation.model.aod.settings.interaction.toUiModel
+import com.decoutkhanqindev.aodamn.presentation.model.aod.settings.interaction.withAction
 import com.decoutkhanqindev.aodamn.presentation.model.aod.settings.rules.AodRulesUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.aod.settings.rules.ChargingRuleValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.settings.rules.ScheduleTimeValue
-import com.decoutkhanqindev.aodamn.presentation.model.aod.settings.rules.observeAodRules
+import com.decoutkhanqindev.aodamn.presentation.model.aod.settings.rules.toUiModel
+import com.decoutkhanqindev.aodamn.presentation.model.aod.settings.toUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.language.LanguageValue
 import com.decoutkhanqindev.aodamn.presentation.model.language.toUiModel
 import com.decoutkhanqindev.aodamn.presentation.model.permission.PermissionValue
@@ -73,21 +73,23 @@ class SettingsViewModel(
 
     private fun onOptionsIntent(intent: SettingsIntent.Options) {
         when (intent) {
-            is SettingsIntent.Options.ToggleCustomBrightness -> dataStoreManager.saveIsAodCustomBrightness(
-                intent.isEnabled
-            )
+            is SettingsIntent.Options.ToggleCustomBrightness ->
+                dataStoreManager.updateAodOptions { options -> options.copy(isCustomBrightness = intent.isEnabled) }
 
-            is SettingsIntent.Options.ChangeBrightness -> dataStoreManager.saveAodBrightnessPercent(
-                intent.percent
-            )
+            is SettingsIntent.Options.ChangeBrightness ->
+                dataStoreManager.updateAodOptions { options -> options.copy(brightnessPercent = intent.percent) }
 
-            is SettingsIntent.Options.ToggleProximity -> dataStoreManager.saveIsAodProximityEnabled(
-                intent.isEnabled
-            )
+            is SettingsIntent.Options.ToggleProximity ->
+                dataStoreManager.updateAodOptions { options -> options.copy(isProximityEnabled = intent.isEnabled) }
 
-            is SettingsIntent.Options.ChangeTimeout -> dataStoreManager.saveAodTimeoutMinutes(intent.minutes)
-            is SettingsIntent.Options.ChangeAutoHide -> dataStoreManager.saveAodAutoHideSeconds(intent.seconds)
-            is SettingsIntent.Options.ToggleLandscape -> dataStoreManager.saveIsAodLandscape(intent.isEnabled)
+            is SettingsIntent.Options.ChangeTimeout ->
+                dataStoreManager.updateAodOptions { options -> options.copy(timeoutMinutes = intent.minutes) }
+
+            is SettingsIntent.Options.ChangeAutoHide ->
+                dataStoreManager.updateAodOptions { options -> options.copy(autoHideSeconds = intent.seconds) }
+
+            is SettingsIntent.Options.ToggleLandscape ->
+                dataStoreManager.updateAodAppearance { appearance -> appearance.copy(isLandscape = intent.isEnabled) }
         }
     }
 
@@ -104,13 +106,11 @@ class SettingsViewModel(
                 intent.action
             )
 
-            is SettingsIntent.Interaction.ToggleAutoDim -> dataStoreManager.saveIsAodAutoDimEnabled(
-                intent.isEnabled
-            )
+            is SettingsIntent.Interaction.ToggleAutoDim ->
+                dataStoreManager.updateAodInteraction { interaction -> interaction.copy(isAutoDimEnabled = intent.isEnabled) }
 
-            is SettingsIntent.Interaction.ToggleRaiseToWake -> dataStoreManager.saveIsAodRaiseToWakeEnabled(
-                intent.isEnabled
-            )
+            is SettingsIntent.Interaction.ToggleRaiseToWake ->
+                dataStoreManager.updateAodInteraction { interaction -> interaction.copy(isRaiseToWakeEnabled = intent.isEnabled) }
         }
     }
 
@@ -123,7 +123,8 @@ class SettingsViewModel(
                 updateState { copy(rules = rules.copy(isChargingRulePickerVisible = false)) }
 
             is SettingsIntent.Rules.ChangeChargingRule -> changeChargingRule(intent.rule)
-            is SettingsIntent.Rules.ToggleSchedule -> dataStoreManager.saveIsAodScheduleEnabled(intent.isEnabled)
+            is SettingsIntent.Rules.ToggleSchedule ->
+                dataStoreManager.updateAodRules { rules -> rules.copy(isScheduleEnabled = intent.isEnabled) }
             is SettingsIntent.Rules.ShowScheduleTimePicker ->
                 updateState { copy(rules = rules.copy(editingScheduleTime = intent.time)) }
 
@@ -135,7 +136,8 @@ class SettingsViewModel(
                 intent.minuteOfDay
             )
 
-            is SettingsIntent.Rules.ChangeMinBattery -> dataStoreManager.saveAodMinBattery(intent.percent)
+            is SettingsIntent.Rules.ChangeMinBattery ->
+                dataStoreManager.updateAodRules { rules -> rules.copy(minBatteryPercent = intent.percent) }
         }
     }
 
@@ -158,16 +160,16 @@ class SettingsViewModel(
     private fun observeSettings() {
         viewModelScope.launch {
             combine(
-                dataStoreManager.observeAodOptions(),
-                dataStoreManager.observeAodAppearance(),
-                dataStoreManager.observeAodInteraction(),
-                dataStoreManager.observeAodRules(),
+                dataStoreManager.aodOptions.filterNotNull(),
+                dataStoreManager.aodAppearance.filterNotNull(),
+                dataStoreManager.aodInteraction.filterNotNull(),
+                dataStoreManager.aodRules.filterNotNull(),
             ) { options, appearance, interaction, rules ->
                 Settings(
-                    options = options,
-                    appearance = appearance,
-                    interaction = interaction,
-                    rules = rules,
+                    options = options.toUiModel(),
+                    appearance = appearance.toUiModel(),
+                    interaction = interaction.toUiModel(),
+                    rules = rules.toUiModel(),
                 )
             }.collectCatching(
                 block = { settings ->
@@ -215,19 +217,22 @@ class SettingsViewModel(
     }
 
     private fun changeGestureAction(gesture: AodGestureValue, action: AodActionValue) {
-        dataStoreManager.saveGestureAction(gesture, action)
+        dataStoreManager.updateAodInteraction { interaction -> interaction.withAction(gesture, action) }
         updateState { copy(interaction = interaction.copy(editingGesture = null)) }
     }
 
     private fun changeChargingRule(rule: ChargingRuleValue) {
-        dataStoreManager.saveAodChargingRule(rule.code)
+        dataStoreManager.updateAodRules { rules -> rules.copy(chargingRule = rule.id) }
         updateState { copy(rules = rules.copy(isChargingRulePickerVisible = false)) }
     }
 
     private fun changeScheduleTime(time: ScheduleTimeValue, minuteOfDay: Int) {
         when (time) {
-            ScheduleTimeValue.START -> dataStoreManager.saveAodScheduleStartMinute(minuteOfDay)
-            ScheduleTimeValue.END -> dataStoreManager.saveAodScheduleEndMinute(minuteOfDay)
+            ScheduleTimeValue.START ->
+                dataStoreManager.updateAodRules { rules -> rules.copy(scheduleStartMinute = minuteOfDay) }
+
+            ScheduleTimeValue.END ->
+                dataStoreManager.updateAodRules { rules -> rules.copy(scheduleEndMinute = minuteOfDay) }
         }
         updateState { copy(rules = rules.copy(editingScheduleTime = null)) }
     }
@@ -267,7 +272,7 @@ class SettingsViewModel(
         refreshPermissions()
         viewModelScope.launch {
             when {
-                isGranted -> if (dataStoreManager.isAodEnabled.value == true) sendEffect(SettingsEffect.StartAodService)
+                isGranted -> if (dataStoreManager.aodOptions.value?.isEnabled == true) sendEffect(SettingsEffect.StartAodService)
                 else -> sendEffect(SettingsEffect.Permission.OpenNotificationSettings)
             }
         }
