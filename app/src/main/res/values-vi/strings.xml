@@ -85,6 +85,12 @@
     <string name="theme_meridian">Kinh tuyến</string>
     <string name="theme_glass">Kính</string>
     <string name="theme_dot">Chấm</string>
+    <string name="theme_matrix">Ma trận</string>
+    <string name="theme_opt_dot_style">Kiểu chấm</string>
+    <string name="matrix_dot_round">Tròn</string>
+    <string name="matrix_dot_square">Vuông</string>
+    <string name="theme_opt_unlit_dots">Lưới chấm tắt</string>
+    <string name="matrix_clock_size_value">Cỡ đồng hồ: %1$d</string>
     <string name="glass_style_regular">Thường</string>
     <string name="glass_style_rounded">Bo tròn</string>
     <string name="glass_style_stencil">Khuôn tô</string>

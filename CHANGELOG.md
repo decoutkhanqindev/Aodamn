@@ -7,6 +7,40 @@ Project chưa phát hành (`versionName` vẫn là `v1.0.0`), nên các thay đ�
 ngày. Lịch sử của demo FakeAOD, nơi lõi AOD được làm ra trước, giữ ở cuối file.
 Mã nguồn demo FakeAOD không nằm trong repo này.
 
+## [Chưa phát hành] – 2026-11-21 – Chủ đề Ma trận
+
+Thêm Ma trận (Matrix) từ Nothing(2) (chủ đề 27) của Muviz Edge, số đo lấy từ `Jul23Screen`, layout `jul23_screen_layout` dọc / ngang, font NDot 47 / NDot 55
+và icon `nothing_*_btn` trong APK (chỉ đo, không lấy file). Doto của Chấm khác hẳn NDot 47 (chấm nhỏ có khe, số 0 hình thoi) nên user chọn "Tự vẽ số chấm",
+rồi duyệt mock: "Duyệt, code đi" (Kiro CLI code, Claude review theo `jetpack-compose-performance` và `anr-audit-and-fix`: dựng sẵn ô của icon lưới, gom brush
+hàng icon ra ngoài vòng lặp, thêm chạm cụm thông báo ở màn ngang như mẫu; không có rủi ro ANR).
+`check_theme.sh matrix "Ma trận"` phần nhanh pass (compile, option / pairwise / lưu cấu hình, `AodThemeSpecTest`, `MatrixGlyphsTest`, đăng ký code + docs),
+`check-rules` 0 vi phạm, thư mục chủ đề cũ không đổi; preview dọc / ngang render bằng Android CLI khớp mock. Chưa chạy test máy (không có máy ảo đang chạy),
+chưa có ảnh chuẩn `androidTest/screenshots/themes/matrix/`. Chưa test trên máy thật.
+
+### Thêm
+
+- Giờ "HH:mm" (12 giờ "hh:mm", không SA / CH) một dòng, chữ số tự vẽ lưới 5 × 7 chấm sát nhau như NDot 47 (`MatrixGlyphs`, mọi số rộng như nhau nên giờ
+  không xê dịch khi đổi phút), chữ số cao 1,4 × cỡ dp như mẫu (cỡ 30–50, mặc định 40). Mỗi lớp chấm vẽ bằng một lệnh `drawPoints`.
+- Dọc như mẫu, cột trái lề 40 dp: giờ đứng yên ở vị trí của mẫu khi có hàng icon (mẫu: cả cụm dịch lên khi có icon), cách 28 dp là ngày `EEE, dd MMM` in hoa
+  20 sp, thời tiết dòng riêng, một dòng sự kiện, cách 12 dp hàng icon 18 dp / thông báo mới (trượt từ trên, chạm cột để hiện / ẩn); trình phát (tên 18 /
+  nghệ sĩ 16 sp tối 30%, phát 48 dp, tới 43 dp, thanh tiến trình hàng chấm) cách 35 dp trên dòng pin 16 sp (mờ 0,8 khi không sạc, tia sét chấm khi sạc)
+  cách đáy 35 dp. Ngang 50 / 50 như mẫu: giờ + ngày + thời tiết + sự kiện + pin giữa nửa trái; nửa phải hàng icon / thông báo mới, vạch ngăn màu thông
+  báo tối 50%, trình phát; nửa phải trống thì cụm trái trượt ra giữa màn.
+- Nâng cấp so với mẫu: Kiểu chấm Tròn / Vuông áp cho giờ, chữ nhỏ (Tiny5 ROND 100 / ROND 0), icon, nút nhạc, thanh tiến trình; Lưới chấm tắt mờ sau chữ
+  số như bảng LED (bật mặc định); icon thông báo và thời tiết lấy mẫu thành lưới 7 × 7; một dòng sự kiện tự vẽ (`AodBlockValue.EVENTS`).
+- Màu giờ, ngày (cả thời tiết), sự kiện, thông báo, pin, nhạc riêng, màu nào cũng dùng được gradient; mặc định giờ hổ phách `#FFB000` (`MatrixAmber`, màu nhấn
+  chưa chủ đề nào dùng), chữ phụ GreyE4.
+- Font: sinh `tiny5_square_regular` (Tiny5 ROND 0, cùng file nguồn đã cắt Latin + tiếng Việt), không tải font mới.
+
+### Thay đổi
+
+- Bỏ Theme Color của mẫu: mỗi phần một màu riêng. Bỏ Ghi nhớ (chữ tự do có thể dài nhiều dòng, cột chữ chấm chỉ hợp dòng ngắn) và Nét vẽ (khối hình lớn, không có
+  chỗ trong cột chữ, màn ngang không cân). Thanh tiến trình là hàng chấm thay vạch phẳng như Chấm.
+- Chỉ thêm, không đổi chủ đề đang có: nhánh `MATRIX` ở `AodThemeLayout` và `AodMediaControls`, mục `MATRIX` cuối `AodThemeValue`, `ThemeExpectation`;
+  `AodThemeSpecTest` thêm Ma trận vào tập tự vẽ thông báo mới, cho phép Ma trận tự vẽ sự kiện (trước đây chỉ Chuỗi) và một test riêng; `MatrixGlyphsTest`;
+  màu `MatrixAmber`; họ font `FontFamilyTiny5Square`; chuỗi `theme_matrix`, `theme_opt_dot_style`, `matrix_dot_*`, `theme_opt_unlit_dots`,
+  `matrix_clock_size_value`, `aod_matrix_*`.
+
 ## [Chưa phát hành] – 2026-11-21 – DataStore gom theo cụm JSON
 
 User: "tôi thấy trong data store có khá nhiều key lẻ, tôi gôm thành 1 key nhưng chứa value json dùng kotlin serializable để parse", "bạn đưng quan

@@ -92,6 +92,12 @@
     <string name="theme_meridian">Meridian</string>
     <string name="theme_glass">Glass</string>
     <string name="theme_dot">Dot</string>
+    <string name="theme_matrix">Matrix</string>
+    <string name="theme_opt_dot_style">Dot style</string>
+    <string name="matrix_dot_round">Round</string>
+    <string name="matrix_dot_square">Square</string>
+    <string name="theme_opt_unlit_dots">Unlit dots</string>
+    <string name="matrix_clock_size_value">Clock size: %1$d</string>
     <string name="glass_style_regular">Regular</string>
     <string name="glass_style_rounded">Rounded</string>
     <string name="glass_style_stencil">Stencil</string>
@@ -280,6 +286,11 @@
     <string name="aod_dot_hour_12h" translatable="false">hh</string>
     <string name="aod_dot_minute" translatable="false">mm</string>
     <string name="aod_dot_notification" translatable="false">%1$s: %2$s</string>
+    <string name="aod_matrix_time_24h" translatable="false">HH:mm</string>
+    <string name="aod_matrix_time_12h" translatable="false">hh:mm</string>
+    <string name="aod_matrix_date_pattern" translatable="false">EEE, dd MMM</string>
+    <string name="aod_matrix_notification" translatable="false">%1$s: %2$s</string>
+    <string name="aod_matrix_event" translatable="false">"%1$s  %2$s"</string>
 
     <!-- Tab Edge Light -->
     <string name="edge_light_soon_title">Edge Light is coming soon</string>

@@ -39,6 +39,8 @@ import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.halfmoon.Ao
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.halfmoon.AodHalfMoonPortrait
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.jersey.AodJerseyLandscape
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.jersey.AodJerseyPortrait
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.matrix.AodMatrixLandscape
+import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.matrix.AodMatrixPortrait
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.meridian.AodMeridianLandscape
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.meridian.AodMeridianPortrait
 import com.decoutkhanqindev.aodamn.presentation.components.aod.theme.mono.AodMonoLandscape
@@ -110,6 +112,7 @@ fun AodPortrait(
         AodThemeValue.MERIDIAN -> AodMeridianPortrait(state = state, onIntent = onIntent)
         AodThemeValue.GLASS -> AodGlassPortrait(state = state, onIntent = onIntent)
         AodThemeValue.DOT -> AodDotPortrait(state = state, onIntent = onIntent)
+        AodThemeValue.MATRIX -> AodMatrixPortrait(state = state, onIntent = onIntent)
     }
 }
 
@@ -152,5 +155,6 @@ fun AodLandscape(
         AodThemeValue.MERIDIAN -> AodMeridianLandscape(state = state, onIntent = onIntent)
         AodThemeValue.GLASS -> AodGlassLandscape(state = state, onIntent = onIntent)
         AodThemeValue.DOT -> AodDotLandscape(state = state, onIntent = onIntent)
+        AodThemeValue.MATRIX -> AodMatrixLandscape(state = state, onIntent = onIntent)
     }
 }

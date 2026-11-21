@@ -23,6 +23,7 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.glass.GlassTheme
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.gradientline.GradientLineThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.halfmoon.HalfMoonThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.jersey.JerseyThemeSpec
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.matrix.MatrixThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.meridian.MeridianThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.mono.MonoThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.moonphase.MoonPhaseThemeSpec
@@ -76,7 +77,8 @@ enum class AodThemeValue(
     PIXEL(id = "pixel", nameRes = R.string.theme_pixel, spec = PixelThemeSpec),
     MERIDIAN(id = "meridian", nameRes = R.string.theme_meridian, spec = MeridianThemeSpec),
     GLASS(id = "glass", nameRes = R.string.theme_glass, spec = GlassThemeSpec),
-    DOT(id = "dot", nameRes = R.string.theme_dot, spec = DotThemeSpec);
+    DOT(id = "dot", nameRes = R.string.theme_dot, spec = DotThemeSpec),
+    MATRIX(id = "matrix", nameRes = R.string.theme_matrix, spec = MatrixThemeSpec);
 
     companion object {
         val DEFAULT = CLASSIC

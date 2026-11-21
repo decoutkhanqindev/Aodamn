@@ -66,6 +66,7 @@ code dịch ngược, không lấy asset (font, ảnh, Lottie) từ APK. APK và
 | Kinh tuyến (`MERIDIAN`) | **33 · Jan24 "Dual Timezone"** | làm từ danh mục này (2026-11-13), số đo lấy từ layout `jan24_screen_layout` dọc / ngang / `Jan24Screen` / `SimpleAnalogClock` / font Flex Round trong APK |
 | Kính (`GLASS`) | **26 · Jun23 "iOS Lockscreen"** | làm từ danh mục này (2026-11-16), số đo lấy từ layout `jun23_screen_layout` dọc / ngang / `Jun23Screen` / `TimeProgressBarRounded` / năm font SF Pro, New York trong APK (chỉ đo) |
 | Chấm (`DOT`) | **17 · Sep22 "Nothing(1)"** | làm từ danh mục này (2026-11-16), số đo lấy từ layout `sep22_screen_layout` dọc / ngang / `Sep22Screen` / font NDot 47, NDot 55 và icon `nothing_*_btn` trong APK (chỉ đo) |
+| Ma trận (`MATRIX`) | **27 · Jul23 "Nothing(2)"** | làm từ danh mục này (2026-11-21), số đo lấy từ layout `jul23_screen_layout` dọc / ngang / `Jul23Screen` / font NDot 47, NDot 55 và icon `nothing_*_btn` trong APK (chỉ đo); chữ số tự vẽ lưới chấm 5 × 7 |
 
 ## Danh mục đủ 44 chủ đề
 
@@ -100,7 +101,7 @@ text view chung) hoặc font dùng trong code; "chữ (font layout)" nghĩa là 
 | 24 | Apr23 | Android 14 Analog Clock | Text Style, Clock Style, Clock Size, Color 1, Color 2, Theme Color | Color 3, Date, Notification, Controls, Battery Status | PilotBold2Tick, PixelAnalogClock | – | **Bốn số** (`QUARTERS`) |
 | 25 | May23 | Ambitio Face ⭐ | Clock Style, Clock Size, Color 1, Color 2, Controls Color | – | AmbitioClock | – | **La bàn** (`COMPASS`) |
 | 26 | Jun23 | iOS Lockscreen | Clock Style, Clock Size, Clock Color, Theme Color | Date, Notification, Controls, Battery Status | chữ: 5 font iOS | font độc quyền | **Kính** (`GLASS`) |
-| 27 | Jul23 | Nothing(2) | Clock Size, Theme Color | Clock, Date, Notification, Controls, Battery Status | chữ: ndot47 | font độc quyền | chưa có |
+| 27 | Jul23 | Nothing(2) | Clock Size, Theme Color | Clock, Date, Notification, Controls, Battery Status | chữ: ndot47 | font độc quyền | **Ma trận** (`MATRIX`) |
 | 28 | Aug23 | Bullet List | Clock Size, Theme Color | Clock, Date, Battery Status, Notification, Controls | Aug23Clock | – | **Chuỗi** (`CHAIN`) |
 | 29 | Sep23 | Gradient Line Clock | Clock Size, Dash Color, Theme Color | Position, Clock, Battery Status, Notification, Controls | Sep23Clock | – | **Dải màu** (`GRADIENT_LINE`) |
 | 30 | Oct23 | Coum Face Clock ⭐ | Clock Size, Ring Color, Clock Color, Controls Color | – | CoumTick | – | **Nhịp giây** (`TICK`) |
@@ -345,8 +346,20 @@ mỗi phút (`AodViewModel`), nên phần chạy theo giây của app mẫu ph�
   Màu Hour / Minute / Second (hai chấm) / Date / Notification / Controls / Battery theo Theme. Bên mình: Doto 900 bo tròn thay NDot 47, Tiny5 bo tròn (đủ tiếng
   Việt) thay NDot 55 cho mọi chữ; icon thông báo, tia sét, thời tiết và thanh tiến trình cũng thành chấm (user); hai chấm đỏ #D71921 mặc định; bỏ Theme Color,
   sự kiện, ghi nhớ, nét vẽ; ngang đồng hồ giữa màn (user duyệt).
+- ~~**27 · Nothing(2)**~~ (`Jul23Screen`, `jul23_screen_layout` dọc + ngang, đọc 2026-11-17, đã làm thành Ma trận 2026-11-21): cùng bộ với Nothing(1): giờ `HH:mm` / `hh:mm` một dòng NDot 47
+  (cỡ 30–50, mặc định 40, chữ 0,9 × cỡ sp, chữ số cao 1,556 em = 1,4 × cỡ dp; chữ số 5 × 7 chấm sát nhau, hai chấm rộng 2 bước), ngày `EEE, dd MMM` in hoa
+  NDot 55 20 sp cách 28 dp dưới giờ, icon 18 dp cách 10 dp / thông báo mới (icon 18 dp + 7 dp + 18 sp in hoa) cách 12 dp; dọc 35% / 65%: cụm trên căn trái
+  lề 40 dp neo đáy vùng 35%, vùng dưới căn giữa neo đáy: trình phát (tên 18 sp giãn 0,05 / nghệ sĩ 16 sp giãn 0,07 tối 30%, phát 48 dp cách 10 dp, tới 43 dp,
+  vạch tiến trình 1,5 dp cách 15 dp, cùng icon `nothing_*_btn` với Nothing(1)) cách 35 dp trên pin 16 sp giãn 0,03 (mờ 0,8 khi không sạc) cách đáy 35 dp.
+  Ngang 50 / 50: giờ + ngày (cách 8 dp) + pin giữa nửa trái; nửa phải (căn trái, giữa dọc) icon / thông báo mới, vạch ngăn 1 px màu thông báo tối 50% cách
+  20 dp, trình phát cách 35 dp; nửa phải trống thì ẩn, nửa trái chiếm cả màn. Màu Theme trắng, Clock / Date / Notification / Controls / Battery ghi đè;
+  không có màu hai chấm riêng. Trình phát hiện khi mở / đổi bài, ẩn theo AOD_CONTROLS_TIMEOUT; thông báo mới 10 giây; chạm cụm thông báo bật / tắt.
+  Doto (đang dùng cho Chấm) khác NDot 47: chấm nhỏ có khe, số 0 bo thành hình thoi, hai chấm thành dấu cộng. Bên mình (user duyệt mock): chữ số
+  tự vẽ lưới 5 × 7 chấm sát nhau, mọi số rộng như nhau; Kiểu chấm Tròn / Vuông (chữ nhỏ Tiny5 ROND 100 / ROND 0), Lưới chấm tắt mờ sau chữ số
+  (bật mặc định); giờ hổ phách #FFB000 mặc định; thêm thời tiết dòng riêng và một dòng sự kiện dưới ngày; giờ đứng yên ở vị trí mẫu khi có hàng icon;
+  thanh tiến trình hàng chấm; bỏ Theme Color, ghi nhớ, nét vẽ; ngang giữ 50 / 50 như mẫu.
 Để sau: ~~33 Dual Timezone~~ (đã làm thành Kinh tuyến, thêm `AodZoneOption`), 16 / 22 (cần ô nhập chữ), ~~chủ đề giờ bằng chữ~~ (đã làm thành Lời bằng ICU spellout có sẵn), 6 Visualizer (cần quyền `RECORD_AUDIO`, phải hỏi trước), 8 / 11 / 21 (hiệu ứng, hạt: công sức
-lớn), 27 (cần chọn font mở thay font độc quyền; ~~26~~ đã làm thành Kính, ~~17~~ thành Chấm). 18 / 41 dùng Google Sans: font này nay có trên Google Fonts (OFL, Vành
+lớn), ~~27~~ thành Ma trận (chữ số tự vẽ thay font độc quyền; ~~26~~ đã làm thành Kính, ~~17~~ thành Chấm). 18 / 41 dùng Google Sans: font này nay có trên Google Fonts (OFL, Vành
 dùng bản Bold), Google Sans Flex cũng có, nên không còn vướng font.
 
 Không cần chụp ảnh chủ đề từ app mẫu: số đo lấy từ layout XML, code của chủ đề và thông số font trong APK

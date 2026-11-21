@@ -66,6 +66,8 @@ FONTS = {
     "doto": ([900], {"ROND": 100}),
     # Chữ phụ của Chấm thay NDot 55: Tiny5 bo tròn tối đa thành chữ chấm, đủ tiếng Việt (bản Google Fonts đã cắt còn Latin + tiếng Việt)
     "tiny5": ([400], {"ROND": 100, "BLED": 0, "JITT": 0, "wdth": 100}),
+    # Kiểu Vuông của Ma trận: Tiny5 ROND 0 (điểm ảnh vuông), cùng file nguồn với tiny5
+    "tiny5_square": ([400], {"ROND": 0, "BLED": 0, "JITT": 0, "wdth": 100}, "tiny5"),
 }
 
 # họ font vẽ viền (TextStyle.drawStyle = Stroke): gộp phần chồng của glyph khi tách để nét không lộ cạnh bên trong (cần pip install skia-pathops)

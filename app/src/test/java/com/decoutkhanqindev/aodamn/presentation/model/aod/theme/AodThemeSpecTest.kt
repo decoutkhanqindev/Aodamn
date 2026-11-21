@@ -23,6 +23,8 @@ import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.gradientline.Gra
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.gentle.AodGentleWeightValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.gentle.GentleThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.halfmoon.HalfMoonThemeSpec
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.matrix.AodMatrixDotValue
+import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.matrix.MatrixThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.meridian.AodMeridianStyleValue
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.meridian.MeridianThemeSpec
 import com.decoutkhanqindev.aodamn.presentation.model.aod.theme.mono.MonoThemeSpec
@@ -53,6 +55,7 @@ import com.decoutkhanqindev.aodamn.presentation.theme.GreyCE
 import com.decoutkhanqindev.aodamn.presentation.theme.GreyE4
 import com.decoutkhanqindev.aodamn.presentation.theme.GreyED
 import com.decoutkhanqindev.aodamn.presentation.theme.Ink
+import com.decoutkhanqindev.aodamn.presentation.theme.MatrixAmber
 import com.decoutkhanqindev.aodamn.presentation.theme.Midnight
 import com.decoutkhanqindev.aodamn.presentation.theme.Mist
 import com.decoutkhanqindev.aodamn.presentation.theme.Orchid
@@ -85,7 +88,7 @@ class AodThemeSpecTest {
     }
 
     @Test
-    fun `only chain owns memo and events and notification content follows theme support`() {
+    fun `only chain owns memo, chain and matrix own events and notification content follows theme support`() {
         AodThemeValue.entries.forEach { theme ->
             val isChain = theme == AodThemeValue.CHAIN
             val drawsLatest = isChain ||
@@ -113,11 +116,12 @@ class AodThemeSpecTest {
                     AodThemeValue.MERIDIAN,
                     AodThemeValue.GLASS,
                     AodThemeValue.DOT,
+                    AodThemeValue.MATRIX,
                     AodThemeValue.BLINKY,
                 )
             val hasSharedLatest = AodBlockValue.STATUS !in theme.spec.ownBlocks && theme != AodThemeValue.FLIP
             assertEquals("${theme.id}: ghi nhớ", isChain, AodBlockValue.MEMO in theme.spec.ownBlocks)
-            assertEquals("${theme.id}: sự kiện", isChain, AodBlockValue.EVENTS in theme.spec.ownBlocks)
+            assertEquals("${theme.id}: sự kiện", isChain || theme == AodThemeValue.MATRIX, AodBlockValue.EVENTS in theme.spec.ownBlocks)
             assertEquals(
                 "${theme.id}: nội dung thông báo",
                 drawsLatest || hasSharedLatest,
@@ -1029,6 +1033,20 @@ class AodThemeSpecTest {
         assertEquals(70..130, DotThemeSpec.ClockSize.range)
         assertEquals(100, DotThemeSpec.ClockSize.default)
         assertEquals(false, AodComponentValue.EVENTS in spec.components)
+        assertEquals(false, AodComponentValue.MEMO in spec.components)
+        assertEquals(false, AodComponentValue.DRAWING in spec.components)
+    }
+
+    @Test
+    fun `matrix keeps the reference clock size and its own events line`() {
+        val spec = AodThemeValue.MATRIX.spec
+        assertEquals(30..50, MatrixThemeSpec.ClockSize.range)
+        assertEquals(40, MatrixThemeSpec.ClockSize.default)
+        assertEquals(AodMatrixDotValue.ROUND, MatrixThemeSpec.DotStyle.default)
+        assertEquals(true, MatrixThemeSpec.UnlitDots.default)
+        assertEquals(MatrixAmber, MatrixThemeSpec.ClockColor.default)
+        assertEquals(true, AodComponentValue.EVENTS in spec.components)
+        assertEquals(true, AodBlockValue.EVENTS in spec.ownBlocks)
         assertEquals(false, AodComponentValue.MEMO in spec.components)
         assertEquals(false, AodComponentValue.DRAWING in spec.components)
     }

@@ -7214,3 +7214,324 @@ if ONLY in (None, "w_glass"):
     ios_code = re.sub(r' aria-label="[^"]*"', "", ios_code)
     (OUT / "w_glass.html").write_text(ios_code, encoding="utf-8")
     print("w_glass", len(ios_code))
+
+
+
+# ------------------------------------------------------------------ MA TRẬN (Nothing(2) của Muviz Edge, Jul23Screen)
+# Giờ "HH:mm" một dòng, chữ số 5 × 7 chấm sát nhau như NDot 47 của app mẫu nhưng tự vẽ (lưới chấm riêng, không dùng file font), chữ số
+# cao 1,4 × Cỡ dp (cỡ 30–50, mặc định 40), mỗi số rộng 6 bước, hai chấm 2 bước; kiểu chấm Tròn / Vuông, lưới chấm tắt mờ phía sau.
+# Dọc như mẫu: cột trái lề 40 dp (giờ, cách 28 dp ngày "EEE, dd MMM" in hoa 20 sp, thời tiết, sự kiện, cách 12 dp hàng icon / thông báo mới),
+# giờ đứng yên ở vị trí mẫu khi có hàng icon; trình phát (tên 18 / nghệ sĩ 16 sp, phát 48, tới 43 dp, thanh chấm) cách 35 dp trên pin 16 sp
+# cách đáy 35 dp, căn giữa. Ngang như mẫu: giờ + ngày + pin giữa nửa trái, thông báo + vạch + trình phát nửa phải; nửa phải trống thì cụm
+# trái ra giữa màn. Chữ nhỏ Tiny5 (tròn ROND 100, vuông ROND 0).
+MX_DIGITS = {
+    "0": [" ### ", "#   #", "#   #", "#   #", "#   #", "#   #", " ### "],
+    "1": ["  #  ", " ##  ", "  #  ", "  #  ", "  #  ", "  #  ", " ### "],
+    "2": [" ### ", "#   #", "    #", "   # ", "  #  ", " #   ", "#####"],
+    "3": [" ### ", "#   #", "    #", "  ## ", "    #", "#   #", " ### "],
+    "4": ["   # ", "  ## ", " # # ", "#  # ", "#####", "   # ", "   # "],
+    "5": ["#####", "#    ", "#    ", "#### ", "    #", "#   #", " ### "],
+    "6": ["  ## ", " #   ", "#    ", "#### ", "#   #", "#   #", " ### "],
+    "7": ["#####", "    #", "   # ", "  #  ", " #   ", " #   ", " #   "],
+    "8": [" ### ", "#   #", "#   #", " ### ", "#   #", "#   #", " ### "],
+    "9": [" ### ", "#   #", "#   #", " ####", "    #", "   # ", " ##  "],
+    ":": [" ", " ", "#", " ", "#", " ", " "],
+}
+MX_AMBER = "#FFB000"
+MX_WHITE = "#FFFFFF"
+MX_GREY = "#E4E4E4"
+MX_UNLIT = .12
+MX_UNLIT_SIZE = .7
+MX_T_USED = set()
+MX_TEXTS = {}
+MX_ICON_USED = set()
+MX_MEDIA_USED = set()
+
+
+def mx_cells(text):
+    lit, off, col = [], [], 0
+    for ch in text:
+        rows = MX_DIGITS[ch]
+        for r, row in enumerate(rows):
+            for c, v in enumerate(row):
+                if v == "#":
+                    lit.append((col + c, r))
+                elif ch != ":":
+                    off.append((col + c, r))
+        col += len(rows[0]) + 1
+    return lit, off, col - 1
+
+
+def mx_dot_path(cells, x0, top, p, color, shape, opacity=1.0, width=None):
+    if not cells:
+        return ""
+    d = "".join(f"M{f(x0 + (c + .5) * p)} {f(top + (r + .5) * p)}h0" for c, r in cells)
+    w = width if width is not None else p * (.94 if shape == "round" else .84)
+    cap = "round" if shape == "round" else "square"
+    o = "" if opacity == 1 else f' opacity="{opacity}"'
+    return f'<path d="{d}" fill="none" stroke="{color}" stroke-width="{f(w)}" stroke-linecap="{cap}"{o}/>'
+
+
+def mx_clock_size(size):
+    p = 1.4 * size / 7
+    return 25 * p, 7 * p
+
+
+MX_DIGIT_USED = set()
+
+
+def mx_digit_def(ch, shape, lit):
+    rows = MX_DIGITS[ch]
+    cells = [(c, r) for r, row in enumerate(rows) for c, v in enumerate(row) if (v == "#") == lit]
+    d = "".join(f"M{c + .5:g} {r + .5:g}h0" for c, r in cells)
+    w = (.94 if shape == "round" else .84) * (1 if lit else MX_UNLIT_SIZE)
+    cap = "round" if shape == "round" else "square"
+    o = "" if lit else f' opacity="{MX_UNLIT}"'
+    return f'<path id="mx{"d" if lit else "u"}{shape[0]}{ord(ch)}" d="{d}" fill="none" stroke="currentColor" stroke-width="{w:g}" stroke-linecap="{cap}"{o}/>'
+
+
+def mx_clock(x, top, text, size, color, shape="round", unlit=True, anchor="start"):
+    p = 1.4 * size / 7
+    cols = sum(len(MX_DIGITS[ch][0]) + 1 for ch in text) - 1
+    x0 = x - cols * p / 2 if anchor == "middle" else x
+    s, col = "", 0
+    for ch in text:
+        for lit in ((True, False) if unlit and ch != ":" else (True,)):
+            MX_DIGIT_USED.add((ch, shape, lit))
+            s += f'<use href="#mx{"d" if lit else "u"}{shape[0]}{ord(ch)}"' + (f' x="{col}"' if col else "") + "/>"
+        col += len(MX_DIGITS[ch][0]) + 1
+    return f'<g color="{color}" transform="translate({f(x0)} {f(top)}) scale({p:.3f})">{s}</g>'
+
+
+def mx_t_def(ch):
+    rec = __import__("fontTools.pens.recordingPen", fromlist=["DecomposingRecordingPen"]).DecomposingRecordingPen(NT_T_GLYPHS)
+    NT_T_GLYPHS[NT_T_CMAP[ord(ch)]].draw(rec)
+    dots, pts = [], []
+    for op, args in rec.value:
+        if op == "moveTo":
+            pts = [args[0]]
+        elif op in ("lineTo", "qCurveTo", "curveTo"):
+            pts += [a for a in args if a]
+        elif op in ("closePath", "endPath"):
+            xs, ys = [q[0] for q in pts], [q[1] for q in pts]
+            dots.append(f'M{round((min(xs) + max(xs)) / 2)} {round((min(ys) + max(ys)) / 2)}h0')
+    return f'<path id="mxt{ord(ch)}" d="{"".join(dots)}"/>'
+
+
+def mx_tiny(x, base, text, size, color, shape="round", anchor="start", spacing=0.0, opacity=1.0):
+    width = nt_t_width(text, size, spacing)
+    x0 = x - width / 2 if anchor == "middle" else (x - width if anchor == "end" else x)
+    key = (text, spacing)
+    if key not in MX_TEXTS:
+        s, cursor = "", 0.0
+        for ch in text:
+            if ch != " ":
+                MX_T_USED.add(ch)
+                s += f'<use href="#mxt{ord(ch)}"' + (f' x="{cursor:.0f}"' if cursor else "") + "/>"
+            cursor += NT_TINY["hmtx"][NT_T_CMAP[ord(ch)]][0] + spacing * NT_T_UPM
+        MX_TEXTS[key] = (f"mxx{len(MX_TEXTS)}", s)
+    k = size / NT_T_UPM
+    o = "" if opacity == 1 else f' opacity="{opacity}"'
+    return f'<use href="#{MX_TEXTS[key][0]}" color="{color}"{o} class="mx{shape[0]}t" transform="translate({f(x0)} {f(base)}) scale({k:.4f} {-k:.4f})"/>'
+
+
+MX_ICONS = dict(NT_ICONS, cal=["#######", "# # # #", "#######", "#     #", "#  ## #", "#  ## #", "#######"])
+
+
+def mx_icon(kind, x, cy, h, color, shape):
+    MX_ICON_USED.add(kind)
+    pitch = h / len(MX_ICONS[kind])
+    return f'<use href="#mxi{kind}" color="{color}" class="mx{shape[0]}i" transform="translate({f(x)} {f(cy - h / 2)}) scale({pitch:.3f})"/>'
+
+
+def mx_icon_def(kind):
+    d = "".join(f'M{c + .5:g} {i + .5:g}h0' for i, row in enumerate(MX_ICONS[kind]) for c, v in enumerate(row) if v == "#")
+    return f'<path id="mxi{kind}" d="{d}"/>'
+
+
+def mx_media_icon(kind, cx, cy, h, color, shape):
+    MX_MEDIA_USED.add(kind)
+    pitch = h / 11
+    width = (max(c for c, _ in NT_MEDIA_COLS[kind]) + 1) * pitch
+    return f'<use href="#mxm{kind}" color="{color}" class="mx{shape[0]}i" transform="translate({f(cx - width / 2)} {f(cy - h / 2)}) scale({pitch:.3f})"/>'
+
+
+def mx_media_def(kind):
+    d = "".join(f'M{c + .5:g} {i + .5:g}h0' for c, rs in NT_MEDIA_COLS[kind] for i in rs)
+    return f'<path id="mxm{kind}" d="{d}"/>'
+
+
+def mx_dot_bar(left, right, cy, color, shape, progress=.42):
+    pitch = 5
+    n = int((right - left) // pitch)
+    done = round(n * progress)
+    x0 = left + pitch / 2
+    mid = x0 + done * pitch
+    end = x0 + (n - 1) * pitch
+    cap, w = ("round", 3.6) if shape == "round" else ("square", 3.2)
+    line = '<line x1="{a}" y1="{y}" x2="{b}" y2="{y}" stroke="{c}" stroke-width="{w}" stroke-linecap="{cap}" stroke-dasharray="0 5"{o}/>'
+    return (line.format(a=f(x0), b=f(mid - pitch + .1), y=f(cy), c=color, w=w, cap=cap, o="")
+            + line.format(a=f(mid), b=f(end + .1), y=f(cy), c=color, w=w, cap=cap, o=' opacity=".3"'))
+
+
+def mx_line_h(size):
+    return 1.125 * size
+
+
+MX_PLAYER_H = 48 + 15 + 3
+
+
+def mx_player(left, right, top, color, shape, paused=False):
+    dark = ec_mix(color, "#000000", .3)
+    s = (mx_tiny(left, top + 4 + .875 * 18, NT_TITLE, 18, color, shape, spacing=.05)
+         + mx_tiny(left, top + 4 + mx_line_h(18) + 4 + .875 * 16, NT_ARTIST, 16, dark, shape, spacing=.07))
+    cy = top + 24
+    px, nx = right - 43 - 10 - 24, right - 21.5
+    s += mx_media_icon("play" if paused else "pause", px, cy, 28, color, shape) + mx_media_icon("next", nx, cy, 23, color, shape)
+    return s + mx_dot_bar(left, right, top + 48 + 15 + 1, color, shape)
+
+
+def mx_battery(x, base, color, shape, charging, anchor="middle"):
+    width = nt_t_width("72%", 16, .03) + (16 if charging else 0)
+    x0 = x - width / 2 if anchor == "middle" else x
+    s = mx_icon("bolt", x0, base - 6, 12, color, shape) if charging else ""
+    return s + mx_tiny(x0 + (16 if charging else 0), base, "72%", 16, color, shape, spacing=.03, opacity=1 if charging else .8)
+
+
+def mx_column(x, top, items, c_text, shape, anchor, maxw):
+    s, y = "", top
+    for kind, value in items:
+        if kind == "date":
+            s += mx_tiny(x, y + .875 * 20, value, 20, c_text, shape, anchor)
+            y += mx_line_h(20)
+        elif kind == "weather":
+            w = 22 + nt_t_width("28°", 18)
+            x0 = x - w / 2 if anchor == "middle" else x
+            s += mx_icon("cloud", x0, y + 10, 10, c_text, shape) + mx_tiny(x0 + 22, y + .875 * 18, "28°", 18, c_text, shape)
+            y += mx_line_h(18)
+        elif kind == "event":
+            text = "10:00  HỌP NHÓM"
+            w = 26 + nt_t_width(text, 18)
+            x0 = x - w / 2 if anchor == "middle" else x
+            s += mx_icon("cal", x0, y + 10, 16, value, shape) + mx_tiny(x0 + 26, y + .875 * 18, text, 18, value, shape)
+            y += mx_line_h(18)
+        elif kind == "battery":
+            s += mx_battery(x, y + .875 * 16, c_text, shape, value, anchor)
+            y += mx_line_h(16)
+        elif kind == "icons":
+            kinds = ["bubble", "mail", "send", "bubble"]
+            s += "".join(mx_icon(kinds[i], x + i * 28, y + 11, 18, c_text, shape) for i in range(value))
+            y += 22
+        elif kind == "latest":
+            text = nt_tiny_fit("MAI: TỐI NAY ĐI ĂN NHÉ, NHỚ MANG Ô", 18, 0, maxw - 25)
+            s += mx_icon("bubble", x, y + 11, 18, c_text, shape) + mx_tiny(x + 25, y + 11 + 6, text, 18, c_text, shape)
+            y += 22
+        elif kind == "gap":
+            y += value
+    return s, y
+
+
+def mx_media_group(svg, shown):
+    hidden = "" if shown else ' style="display:none"'
+    return f'<g class="mx-m"{hidden}>{svg}</g>'
+
+
+def mx_face(width, height, hh="08:30", date="CN, 08 THG 11", size=40, c_clock=MX_AMBER, c_text=MX_GREY, c_event=MX_GREY, shape="round",
+            unlit=True, media=True, latest=False, charging=False, icons=3, weather=False, event=True, is_date_shown=True, ref=False):
+    land = width > height
+    _, ch = mx_clock_size(size)
+    s = ""
+    if not land:
+        top = height * .35 - (56 + 28 + mx_line_h(20) + 12 + 22)
+        s += mx_clock(40, top, hh, size, c_clock, shape, unlit)
+        items = []
+        if is_date_shown:
+            items += [("date", date)]
+        if weather:
+            items += ([("gap", 8)] if items else []) + [("weather", 0)]
+        if event:
+            items += ([("gap", 8)] if items else []) + [("event", c_event)]
+        if latest or icons:
+            items += ([("gap", 12)] if items else []) + ([("latest", 0)] if latest else [("icons", icons)])
+        col, _ = mx_column(40, top + ch + 28, items, c_text, shape, "start", width - 80)
+        s += col
+        bat_base = height - 35 - .25 * 16
+        s += mx_battery(width / 2, bat_base, c_text, shape, charging)
+        s += mx_media_group(mx_player(40, width - 40, bat_base - .875 * 16 - 35 - MX_PLAYER_H, c_text, shape), media)
+        return f'<g class="mx" style="cursor:pointer"><rect width="{width}" height="{height}" fill="transparent"/>{s}</g>'
+    right_shown = media or latest or icons
+    left_w = width / 2 if right_shown else width
+    items = []
+    if is_date_shown:
+        items += [("date", date)]
+    if weather:
+        items += ([("gap", 8)] if items else []) + [("weather", 0)]
+    if event:
+        items += ([("gap", 8)] if items else []) + [("event", c_event)]
+    items += ([("gap", 8)] if items else []) + [("battery", charging)]
+    _, col_h = mx_column(0, 0, items, c_text, shape, "middle", 0)
+    top = height / 2 - (ch + 28 + col_h) / 2
+    s += mx_clock(left_w / 2, top, hh, size, c_clock, shape, unlit, "middle")
+    col, _ = mx_column(left_w / 2, top + ch + 28, items, c_text, shape, "middle", left_w - 80)
+    s += col
+    if right_shown:
+        rl, rr = width / 2 + 40, width - 40
+        det_h = (22 + 20 + 1 + 35) if (latest or icons) else 0
+        y = height / 2 - (det_h + (MX_PLAYER_H if media else 0)) / 2
+        if latest or icons:
+            det, _ = mx_column(rl, y, [("latest", 0)] if latest else [("icons", icons)], c_text, shape, "start", rr - rl)
+            s += det + f'<rect x="{f(rl)}" y="{f(y + 22 + 20)}" width="{f(rr - rl)}" height="1" fill="{ec_mix(c_text, "#000000", .5)}"/>'
+            y += det_h
+        if media:
+            s += mx_media_group(mx_player(rl, rr, y, c_text, shape), True)
+    return f'<g class="mx" style="cursor:pointer"><rect width="{width}" height="{height}" fill="transparent"/>{s}</g>'
+
+
+def mx_defs():
+    return ("".join(mx_digit_def(ch, sh, lit) for ch, sh, lit in sorted(MX_DIGIT_USED))
+            + "".join(mx_t_def(ch) for ch in sorted(MX_T_USED))
+            + "".join(f'<g id="{i}">{v}</g>' for i, v in MX_TEXTS.values())
+            + "".join(mx_media_def(k) for k in sorted(MX_MEDIA_USED))
+            + "".join(mx_icon_def(k) for k in sorted(MX_ICON_USED)))
+
+
+def mx_style():
+    return ('<style>.mxrt,.mxst,.mxri,.mxsi{fill:none;stroke:currentColor}.mxrt{stroke-linecap:round;stroke-width:128px}'
+            '.mxst{stroke-linecap:square;stroke-width:116px}.mxri{stroke-linecap:round;stroke-width:.8px}.mxsi{stroke-linecap:square;stroke-width:.72px}</style>')
+
+
+def mx_live_script():
+    return ('<script>(function(){document.querySelectorAll(".mx").forEach(function(G){var m=G.querySelector(".mx-m");if(!m)return;'
+            'G.addEventListener("click",function(){var on=m.style.display=="none";m.style.display=on?"":"none";'
+            'if(on&&m.animate)m.animate([{transform:"translateY(17px)",opacity:0},{transform:"none",opacity:1}],{duration:250,easing:"ease-out"})})})})();</script>')
+
+
+matrix_frames = [
+    '<div style="font-size:0">',
+    frame_portrait("App mẫu (Nothing(2)) vẽ lại: mọi phần màu Theme trắng, chấm tròn sát nhau, không lưới nền, không sự kiện",
+                   mx_face(PW, PH, "05:00", "T4, 07 THG 2", c_clock=MX_WHITE, c_text=MX_WHITE, unlit=False, event=False, icons=0)),
+    frame_portrait("D1 · Mặc định (thẻ ở lưới): giờ hổ phách #FFB000 (màu nhấn) chấm tròn trên lưới chấm tắt mờ; cột trái: ngày, sự kiện, hàng icon; trình phát + pin ở đáy. Chạm khung: hiện / ẩn nhạc",
+                   mx_face(PW, PH)),
+    frame_portrait("D2 · Kiểu Vuông (chữ nhỏ, icon, nút, thanh cũng vuông), cỡ 50, giờ trắng, thông báo mới thay hàng icon, thời tiết dòng riêng dưới ngày",
+                   mx_face(PW, PH, "13:36", "T2, 09 THG 11", 50, MX_WHITE, "#CFD8DC", "#FFCC80", "square", latest=True, weather=True)),
+    frame_portrait("D3 · Cỡ 30, tắt lưới nền, màu riêng (giờ xanh, chữ xám), đang sạc (pin sáng hẳn, mờ 0,8 khi không sạc như mẫu), 4 icon, không nhạc",
+                   mx_face(PW, PH, "09:47", "T3, 10 THG 11", 30, "#80DEEA", "#B4B4B4", "#B4B4B4", unlit=False, media=False, charging=True, icons=4)),
+    frame_portrait("D4 · Tắt ngày, không sự kiện, không thông báo: giờ vẫn đứng yên chỗ cũ, trình phát + pin ở đáy",
+                   mx_face(PW, PH, "22:15", is_date_shown=False, event=False, icons=0)),
+    '</div>',
+    frame("N0 · App mẫu ngang: giờ + ngày + pin giữa nửa trái; hàng icon, vạch ngăn, trình phát ở nửa phải (căn trái, giữa theo chiều cao)",
+          mx_face(W, H, "05:00", "T4, 07 THG 2", c_clock=MX_WHITE, c_text=MX_WHITE, unlit=False, event=False, ref=True)),
+    frame("N1 · Mặc định ngang (như mẫu): giờ + ngày + sự kiện + pin giữa nửa trái; icon + vạch + trình phát nửa phải", mx_face(W, H)),
+    frame("N2 · Kiểu Vuông, cỡ 50, thông báo mới, thời tiết, có nhạc",
+          mx_face(W, H, "13:36", "T2, 09 THG 11", 50, MX_WHITE, "#CFD8DC", "#FFCC80", "square", latest=True, weather=True)),
+    frame("N3 · Chỉ có nhạc (không thông báo): nửa phải còn trình phát, giữa theo chiều cao", mx_face(W, H, "09:47", "T3, 10 THG 11", icons=0)),
+    frame("N4 · Không nhạc, không thông báo: nửa phải trống nên cụm giờ ra giữa màn (như mẫu); cỡ 30, đang sạc, tắt lưới nền",
+          mx_face(W, H, "22:15", size=30, media=False, icons=0, charging=True, unlit=False)),
+    mx_live_script(),
+    mx_style(),
+]
+if ONLY in (None, "w_matrix"):
+    matrix_code = widget("Chủ đề Ma trận (Matrix): giờ HH:mm chấm 5 × 7 tự vẽ một dòng căn trái, lưới chấm tắt mờ, năm khung dọc và năm khung ngang",
+                         mx_defs(), matrix_frames)
+    (OUT / "w_matrix.html").write_text(matrix_code, encoding="utf-8")
+    print("w_matrix", len(matrix_code))

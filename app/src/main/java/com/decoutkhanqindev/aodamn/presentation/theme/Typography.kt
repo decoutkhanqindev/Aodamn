@@ -177,6 +177,10 @@ val FontFamilyTiny5 = FontFamily(
     Font(R.font.tiny5_regular, FontWeight.Normal),
 )
 
+val FontFamilyTiny5Square = FontFamily(
+    Font(R.font.tiny5_square_regular, FontWeight.Normal),
+)
+
 private val MaterialTypeScale = androidx.compose.material3.Typography()
 
 val DisplaySmall = MaterialTypeScale.displaySmall.copy(fontFamily = FontFamilyPlusJakartaSans)
